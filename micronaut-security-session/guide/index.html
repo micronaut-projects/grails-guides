@@ -738,6 +738,7 @@ the necessary dependencies:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeDriver</span>
 <span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeOptions</span>
 <span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxDriver</span>
+<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxOptions</span>
 
 environments {
 
@@ -752,6 +753,14 @@ environments {
             ChromeOptions o = <span class="keyword">new</span> ChromeOptions()
             o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">headless</span><span class="delimiter">'</span></span>)
             <span class="keyword">new</span> ChromeDriver(o)
+        }
+    }
+
+    firefoxHeadless {
+        driver = {
+            FirefoxOptions o = <span class="keyword">new</span> FirefoxOptions()
+            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">-headless</span><span class="delimiter">'</span></span>)
+            <span class="keyword">new</span> FirefoxDriver(o)
         }
     }
 
