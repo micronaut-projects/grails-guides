@@ -22,6 +22,9 @@
     <loc>http://guides.micronaut.io/micronaut-database-authentication-provider/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
