@@ -19,6 +19,9 @@
     <loc>http://guides.micronaut.io/micronaut-cli/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-database-authentication-provider/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
