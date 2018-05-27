@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.4 Delegating Authentication Provider null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        LDAP and Database authentication providers
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.4 Delegating Authentication Provider</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#userFetcher"><strong>2.1</strong><span>User Fetcher</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#authoritiesFetcher"><strong>2.2</strong><span>Authorities Fetcher</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#passwordEncoder"><strong>2.3</strong><span>Password Encoder</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h2 id="delegatingAuthenticationProvider">2.4 Delegating Authentication Provider</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut ships with <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/DelegatingAuthenticationProvider.html">DelegatingAuthenticationProvider</a> which can be typically used in environments such as the one described in the next diagramm.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/delegating_authentication_provider.svg" alt="delegating authentication provider">
+</div>
+</div>
+<div class="paragraph">
+<p><code>DelegatingAuthenticationProvider</code> is not enabled unless you provide implementations for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>, <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a> and <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>.</p>
+</div>
+<div class="paragraph">
+<p>Next, we provide an implementation for those interfaces.</p>
+</div>
+
+
+<h2 id="userFetcher">2.4.1 User Fetcher</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/userFetcher.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserFetcher</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
+
+    <span class="directive">protected</span>  <span class="directive">final</span> UserGormService userGormService
+
+    UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="local-variable">this</span>.userGormService = userGormService
+    }
+
+    <span class="annotation">@Override</span>
+    Publisher&lt;UserState&gt; findByUsername(<span class="predefined-type">String</span> username) {
+        UserState user = userGormService.findByUsername(username) <span class="keyword">as</span> UserState
+        (user ? Flowable.just(user) : Flowable.empty()) <span class="keyword">as</span> Publisher&lt;UserState&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>UserGormService</code> is injected via constructor injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="authoritiesFetcher">2.4.2 Authorities Fetcher</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authoritiesFetcher.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Provide an implementation for <a href="http://docs.micronaut.io//api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.AuthoritiesFetcher</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
+
+    <span class="directive">protected</span>  <span class="directive">final</span> UserRoleGormService userRoleGormService
+
+    AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
+    }
+
+    <span class="annotation">@Override</span>
+    Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
+        Flowable.just(<span class="local-variable">this</span>.userRoleGormService.findAllAuthoritiesByUsername(username))
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>UserRoleGormService</code> is injected via constructor injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="passwordEncoder">2.4.3 Password Encoder</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/passwordEncoder.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+</div>
+<div class="paragraph">
+<p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ext {
+...
+..
+.
+    springSecurityCryptoVersion=<span class="string"><span class="delimiter">'</span><span class="content">4.2.5.RELEASE</span><span class="delimiter">'</span></span>
+}
+dependencies {
+...
+..
+.
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.security:spring-security-crypto:</span><span class="inline"><span class="inline-delimiter">${</span>springSecurityCryptoVersion<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.PasswordEncoder</span>
+<span class="keyword">import</span> <span class="include">org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder</span>
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">BCryptPasswordEncoderService</span> <span class="directive">implements</span> PasswordEncoder {
+
+    org.springframework.security.crypto.password.PasswordEncoder delegate = <span class="keyword">new</span> BCryptPasswordEncoder()
+
+    <span class="predefined-type">String</span> encode(<span class="predefined-type">String</span> rawPassword) {
+        <span class="keyword">return</span> delegate.encode(rawPassword)
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="type">boolean</span> matches(<span class="predefined-type">String</span> rawPassword, <span class="predefined-type">String</span> encodedPassword) {
+        <span class="keyword">return</span> delegate.matches(rawPassword, encodedPassword)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
