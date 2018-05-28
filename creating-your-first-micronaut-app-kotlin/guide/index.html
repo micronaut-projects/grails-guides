@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Creating your first Micronaut Kotlin app | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Creating your first Micronaut Kotlin app. Learn how to create a Micronaut app with Kotlin with a controller and a functional test.' />
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/creating-your-first-micronaut-app-kotlin/guide/index.html">Creating your first Micronaut Kotlin app</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/creating-your-first-micronaut-app-kotlin"><img src="https://travis-ci.org/micronaut-guides/creating-your-first-micronaut-app-kotlin.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/creating-your-first-micronaut-app-kotlin.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/creating-your-first-micronaut-app-kotlin.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#application"><strong>3</strong><span>Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>4</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>5</strong><span>Test</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>6</strong><span>Testing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>7</strong><span>Running the Application</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Creating your first Micronaut Kotlin app</h1>
+        <p>Learn how to create a Micronaut app with Kotlin with a controller and a functional test.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0-SNAPSHOT</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide we are going to create a Micronaut app written in Kotlin.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin.git" class="bare">https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example --features kotlin</code></p>
+</div>
+<div class="paragraph">
+<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+</div>
+
+
+<h1 id="application">3 Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/application.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Remove the <code>Application.java</code> created by the <code>mn create-app --features kotlin</code> command.</p>
+</div>
+<div class="paragraph">
+<p>Create a Kotlin file instead which is used when running the application via Gradle or via deployment. You can also run the main class directly within your IDE if it is configured correctly.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/Application.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import io.micronaut.runtime.Micronaut
+
+object Application {
+
+    @JvmStatic
+    fun main(args: Array&lt;String&gt;) {
+        Micronaut.build()
+                .packages(&quot;example&quot;)
+                .mainClass(Application.javaClass)
+                .start()
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h1 id="controller">4 Controller</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In order to create a microservice that responds to "Hello World" you first need a controller.</p>
+</div>
+<div class="paragraph">
+<p>Create a Controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/HelloController.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+
+@Controller(&quot;/hello&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+class HelloController {
+
+    @Get(&quot;/&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
+    fun index(): String {
+        return &quot;Hello World&quot;  <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path /hello</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the index method to all requests that use an HTTP GET</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>A String "Hello World" is returned as the result</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="tests">5 Test</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://spekframework.org/">Speck</a> is a Kotlin Specification Framework for the JVM.</p>
+</div>
+<div class="paragraph">
+<p>To use Spek modify <code>build.gradle</code> file as described in the <a href="http://spekframework.org/docs/latest/#_gradle">Spek documentation</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+    repositories {
+      ...
+      ..
+    }
+    dependencies {
+      ...
+      ..
+        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.0.0</span><span class="delimiter">'</span></span>
+    }
+}
+...
+..
+.
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+
+junitPlatform {
+    filters {
+        engines {
+            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+        }
+    }
+}
+
+repositories {
+  ...
+  ..
+    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">http://dl.bintray.com/jetbrains/spek</span><span class="delimiter">&quot;</span></span> }
+}
+
+dependencies {
+...
+..
+    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">'</span></span>
+    testRuntime <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">'</span></span>
+}
+...
+..
+
+test {
+    useJUnitPlatform()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which verifies that when you do a GET request to <code>/hello</code> you get <code>Hello World</code> as a response:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/HelloControllerSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.client.HttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import org.junit.Assert.assertEquals
+
+class HomeControllerSpec: Spek({
+    describe(&quot;HelloController&quot;) {
+        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client : HttpClient  = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+        on(&quot;test /hello responds Hello World&quot;) {
+            var rsp : String = client.toBlocking().retrieve(&quot;/hello&quot;)
+            assertEquals(rsp, &quot;Hello World&quot;)
+        }
+        afterGroup {
+            client.close()
+            embeddedServer.close()
+        }
+
+    }
+})</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="testingTheApp">6 Testing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+<h1 id="runningTheApp">7 Running the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
+</div>
+
+</article>
+</div>
+</body>
+</html>
