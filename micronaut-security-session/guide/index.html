@@ -265,11 +265,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose /login endpoint</td>
+<td>Expose <code>/login</code> endpoint</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose /logout endpoint</td>
+<td>Expose <code>/logout</code> endpoint</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -430,7 +430,7 @@ going to produce HTML in our controllers.</p>
             &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
 </span>            &lt;li&gt;
                 &lt;label <span class="keyword">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>&gt;Password&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">label&gt;</span></span><span class="error">
-</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>/&gt;
+</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>/&gt;
             &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
 </span>            &lt;li&gt;
                 &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> value=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span>/&gt;
@@ -686,7 +686,7 @@ going to produce HTML in our controllers.</p>
 
 
 <div class="paragraph">
-<p>Micronaut&#8217;s is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -704,9 +704,22 @@ the necessary dependencies:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
 ...
 ..
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
     testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
+<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
+<span class="head"><span class="head">---</span></span>
+<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
+<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">

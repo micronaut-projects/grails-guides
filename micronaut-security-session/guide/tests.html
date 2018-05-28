@@ -100,7 +100,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut&#8217;s is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -118,9 +118,22 @@ the necessary dependencies:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
 ...
 ..
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
     testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
+<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
+<span class="head"><span class="head">---</span></span>
+<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
+<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
