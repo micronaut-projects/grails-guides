@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-scheduled/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-security-basicauth/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-security-session/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-security-jwt/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-security-jwt-cookie/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-cli/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/micronaut-database-authentication-provider-groovy/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/null/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
   </url>
   <url>
     <loc>index.html</loc>
