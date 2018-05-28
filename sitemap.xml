@@ -25,7 +25,13 @@
     <loc>http://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app-kt-/guide/index.html</loc>
+    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app-kotlin/guide/index.html</loc>
+  </url>
+  <url>
+    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app/guide/index.html</loc>
+  </url>
+  <url>
+    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app-groovy/guide/index.html</loc>
   </url>
   <url>
     <loc>index.html</loc>
