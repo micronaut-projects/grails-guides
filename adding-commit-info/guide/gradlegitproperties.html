@@ -101,9 +101,9 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>If a git.properties file is available on the classpath, the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/management/endpoint/info/source/GitInfoSource.html">GitInfoSource</a>
-will expose the values in that file under the git key. Generating of a <code>git.properties</code> file will need to be configured
-as part of your build; for example, you may choose to use the <a href="https://plugins.gradle.org/plugin/com.gorylenko.gradle-git-properties">Gradle Git Properties</a>.</p>
+<p>If a <code>git.properties</code> file is available on the classpath, the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/management/endpoint/info/source/GitInfoSource.html">GitInfoSource</a>
+will expose the values in that file under the <code>git</code> key. Generating of a <code>git.properties</code> file will need to be configured
+as part of your build; for example, you may choose to use the <a href="https://plugins.gradle.org/plugin/com.gorylenko.gradle-git-properties">Gradle Git Properties</a> plugin.</p>
 </div>
 <div class="paragraph">
 <p>Modify <code>build.gradle</code> file to add the Gradle plugin:</p>
