@@ -6,7 +6,7 @@
     <link rel='icon' href='../img/micronaut-favicon.ico' />
     <meta charset='UTF-8' />
     <title>Micronaut JWT authentication via Cookies | Micronaut Guides | Micronaut Framework</title>
-    <meta name='description' content='Micronaut JWT authentication via Cookies. Learn how to secure a Micronaut app using JWT based authentication where the JWT tokens are transported via Cookies.' />
+    <meta name='description' content='Micronaut JWT authentication via Cookies. Learn how to secure a Micronaut app using JWT (JSON Web Token) based authentication where the JWT tokens are transported via Cookies.' />
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -85,7 +85,7 @@
     </aside>
     <header>
         <h1>Micronaut JWT authentication via Cookies</h1>
-        <p>Learn how to secure a Micronaut app using JWT based authentication where the JWT tokens are transported via Cookies.</p>
+        <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) based authentication where the JWT tokens are transported via Cookies.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
         <p><strong>Micronaut Version:</strong> 1.0.0-SNAPSHOT</p>
     </header>
@@ -742,7 +742,7 @@ going to produce HTML in our controllers.</p>
 
 
 <div class="paragraph">
-<p>Micronaut&#8217;s is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -763,6 +763,15 @@ the necessary dependencies:</p>
     compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
     testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="error">Unresolved directive in build/resources/micronaut-guides-master/src/main/docs/common-spockinjavaapp.adoc - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie/complete/micronaut-cli.yml[]</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1055,5 +1064,13 @@ $ open build/reports/tests/test/index.html</code></pre>
 
 </article>
 </div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
 </body>
 </html>
