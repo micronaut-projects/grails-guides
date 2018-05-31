@@ -413,10 +413,29 @@ $ open build/reports/tests/test/index.html</code></pre>
 
 
 <div class="paragraph">
+<p>Before running the Application, adapt the in <code>build.gradle</code> the</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+mainClassName = <span class="string"><span class="delimiter">&quot;</span><span class="content">example.micronaut.Application</span><span class="delimiter">&quot;</span></span>
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
 </div>
 
 </article>
 </div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
 </body>
 </html>
