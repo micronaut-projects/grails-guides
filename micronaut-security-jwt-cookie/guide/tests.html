@@ -280,6 +280,7 @@ environments {
     <span class="annotation">@AutoCleanup</span>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
+    <span class="annotation">@IgnoreIf</span>({ !sys[<span class="string"><span class="delimiter">'</span><span class="content">geb.env</span><span class="delimiter">'</span></span>] })
     <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">verify session based authentication works</span><span class="delimiter">&quot;</span></span>() {
         <span class="key">given</span>:
         browser.baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:</span><span class="inline"><span class="inline-delimiter">${</span>embeddedServer.port<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
