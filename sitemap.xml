@@ -28,6 +28,9 @@
     <loc>http://guides.micronaut.io/micronaut-database-authentication-provider-groovy/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-email/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
