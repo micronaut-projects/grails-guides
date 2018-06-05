@@ -156,31 +156,20 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailCmd.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
-
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.ToString</span>
-
-<span class="keyword">import</span> <span class="include">javax.validation.Validation</span>
-
-<span class="annotation">@ToString</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@ToString</span>
 <span class="annotation">@CompileStatic</span>
-<span class="annotation">@EmailConstraints</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
 
     <span class="predefined-type">String</span> recipient
-
     <span class="predefined-type">String</span> subject
-
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="type">[]</span>
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="type">[]</span>
-
     <span class="predefined-type">String</span> htmlBody
     <span class="predefined-type">String</span> textBody
     <span class="predefined-type">String</span> replyTo
 
-    <span class="type">boolean</span> hasErrors() {
-        Validation.buildDefaultValidatorFactory().validator.validate(<span class="local-variable">this</span>)
+    <span class="type">boolean</span> hasErrors() { <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="predefined-constant">false</span>
     }
 }</code></pre>
 </div>
@@ -189,11 +178,7 @@ function addJsClass() {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>recipient</code> is required</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>subject</code> is required</td>
+<td>We will use a custom validation. See <a href="#validation">CustomValidation</a> section to learn more.</td>
 </tr>
 </table>
 </div>

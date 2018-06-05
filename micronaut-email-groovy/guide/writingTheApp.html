@@ -97,6 +97,9 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#test"><strong>3.4</strong><span>Test</span></a>
                     </div>
                     
+                    <div class="toc-item" style="margin-left:0px"><a href="#validation"><strong>3.5</strong><span>Validation</span></a>
+                    </div>
+                    
                 </div>
                 
 
@@ -200,31 +203,20 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailCmd.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
-
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.ToString</span>
-
-<span class="keyword">import</span> <span class="include">javax.validation.Validation</span>
-
-<span class="annotation">@ToString</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@ToString</span>
 <span class="annotation">@CompileStatic</span>
-<span class="annotation">@EmailConstraints</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
 
     <span class="predefined-type">String</span> recipient
-
     <span class="predefined-type">String</span> subject
-
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="type">[]</span>
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="type">[]</span>
-
     <span class="predefined-type">String</span> htmlBody
     <span class="predefined-type">String</span> textBody
     <span class="predefined-type">String</span> replyTo
 
-    <span class="type">boolean</span> hasErrors() {
-        Validation.buildDefaultValidatorFactory().validator.validate(<span class="local-variable">this</span>)
+    <span class="type">boolean</span> hasErrors() { <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="predefined-constant">false</span>
     }
 }</code></pre>
 </div>
@@ -233,11 +225,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>recipient</code> is required</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>subject</code> is required</td>
+<td>We will use a custom validation. See <a href="#validation">CustomValidation</a> section to learn more.</td>
 </tr>
 </table>
 </div>
@@ -619,8 +607,8 @@ system properties (<code>SENDGRID_APIKEY</code>, <code>SENDGRID_APIKEY</code>) a
 
     <span class="predefined-type">String</span> fromEmail
 
-    SendGridEmailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_APIKEY:faa}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> apiKey, <i class="conum" data-value="3"></i><b>(3)</b>
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_FROM_EMAIL:foo}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> fromEmail) {
+    SendGridEmailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_APIKEY}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> apiKey, <i class="conum" data-value="3"></i><b>(3)</b>
+                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_FROM_EMAIL}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> fromEmail) {
         <span class="local-variable">this</span>.apiKey = apiKey
         <span class="local-variable">this</span>.fromEmail = fromEmail
     }
@@ -898,6 +886,247 @@ $ ./gradlew run</code></pre>
 <td><code>emailService.send</code> method is invoked once.</td>
 </tr>
 </table>
+</div>
+
+
+<h2 id="validation">3.5 Validation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-groovy/edit/master/src/main/docs/guide/writingTheApp/validation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We want to ensure any email request contains a subject, recipient and a text body or html body.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+</div>
+<div class="paragraph">
+<p>Hibernate Validator is a reference implementation of the validation API.</p>
+</div>
+<div class="paragraph">
+<p>Add a dependency to it:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:validation</span><span class="delimiter">&quot;</span></span>
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-validator</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create the next test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/example/micronaut/MailControllerValidationSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="namespace">import</span> <span class="namespace">spock.lang.AutoCleanup</span>
+<span class="namespace">import</span> <span class="namespace">spock.lang.Shared</span>
+<span class="namespace">import</span> <span class="namespace">spock.lang.Specification</span>
+
+
+<span class="namespace">class</span> <span class="namespace">MailControllerValidationSpec</span> <span class="namespace">extends</span> <span class="namespace">Specification</span> {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="namespace">EmbeddedServer</span> <span class="namespace">embeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>, [
+            <span class="string"><span class="delimiter">'</span><span class="content">spec.name</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">mailcontroller</span><span class="delimiter">'</span></span>,
+    ], <span class="string"><span class="delimiter">'</span><span class="content">test</span><span class="delimiter">'</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    <span class="namespace">RxHttpClient</span> <span class="namespace">client</span> = <span class="namespace">embeddedServer.applicationContext.createBean</span>(<span class="namespace">RxHttpClient</span>, <span class="namespace">embeddedServer.getURL</span>()) <i class="conum" data-value="3"></i><b>(3)</b>
+
+
+    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without subject</span><span class="delimiter">&quot;</span></span>() {
+        <span class="namespace">given</span>:
+        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
+                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
+                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola hola</span><span class="delimiter">'</span></span>)
+        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="namespace">when</span>:
+        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+
+        <span class="namespace">then</span>:
+        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
+        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+    }
+
+    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without recipient</span><span class="delimiter">&quot;</span></span>() {
+        <span class="namespace">given</span>:
+        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
+                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
+                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola hola</span><span class="delimiter">'</span></span>)
+        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="namespace">when</span>:
+        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+
+        <span class="namespace">then</span>:
+        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
+        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+    }
+
+    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without either textBody or htmlBody</span><span class="delimiter">&quot;</span></span>() {
+        <span class="namespace">given</span>:
+        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
+                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
+                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,)
+        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="namespace">when</span>:
+        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+
+        <span class="namespace">then</span>:
+        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
+        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+    }
+
+    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send can be invoked without textBody and not htmlBody</span><span class="delimiter">&quot;</span></span>() {
+        <span class="namespace">given</span>:
+        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
+                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
+                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
+                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hello</span><span class="delimiter">'</span></span>)
+        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="namespace">when</span>:
+        <span class="namespace">HttpResponse</span> <span class="namespace">rsp</span> = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+
+        <span class="namespace">then</span>:
+        <span class="namespace">rsp.status</span>().<span class="namespace">code</span> == <span class="integer">200</span>
+    }
+
+    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send can be invoked without htmlBody and not textBody</span><span class="delimiter">&quot;</span></span>() {
+        <span class="namespace">given</span>:
+        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
+                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
+                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
+                <span class="namespace">htmlBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">&lt;h1&gt;Hello&lt;/h1&gt;</span><span class="delimiter">'</span></span>)
+        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="namespace">when</span>:
+        <span class="namespace">HttpResponse</span> <span class="namespace">rsp</span> = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+
+        <span class="namespace">then</span>:
+        <span class="namespace">rsp.status</span>().<span class="namespace">code</span> == <span class="integer">200</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In order to satisfy the test, create an email constraints annotation</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/EmailConstraints.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>;
+
+<span class="keyword">import</span> <span class="include">javax.validation.Constraint</span>;
+<span class="keyword">import</span> <span class="include">javax.validation.Payload</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.ElementType</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.Retention</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.RetentionPolicy</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.Target</span>;
+
+<span class="annotation">@Constraint</span>(validatedBy = { EmailConstraintsValidator.class })
+<span class="annotation">@Target</span>( { <span class="predefined-type">ElementType</span>.TYPE })
+<span class="annotation">@Retention</span>(<span class="predefined-type">RetentionPolicy</span>.RUNTIME)
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@interface</span> EmailConstraints {
+
+    <span class="predefined-type">String</span> message() <span class="keyword">default</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">{email.invalid}</span><span class="delimiter">&quot;</span></span>;
+    <span class="predefined-type">Class</span>&lt;?&gt;<span class="type">[]</span> groups() <span class="keyword">default</span> { };
+    <span class="predefined-type">Class</span>&lt;? <span class="directive">extends</span> Payload&gt;<span class="type">[]</span> payload() <span class="keyword">default</span> { };
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and a validator:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/EmailConstraintsValidator.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+
+<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidator</span>
+<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidatorContext</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="type">class</span> <span class="class">EmailConstraintsValidator</span> <span class="directive">implements</span> ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
+        email &amp;&amp; (email.textBody || email.htmlBody) &amp;&amp; email.subject &amp;&amp; email.recipient
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Annotate Email with <code>EmailConstraints</code> and populate the <code>hasErrors</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/EmailCmd.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="include">import</span> <span class="include">groovy.transform.ToString</span>
+<span class="include">import</span> <span class="include">javax.validation.Validation</span>
+
+<span class="annotation">@ToString</span>
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@EmailConstraints</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="include">class</span> <span class="include">EmailCmd</span> <span class="include">implements</span> <span class="include">Email</span> {
+
+    <span class="include">String</span> <span class="include">recipient</span>
+    <span class="include">String</span> <span class="include">subject</span>
+    <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">cc</span> = <span class="type">[]</span>
+    <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">bcc</span> = <span class="type">[]</span>
+    <span class="include">String</span> <span class="include">htmlBody</span>
+    <span class="include">String</span> <span class="include">textBody</span>
+    <span class="include">String</span> <span class="include">replyTo</span>
+
+    <span class="include">boolean</span> <span class="include">hasErrors</span>() {
+        <span class="include">Validation.buildDefaultValidatorFactory</span>().<span class="include">validator.validate</span>(<span class="include">this</span>)
+    }
+}</code></pre>
+</div>
 </div>
 
 

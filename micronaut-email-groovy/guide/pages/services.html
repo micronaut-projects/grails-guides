@@ -466,8 +466,8 @@ system properties (<code>SENDGRID_APIKEY</code>, <code>SENDGRID_APIKEY</code>) a
 
     <span class="predefined-type">String</span> fromEmail
 
-    SendGridEmailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_APIKEY:faa}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> apiKey, <i class="conum" data-value="3"></i><b>(3)</b>
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_FROM_EMAIL:foo}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> fromEmail) {
+    SendGridEmailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_APIKEY}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> apiKey, <i class="conum" data-value="3"></i><b>(3)</b>
+                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${SENDGRID_FROM_EMAIL}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> fromEmail) {
         <span class="local-variable">this</span>.apiKey = apiKey
         <span class="local-variable">this</span>.fromEmail = fromEmail
     }
