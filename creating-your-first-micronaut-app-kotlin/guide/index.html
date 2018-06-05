@@ -61,15 +61,13 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#application"><strong>3</strong><span>Application</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>3</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>4</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>4</strong><span>Test</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>5</strong><span>Test</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>5</strong><span>Testing the Application</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>6</strong><span>Testing the Application</span></a></div>
-            
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>7</strong><span>Running the Application</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>6</strong><span>Running the Application</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -187,43 +185,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h1 id="application">3 Application</h1>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/application.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Remove the <code>Application.java</code> created by the <code>mn create-app --features kotlin</code> command.</p>
-</div>
-<div class="paragraph">
-<p>Create a Kotlin file instead which is used when running the application via Gradle or via deployment. You can also run the main class directly within your IDE if it is configured correctly.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/Application.kt</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
-
-import io.micronaut.runtime.Micronaut
-
-object Application {
-
-    @JvmStatic
-    fun main(args: Array&lt;String&gt;) {
-        Micronaut.build()
-                .packages(&quot;example&quot;)
-                .mainClass(Application.javaClass)
-                .start()
-    }
-}</code></pre>
-</div>
-</div>
-
-
-<h1 id="controller">4 Controller</h1>
+<h1 id="controller">3 Controller</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/controller.adoc"'>
@@ -274,7 +236,7 @@ class HelloController {
 </div>
 
 
-<h1 id="tests">5 Test</h1>
+<h1 id="tests">4 Test</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/tests.adoc"'>
@@ -383,7 +345,7 @@ class HomeControllerSpec: Spek({
 </div>
 
 
-<h1 id="testingTheApp">6 Testing the Application</h1>
+<h1 id="testingTheApp">5 Testing the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
@@ -403,7 +365,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="runningTheApp">7 Running the Application</h1>
+<h1 id="runningTheApp">6 Running the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-kotlin/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
