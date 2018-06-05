@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.2.1 AWS SES null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Send Emails from Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.2.1 AWS SES</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="awsSesService">2.2.1 AWS SES</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email/edit/master/src/main/docs/guide/writingTheApp/services/awsSesService.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Amazon Simple Email Service (Amazon SES) is a cloud-based email sending service designed to help digital marketers and application developers send marketing, notification, and transactional emails. It is a reliable, cost-effective service for businesses of all sizes that use email to keep in contact with their customers.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add a dependency to AWS SES SDK:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.amazonaws:aws-java-sdk-ses:1.11.285</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a service which encapsulates AWS credentials provider. The bean will not be loaded if the
+system properties (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) are not present.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/AwsCredentialsProviderCondition.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.Condition</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.ConditionContext</span>;
+
+<span class="type">class</span> <span class="class">AwsCredentialsProviderCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
+        <span class="keyword">return</span> (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>))) ||
+                (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>)) &amp;&amp;  notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>)));
+    }
+
+    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
+        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/AwsCredentialsProviderService.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">com.amazonaws.auth.AWSCredentials</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.auth.AWSCredentialsProvider</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.auth.BasicAWSCredentials</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(condition = AwsCredentialsProviderCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="type">class</span> <span class="class">AwsCredentialsProviderService</span> <span class="directive">implements</span> AWSCredentialsProvider {
+
+    <span class="predefined-type">String</span> accessKey;
+    <span class="predefined-type">String</span> secretKey;
+
+    AwsCredentialsProviderService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_ACCESS_KEY_ID}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> accessKey, <i class="conum" data-value="3"></i><b>(3)</b>
+                                  <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_SECRET_KEY}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> secretKey) {
+        <span class="local-variable">this</span>.accessKey = accessKey;
+        <span class="local-variable">this</span>.secretKey = secretKey;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> AWSCredentials getCredentials() {
+        <span class="keyword">return</span> <span class="keyword">new</span> BasicAWSCredentials(accessKey, secretKey);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> refresh() {
+
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless condition is met.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Values will be resolved from system properties.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a service which sends the email with AWS Simple Email Service. The bean will not be loaded if the
+system properties (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) are not present.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/AwsSesMailCondition.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.Condition</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.ConditionContext</span>;
+
+<span class="type">class</span> <span class="class">AwsSesMailCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
+        <span class="keyword">return</span> (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>))) ||
+                (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>)) &amp;&amp;  notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>)));
+    }
+
+    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
+        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/AwsSesMailService.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.SendEmailResult</span>;
+
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.AmazonSimpleEmailService</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Body</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Content</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Destination</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Message</span>;
+<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.SendEmailRequest</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Primary</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
+<span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
+<span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
+
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(beans = AwsCredentialsProviderService.class) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@Requires</span>(condition = AwsSesMailCondition.class)  <i class="conum" data-value="3"></i><b>(3)</b>
+<span class="annotation">@Primary</span> <i class="conum" data-value="4"></i><b>(4)</b>
+<span class="type">class</span> <span class="class">AwsSesMailService</span> <span class="directive">implements</span> EmailService {
+    <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(AwsSesMailService.class);
+
+    <span class="predefined-type">String</span> awsRegion;
+
+    <span class="predefined-type">String</span> sourceEmail;
+
+    AwsCredentialsProviderService awsCredentialsProviderService;
+
+    AwsSesMailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_REGION}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> awsRegion, <i class="conum" data-value="5"></i><b>(5)</b>
+                      <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_SOURCE_EMAIL}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> sourceEmail,
+                      AwsCredentialsProviderService awsCredentialsProviderService
+                      ) {
+        <span class="local-variable">this</span>.awsRegion = awsRegion;
+        <span class="local-variable">this</span>.sourceEmail = sourceEmail;
+        <span class="local-variable">this</span>.awsCredentialsProviderService = awsCredentialsProviderService;
+    }
+
+    <span class="directive">private</span> Body bodyOfEmail(Email email) {
+        <span class="keyword">if</span> (email.getHtmlBody() != <span class="predefined-constant">null</span> &amp;&amp; !email.getHtmlBody().isEmpty()) {
+            Content htmlBody = <span class="keyword">new</span> Content().withData(email.getHtmlBody());
+            <span class="keyword">return</span> <span class="keyword">new</span> Body().withHtml(htmlBody);
+        }
+        <span class="keyword">if</span> (email.getTextBody() != <span class="predefined-constant">null</span> &amp;&amp; !email.getTextBody().isEmpty()) {
+            Content textBody = <span class="keyword">new</span> Content().withData(email.getTextBody());
+            <span class="keyword">return</span> <span class="keyword">new</span> Body().withHtml(textBody);
+        }
+        <span class="keyword">return</span> <span class="keyword">new</span> Body();
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> send(Email email) {
+
+        <span class="keyword">if</span> ( awsCredentialsProviderService == <span class="predefined-constant">null</span> ) {
+            <span class="keyword">if</span> (LOG.isWarnEnabled()) {
+                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS Credentials provider not configured</span><span class="delimiter">&quot;</span></span>);
+            }
+            <span class="keyword">return</span>;
+        }
+
+        <span class="predefined-type">Destination</span> destination = <span class="keyword">new</span> <span class="predefined-type">Destination</span>().withToAddresses(email.getRecipient());
+        <span class="keyword">if</span> ( email.getCc() !=<span class="predefined-constant">null</span>) {
+            destination = destination.withCcAddresses(email.getCc());
+        }
+        <span class="keyword">if</span> ( email.getBcc() != <span class="predefined-constant">null</span> ) {
+            destination = destination.withBccAddresses(email.getBcc());
+        }
+        Content subject = <span class="keyword">new</span> Content().withData(email.getSubject());
+        Body body = bodyOfEmail(email);
+        Message message = <span class="keyword">new</span> Message().withSubject(subject).withBody(body);
+
+        SendEmailRequest request = <span class="keyword">new</span> SendEmailRequest()
+                .withSource(sourceEmail)
+                .withDestination(destination)
+                .withMessage(message);
+
+        <span class="keyword">if</span> ( email.getReplyTo() != <span class="predefined-constant">null</span> ) {
+            request = request.withReplyToAddresses();
+        }
+
+        <span class="keyword">try</span> {
+            <span class="keyword">if</span> (LOG.isInfoEnabled()) {
+                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Attempting to send an email through Amazon SES by using the AWS SDK for Java...</span><span class="delimiter">&quot;</span></span>);
+            }
+
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
+                    .withCredentials(awsCredentialsProviderService)
+                    .withRegion(awsRegion)
+                    .build();
+
+            SendEmailResult sendEmailResult = client.sendEmail(request);
+
+            <span class="keyword">if</span> (LOG.isInfoEnabled()) {
+                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Email sent! {}</span><span class="delimiter">&quot;</span></span>, sendEmailResult.toString());
+            }
+        } <span class="keyword">catch</span> (<span class="exception">Exception</span> ex) {
+            <span class="keyword">if</span> (LOG.isWarnEnabled()) {
+                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">The email was not sent.</span><span class="delimiter">&quot;</span></span>);
+                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">Error message: {}</span><span class="delimiter">&quot;</span></span>, ex.getMessage());
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless condition is met.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Bean will not loaded, if bean is not present.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>@Primary</code> is a qualifier that indicates that a bean is the primary bean that should be selected in the case of multiple possible interface implementations.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Values will be resolved from system properties.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
