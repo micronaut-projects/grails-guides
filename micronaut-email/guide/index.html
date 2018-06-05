@@ -433,7 +433,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="paragraph">
 <p>Create a service which encapsulates AWS credentials provider. The bean will not be loaded if the
-system properties (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) are not present.</p>
+environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) or system properties ( <code>aws.accesskeyid</code>, <code>aws.secretkey</code>) are not present.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsCredentialsProviderCondition.java</div>
@@ -600,7 +600,7 @@ system properties (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) 
 </div>
 <div class="paragraph">
 <p>Create a service which sends the email with AWS Simple Email Service. The bean will not be loaded if the
-system properties (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) are not present.</p>
+environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) or system properties (<code>aws.region</code>, <code>aws.sourceemail</code>) are not present.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsSesMailCondition.java</div>
