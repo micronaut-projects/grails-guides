@@ -106,7 +106,7 @@ function addJsClass() {
 <span class="directive">public</span> <span class="type">class</span> <span class="class">MailController</span> {
     <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(MailController.class);
 
-    EmailService emailService;
+    <span class="directive">protected</span> <span class="directive">final</span> EmailService emailService;
 
     <span class="directive">public</span> MailController( EmailService  emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.emailService = emailService;
