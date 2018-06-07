@@ -128,7 +128,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
@@ -147,7 +147,7 @@ function addJsClass() {
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
 
-    <span class="directive">protected</span>  <span class="directive">final</span> UserGormService userGormService
+    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.userGormService = userGormService
@@ -185,7 +185,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Provide an implementation for <a href="http://docs.micronaut.io//api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
@@ -201,7 +201,7 @@ function addJsClass() {
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
 
-    <span class="directive">protected</span>  <span class="directive">final</span> UserRoleGormService userRoleGormService
+    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
 
     AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
@@ -209,7 +209,7 @@ function addJsClass() {
 
     <span class="annotation">@Override</span>
     Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
-        Flowable.just(<span class="local-variable">this</span>.userRoleGormService.findAllAuthoritiesByUsername(username))
+        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
     }
 }</code></pre>
 </div>
@@ -238,7 +238,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
 </div>
 <div class="paragraph">
 <p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>

@@ -124,10 +124,10 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">ldap</span>:
-  <span class="key">server</span>: ldap.forumsys.com
-  <span class="key">port</span>: <span class="integer">389</span>
-  <span class="key">basedn</span>: cn=read-only-admin,dc=example,dc=com</code></pre>
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">ldap</span>:
+  <span class="key">server</span>: <span class="string"><span class="content">ldap.forumsys.com</span></span>
+  <span class="key">port</span>: <span class="string"><span class="content">389</span></span>
+  <span class="key">basedn</span>: <span class="string"><span class="content">cn=read-only-admin,dc=example,dc=com</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -239,7 +239,7 @@ dependencies {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class as a singleton.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>

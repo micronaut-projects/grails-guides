@@ -253,10 +253,10 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">ldap</span>:
-  <span class="key">server</span>: ldap.forumsys.com
-  <span class="key">port</span>: <span class="integer">389</span>
-  <span class="key">basedn</span>: cn=read-only-admin,dc=example,dc=com</code></pre>
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">ldap</span>:
+  <span class="key">server</span>: <span class="string"><span class="content">ldap.forumsys.com</span></span>
+  <span class="key">port</span>: <span class="string"><span class="content">389</span></span>
+  <span class="key">basedn</span>: <span class="string"><span class="content">cn=read-only-admin,dc=example,dc=com</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -368,7 +368,7 @@ dependencies {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class as a singleton.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -861,7 +861,7 @@ mapped onto an underlying database table.</p>
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
@@ -880,7 +880,7 @@ mapped onto an underlying database table.</p>
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
 
-    <span class="directive">protected</span>  <span class="directive">final</span> UserGormService userGormService
+    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.userGormService = userGormService
@@ -918,7 +918,7 @@ mapped onto an underlying database table.</p>
 
 
 <div class="paragraph">
-<p>Provide an implementation for <a href="http://docs.micronaut.io//api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
@@ -934,7 +934,7 @@ mapped onto an underlying database table.</p>
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
 
-    <span class="directive">protected</span>  <span class="directive">final</span> UserRoleGormService userRoleGormService
+    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
 
     AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
@@ -942,7 +942,7 @@ mapped onto an underlying database table.</p>
 
     <span class="annotation">@Override</span>
     Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
-        Flowable.just(<span class="local-variable">this</span>.userRoleGormService.findAllAuthoritiesByUsername(username))
+        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
     }
 }</code></pre>
 </div>
@@ -971,7 +971,7 @@ mapped onto an underlying database table.</p>
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
 </div>
 <div class="paragraph">
 <p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>

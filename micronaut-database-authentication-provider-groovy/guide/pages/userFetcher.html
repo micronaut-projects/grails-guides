@@ -89,7 +89,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
@@ -108,7 +108,7 @@ function addJsClass() {
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
 
-    <span class="directive">protected</span>  <span class="directive">final</span> UserGormService userGormService
+    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="local-variable">this</span>.userGormService = userGormService
