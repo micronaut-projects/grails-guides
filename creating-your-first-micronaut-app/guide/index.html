@@ -252,7 +252,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path /hello</td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/hello</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -308,10 +308,10 @@ other build tool such as <code>Maven</code> or other programming languages such 
 
     <span class="annotation">@AfterClass</span>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> stopServer() {
-        <span class="keyword">if</span>(server != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (server != <span class="predefined-constant">null</span>) {
             server.stop();
         }
-        <span class="keyword">if</span>(client != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (client != <span class="predefined-constant">null</span>) {
             client.stop();
         }
     }
@@ -326,7 +326,6 @@ other build tool such as <code>Maven</code> or other programming languages such 
                 <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>
         );
     }
-
 }</code></pre>
 </div>
 </div>
