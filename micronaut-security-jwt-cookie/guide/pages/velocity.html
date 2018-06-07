@@ -126,63 +126,63 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Home&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
-</span>    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">head&gt;</span></span><span class="error">
-</span>    &lt;body&gt;
-        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>loggedIn )
-            &lt;h1&gt;<span class="key">username</span>: &lt;span&gt;<span class="error">$</span>username&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">span&gt;&lt;</span><span class="delimiter">/</span></span>h1&gt;
-        <span class="error">#</span><span class="keyword">else</span>
-            &lt;h1&gt;You are not logged <span class="keyword">in</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">h1&gt;</span></span><span class="error">
-</span>        <span class="error">#</span>end
-        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>loggedIn )
-            &lt;form action=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> method=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span>&gt;
-                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> value=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span>/&gt;
-            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">form&gt;</span></span><span class="error">
-</span>        <span class="error">#</span><span class="keyword">else</span>
-            &lt;p&gt;&lt;a href=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span>&gt;Login&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">a&gt;&lt;</span><span class="delimiter">/</span></span>p&gt;
-        <span class="error">#</span>end
-    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">body&gt;</span></span><span class="error">
-</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">html&gt;</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+    <span class="tag">&lt;head&gt;</span>
+        <span class="tag">&lt;title&gt;</span>Home<span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;/head&gt;</span>
+    <span class="tag">&lt;body&gt;</span>
+        #if( $loggedIn )
+            <span class="tag">&lt;h1&gt;</span>username: <span class="tag">&lt;span&gt;</span>$username<span class="tag">&lt;/span&gt;</span><span class="tag">&lt;/h1&gt;</span>
+        #else
+            <span class="tag">&lt;h1&gt;</span>You are not logged in<span class="tag">&lt;/h1&gt;</span>
+        #end
+        #if( $loggedIn )
+            <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/form&gt;</span>
+        #else
+            <span class="tag">&lt;p&gt;</span><span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/p&gt;</span>
+        #end
+    <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>errors )
-            &lt;title&gt;Login Failed&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
-</span>        <span class="error">#</span><span class="keyword">else</span>
-            &lt;title&gt;Login&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
-</span>        <span class="error">#</span>end
-    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">head&gt;</span></span><span class="error">
-</span>&lt;body&gt;
-    &lt;form action=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> method=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span>&gt;
-        &lt;ol&gt;
-            &lt;li&gt;
-                &lt;label <span class="keyword">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>&gt;Username&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">label&gt;</span></span><span class="error">
-</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>/&gt;
-            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
-</span>            &lt;li&gt;
-                &lt;label <span class="keyword">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>&gt;Password&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">label&gt;</span></span><span class="error">
-</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>/&gt;
-            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
-</span>            &lt;li&gt;
-                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> value=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span>/&gt;
-            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
-</span>            <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>errors )
-                &lt;li id=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span>&gt;
-                    &lt;span style=<span class="string"><span class="delimiter">&quot;</span><span class="content">color: red;</span><span class="delimiter">&quot;</span></span>&gt;Login Failed&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">span&gt;</span></span><span class="error">
-</span>                &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
-</span>            <span class="error">#</span>end
-        &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">ol&gt;</span></span><span class="error">
-</span>    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">form&gt;</span></span><span class="error">
-</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">body&gt;</span></span><span class="error">
-</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">html&gt;</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+    <span class="tag">&lt;head&gt;</span>
+        #if( $errors )
+            <span class="tag">&lt;title&gt;</span>Login Failed<span class="tag">&lt;/title&gt;</span>
+        #else
+            <span class="tag">&lt;title&gt;</span>Login<span class="tag">&lt;/title&gt;</span>
+        #end
+    <span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;ol&gt;</span>
+            <span class="tag">&lt;li&gt;</span>
+                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Username<span class="tag">&lt;/label&gt;</span>
+                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/li&gt;</span>
+            <span class="tag">&lt;li&gt;</span>
+                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Password<span class="tag">&lt;/label&gt;</span>
+                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/li&gt;</span>
+            <span class="tag">&lt;li&gt;</span>
+                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/li&gt;</span>
+            #if( $errors )
+                <span class="tag">&lt;li</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;span</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">color</span>: <span class="value">red</span>;<span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login Failed<span class="tag">&lt;/span&gt;</span>
+                <span class="tag">&lt;/li&gt;</span>
+            #end
+        <span class="tag">&lt;/ol&gt;</span>
+    <span class="tag">&lt;/form&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -191,7 +191,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/services/VelocityService.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>;
 
 <span class="keyword">import</span> <span class="include">org.apache.velocity.VelocityContext</span>;
 <span class="keyword">import</span> <span class="include">org.apache.velocity.app.VelocityEngine</span>;

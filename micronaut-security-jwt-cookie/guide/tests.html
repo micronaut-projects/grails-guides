@@ -129,7 +129,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="error">Unresolved directive in build/resources/micronaut-guides-master/src/main/docs/common-spockinjavaapp.adoc - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie/complete/micronaut-cli.yml[]</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
+<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
+<span class="head"><span class="head">---</span></span>
+<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
+<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -165,12 +169,12 @@ the necessary dependencies:</p>
 
 environments {
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=chrome iT”</span>
+    <span class="comment">// run via “./gradlew -Dgeb.env=chrome test”</span>
     chrome {
         driver = { <span class="keyword">new</span> ChromeDriver() }
     }
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=chromeHeadless iT”</span>
+    <span class="comment">// run via “./gradlew -Dgeb.env=chromeHeadless test”</span>
     chromeHeadless {
         driver = {
             ChromeOptions o = <span class="keyword">new</span> ChromeOptions()
@@ -187,7 +191,7 @@ environments {
         }
     }
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=firefox iT”</span>
+    <span class="comment">// run via “./gradlew -Dgeb.env=firefox test”</span>
     firefox {
         driver = { <span class="keyword">new</span> FirefoxDriver() }
     }

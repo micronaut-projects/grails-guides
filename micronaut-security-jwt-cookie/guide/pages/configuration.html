@@ -97,26 +97,26 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">micronaut</span>:
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
   <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
     <span class="key">endpoints</span>:
       <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
       <span class="key">logout</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
     <span class="key">token</span>:
       <span class="key">jwt</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
         <span class="key">bearer</span>:
-          <span class="key">enabled</span>: <span class="predefined-constant">false</span> <i class="conum" data-value="5"></i><b>(5)</b>
+          <span class="key">enabled</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
         <span class="key">cookie</span>:
-          <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="6"></i><b>(6)</b>
-          <span class="key">loginFailureTargetUrl</span>: <span class="regexp"><span class="delimiter">/</span><span class="content">login</span><span class="delimiter">/</span></span>authFailed  <i class="conum" data-value="7"></i><b>(7)</b>
+          <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
+          <span class="key">loginFailureTargetUrl</span>: <span class="string"><span class="content">/login/authFailed  </span></span><i class="conum" data-value="7"></i><b>(7)</b>
         <span class="key">signatures</span>:
           <span class="key">secret</span>:
             <span class="key">generator</span>: <i class="conum" data-value="9"></i><b>(9)</b>
-              <span class="key">secret</span>: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -127,11 +127,11 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose /login endpoint</td>
+<td>Expose <code>/login</code> endpoint</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose /logout endpoint</td>
+<td>Expose <code>/logout</code> endpoint</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -147,11 +147,11 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>If the login fails, redirect him to /login/authFailed</td>
+<td>If the login fails, redirect to <code>/login/authFailed</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
+<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
