@@ -183,6 +183,36 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
 </div>
 </div>
+<div class="sect1">
+<h2 id="_kotlin_kapt_and_intellij">Kotlin, Kapt and IntelliJ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As of this writing IntelliJ&#8217;s built-in compiler does not directly support Kapt and annotation processing. You must instead configure Intellij to run Gradle (or Maven) compilation as a build step before running your tests or application class.</p>
+</div>
+<div class="paragraph">
+<p>First edit the run configuration for tests or for the application and select "Run Gradle task" as a build step:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/kotlin-run-1.png" alt="Intellij Settings" width="1024" height="768">
+</div>
+</div>
+<div class="paragraph">
+<p>Then add the <code>classes</code> task as task to execute for the application or for tests the <code>testClasses</code> task:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/kotlin-run-2.png" alt="Intellij Settings" width="1024" height="768">
+</div>
+</div>
+<div class="paragraph">
+<p>Now whenever you run tests or the application Micronaut classes will be generated at compilation time.</p>
+</div>
+<div class="paragraph">
+<p>Read <a href="https://docs.micronaut.io/latest/guide/index.html#kotlin">Micronaut Kotlin</a> section to learn more.</p>
+</div>
+</div>
+</div>
 
 
 <h1 id="controller">3 Controller</h1>
