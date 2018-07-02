@@ -131,7 +131,6 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpRequest</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Filter</span>;
@@ -140,22 +139,19 @@ function addJsClass() {
 <span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
 
 <span class="annotation">@Filter</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/**</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray.username</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray.token</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.username</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.token</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayFilter</span>  <span class="directive">implements</span> HttpClientFilter {
 
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> username;
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> token;
+    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration;
 
-    <span class="directive">public</span> BintrayFilter(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${bintray.username}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> username,  <i class="conum" data-value="3"></i><b>(3)</b>
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${bintray.token}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> token ) {
-        <span class="local-variable">this</span>.username = username;
-        <span class="local-variable">this</span>.token = token;
+    <span class="directive">public</span> BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="local-variable">this</span>.configuration = configuration;
     }
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> Publisher&lt;? <span class="directive">extends</span> HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
-        <span class="keyword">return</span> chain.proceed(request.basicAuth(username, token)); <i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="keyword">return</span> chain.proceed(request.basicAuth(configuration.getUsername(), configuration.getToken())); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>

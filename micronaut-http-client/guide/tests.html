@@ -125,8 +125,9 @@ the necessary dependencies:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>, {
+        exclude <span class="key">module</span>:<span class="string"><span class="delimiter">'</span><span class="content">groovy-all</span><span class="delimiter">'</span></span>
+    }
 }</code></pre>
 </div>
 </div>
@@ -151,19 +152,19 @@ the necessary dependencies:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
 
+<span class="keyword">import</span> <span class="include">com.sun.org.apache.xpath.internal.operations.String</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
 <span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Ignore</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
 
-<span class="annotation">@Ignore</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Unit M2 is released</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">BintrayControllerSpec</span> <span class="directive">extends</span> Specification {
 
     <span class="annotation">@Shared</span>
@@ -172,37 +173,38 @@ the necessary dependencies:</p>
 
     <span class="annotation">@Shared</span>
     <span class="annotation">@AutoCleanup</span>
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+    RxStreamingHttpClient client = embeddedServer.applicationContext.createBean(RxStreamingHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
     <span class="annotation">@Shared</span>
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; expectedProfileNames = [<span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">federation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function-aws</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">service</span><span class="delimiter">'</span></span>]
 
     <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with low level HttpClient</span><span class="delimiter">&quot;</span></span>() {
         <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packageswithlowlevelhttpclient</span><span class="delimiter">'</span></span>)
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages-lowlevel</span><span class="delimiter">'</span></span>)
 
-        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
+                Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
 
         <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
-        rsp.status == HttpStatus.OK  <i class="conum" data-value="5"></i><b>(5)</b>
-        rsp.body() <i class="conum" data-value="6"></i><b>(6)</b>
-        rsp.body()*.name.each { <span class="predefined-type">String</span> name -&gt;
-            <span class="keyword">assert</span> name <span class="keyword">in</span> expectedProfileNames
-        }
+        rsp.status == HttpStatus.OK  <i class="conum" data-value="6"></i><b>(6)</b>
+        rsp.body() <i class="conum" data-value="7"></i><b>(7)</b>
+
+        <span class="key">when</span>:
+        <span class="predefined-type">List</span>&lt;BintrayPackage&gt; packages = rsp.body()
+
+        <span class="key">then</span>:
+        packages*.name.every { expectedProfileNames.contains(<span class="local-variable">it</span>) }
     }
 
     <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with compile-time autogenerated @Client</span><span class="delimiter">&quot;</span></span>() {
         <span class="key">when</span>:
         HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages</span><span class="delimiter">'</span></span>)
 
-        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="4"></i><b>(4)</b>
+        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="8"></i><b>(8)</b>
+        <span class="predefined-type">Iterable</span>&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
-        rsp.status == HttpStatus.OK  <i class="conum" data-value="4"></i><b>(4)</b>
-        rsp.body()  <i class="conum" data-value="6"></i><b>(6)</b>
-        rsp.body()*.name.each { <span class="predefined-type">String</span> name -&gt;
-            <span class="keyword">assert</span> name <span class="keyword">in</span> expectedProfileNames
-        }
+        <span class="key">then</span>:
+        bintrayPackages*.name.every { expectedProfileNames.contains(<span class="local-variable">it</span>) }
     }
 }</code></pre>
 </div>
@@ -219,19 +221,27 @@ the necessary dependencies:</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Micronaut’s HTTP client includes support for streaming data over HTTP via the <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/client/RxStreamingHttpClient.html">RxStreamingHttpClient</a>. Register a <code>RxStreamingHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+<td>Sometimes, receiving just the object is not enough and you need information about the response. In this case, instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Use <code>status</code> to check the HTTP status code.</td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use <code>status</code> to check the HTTP status code.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Use <code>.body()</code> to retrieve the parsed payload.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Use the <code>jsonStream</code> method, which returns a <code>Flowable</code>, to consume the endpoint which generates a JSON Stream.</td>
 </tr>
 </table>
 </div>

@@ -110,7 +110,7 @@ function addJsClass() {
 <p>Initially, you will create a Bean which uses the low-level Client API.</p>
 </div>
 <div class="paragraph">
-<p>Create a couple of objects:</p>
+<p>Create a POJO to parse the JSON response into a Java object:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayPackage.java</div>
@@ -139,16 +139,6 @@ function addJsClass() {
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/BintrayApi.java</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
-
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayApi</span> {
-    <span class="directive">public</span> <span class="directive">final</span> <span class="directive">static</span> <span class="predefined-type">String</span> BINTRAY_API_URL = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://bintray.com</span><span class="delimiter">&quot;</span></span>;
-}</code></pre>
-</div>
-</div>
 <div class="paragraph">
 <p>Create <code>BintrayLowLevelClient</code>:</p>
 </div>
@@ -157,53 +147,39 @@ function addJsClass() {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.uri.UriTemplate</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+
 <span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
 <span class="keyword">import</span> <span class="include">java.util.List</span>;
 
 <span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayLowLevelClient</span> {
 
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> bintrayApiVersion;
-
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> bintrayOrganization;
-
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> bintrayRepository;
 
     <span class="directive">private</span> <span class="directive">final</span> RxHttpClient httpClient;
+    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration;
 
-    <span class="directive">public</span> BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayApi.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
-                                 <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${bintray.apiversion}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> bintrayApiVersion,  <i class="conum" data-value="3"></i><b>(3)</b>
-                                 <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${bintray.organization}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> bintrayOrganization,  <i class="conum" data-value="3"></i><b>(3)</b>
-                                 <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${bintray.repository}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> bintrayRepository) {  <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="directive">public</span> BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
+                                 BintrayConfiguration configuration) {  <i class="conum" data-value="3"></i><b>(3)</b>
         <span class="local-variable">this</span>.httpClient = httpClient;
-        <span class="local-variable">this</span>.bintrayApiVersion = bintrayApiVersion;
-        <span class="local-variable">this</span>.bintrayOrganization = bintrayOrganization;
-        <span class="local-variable">this</span>.bintrayRepository = bintrayRepository;
+        <span class="local-variable">this</span>.configuration = configuration;
     }
 
-    Flowable&lt;HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;&gt; fetchPackages() {
-        HttpRequest req = HttpRequest.GET(packagesPath());  <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">return</span> (Flowable&lt;HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;&gt;) httpClient.exchange(req, Argument.of(<span class="predefined-type">List</span>.class, BintrayPackage.class));  <i class="conum" data-value="5"></i><b>(5)</b>
+    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; fetchPackages() {
+        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>;
+        <span class="predefined-type">String</span> uri = UriTemplate.of(path).expand(configuration.toMap());
+        HttpRequest&lt;?&gt; req = HttpRequest.GET(uri);  <i class="conum" data-value="4"></i><b>(4)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.of(<span class="predefined-type">List</span>.class, BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="keyword">return</span> (Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;) flowable.firstElement(); <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> packagesPath() {
-        <span class="predefined-type">StringBuilder</span> sb = <span class="keyword">new</span> <span class="predefined-type">StringBuilder</span>();
-        sb.append(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/</span><span class="delimiter">&quot;</span></span>);
-        sb.append(bintrayApiVersion);
-        sb.append(<span class="string"><span class="delimiter">&quot;</span><span class="content">/repos/</span><span class="delimiter">&quot;</span></span>);
-        sb.append(bintrayOrganization);
-        sb.append(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>);
-        sb.append(bintrayRepository);
-        sb.append(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>);
-        <span class="keyword">return</span> sb.toString();
-    }
 }</code></pre>
 </div>
 </div>
@@ -227,7 +203,11 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects. We parse the response to a <code>List&lt;BintrayPackage&gt;</code></td>
+<td>Use <code>retrieve</code> to perform an HTTP request for the given request object and convert the full HTTP response&#8217;s body into the specified type. e.g. <code>List&lt;BintrayPackage&gt;</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>retrieve</code> method returns a Flowable which has a firstElement method that returns the first emitted item or nothing</td>
 </tr>
 </table>
 </div>

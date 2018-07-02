@@ -107,7 +107,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Tt is time to take a look at Micronaut’s support for declarative clients via the Client annotation.</p>
+<p>It is time to take a look at Micronaut’s support for declarative clients via the Client annotation.</p>
 </div>
 <div class="paragraph">
 <p>Create <code>BintrayClient</code> which clearly illustrates how a declarative Micronaut HTTP Client, which is generated at compile-time, simplifies our code.</p>
@@ -117,17 +117,15 @@ function addJsClass() {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
 
-<span class="annotation">@Client</span>(BintrayApi.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">interface</span> <span class="class">BintrayClient</span> {
 
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
-    Flowable&lt;HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;&gt; fetchPackages(); <i class="conum" data-value="3"></i><b>(3)</b>
+    Flowable&lt;BintrayPackage&gt; fetchPackages(); <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>

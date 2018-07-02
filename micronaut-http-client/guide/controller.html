@@ -107,17 +107,30 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Create a Controller which uses both clients in two different endpoints:</p>
+<p>Create a Controller. It uses both (low-level and declarative clients). It showcases several Micronaut&#8217;s capabilities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Micronaut supports any framework that implements Reactive Streams, including RxJava, and Reactor. Thus, you can easily and efficiently
+compose multiple HTTP client calls without blocking (which will limit the throughput and scalability of your application).</p>
+</li>
+<li>
+<p>Micronaut enables you to consume/produce <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientStreaming">JSON Streams</a>.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayController.java</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+
 <span class="keyword">import</span> <span class="include">java.util.List</span>;
 
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/bintray</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
@@ -133,13 +146,13 @@ function addJsClass() {
         <span class="local-variable">this</span>.bintrayClient = bintrayClient;
     }
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packageswithlowlevelhttpclient</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    Flowable&lt;HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;&gt; packagesWithLowLevelClient() { <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packages-lowlevel</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
+    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; packagesWithLowLevelClient() { <i class="conum" data-value="4"></i><b>(4)</b>
         <span class="keyword">return</span> bintrayLowLevelClient.fetchPackages();
     }
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="3"></i><b>(3)</b>
-    Flowable&lt;HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;&gt; packages() { <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(uri = <span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>, produces = MediaType.APPLICATION_JSON_STREAM)  <i class="conum" data-value="6"></i><b>(6)</b>
+    Flowable&lt;BintrayPackage&gt; packages() { <i class="conum" data-value="4"></i><b>(4)</b>
         <span class="keyword">return</span> bintrayClient.fetchPackages();
     }
 }</code></pre>
@@ -161,6 +174,14 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>packagesWithLowLevelClient</code> returns a Maybe which may or may not emit an item. If an item is not emitted a 404 is returned.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>In order to do JSON streaming you can declare a controller method that returns a <code>application/x-json-stream</code> of JSON objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>You can return reactive types, such as an RxJava <code>Flowable</code>.</td>
 </tr>
 </table>

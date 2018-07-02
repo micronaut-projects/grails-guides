@@ -138,7 +138,90 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>In this guides, you are going to fetch Micronaut profiles packages. Those packages are used by the Micronaut CLI.</p>
+<p>To encapsulate type-safe configuration retrieval, we use a <a href="https://docs.micronaut.io/snapshot/guide/index.html#configurationProperties"><code>@ConfigurationProperties</code></a> object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BintrayConfiguration.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.ConfigurationProperties</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.HashMap</span>;
+<span class="keyword">import</span> <span class="include">java.util.Map</span>;
+
+<span class="annotation">@ConfigurationProperties</span>(BintrayConfiguration.PREFIX)
+<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayConfiguration</span> {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> PREFIX = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray</span><span class="delimiter">&quot;</span></span>;
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> BINTRAY_API_URL = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://bintray.com</span><span class="delimiter">&quot;</span></span>;
+
+    <span class="directive">private</span> <span class="predefined-type">String</span> apiversion;
+
+    <span class="directive">private</span> <span class="predefined-type">String</span> organization;
+
+    <span class="directive">private</span> <span class="predefined-type">String</span> repository;
+
+    <span class="directive">private</span> <span class="predefined-type">String</span> username;
+
+    <span class="directive">private</span> <span class="predefined-type">String</span> token;
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getApiversion() {
+        <span class="keyword">return</span> apiversion;
+    }
+
+    <span class="directive">public</span> <span class="type">void</span> setApiversion(<span class="predefined-type">String</span> apiversion) {
+        <span class="local-variable">this</span>.apiversion = apiversion;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getOrganization() {
+        <span class="keyword">return</span> organization;
+    }
+
+    <span class="directive">public</span> <span class="type">void</span> setOrganization(<span class="predefined-type">String</span> organization) {
+        <span class="local-variable">this</span>.organization = organization;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getRepository() {
+        <span class="keyword">return</span> repository;
+    }
+
+    <span class="directive">public</span> <span class="type">void</span> setRepository(<span class="predefined-type">String</span> repository) {
+        <span class="local-variable">this</span>.repository = repository;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getUsername() {
+        <span class="keyword">return</span> username;
+    }
+
+    <span class="directive">public</span> <span class="type">void</span> setUsername(<span class="predefined-type">String</span> username) {
+        <span class="local-variable">this</span>.username = username;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getToken() {
+        <span class="keyword">return</span> token;
+    }
+
+    <span class="directive">public</span> <span class="type">void</span> setToken(<span class="predefined-type">String</span> token) {
+        <span class="local-variable">this</span>.token = token;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; toMap() {
+        <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; m = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>&lt;&gt;();
+        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">apiversion</span><span class="delimiter">&quot;</span></span>, getApiversion());
+        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">organization</span><span class="delimiter">&quot;</span></span>, getOrganization());
+        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">repository</span><span class="delimiter">&quot;</span></span>, getRepository());
+        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>, getUsername());
+        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">token</span><span class="delimiter">&quot;</span></span>, getToken());
+        <span class="keyword">return</span> m;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this guide, you are going to fetch <a href="https://bintray.com/micronaut/profiles">Micronaut profiles packages</a>. Those packages are used by the <a href="https://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut CLI</a>.</p>
 </div>
 <div class="paragraph">
 <p>To consume the Bintray API, you will use Micronaut HTTP Client.</p>
