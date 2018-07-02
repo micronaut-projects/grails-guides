@@ -164,17 +164,16 @@ function addJsClass() {
 
 
     <span class="directive">private</span> <span class="directive">final</span> RxHttpClient httpClient;
-    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration;
+    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> uri;
 
     <span class="directive">public</span> BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
                                  BintrayConfiguration configuration) {  <i class="conum" data-value="3"></i><b>(3)</b>
         <span class="local-variable">this</span>.httpClient = httpClient;
-        <span class="local-variable">this</span>.configuration = configuration;
+        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>;
+        uri = UriTemplate.of(path).expand(configuration.toMap());
     }
 
     Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; fetchPackages() {
-        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>;
-        <span class="predefined-type">String</span> uri = UriTemplate.of(path).expand(configuration.toMap());
         HttpRequest&lt;?&gt; req = HttpRequest.GET(uri);  <i class="conum" data-value="4"></i><b>(4)</b>
         Flowable flowable = httpClient.retrieve(req, Argument.of(<span class="predefined-type">List</span>.class, BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
         <span class="keyword">return</span> (Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;) flowable.firstElement(); <i class="conum" data-value="6"></i><b>(6)</b>
