@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Micronaut HTTP Client | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Micronaut HTTP Client. Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.' />
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-http-client-groovy/guide/index.html">Micronaut HTTP Client</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-http-client-groovy"><img src="https://travis-ci.org/micronaut-guides/micronaut-http-client-groovy.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-http-client-groovy&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-http-client-groovy.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-http-client-groovy.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-http-client-groovy.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-http-client-groovy/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#bintray"><strong>3</strong><span>Bintray API</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#lowlevelclient"><strong>4</strong><span>Low Level Client</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#declarativeclient"><strong>5</strong><span>Declarative Client</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>6</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>7</strong><span>Test</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>8</strong><span>Testing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#httpClientFilter"><strong>9</strong><span>Http Client Filter</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#next"><strong>10</strong><span>Where To Go From Here?</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Micronaut HTTP Client</h1>
+        <p>Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide we are going to create a Micronaut app written in Java.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-http-client-groovy/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-http-client-groovy.git" class="bare">https://github.com/micronaut-guides/micronaut-http-client-groovy.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h1 id="bintray">3 Bintray API</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/bintray.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, you are going to consume the <a href="https://bintray.com/docs/api/">Bintray API</a> from a Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>In particular, we consume the <a href="https://bintray.com/docs/api/#_get_packages">Get Packages</a> endpoint.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Get a list of packages in the specified repository, optionally specify a starting position and/or a name prefix filter.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>This API resource can be consumed by both authenticated and anonymous clients.</p>
+</div>
+<div class="paragraph">
+<p>Initially, you will consume it anonymously, later we will discuss authentication.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>src/main/resources/application.yml</code> to create some configuration parameters.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
+    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
+    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
+    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To encapsulate type-safe configuration retrieval, we use a <a href="https://docs.micronaut.io/snapshot/guide/index.html#configurationProperties"><code>@ConfigurationProperties</code></a> object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayConfiguration.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.ConfigurationProperties</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@ConfigurationProperties</span>(BintrayConfiguration.PREFIX)
+<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX)
+<span class="type">class</span> <span class="class">BintrayConfiguration</span> {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> PREFIX = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray</span><span class="delimiter">&quot;</span></span>
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> BINTRAY_API_URL = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://bintray.com</span><span class="delimiter">&quot;</span></span>
+
+    <span class="predefined-type">String</span> apiversion
+
+    <span class="predefined-type">String</span> organization
+
+    <span class="predefined-type">String</span> repository
+
+    <span class="predefined-type">String</span> username
+
+    <span class="predefined-type">String</span> token
+
+    <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; toMap() {
+        [
+                <span class="key">apiversion</span>: apiversion,
+                <span class="key">organization</span>: organization,
+                <span class="key">repository</span>: repository,
+                <span class="key">username</span>: username,
+                <span class="key">token</span>: token
+        ] <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this guide, you are going to fetch <a href="https://bintray.com/micronaut/profiles">Micronaut profiles packages</a>. Those packages are used by the <a href="https://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut CLI</a>.</p>
+</div>
+<div class="paragraph">
+<p>To consume the Bintray API, you will use Micronaut HTTP Client.</p>
+</div>
+
+
+<h1 id="lowlevelclient">4 Low Level Client</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/lowlevelclient.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Initially, you will create a Bean which uses the low-level Client API.</p>
+</div>
+<div class="paragraph">
+<p>Create a POJO to parse the JSON response into a Java object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayPackage.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="type">class</span> <span class="class">BintrayPackage</span> {
+    <span class="predefined-type">String</span> name
+    <span class="type">boolean</span> linked
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create <code>BintrayLowLevelClient</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayLowLevelClient.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.uri.UriTemplate</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>
+
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">BintrayLowLevelClient</span> {
+    <span class="directive">private</span> <span class="directive">final</span> RxHttpClient httpClient
+    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> uri
+
+    BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient, <i class="conum" data-value="2"></i><b>(2)</b>
+                          BintrayConfiguration configuration) { <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="local-variable">this</span>.httpClient = httpClient
+        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>
+        uri = UriTemplate.of(path).expand(configuration.toMap())
+    }
+
+    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; fetchPackages() {
+        HttpRequest&lt;?&gt; req = HttpRequest.GET(uri) <i class="conum" data-value="4"></i><b>(4)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        flowable.firstElement() <span class="keyword">as</span> Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject <code>RxClient</code> via constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject the previously defined configuration parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut’s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Use <code>retrieve</code> to perform an HTTP request for the given request object and convert the full HTTP response&#8217;s body into the specified type. e.g. <code>List&lt;BintrayPackage&gt;</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>retrieve</code> method returns a Flowable which has a <code>firstElement</code> method that returns the first emitted item or nothing</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Instead of <code>retrieve</code> we could have used <code>jsonStream</code>. You can use <code>jsonStream()</code> to stream arrays of type <code>application/json</code> or
+JSON streams of type <code>application/x-json-stream</code>. If we use <code>retrieve</code>, such as in the previous code listing, the operation will not block.
+However, it will not return until all the data has been received from the server. In the case of a JSON array that would be the whole array.
+However, if you are interested in just the first element of the array, <code>jsonStream</code> provides a better alternative since it starts streaming data from the server without needing the whole response.
+For example, <code>jsonStream().firstElement()</code> will only parse the first item in a JSON array. Hence it is more efficient.
+</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="declarativeclient">5 Declarative Client</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/declarativeclient.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>It is time to take a look at Micronaut’s support for declarative clients via the Client annotation.</p>
+</div>
+<div class="paragraph">
+<p>Create <code>BintrayClient</code> which clearly illustrates how a declarative Micronaut HTTP Client, which is generated at compile-time, simplifies our code.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayClient.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">interface</span> BintrayClient {
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">'</span><span class="content">/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages</span><span class="delimiter">'</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+    Flowable&lt;BintrayPackage&gt; fetchPackages() <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>URL of the remote service</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>You can use configuration parameter interpolation when you define the path of the GET endpoint.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>You can return reactive types, such as an RxJava <code>Flowable</code>.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="controller">6 Controller</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Controller. It uses both (low-level and declarative clients). It showcases several Micronaut&#8217;s capabilities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Micronaut supports any framework that implements Reactive Streams, including RxJava, and Reactor. Thus, you can easily and efficiently
+compose multiple HTTP client calls without blocking (which will limit the throughput and scalability of your application).</p>
+</li>
+<li>
+<p>Micronaut enables you to consume/produce <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientStreaming">JSON Streams</a>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayController.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/bintray</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">BintrayController</span> {
+    <span class="directive">private</span> <span class="directive">final</span> BintrayLowLevelClient bintrayLowLevelClient
+
+    <span class="directive">private</span> <span class="directive">final</span> BintrayClient bintrayClient
+
+    BintrayController(BintrayLowLevelClient bintrayLowLevelClient, <i class="conum" data-value="2"></i><b>(2)</b>
+                             BintrayClient bintrayClient) {
+        <span class="local-variable">this</span>.bintrayLowLevelClient = bintrayLowLevelClient
+        <span class="local-variable">this</span>.bintrayClient = bintrayClient
+    }
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packages-lowlevel</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
+    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; packagesWithLowLevelClient() { <i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="keyword">return</span> bintrayLowLevelClient.fetchPackages()
+    }
+
+    <span class="annotation">@Get</span>(uri = <span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>, produces = MediaType.APPLICATION_JSON_STREAM) <i class="conum" data-value="5"></i><b>(5)</b>
+    Flowable&lt;BintrayPackage&gt; packages() { <i class="conum" data-value="6"></i><b>(6)</b>
+        <span class="keyword">return</span> bintrayClient.fetchPackages()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/bintray</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject beans via constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the index method to all requests that use an HTTP GET</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>packagesWithLowLevelClient</code> returns a Maybe which may or may not emit an item. If an item is not emitted a 404 is returned.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>In order to do JSON streaming you can declare a controller method that returns a <code>application/x-json-stream</code> of JSON objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>You can return reactive types, such as an RxJava <code>Flowable</code>.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="tests">7 Test</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Spock test which verifies both clients work as expected and the controller echoes the output of the Bintray API in a Reactive way.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/BintrayControllerSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+
+<span class="type">class</span> <span class="class">BintrayControllerSpec</span> <span class="directive">extends</span> Specification {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    RxStreamingHttpClient client = embeddedServer.applicationContext.createBean(RxStreamingHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+
+    <span class="annotation">@Shared</span>
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; expectedProfileNames = [<span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">federation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function-aws</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">service</span><span class="delimiter">'</span></span>]
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with low level HttpClient</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>:
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages-lowlevel</span><span class="delimiter">'</span></span>)
+
+        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
+                Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        rsp.status == HttpStatus.OK <i class="conum" data-value="6"></i><b>(6)</b>
+        rsp.body() <i class="conum" data-value="7"></i><b>(7)</b>
+
+        <span class="key">when</span>:
+        <span class="predefined-type">List</span>&lt;BintrayPackage&gt; packages = rsp.body()
+
+        <span class="key">then</span>:
+        packages*.name.every { expectedProfileNames.contains(<span class="local-variable">it</span>) }
+    }
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with compile-time autogenerated @Client</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>:
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages</span><span class="delimiter">'</span></span>)
+
+        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="8"></i><b>(8)</b>
+        <span class="predefined-type">Iterable</span>&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
+
+        <span class="key">then</span>:
+        bintrayPackages*.name.every { expectedProfileNames.contains(<span class="local-variable">it</span>) }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Micronaut’s HTTP client includes support for streaming data over HTTP via the <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/client/RxStreamingHttpClient.html">RxStreamingHttpClient</a>. Register a <code>RxStreamingHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Sometimes, receiving just the object is not enough and you need information about the response. In this case, instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use <code>status</code> to check the HTTP status code.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Use <code>.body()</code> to retrieve the parsed payload.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Use the <code>jsonStream</code> method, which returns a <code>Flowable</code>, to consume the endpoint which generates a JSON Stream.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="testingTheApp">8 Testing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+<h1 id="httpClientFilter">9 Http Client Filter</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/httpClientFilter.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Often, you need to include the same HTTP headers or URL parameters in a set of requests against a third-party API or when calling another Microservice.</p>
+</div>
+<div class="paragraph">
+<p>To simplify this, Micronaut includes the ability to define <code>HttpClientFilter</code> classes that are applied to all matching HTTP clients.</p>
+</div>
+<div class="paragraph">
+<p>For real world example, let us provide Bintray Authentication via a <code>HttpClientFilter</code>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The Bintray REST API requires an applicative API key. An API key can be obtained from the user profile page. Authentication is achieved using HTTP Basic Authentication with the user’s name as username and the API key as the password. Authenticated REST calls should only be used via HTTPs.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Create a Filter:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/BintrayFilter.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Filter</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.ClientFilterChain</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.HttpClientFilter</span>
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Filter</span>(<span class="string"><span class="delimiter">'</span><span class="content">/api/${bintray.apiversion}/repos/**</span><span class="delimiter">'</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray.username</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray.token</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="type">class</span> <span class="class">BintrayFilter</span>  <span class="directive">implements</span> HttpClientFilter {
+
+    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration
+
+    BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="local-variable">this</span>.configuration = configuration
+    }
+
+    <span class="annotation">@Override</span>
+    Publisher&lt;? <span class="directive">extends</span> HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
+        <span class="keyword">return</span> chain.proceed(request.basicAuth(configuration.username, configuration.token)) <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Supply the pattern you want to match to the <code>@Filter</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless configuration properties are set.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection of the configuration parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enhance every request sent to Bintray API providing Basic Authentication.</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_configuration_parameters">Configuration Parameters</h4>
+<div class="paragraph">
+<p>Add your Bintray <code>username</code> and <code>token</code> to <code>src/main/resource/application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
+    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
+    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
+    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span>
+    <span class="key">username</span>: <span class="string"><span class="content">yourbintrayusername</span></span>
+    <span class="key">token</span>: <span class="string"><span class="content">XXXXXXXXXXX</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add to <code>src/main/resources/logback.xml</code>, a logger to see Micronaut&#8217;s HTTP client output.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.http.client</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you run again the tests, you will see the that the Filter is invoked and HTTP Basic Auth is used against Bintray API.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
+</div>
+</div>
+</div>
+
+
+<h1 id="next">10 Where To Go From Here?</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-http-client-groovy/edit/master/src/main/docs/guide/next.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Visit <a href="https://docs.micronaut.io/snapshot/guide/index.html#httpClient">Micronaut HTTP Client documentation</a> to learn more.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
