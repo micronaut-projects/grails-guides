@@ -562,8 +562,8 @@ compose multiple HTTP client calls without blocking (which will limit the throug
         <span class="keyword">return</span> bintrayLowLevelClient.fetchPackages();
     }
 
-    <span class="annotation">@Get</span>(uri = <span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>, produces = MediaType.APPLICATION_JSON_STREAM)  <i class="conum" data-value="6"></i><b>(6)</b>
-    Flowable&lt;BintrayPackage&gt; packages() { <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(uri = <span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>, produces = MediaType.APPLICATION_JSON_STREAM)  <i class="conum" data-value="5"></i><b>(5)</b>
+    Flowable&lt;BintrayPackage&gt; packages() { <i class="conum" data-value="6"></i><b>(6)</b>
         <span class="keyword">return</span> bintrayClient.fetchPackages();
     }
 }</code></pre>
