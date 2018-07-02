@@ -210,6 +210,22 @@ function addJsClass() {
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Instead of <code>retrieve</code> we could have used <code>jsonStream</code>. You can use <code>jsonStream()</code> to stream arrays of type <code>application/json</code> or
+JSON streams of type <code>application/x-json-stream</code>. If we use <code>retrieve</code>, such as in the previous code listing, the operation will not block.
+However, it will not return until all the data has been received from the server. In the case of a JSON array that would be the whole array.
+However, if you are interested in just the first element of the array, <code>jsonStream</code> provides a better alternative since it starts streaming data from the server without needing the whole response.
+For example, <code>jsonStream().firstElement()</code> will only parse the first item in a JSON array. Hence it is more efficient.
+</td>
+</tr>
+</table>
+</div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
