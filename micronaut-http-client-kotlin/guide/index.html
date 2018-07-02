@@ -747,7 +747,7 @@ class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val u
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Supply the pattern you want to match to the <code>@Filter</code> annotation.</td>
+<td>Supply the pattern you want to match to the <code>@Filter</code> annotation. Note the required escaping (backslash) on "/api/\${bintray.apiversion}/repos/**" which is required due to Kotlin string interpolation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
