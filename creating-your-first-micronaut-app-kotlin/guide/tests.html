@@ -137,7 +137,7 @@ dependencies {
 ...
 ..
     testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">'</span></span>
-    testRuntime <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">'</span></span>
+    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.junit.jupiter:junit-jupiter-engine:5.1.0</span><span class="delimiter">&quot;</span></span>
 }
 ...
 ..
@@ -161,7 +161,7 @@ import io.micronaut.runtime.server.EmbeddedServer
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.on
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 
 class HomeControllerSpec: Spek({
     describe(&quot;HelloController&quot;) {
