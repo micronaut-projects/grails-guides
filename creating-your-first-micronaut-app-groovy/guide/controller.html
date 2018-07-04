@@ -115,9 +115,9 @@ function addJsClass() {
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/hello</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="type">class</span> <span class="class">HelloController</span> {
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN)
+    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="predefined-type">String</span> index() {
-        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -134,6 +134,10 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>By default a Micronaut&#8217;s response uses <code>application/json</code> as <code>Content-Type</code>. We are returning a String not a JSON object. Because of that, we set it to <code>text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>A String "Hello World" is returned as the result</td>
 </tr>
 </table>
