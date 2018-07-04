@@ -130,7 +130,6 @@ data class BintrayPackage(var name: String = &quot;&quot;,
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.annotation.Value
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.Client
@@ -140,18 +139,13 @@ import io.reactivex.Maybe
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class BintrayLowLevelClient(@param:Client(&quot;https://bintray.com&quot;) private val httpClient: RxHttpClient, <i class="conum" data-value="2"></i><b>(2)</b>
-                            @param:Value(&quot;\${bintray.apiversion}&quot;) private val apiversion: String, <i class="conum" data-value="3"></i><b>(3)</b>
-                            @param:Value(&quot;\${bintray.organization}&quot;) private val organization: String, <i class="conum" data-value="3"></i><b>(3)</b>
-                            @param:Value(&quot;\${bintray.repository}&quot;) private val repository: String) { <i class="conum" data-value="3"></i><b>(3)</b>
+class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) private val httpClient: RxHttpClient, <i class="conum" data-value="2"></i><b>(2)</b>
+                            bintrayConfiguration: BintrayConfiguration) { <i class="conum" data-value="3"></i><b>(3)</b>
     private val uri: String
 
     init {
         val path = &quot;/api/{apiversion}/repos/{organization}/{repository}/packages&quot;
-        val m = mapOf(Pair(&quot;apiversion&quot;, apiversion),
-                Pair(&quot;organization&quot;, organization),
-                Pair(&quot;repository&quot;, repository))
-        uri = UriTemplate.of(path).expand(m)
+        uri = UriTemplate.of(path).expand(bintrayConfiguration.toMap())
     }
 
     internal fun fetchPackages(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {

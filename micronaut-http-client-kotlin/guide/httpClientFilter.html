@@ -140,13 +140,15 @@ import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
 
 @Filter(&quot;/api/\${bintray.apiversion}/repos/**&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
-//@Requires(property = &quot;bintray.username&quot;)
-@Requires(property = &quot;bintray.token&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
-class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val username: String,  <i class="conum" data-value="3"></i><b>(3)</b>
-                    @param:Value(&quot;\${bintray.token}&quot;) private val token: String) : HttpClientFilter {
+@Requires(condition = BintrayFilterCondition::class)
+class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClientFilter {
 
     override fun doFilter(request: MutableHttpRequest&lt;*&gt;, chain: ClientFilterChain): Publisher&lt;out HttpResponse&lt;*&gt;&gt; {
-        return chain.proceed(request.basicAuth(username, token))  <i class="conum" data-value="4"></i><b>(4)</b>
+        if ( bintrayConfiguration.username != null &amp;&amp; bintrayConfiguration.token != null) {
+            return chain.proceed(request.basicAuth(bintrayConfiguration.username, bintrayConfiguration.token)) <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+        return return chain.proceed(request)
+
     }
 }</code></pre>
 </div>
@@ -159,7 +161,7 @@ class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val u
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded unless configuration properties are set.</td>
+<td>Bean will not loaded unless condition is met</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -170,6 +172,83 @@ class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val u
 <td>Enhance every request sent to Bintray API providing Basic Authentication.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>We want to load the <code>BintrayFilter</code> bean if both configuration parameters <code>bintray.username</code> and <code>bintray.token</code> are present.
+In the Java or Groovy versions of this guide, multiple <code>Requires</code> annotations are used. Multiple <code>@Requires</code> annotations are not possible with Kotlin.
+Instead, we use a condition class.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/BintrayFilterCondition.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import io.micronaut.context.condition.Condition
+import io.micronaut.context.condition.ConditionContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+
+class BintrayFilterCondition : Condition {
+
+    override fun matches(context: ConditionContext&lt;*&gt;?): Boolean {
+        if (context != null &amp;&amp; context.beanContext != null) {
+            try {
+                val bintrayConfiguration: BintrayConfiguration = context.beanContext.getBean(BintrayConfiguration::class.java)
+                if (bintrayConfiguration.token != null &amp;&amp; bintrayConfiguration.username != null) {
+                    return true
+                }
+            } catch (e: NoSuchBeanException) {
+            }
+        }
+        return false
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We verify the previous condition class with a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/BintrayFilterConditionSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+
+class BintrayFilterConditionSpec: Spek({
+
+    describe(&quot;BintrayFilter is loaded&quot;) {
+        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair(&quot;bintray.username&quot;, &quot;john&quot;), Pair(&quot;bintray.token&quot;, &quot;XXX&quot;)), &quot;test&quot;)
+         on(&quot;Verify BintrayFilter is loaded if bintray.username/bintray.token are set&quot;) {
+             Assertions.assertNotNull(applicationContext.getBean(BintrayFilter::class.java))
+        }
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+
+    describe(&quot;BintrayFilter is not loaded&quot;) {
+        val applicationContext = ApplicationContext.run(&quot;test&quot;)
+        on(&quot;Verify BintrayFilter is NOT loaded if bintray.username and bintray.token are not set&quot;) {
+            var exceptionThrown = false
+            try {
+                applicationContext.getBean(BintrayFilter::class.java)
+            } catch (e: NoSuchBeanException) {
+                exceptionThrown = true
+            }
+            Assertions.assertTrue(exceptionThrown)
+        }
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_configuration_parameters">Configuration Parameters</h4>

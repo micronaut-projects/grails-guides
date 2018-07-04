@@ -260,10 +260,56 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1</code></pre>
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
+    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
+    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
+    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To encapsulate type-safe configuration retrieval, we use a @ConfigurationProperties` object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/BintrayConfiguration.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import example.micronaut.BintrayConfiguration.Companion.PREFIX
+import io.micronaut.context.annotation.ConfigurationProperties
+
+@ConfigurationProperties(PREFIX)
+class BintrayConfiguration {
+    companion object {
+        const val PREFIX = &quot;bintray&quot;
+        const val BINTRAY_URL = &quot;https://bintray.com&quot;
+    }
+
+    var apiversion: String? = null
+    var organization: String? = null
+    var repository: String? = null
+    var username: String? = null
+    var token: String? = null
+
+    fun toMap(): MutableMap&lt;String, Any&gt; {
+        val m = HashMap&lt;String, Any&gt;()
+        if (apiversion != null) {
+            m[&quot;apiversion&quot;] = apiversion!!
+        }
+        if (organization != null) {
+            m[&quot;organization&quot;] = organization!!
+        }
+        if (repository != null) {
+            m[&quot;repository&quot;] = repository!!
+        }
+        if (username != null) {
+            m[&quot;username&quot;] = username!!
+        }
+        if (token != null) {
+            m[&quot;token&quot;] = token!!
+        }
+        return m
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -307,7 +353,6 @@ data class BintrayPackage(var name: String = &quot;&quot;,
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.annotation.Value
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.Client
@@ -317,18 +362,13 @@ import io.reactivex.Maybe
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class BintrayLowLevelClient(@param:Client(&quot;https://bintray.com&quot;) private val httpClient: RxHttpClient, <i class="conum" data-value="2"></i><b>(2)</b>
-                            @param:Value(&quot;\${bintray.apiversion}&quot;) private val apiversion: String, <i class="conum" data-value="3"></i><b>(3)</b>
-                            @param:Value(&quot;\${bintray.organization}&quot;) private val organization: String, <i class="conum" data-value="3"></i><b>(3)</b>
-                            @param:Value(&quot;\${bintray.repository}&quot;) private val repository: String) { <i class="conum" data-value="3"></i><b>(3)</b>
+class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) private val httpClient: RxHttpClient, <i class="conum" data-value="2"></i><b>(2)</b>
+                            bintrayConfiguration: BintrayConfiguration) { <i class="conum" data-value="3"></i><b>(3)</b>
     private val uri: String
 
     init {
         val path = &quot;/api/{apiversion}/repos/{organization}/{repository}/packages&quot;
-        val m = mapOf(Pair(&quot;apiversion&quot;, apiversion),
-                Pair(&quot;organization&quot;, organization),
-                Pair(&quot;repository&quot;, repository))
-        uri = UriTemplate.of(path).expand(m)
+        uri = UriTemplate.of(path).expand(bintrayConfiguration.toMap())
     }
 
     internal fun fetchPackages(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {
@@ -410,7 +450,7 @@ import io.micronaut.http.client.Client
 import io.reactivex.Flowable
 import io.micronaut.http.annotation.Get
 
-@Client(&quot;https://bintray.com&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Client(BintrayConfiguration.BINTRAY_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 interface BintrayClient {
 
     @Get(&quot;/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
@@ -732,13 +772,15 @@ import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
 
 @Filter(&quot;/api/\${bintray.apiversion}/repos/**&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
-//@Requires(property = &quot;bintray.username&quot;)
-@Requires(property = &quot;bintray.token&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
-class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val username: String,  <i class="conum" data-value="3"></i><b>(3)</b>
-                    @param:Value(&quot;\${bintray.token}&quot;) private val token: String) : HttpClientFilter {
+@Requires(condition = BintrayFilterCondition::class)
+class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClientFilter {
 
     override fun doFilter(request: MutableHttpRequest&lt;*&gt;, chain: ClientFilterChain): Publisher&lt;out HttpResponse&lt;*&gt;&gt; {
-        return chain.proceed(request.basicAuth(username, token))  <i class="conum" data-value="4"></i><b>(4)</b>
+        if ( bintrayConfiguration.username != null &amp;&amp; bintrayConfiguration.token != null) {
+            return chain.proceed(request.basicAuth(bintrayConfiguration.username, bintrayConfiguration.token)) <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+        return return chain.proceed(request)
+
     }
 }</code></pre>
 </div>
@@ -751,7 +793,7 @@ class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val u
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded unless configuration properties are set.</td>
+<td>Bean will not loaded unless condition is met</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -762,6 +804,83 @@ class BintrayFilter(@param:Value(&quot;\${bintray.username}&quot;) private val u
 <td>Enhance every request sent to Bintray API providing Basic Authentication.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>We want to load the <code>BintrayFilter</code> bean if both configuration parameters <code>bintray.username</code> and <code>bintray.token</code> are present.
+In the Java or Groovy versions of this guide, multiple <code>Requires</code> annotations are used. Multiple <code>@Requires</code> annotations are not possible with Kotlin.
+Instead, we use a condition class.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/BintrayFilterCondition.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import io.micronaut.context.condition.Condition
+import io.micronaut.context.condition.ConditionContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+
+class BintrayFilterCondition : Condition {
+
+    override fun matches(context: ConditionContext&lt;*&gt;?): Boolean {
+        if (context != null &amp;&amp; context.beanContext != null) {
+            try {
+                val bintrayConfiguration: BintrayConfiguration = context.beanContext.getBean(BintrayConfiguration::class.java)
+                if (bintrayConfiguration.token != null &amp;&amp; bintrayConfiguration.username != null) {
+                    return true
+                }
+            } catch (e: NoSuchBeanException) {
+            }
+        }
+        return false
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We verify the previous condition class with a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/BintrayFilterConditionSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+
+class BintrayFilterConditionSpec: Spek({
+
+    describe(&quot;BintrayFilter is loaded&quot;) {
+        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair(&quot;bintray.username&quot;, &quot;john&quot;), Pair(&quot;bintray.token&quot;, &quot;XXX&quot;)), &quot;test&quot;)
+         on(&quot;Verify BintrayFilter is loaded if bintray.username/bintray.token are set&quot;) {
+             Assertions.assertNotNull(applicationContext.getBean(BintrayFilter::class.java))
+        }
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+
+    describe(&quot;BintrayFilter is not loaded&quot;) {
+        val applicationContext = ApplicationContext.run(&quot;test&quot;)
+        on(&quot;Verify BintrayFilter is NOT loaded if bintray.username and bintray.token are not set&quot;) {
+            var exceptionThrown = false
+            try {
+                applicationContext.getBean(BintrayFilter::class.java)
+            } catch (e: NoSuchBeanException) {
+                exceptionThrown = true
+            }
+            Assertions.assertTrue(exceptionThrown)
+        }
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_configuration_parameters">Configuration Parameters</h4>

@@ -121,7 +121,7 @@ import io.micronaut.http.client.Client
 import io.reactivex.Flowable
 import io.micronaut.http.annotation.Get
 
-@Client(&quot;https://bintray.com&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Client(BintrayConfiguration.BINTRAY_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 interface BintrayClient {
 
     @Get(&quot;/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
