@@ -189,7 +189,10 @@
 <p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example</code></p>
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
 <p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
@@ -312,44 +315,7 @@ apply <span class="key">plugin</span>: <span class="string"><span class="delimit
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code> to install spock.</p>
-</div>
-<div class="paragraph">
-<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
-the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-...
-..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a test which verifies that when you do a GET request to <code>/info</code> you get a payload such as:</p>
+<p>Create a Junit test which verifies that when you do a GET request to <code>/info</code> you get a payload such as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -380,50 +346,7 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/InfoSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
-
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-
-<span class="type">class</span> <span class="class">InfoSpec</span> <span class="directive">extends</span> Specification {
-
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)  <i class="conum" data-value="2"></i><b>(2)</b>
-
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
-
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">test git commit info appears in JSON</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/info</span><span class="delimiter">'</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-
-        <span class="key">when</span>:
-        HttpResponse&lt;<span class="predefined-type">Map</span>&gt; rsp = client.toBlocking().exchange(request, <span class="predefined-type">Map</span>)
-
-        <span class="key">then</span>:
-        rsp.status().code == <span class="integer">200</span>
-
-        <span class="key">when</span>:
-        <span class="predefined-type">Map</span> json = rsp.body() <i class="conum" data-value="5"></i><b>(5)</b>
-
-        <span class="key">then</span>:
-        json.git
-        json.git.commit
-        json.git.commit.message
-        json.git.commit.time
-        json.git.commit.id
-        json.git.commit.user
-        json.git.branch
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> &lt;stdin&gt; - <span class="key">include</span>::<span class="regexp"><span class="delimiter">/</span><span class="content">home</span><span class="delimiter">/</span></span>travis/build/micronaut-guides/adding-commit-info/complete/src/test/groovy/example/micronaut/InfoSpec.groovy<span class="type">[]</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
