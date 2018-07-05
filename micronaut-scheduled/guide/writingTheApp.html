@@ -106,7 +106,10 @@ function addJsClass() {
 <p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example</code></p>
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
 <p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
@@ -423,7 +426,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Constructor injection of <code>RegisterService</code></td>
+<td>Constructor injection of <code>RegisterUseCase</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -466,7 +469,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 </div>
 <div class="paragraph">
-<p>Create <code>RegisterService.java</code> which schedules the previous task.</p>
+<p>Create <code>RegisterUseCase.java</code> which schedules the previous task.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/RegisterUseCase.java</div>
