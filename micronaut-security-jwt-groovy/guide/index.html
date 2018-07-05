@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Micronaut JWT Authentication | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Micronaut JWT Authentication. Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.' />
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-security-jwt/guide/index.html">Micronaut JWT Authentication</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-security-jwt"><img src="https://travis-ci.org/micronaut-guides/micronaut-security-jwt.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-security-jwt&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-security-jwt.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-security-jwt.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-security-jwt.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-security-jwt/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#dependency"><strong>2.1</strong><span>Security Dependency</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#configuration"><strong>2.2</strong><span>Configuration</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#authenticationProvider"><strong>2.3</strong><span>Authentication Provider</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controllers</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3</strong><span>Tests</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#oauth"><strong>3.1</strong><span>Token Refresh</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#jwt"><strong>3.2</strong><span>Use Micronaut's HTTP Client and JWT</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>4</strong><span>Testing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the Application</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Micronaut JWT Authentication</h1>
+        <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut ships with security capabilities based on <a href="https://jwt.io/">Json Web Token (JWT)</a>. JWT is an <a href="https://tools.ietf.org/html/rfc7519">IETF standard</a> which defines a secure way to encapsulate arbitrary data that can be sent over unsecure URL’s.</p>
+</div>
+<div class="paragraph">
+<p>In this guide you are going to create a Micronaut app and secure it with JWT.</p>
+</div>
+<div class="paragraph">
+<p>The following sequence illustrates the authentication flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/jwt-bearer-token.svg" alt="jwt bearer token">
+</div>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-security-jwt/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-security-jwt.git" class="bare">https://github.com/micronaut-guides/micronaut-security-jwt.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+</div>
+
+
+<h2 id="dependency">2.1 Security Dependency</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/writingTheApp/dependency.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add Micronaut&#8217;s <code>security-jwt</code> dependency to your build file.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+...
+..
+.
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security-jwt</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="configuration">2.2 Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/writingTheApp/configuration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add to the <code>application.yml</code> configuration file the next block:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
+  <span class="key">security</span>:
+    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="key">endpoints</span>:
+      <span class="key">login</span>:
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
+      <span class="key">oauth</span>:
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="key">token</span>:
+      <span class="key">jwt</span>:
+        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="key">signatures</span>:
+          <span class="key">secret</span>:
+            <span class="key">generator</span>: <i class="conum" data-value="5"></i><b>(5)</b>
+              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable Micronaut&#8217;s security capabilities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Expose <code>/login</code> endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enable JWT based authentication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="authenticationProvider">2.3 Authentication Provider</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/writingTheApp/authenticationProvider.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/AuthenticationProviderUserPassword.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="annotation">@Override</span>
+    Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        <span class="keyword">if</span> ( authenticationRequest.identity == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp;
+                authenticationRequest.secret == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) {
+            UserDetails userDetails = <span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.identity, <span class="type">[]</span>)
+            <span class="keyword">return</span> Flowable.just(userDetails)  <span class="keyword">as</span> Publisher&lt;AuthenticationResponse&gt;
+        }
+        Flowable.just(<span class="keyword">new</span> AuthenticationFailed()) <span class="keyword">as</span> Publisher&lt;AuthenticationResponse&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut&#8217;s application context, annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A Micronaut&#8217;s Authentication Provider implements the interface <code>io.micronaut.security.authentication.AuthenticationProvider</code></td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controllers</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.controllers
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>
+
+<span class="keyword">import</span> <span class="include">java.security.Principal</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="type">class</span> <span class="class">HomeController</span> {
+
+    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN)
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="predefined-type">String</span> index(<span class="predefined-type">Principal</span> principal) { <i class="conum" data-value="4"></i><b>(4)</b>
+        principal.name
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>isAuthenticated()</code> expression will allow access only to authenticated users.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut&#8217;s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>You can specify the HTTP verb that a controller&#8217;s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If a user is authenticated, Micronaut will bind the user object to an argument of type <code>java.security.Principal</code> (if present).</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="tests">3 Tests</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a test to verify a user is able to login and access a secured endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/JwtAuthenticationSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">com.nimbusds.jwt.JWTParser</span>
+<span class="keyword">import</span> <span class="include">com.nimbusds.jwt.SignedJWT</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpHeaders</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
+<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+
+<span class="type">class</span> <span class="class">JwtAuthenticationSpec</span> <span class="directive">extends</span> Specification {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT authentication works</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">'</span></span>
+        client.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>, )) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">returns unauthorized</span><span class="delimiter">'</span></span>
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.UNAUTHORIZED
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
+        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
+        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        rsp.status == HttpStatus.OK
+        rsp.body().username == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+        rsp.body().accessToken
+        JWTParser.parse(rsp.body().accessToken) <span class="keyword">instanceof</span> SignedJWT
+        rsp.body().refreshToken
+        JWTParser.parse(rsp.body().refreshToken) <span class="keyword">instanceof</span> SignedJWT
+
+        <span class="key">when</span>:
+        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
+        HttpRequest requestWithAuthorization = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span> ).header(HttpHeaders.AUTHORIZATION, <span class="string"><span class="delimiter">&quot;</span><span class="content">Bearer </span><span class="inline"><span class="inline-delimiter">$</span>accessToken</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
+        HttpResponse&lt;<span class="predefined-type">String</span>&gt; response = client.toBlocking().exchange(requestWithAuthorization, <span class="predefined-type">String</span>)
+
+        <span class="key">then</span>:
+        response.status == HttpStatus.OK
+        response.body() == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span> <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Once you turn on security, every endpoint is secured by default.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Micronaut supports <a href="https://tools.ietf.org/html/rfc6750">RFC 6750 Bearer Token</a> specification out-of-the-box. We supply the JWT token in the <code>Authorization</code> HTTP Header.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Use .body() to retrieve the parsed payload.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="oauth">3.1 Token Refresh</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/oauth.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a new test to verify that token refreshing works as expected.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
+<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+
+<span class="type">class</span> <span class="class">OauthAccessTokenSpec</span> <span class="directive">extends</span> Specification {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL())
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT access token refresh works</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
+        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
+        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds)
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        rsp.status == HttpStatus.OK
+
+        <span class="key">when</span>:
+        sleep(<span class="integer">1</span>_000) <span class="comment">// sleep for one second to give time for the issued at `iat` Claim to change</span>
+        <span class="predefined-type">String</span> refreshToken = rsp.body().refreshToken
+        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
+
+        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>,
+                <span class="keyword">new</span> TokenRefreshRequest(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        <span class="key">then</span>:
+        response.status == HttpStatus.OK
+        response.body().accessToken
+        response.body().accessToken != accessToken <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A different access token is retrieved.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you want to access a secured endpoint, you can also use Micronaut&#8217;s HTTP Client and supply the JWT token in the Authorization header.</p>
+</div>
+<div class="paragraph">
+<p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/AppClient.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">groovy.transform.CompileStatic</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Header</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.Client</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+<span class="namespace">interface</span> <span class="namespace">AppClient</span> {
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+    <span class="namespace">String</span> <span class="namespace">home</span>(<span class="annotation">@Header</span> <span class="namespace">String</span> <span class="namespace">authorization</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which uses the previous <code>@Client</code></p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/DeclarativeHttpClientWithJwtSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
+<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+
+<span class="type">class</span> <span class="class">DeclarativeHttpClientWithJwtSpec</span> <span class="directive">extends</span> Specification {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT authentication works with declarative @Client</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>:
+        AppClient appClient = embeddedServer.applicationContext.getBean(AppClient) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        <span class="key">then</span>:
+        noExceptionThrown()
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">'</span></span>
+        client.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>, ))
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">returns unauthorized</span><span class="delimiter">'</span></span>
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.UNAUTHORIZED
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
+        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
+        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        rsp.status == HttpStatus.OK
+        rsp.body().accessToken
+
+        <span class="key">when</span>:
+        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
+        <span class="predefined-type">String</span> authorizationValue = <span class="string"><span class="delimiter">&quot;</span><span class="content">Bearer </span><span class="inline"><span class="inline-delimiter">$</span>accessToken</span><span class="delimiter">&quot;</span></span>
+        <span class="predefined-type">String</span> msg = appClient.home(authorizationValue) <i class="conum" data-value="7"></i><b>(7)</b>
+
+        <span class="key">then</span>:
+        msg == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span> <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Retrieve <code>AppClient</code> bean from application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Use .body() to retrieve the parsed payload.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="testingTheApp">4 Testing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+<h1 id="runningTheApp">5 Running the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
