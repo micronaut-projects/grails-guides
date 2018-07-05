@@ -102,26 +102,22 @@ function addJsClass() {
 <span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
 <span class="keyword">import</span> <span class="include">javax.validation.Valid</span>;
 
-<span class="annotation">@Validated</span>
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">MailController</span> {
     <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(MailController.class);
 
     <span class="directive">protected</span> <span class="directive">final</span> EmailService emailService;
 
-    <span class="directive">public</span> MailController( EmailService  emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="directive">public</span> MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
         <span class="local-variable">this</span>.emailService = emailService;
     }
 
-    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="directive">public</span> HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
-
-        <span class="keyword">if</span> (LOG.isDebugEnabled()) {
-            LOG.debug(<span class="string"><span class="delimiter">&quot;</span><span class="content">{}</span><span class="delimiter">&quot;</span></span>, cmd.toString());
-        }
+    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="directive">public</span> HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
 
         emailService.send(cmd);
-        <span class="keyword">return</span> HttpResponse.ok();  <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="keyword">return</span> HttpResponse.ok();  <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -134,18 +130,22 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Constructor injection</td>
+<td>Add @Validated annotation at the class level to any class that requires validation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
+<td>Constructor injection</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Use a POJO supplied as a JSON payload in the request to populate the email.</td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Return 200 OK as the result</td>
 </tr>
 </table>
