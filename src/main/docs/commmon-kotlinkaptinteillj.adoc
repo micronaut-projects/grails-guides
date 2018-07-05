@@ -13,3 +13,7 @@ image::kotlin-run-2.png[Intellij Settings,1024,768]
 Now whenever you run tests or the application Micronaut classes will be generated at compilation time.
 
 Read https://docs.micronaut.io/latest/guide/index.html#kotlin[Micronaut Kotlin] section to learn more.
+
+Alternatively, you can delegate IntelliJ build/run actions to gradle completely:
+
+image::delegatetogradle.png[]
