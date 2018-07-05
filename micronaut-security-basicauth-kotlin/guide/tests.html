@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3 Tests null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Basic Auth
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/tests.html"><strong>3</strong><span>Tests</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3 Tests</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#declarativeclient"><strong>3.1</strong><span>Use Micronaut's HTTP Client and Basic Auth</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="tests">3 Tests</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://spekframework.org/">Speck</a> is a Kotlin Specification Framework for the JVM.</p>
+</div>
+<div class="paragraph">
+<p>To use Spek modify <code>build.gradle</code> file as described in the <a href="http://spekframework.org/docs/latest/#_gradle">Spek documentation</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+    repositories {
+      ...
+      ..
+    }
+    dependencies {
+      ...
+      ..
+        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.2.0</span><span class="delimiter">'</span></span>
+    }
+}
+...
+..
+.
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+
+junitPlatform {
+    filters {
+        engines {
+            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+        }
+    }
+}
+
+repositories {
+  ...
+  ..
+    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">https://jcenter.bintray.com</span><span class="delimiter">&quot;</span></span> }
+}
+
+dependencies {
+...
+..
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">&quot;</span></span>
+    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.kotlin:kotlin-test:1.1.0</span><span class="delimiter">'</span></span>
+}
+...
+..
+
+test {
+    useJUnitPlatform()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which verifies the user authentication flow via Basic Auth.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpStatus</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertTrue</span>
+
+<span class="namespace">class</span> <span class="namespace">BasicAuthSpec</span>: <span class="namespace">Spek</span>({
+    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>) {
+
+        <span class="namespace">var</span> <span class="namespace">embeddedServer</span> : <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="namespace">var</span> <span class="namespace">client</span> : <span class="namespace">RxHttpClient</span> = <span class="namespace">RxHttpClient.create</span>(<span class="namespace">embeddedServer.url</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
+            <span class="namespace">try</span> {
+                <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.GET</span>&lt;<span class="namespace">Any</span>&gt;(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+                <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">String</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+            } <span class="namespace">catch</span>(<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {  <i class="conum" data-value="4"></i><b>(4)</b>
+                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            }
+            <span class="namespace">assertTrue</span>(<span class="namespace">exceptionThrown</span>)
+        }
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">If a secured URL is accessed with Basic Auth, it can be accessed</span><span class="delimiter">&quot;</span></span>) {
+                <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.GET</span>&lt;<span class="namespace">Any</span>&gt;(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>).<span class="namespace">basicAuth</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="5"></i><b>(5)</b>
+                <span class="namespace">val</span> <span class="namespace">rsp</span> : <span class="namespace">HttpResponse</span>&lt;<span class="namespace">String</span>&gt; = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">String</span>::<span class="namespace">class.java</span>)  <i class="conum" data-value="6"></i><b>(6)</b>
+
+                <span class="namespace">assertEquals</span>(<span class="namespace">rsp.status</span>()!!, <span class="namespace">HttpStatus.OK</span>)
+                <span class="namespace">assertEquals</span>(<span class="namespace">rsp.body</span>()!!, <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
+        }
+        <span class="namespace">afterGroup</span> {
+            <span class="namespace">client.close</span>()
+            <span class="namespace">embeddedServer.close</span>()
+        }
+
+    }
+})
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If you attempt to access a secured endpoint without authentication, 401 is returned</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>By using <code>basicAuth</code> method, you populate the <code>Authorization</code> header with user-id:password pairs, encoded using Base64.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Micronaut&#8217;s <code>HttpClient</code> simplifies parsing HTTP response payload to Java objects. In this example, we parse the response to <code>String</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Use <code>.body()</code> to retrieve the parsed payload.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="declarativeclient">3.1 Use Micronaut's HTTP Client and Basic Auth</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth/edit/master/src/main/docs/guide/tests/declarativeclient.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you want to access a secured endpoint, you can also use Micronaut&#8217;s HTTP Client and supply the Basic Auth as the Authorization header value.</p>
+</div>
+<div class="paragraph">
+<p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/AppClient.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.Client</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Header</span>
+
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+<span class="namespace">interface</span> <span class="namespace">AppClient</span> {
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+    <span class="namespace">fun</span> <span class="namespace">home</span>(<span class="annotation">@Header</span> <span class="namespace">authorization</span>: <span class="namespace">String</span>): <span class="namespace">String</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which uses the previous <code>@Client</code></p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthClientSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
+<span class="namespace">import</span> <span class="namespace">java.util.Base64</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertFalse</span>
+
+<span class="namespace">class</span> <span class="namespace">BasicAuthClientSpec</span>: <span class="namespace">Spek</span>({
+    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>) {
+
+        <span class="namespace">val</span> <span class="namespace">embeddedServer</span> : <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Accessing a secured URL using a @Client which supplies basic auth in Authorization header</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">val</span> <span class="namespace">credsEncoded</span>: <span class="namespace">String</span> = <span class="namespace">Base64.getEncoder</span>().<span class="namespace">encodeToString</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock:password</span><span class="delimiter">&quot;</span></span>.<span class="namespace">byteInputStream</span>().<span class="namespace">readBytes</span>())
+
+            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
+            <span class="namespace">try</span> {
+                <span class="namespace">val</span> <span class="namespace">appClient</span>: <span class="namespace">AppClient</span> = <span class="namespace">embeddedServer.applicationContext.getBean</span>(<span class="namespace">AppClient</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+                <span class="namespace">val</span> <span class="namespace">rsp</span> : <span class="namespace">String</span> = <span class="namespace">appClient.home</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Basic $credsEncoded</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
+                <span class="namespace">assertEquals</span>(<span class="namespace">rsp</span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>)
+            } <span class="namespace">catch</span>(<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {  <i class="conum" data-value="4"></i><b>(4)</b>
+                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            }
+            <span class="namespace">assertFalse</span>(<span class="namespace">exceptionThrown</span>)
+        }
+        <span class="namespace">afterGroup</span> {
+            <span class="namespace">embeddedServer.close</span>()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Retrieve <code>AppClient</code> bean from application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Generate Basic Auth header value and pass it as the parameter value.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If the bean is found no exception is thrown</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
