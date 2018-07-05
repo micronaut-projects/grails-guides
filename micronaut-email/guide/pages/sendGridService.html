@@ -119,8 +119,12 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">SendGridEmailCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
-        <span class="keyword">return</span> (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_APIKEY</span><span class="delimiter">&quot;</span></span>))) &amp;&amp;
-                (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>)) ||  notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_FROM_EMAIL</span><span class="delimiter">&quot;</span></span>)));
+        <span class="keyword">return</span> envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_APIKEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
+                envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_FROM_EMAIL</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="directive">private</span> <span class="type">boolean</span> envOrSystemProperty(<span class="predefined-type">String</span> env, <span class="predefined-type">String</span> prop) {
+        <span class="keyword">return</span> notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(prop)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(env));
     }
 
     <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {

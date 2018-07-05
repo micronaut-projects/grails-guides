@@ -277,9 +277,7 @@ function addJsClass() {
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
         <span class="keyword">return</span> email !=<span class="predefined-constant">null</span> &amp;&amp;
-                (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody())) &amp;&amp;
-                notBlankAndNotNull(email.getSubject()) &amp;&amp;
-                notBlankAndNotNull(email.getRecipient());
+                (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody()));
     }
 
     <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
@@ -297,23 +295,22 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@EmailConstraints</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
 
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="directive">private</span> <span class="predefined-type">String</span> recipient;
+
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="directive">private</span> <span class="predefined-type">String</span> subject;
+
     <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
     <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+
     <span class="directive">private</span> <span class="predefined-type">String</span> htmlBody;
     <span class="directive">private</span> <span class="predefined-type">String</span> textBody;
     <span class="directive">private</span> <span class="predefined-type">String</span> replyTo;
 
 <span class="comment">// Getters &amp;&amp; Setters</span>
-
-    <span class="type">boolean</span> hasErrors() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        <span class="predefined-type">Validator</span> validator = factory.getValidator();
-        <span class="predefined-type">Set</span>&lt;ConstraintViolation&lt;EmailCmd&gt;&gt; constraintViolations = validator.validate(<span class="local-variable">this</span>);
-
-        <span class="keyword">return</span> (constraintViolations!= <span class="predefined-constant">null</span> &amp;&amp; !constraintViolations.isEmpty());
-    }
 }</code></pre>
 </div>
 </div>

@@ -100,6 +100,7 @@ function addJsClass() {
 <span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>;
 <span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
 <span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
+<span class="keyword">import</span> <span class="include">javax.validation.Valid</span>;
 
 <span class="annotation">@Validated</span>
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
@@ -113,10 +114,7 @@ function addJsClass() {
     }
 
     <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="directive">public</span> HttpResponse send(<span class="annotation">@Body</span> EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">if</span> ( cmd.hasErrors() ) {
-            <span class="keyword">return</span> HttpResponse.badRequest();
-        }
+    <span class="directive">public</span> HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
 
         <span class="keyword">if</span> (LOG.isDebugEnabled()) {
             LOG.debug(<span class="string"><span class="delimiter">&quot;</span><span class="content">{}</span><span class="delimiter">&quot;</span></span>, cmd.toString());
@@ -160,10 +158,17 @@ function addJsClass() {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
 
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="directive">private</span> <span class="predefined-type">String</span> recipient;
+
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="directive">private</span> <span class="predefined-type">String</span> subject;
+
     <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
     <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+
     <span class="directive">private</span> <span class="predefined-type">String</span> htmlBody;
     <span class="directive">private</span> <span class="predefined-type">String</span> textBody;
     <span class="directive">private</span> <span class="predefined-type">String</span> replyTo;

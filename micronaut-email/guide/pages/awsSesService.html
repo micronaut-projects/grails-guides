@@ -117,8 +117,12 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
-        <span class="keyword">return</span> (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>))) &amp;&amp;
-                (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>)));
+        <span class="keyword">return</span> envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
+                envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="directive">private</span> <span class="type">boolean</span> envOrSystemProperty(<span class="predefined-type">String</span> env, <span class="predefined-type">String</span> prop) {
+        <span class="keyword">return</span> notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(prop)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(env));
     }
 
     <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
