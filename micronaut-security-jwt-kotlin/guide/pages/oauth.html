@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.1 Token Refresh null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut JWT Authentication
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/tests.html"><strong>3</strong><span>Tests</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.1 Token Refresh</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="oauth">3.1 Token Refresh</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-kotlin/edit/master/src/main/docs/guide/tests/oauth.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a new test to verify that token refreshing works as expected.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/OauthAccessTokenSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpStatus</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
+<span class="namespace">import</span> <span class="namespace">java.lang.Thread.sleep</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertNotEquals</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertNotNull</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertTrue</span>
+
+<span class="namespace">class</span> <span class="namespace">OauthAccessTokenSpec</span>: <span class="namespace">Spek</span>({
+    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT access token refresh works</span><span class="delimiter">&quot;</span></span>) {
+
+        <span class="namespace">var</span> <span class="namespace">embeddedServer</span>: <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>)
+        <span class="namespace">var</span> <span class="namespace">client</span>: <span class="namespace">RxHttpClient</span> = <span class="namespace">RxHttpClient.create</span>(<span class="namespace">embeddedServer.url</span>)
+
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">you can refresh JWT access token with /oauth/access_token endpoint</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">val</span> <span class="namespace">creds</span> = <span class="namespace">UsernamePasswordCredentials</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
+            <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>, <span class="namespace">creds</span>)
+
+            <span class="namespace">val</span> <span class="namespace">rsp</span>: <span class="namespace">HttpResponse</span>&lt;<span class="namespace">BearerAccessRefreshToken</span>&gt; = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>,
+                    <span class="namespace">BearerAccessRefreshToken</span>::<span class="namespace">class.java</span>)
+
+            <span class="namespace">assertEquals</span>(<span class="namespace">rsp.status</span>()!!, <span class="namespace">HttpStatus.OK</span>)
+
+            <span class="namespace">val</span> <span class="namespace">refreshToken</span>: <span class="namespace">String</span> = <span class="namespace">rsp.body</span>()!!.<span class="namespace">refreshToken</span>
+            <span class="namespace">val</span> <span class="namespace">accessToken</span>: <span class="namespace">String</span> = <span class="namespace">rsp.body</span>()!!.<span class="namespace">accessToken</span>
+             <span class="namespace">sleep</span>(<span class="integer">1</span><span class="namespace">_000</span>) <span class="comment">// sleep for one second to give time for the issued at `iat` Claim to change</span>
+            <span class="namespace">val</span> <span class="namespace">refreshTokenRequest</span>: <span class="namespace">HttpRequest</span>&lt;<span class="namespace">TokenRefreshRequest</span>&gt; = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/oauth/access_token</span><span class="delimiter">&quot;</span></span>,
+                    <span class="namespace">TokenRefreshRequest</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, <span class="namespace">refreshToken</span>)) <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="namespace">val</span> <span class="namespace">response</span>: <span class="namespace">HttpResponse</span>&lt;<span class="namespace">AccessRefreshToken</span>&gt; = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">refreshTokenRequest</span>, <span class="namespace">AccessRefreshToken</span>::<span class="namespace">class.java</span>)
+
+            <span class="namespace">assertEquals</span>(<span class="namespace">response.status</span>()!!, <span class="namespace">HttpStatus.OK</span>)
+            <span class="namespace">assertNotNull</span>(<span class="namespace">response.body</span>()!!.<span class="namespace">accessToken</span>)
+            <span class="namespace">assertTrue</span>(<span class="namespace">response.body</span>()!!.<span class="namespace">accessToken</span> != <span class="namespace">accessToken</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+        }
+
+        <span class="namespace">afterGroup</span> {
+            <span class="namespace">client.close</span>()
+            <span class="namespace">embeddedServer.close</span>()
+        }
+    }
+})
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A different access token is retrieved.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
