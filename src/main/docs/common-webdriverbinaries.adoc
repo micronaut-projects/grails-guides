@@ -15,6 +15,9 @@ include::{sourceDir}/build.gradle[tag=buildscriptDependenciesWebdriverBinaries]
     }
 }
 
+include::{sourceDir}/build.gradle[tag=applyPluginWebdriverBinaries]
+
+
 dependencies {
 ...
 ..

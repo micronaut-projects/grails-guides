@@ -12,8 +12,6 @@ dependencies {
 include::{sourceDir}/build.gradle[tag=geb]
 }
 
-include::{sourceDir}/build.gradle[tag=withtypetest]
-
 ----
 
 Create a Geb Configuration file to setup different environments:
