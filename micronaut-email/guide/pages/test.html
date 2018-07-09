@@ -86,13 +86,13 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
 </div>
 <div class="paragraph">
-<p>We need to modify <code>build.gradle</code> to install spock.</p>
+<p>We need to modify <code>build.gradle</code>.</p>
 </div>
 <div class="paragraph">
 <p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
@@ -110,10 +110,10 @@ the necessary dependencies:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Edit <code>micronaut-cli</code> to set Spock as the test framework:</p>
+<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
 </div>
 <div class="listingblock">
-<div class="title">build.gradle</div>
+<div class="title">micronaut-cli.yml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
 <span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
