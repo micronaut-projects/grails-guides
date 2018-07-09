@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Session based authentication | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Session based authentication. Learn how to secure a Micronaut app using Session based authentication.' />
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-security-session-groovy/guide/index.html">Session based authentication</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-security-session-groovy"><img src="https://travis-ci.org/micronaut-guides/micronaut-security-session-groovy.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-security-session-groovy&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-security-session-groovy.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-security-session-groovy.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-security-session-groovy.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-security-session-groovy/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#dependency"><strong>2.1</strong><span>Security Dependency</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#configuration"><strong>2.2</strong><span>Configuration</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#authenticationProvider"><strong>2.3</strong><span>Authentication Provider</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#velocity"><strong>2.4</strong><span>Apache Velocity</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.5</strong><span>Controllers</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3</strong><span>Tests</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#webdriverBinaries"><strong>3.1</strong><span>WebDriver Binaries</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>4</strong><span>Testing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the Application</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Session based authentication</h1>
+        <p>Learn how to secure a Micronaut app using Session based authentication.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide you are going to write a Micronaut app with session based authentication.</p>
+</div>
+<div class="paragraph">
+<p>The following sequence illustrates the authentication flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/session_based_auth.svg" alt="session based auth">
+</div>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-security-session-groovy/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-security-session-groovy.git" class="bare">https://github.com/micronaut-guides/micronaut-security-session-groovy.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+</div>
+
+
+<h2 id="dependency">2.1 Security Dependency</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp/dependency.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add Micronaut&#8217;s security dependency to your build file.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+...
+..
+.
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security-session</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="configuration">2.2 Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp/configuration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the next configuration file:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yaml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">micronaut</span>:
+  <span class="key">security</span>:
+    <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="key">endpoints</span>:
+      <span class="key">login</span>:
+        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="2"></i><b>(2)</b>
+      <span class="key">logout</span>:
+        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="key">session</span>:
+      <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="4"></i><b>(4)</b>
+      <span class="key">loginSuccessTargetUrl</span>: <span class="regexp"><span class="delimiter">/</span><span class="content"> </span></span><span class="error"><i class="conum" data-value="5"></i><b>(5)</b>
+</span>      <span class="key">loginFailureTargetUrl</span>: <span class="regexp"><span class="delimiter">/</span><span class="content">login</span><span class="delimiter">/</span></span>authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable Micronaut&#8217;s security capabilities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Expose <code>/login</code> endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Expose <code>/logout</code> endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enable session based authentication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>After the user logs in, redirect him to the Home page.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>If the login fails, redirect him to /login/authFailed</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="authenticationProvider">2.3 Authentication Provider</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp/authenticationProvider.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/AuthenticationProviderUserPassword.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="annotation">@Override</span>
+    Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        <span class="keyword">if</span> ( authenticationRequest.identity == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp; authenticationRequest.secret == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> ) {
+            UserDetails userDetails = <span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.identity, <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;())
+            <span class="keyword">return</span> Flowable.just(userDetails) <span class="keyword">as</span> Flowable&lt;AuthenticationResponse&gt;
+        }
+        Flowable.just(<span class="keyword">new</span> AuthenticationFailed()) <span class="keyword">as</span> Flowable&lt;AuthenticationResponse&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut&#8217;s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A Micronaut&#8217;s Authentication Provider implements the interface <code>io.micronaut.security.authentication.AuthenticationProvider</code></td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="velocity">2.4 Apache Velocity</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp/velocity.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>By default, Micronaut&#8217;s controllers produce JSON. Usually, you consume those endpoints with a mobile phone
+application or a Javascript front end (Angular, React, Vue.js &#8230;&#8203;). However, to keep this guide simple we are
+going to produce HTML in our controllers.</p>
+</div>
+<div class="paragraph">
+<p>In order to do that, we use <a href="http://velocity.apache.org">Apache Velocity</a>.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Velocity is a Java-based template engine. It permits anyone to use a simple yet powerful template language to reference objects defined in Java code.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add a dependency to velocity:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+...
+..
+.
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity:velocity-engine-core:2.0</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create two velocity templates:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/templates/home.vm</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Home&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
+</span>    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">head&gt;</span></span><span class="error">
+</span>    &lt;body&gt;
+        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>loggedIn )
+            &lt;h1&gt;<span class="key">username</span>: &lt;span&gt;<span class="error">$</span>username&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">span&gt;&lt;</span><span class="delimiter">/</span></span>h1&gt;
+        <span class="error">#</span><span class="keyword">else</span>
+            &lt;h1&gt;You are not logged <span class="keyword">in</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">h1&gt;</span></span><span class="error">
+</span>        <span class="error">#</span>end
+        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>loggedIn )
+            &lt;form action=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> method=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span>&gt;
+                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> value=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span>/&gt;
+            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">form&gt;</span></span><span class="error">
+</span>        <span class="error">#</span><span class="keyword">else</span>
+            &lt;p&gt;&lt;a href=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span>&gt;Login&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">a&gt;&lt;</span><span class="delimiter">/</span></span>p&gt;
+        <span class="error">#</span>end
+    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">body&gt;</span></span><span class="error">
+</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">html&gt;</span></span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/templates/auth.vm</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>errors )
+            &lt;title&gt;Login Failed&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
+</span>        <span class="error">#</span><span class="keyword">else</span>
+            &lt;title&gt;Login&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">title&gt;</span></span><span class="error">
+</span>        <span class="error">#</span>end
+    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">head&gt;</span></span><span class="error">
+</span>&lt;body&gt;
+    &lt;form action=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> method=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span>&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;label <span class="keyword">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>&gt;Username&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">label&gt;</span></span><span class="error">
+</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>/&gt;
+            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
+</span>            &lt;li&gt;
+                &lt;label <span class="keyword">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>&gt;Password&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">label&gt;</span></span><span class="error">
+</span>                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> name=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> id=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>/&gt;
+            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
+</span>            &lt;li&gt;
+                &lt;input type=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> value=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span>/&gt;
+            &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
+</span>            <span class="error">#</span><span class="keyword">if</span>( <span class="error">$</span>errors )
+                &lt;li id=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span>&gt;
+                    &lt;span style=<span class="string"><span class="delimiter">&quot;</span><span class="content">color: red;</span><span class="delimiter">&quot;</span></span>&gt;Login Failed&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">span&gt;</span></span><span class="error">
+</span>                &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">li&gt;</span></span><span class="error">
+</span>            <span class="error">#</span>end
+        &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">ol&gt;</span></span><span class="error">
+</span>    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">form&gt;</span></span><span class="error">
+</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">body&gt;</span></span><span class="error">
+</span>&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">html&gt;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To render those templates, create <code>VelocityService.groovy</code></p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/VelocityService.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">org.apache.velocity.VelocityContext</span>
+<span class="keyword">import</span> <span class="include">org.apache.velocity.app.VelocityEngine</span>
+<span class="keyword">import</span> <span class="include">javax.annotation.PostConstruct</span>
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+<span class="keyword">import</span> <span class="include">java.nio.charset.StandardCharsets</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="type">class</span> <span class="class">VelocityService</span> {
+
+    <span class="directive">private</span> VelocityEngine velocityEngine
+
+    <span class="annotation">@PostConstruct</span> <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="type">void</span> initialize() {
+        <span class="directive">final</span> <span class="predefined-type">Properties</span> p = <span class="keyword">new</span> <span class="predefined-type">Properties</span>()
+        p.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">resource.loader</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">class</span><span class="delimiter">&quot;</span></span>)
+        p.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">class.resource.loader.class</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</span><span class="delimiter">&quot;</span></span>)
+        velocityEngine = <span class="keyword">new</span> VelocityEngine(p)
+    }
+
+    <span class="predefined-type">String</span> render(<span class="directive">final</span> <span class="predefined-type">String</span> name, <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; data) {
+        <span class="directive">final</span> <span class="predefined-type">StringWriter</span> writer = <span class="keyword">new</span> <span class="predefined-type">StringWriter</span>()
+        <span class="directive">final</span> VelocityContext velocityContext = <span class="keyword">new</span> VelocityContext(data)
+        velocityEngine.mergeTemplate(<span class="string"><span class="delimiter">&quot;</span><span class="content">templates/</span><span class="inline"><span class="inline-delimiter">$</span>name</span><span class="delimiter">&quot;</span></span>, StandardCharsets.UTF_8.name(), velocityContext, writer)
+        writer.toString()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To create a Sigleton bean use the <code>javax.inject.Singleton</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use the <code>javax.annotation.PostConstruct</code> annotation to trigger the method execution after dependency injection is done. Typically to perform any initialization.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.5 Controllers</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.controllers
+
+<span class="keyword">import</span> <span class="include">example.micronaut.services.VelocityService</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>
+
+<span class="keyword">import</span> <span class="include">javax.annotation.Nullable</span>
+<span class="keyword">import</span> <span class="include">java.security.Principal</span>
+
+<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="type">class</span> <span class="class">HomeController</span> {
+
+    <span class="directive">protected</span> <span class="directive">final</span> VelocityService velocityService
+
+    HomeController(VelocityService velocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="local-variable">this</span>.velocityService = velocityService
+    }
+
+    <span class="annotation">@Produces</span>(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
+    <span class="predefined-type">String</span> index(<span class="annotation">@Nullable</span> <span class="predefined-type">Principal</span> principal) { <i class="conum" data-value="6"></i><b>(6)</b>
+        velocityService.render(<span class="string"><span class="delimiter">&quot;</span><span class="content">home.vm</span><span class="delimiter">&quot;</span></span>, homeModel(principal))
+    }
+
+    <span class="directive">private</span> <span class="predefined-type">Map</span> homeModel(<span class="annotation">@Nullable</span> <span class="predefined-type">Principal</span> principal) {
+        <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; data = [<span class="string"><span class="delimiter">&quot;</span><span class="content">loggedIn</span><span class="delimiter">&quot;</span></span>: principal!=<span class="predefined-constant">null</span>]
+        <span class="keyword">if</span> (principal) {
+            data.username = principal.name
+        }
+        data
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure security access. Use <code>isAnonymous()</code> expression to allow access to authenticated and unauthenticated users.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut&#8217;s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>VelocityService</code> is injected via constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>By default a controller&#8217;s action produces JSON, however you can define that it produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>You can specify the HTTP verb for which a controller&#8217;s action responds to. To respond to a GET request, use <code>io.micronaut.http.annotation.Get</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>If you are authenticated, you can use the <code>java.security.Principal</code> as a parameter type. For parameters which maybe null, use <code>javax.annotation.Nullable</code>.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_login_form">Login Form</h3>
+<div class="paragraph">
+<p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/controllers/LoginAuthController.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.controllers
+
+<span class="keyword">import</span> <span class="include">example.micronaut.services.VelocityService</span>
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="type">class</span> <span class="class">LoginAuthController</span> {
+
+    <span class="directive">protected</span> <span class="directive">final</span> VelocityService velocityService
+
+    LoginAuthController(VelocityService velocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+        <span class="local-variable">this</span>.velocityService = velocityService
+    }
+
+    <span class="annotation">@Produces</span>(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/auth</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
+    <span class="predefined-type">String</span> auth() {
+        velocityService.render(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, [:]) <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+    <span class="annotation">@Produces</span>(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/authFailed</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
+    <span class="predefined-type">String</span> authFailed() {
+        velocityService.render(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, authFailedModel()) <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+    <span class="directive">private</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; authFailedModel() {
+        [<span class="key">errors</span>: <span class="predefined-constant">true</span>] <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure security access. Use <code>isAnonymous()</code> expression for anonymous access.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut&#8217;s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>VelocityService</code> is injected via constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>By default a controller&#8217;s action produces JSON, however you can define that it  produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Responds to GET requests at <code>/login/auth</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Render velocity template <code>auth.vm</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Responds to GET requests at <code>/login/authFailed</code></td>
+</tr>
+</table>
+</div>
+</div>
+
+
+<h1 id="tests">3 Tests</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We use also, <a href="https://gebish.org">Geb</a>; a browser automation solution.</p>
+</div>
+<div class="paragraph">
+<p>To use Geb, add dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+...
+..
+.
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.gebish:geb-spock:2.1</span><span class="delimiter">&quot;</span></span>
+    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-chrome-driver:3.6.0</span><span class="delimiter">&quot;</span></span>
+    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-firefox-driver:3.6.0</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-support:3.6.0</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-api:3.6.0</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Geb Configuration file to setup different environments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeDriver</span>
+<span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeOptions</span>
+<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxDriver</span>
+<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxOptions</span>
+
+environments {
+
+    <span class="comment">// run via “./gradlew -Dgeb.env=chrome iT”</span>
+    chrome {
+        driver = { <span class="keyword">new</span> ChromeDriver() }
+    }
+
+    <span class="comment">// run via “./gradlew -Dgeb.env=chromeHeadless iT”</span>
+    chromeHeadless {
+        driver = {
+            ChromeOptions o = <span class="keyword">new</span> ChromeOptions()
+            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">headless</span><span class="delimiter">'</span></span>)
+            <span class="keyword">new</span> ChromeDriver(o)
+        }
+    }
+
+    firefoxHeadless {
+        driver = {
+            FirefoxOptions o = <span class="keyword">new</span> FirefoxOptions()
+            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">-headless</span><span class="delimiter">'</span></span>)
+            <span class="keyword">new</span> FirefoxDriver(o)
+        }
+    }
+
+    <span class="comment">// run via “./gradlew -Dgeb.env=firefox iT”</span>
+    firefox {
+        driver = { <span class="keyword">new</span> FirefoxDriver() }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way.</p>
+</div>
+<div class="paragraph">
+<p>Create two pages:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">geb.Page</span>
+
+<span class="type">class</span> <span class="class">HomePage</span> <span class="directive">extends</span> Page {
+
+    <span class="directive">static</span> url = <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+
+    <span class="directive">static</span> at = { title == <span class="string"><span class="delimiter">'</span><span class="content">Home</span><span class="delimiter">'</span></span> }
+
+    <span class="directive">static</span> content = {
+        loginLink { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>, <span class="key">text</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login</span><span class="delimiter">'</span></span>) }
+        logoutButton { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">input</span><span class="delimiter">'</span></span>, <span class="key">type</span>: <span class="string"><span class="delimiter">'</span><span class="content">submit</span><span class="delimiter">'</span></span>, <span class="key">value</span>: <span class="string"><span class="delimiter">'</span><span class="content">Logout</span><span class="delimiter">'</span></span>) }
+        usernameElement(<span class="key">required</span>: <span class="predefined-constant">false</span>) { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">h1 span</span><span class="delimiter">'</span></span>, <span class="integer">0</span>) }
+    }
+
+    <span class="predefined-type">String</span> username() {
+        <span class="keyword">if</span> ( usernameElement.empty ) {
+            <span class="keyword">return</span> <span class="predefined-constant">null</span>
+        }
+        usernameElement.text()
+    }
+
+    <span class="type">void</span> login() {
+        loginLink.click()
+    }
+
+    <span class="type">void</span> logout() {
+        logoutButton.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginPage.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">geb.Page</span>
+
+<span class="type">class</span> <span class="class">LoginPage</span> <span class="directive">extends</span> Page {
+
+    <span class="directive">static</span> url = <span class="string"><span class="delimiter">'</span><span class="content">/login/auth</span><span class="delimiter">'</span></span>
+
+    <span class="directive">static</span> at = { title.contains <span class="string"><span class="delimiter">'</span><span class="content">Login</span><span class="delimiter">'</span></span> }
+
+    <span class="directive">static</span> content = {
+        usernameInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">#username</span><span class="delimiter">'</span></span>) }
+        passwordInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">#password</span><span class="delimiter">'</span></span>) }
+        submitInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">input</span><span class="delimiter">'</span></span>, <span class="key">type</span>: <span class="string"><span class="delimiter">'</span><span class="content">submit</span><span class="delimiter">'</span></span>) }
+        errorsLi(<span class="key">required</span>: <span class="predefined-constant">false</span>) { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">li#errors</span><span class="delimiter">'</span></span>) }
+    }
+
+    <span class="type">boolean</span> hasErrors() {
+        !errorsLi.empty
+    }
+
+    <span class="type">void</span> login(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> password) {
+        usernameInput = username
+        passwordInput = password
+        submitInput.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which verifies the user authentication flow.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/SessionAuthenticationSpec.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">SessionAuthenticationSpec</span> <span class="directive">extends</span> GebSpec {
+
+    <span class="annotation">@Shared</span>
+    <span class="annotation">@AutoCleanup</span>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">verify session based authentication works</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">given</span>:
+        browser.baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:</span><span class="inline"><span class="inline-delimiter">${</span>embeddedServer.port<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+
+        <span class="key">when</span>:
+        to HomePage
+
+        <span class="key">then</span>:
+        at HomePage
+
+        <span class="key">when</span>:
+        HomePage homePage = browser.page HomePage
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">As we are not logged in, there is no username</span><span class="delimiter">'</span></span>
+        homePage.username() == <span class="predefined-constant">null</span>
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">click the login link</span><span class="delimiter">'</span></span>
+        homePage.login()
+
+        <span class="key">then</span>:
+        at LoginPage
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">fill the login form, with invalid credentials</span><span class="delimiter">'</span></span>
+        LoginPage loginPage = browser.page LoginPage
+        loginPage.login(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>)
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the user is still in the login form</span><span class="delimiter">'</span></span>
+        at LoginPage
+
+        <span class="key">and</span>: <span class="string"><span class="delimiter">'</span><span class="content">and error is displayed</span><span class="delimiter">'</span></span>
+        loginPage.hasErrors()
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">fill the form with valid credentials</span><span class="delimiter">'</span></span>
+        loginPage.login(<span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>)
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">we get redirected to the home page</span><span class="delimiter">'</span></span>
+        at HomePage
+
+        <span class="key">when</span>:
+        homePage = browser.page HomePage
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the username is populated</span><span class="delimiter">'</span></span>
+        homePage.username() == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+
+        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">click the logout button</span><span class="delimiter">'</span></span>
+        homePage.logout()
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">we are in the home page</span><span class="delimiter">'</span></span>
+        at HomePage
+
+        <span class="key">when</span>:
+        homePage = browser.page HomePage
+
+        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">but we are no longer logged in</span><span class="delimiter">'</span></span>
+        homePage.username() == <span class="predefined-constant">null</span>
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/tests/webdriverBinaries.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
+a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+    repositories {
+...
+..
+    }
+    dependencies {
+        classpath <span class="string"><span class="delimiter">&quot;</span><span class="content">gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4</span><span class="delimiter">&quot;</span></span>
+    }
+}
+
+apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">com.energizedwork.webdriver-binaries</span><span class="delimiter">&quot;</span></span>
+
+
+dependencies {
+...
+..
+.
+}
+
+webdriverBinaries {
+    chromedriver <span class="string"><span class="delimiter">'</span><span class="content">2.40</span><span class="delimiter">'</span></span>
+    geckodriver <span class="string"><span class="delimiter">'</span><span class="content">0.21.0</span><span class="delimiter">'</span></span>
+}
+
+tasks.withType(Test) {
+    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">geb.env</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">geb.env</span><span class="delimiter">'</span></span>)
+    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">'</span></span>)
+    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">'</span></span>)
+}</code></pre>
+</div>
+</div>
+
+
+<h1 id="testingTheApp">4 Testing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+<h1 id="runningTheApp">5 Running the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-groovy/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
