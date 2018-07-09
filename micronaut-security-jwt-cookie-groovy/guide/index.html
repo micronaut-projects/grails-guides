@@ -967,6 +967,9 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
     }
 }
 
+apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">com.energizedwork.webdriver-binaries</span><span class="delimiter">&quot;</span></span>
+
+
 dependencies {
 ...
 ..
@@ -1001,7 +1004,7 @@ tasks.withType(Test) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew -Dgeb.env=chrome test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
