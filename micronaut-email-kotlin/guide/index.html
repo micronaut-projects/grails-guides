@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Send Emails from Micronaut | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Send Emails from Micronaut. Learn how to send emails with AWS SES and SendGrid from a Micronaut app and leverage @Requires annotation to load beans conditionally.' />
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-email-kotlin/guide/index.html">Send Emails from Micronaut</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-email-kotlin"><img src="https://travis-ci.org/micronaut-guides/micronaut-email-kotlin.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-email-kotlin&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-email-kotlin.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-email-kotlin.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-email-kotlin.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-email-kotlin/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.1</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#services"><strong>2.2</strong><span>Email Service</span></a></div>
+            
+            <div class="toc-item" style="margin-left:20px"><a href="#awsSesService"><strong>2.2.1</strong><span>AWS SES</span></a></div>
+            
+            <div class="toc-item" style="margin-left:20px"><a href="#sendGridService"><strong>2.2.2</strong><span>SendGrid</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#resources"><strong>2.3</strong><span>Run the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#test"><strong>2.4</strong><span>Test</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#validation"><strong>2.5</strong><span>Validation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>3</strong><span>Testing the Application</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Send Emails from Micronaut</h1>
+        <p>Learn how to send emails with AWS SES and SendGrid from a Micronaut app and leverage @Requires annotation to load beans conditionally.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide we are going to create a Micronaut app written in Groovy.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-email-kotlin/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-email-kotlin.git" class="bare">https://github.com/micronaut-guides/micronaut-email-kotlin.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+<div class="sect1">
+<h2 id="_kotlin_kapt_and_intellij">Kotlin, Kapt and IntelliJ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As of this writing IntelliJ&#8217;s built-in compiler does not directly support Kapt and annotation processing. You must instead configure Intellij to run Gradle (or Maven) compilation as a build step before running your tests or application class.</p>
+</div>
+<div class="paragraph">
+<p>First edit the run configuration for tests or for the application and select "Run Gradle task" as a build step:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/kotlin-run-1.png" alt="Intellij Settings" width="1024" height="768">
+</div>
+</div>
+<div class="paragraph">
+<p>Then add the <code>classes</code> task as task to execute for the application or for tests the <code>testClasses</code> task:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/kotlin-run-2.png" alt="Intellij Settings" width="1024" height="768">
+</div>
+</div>
+<div class="paragraph">
+<p>Now whenever you run tests or the application Micronaut classes will be generated at compilation time.</p>
+</div>
+<div class="paragraph">
+<p>Read <a href="https://docs.micronaut.io/latest/guide/index.html#kotlin">Micronaut Kotlin</a> section to learn more.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can delegate IntelliJ build/run actions to gradle completely:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/delegatetogradle.png" alt="delegatetogradle">
+</div>
+</div>
+</div>
+</div>
+
+
+<h2 id="controller">2.1 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create <code>MailController</code> which use a collaborator, <code>emailService</code> to send and email.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/MailController.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Body</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Post</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.validation.Validated</span>
+<span class="namespace">import</span> <span class="namespace">javax.validation.Valid</span>
+
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="namespace">open</span> <span class="namespace">class</span> <span class="namespace">MailController</span>(<span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">emailService</span>: <span class="namespace">EmailService</span>) {  <i class="conum" data-value="3"></i><b>(3)</b>
+
+    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="namespace">open</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> <span class="namespace">cmd</span>: <span class="namespace">EmailCmd</span>): <span class="namespace">HttpResponse</span>&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="namespace">emailService.send</span>(<span class="namespace">cmd</span>)
+        <span class="namespace">return</span> <span class="namespace">HttpResponse.ok</span>&lt;<span class="namespace">Any</span>&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path /mail/send</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add @Validated annotation at the class level to any class that requires validation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Return 200 OK as the result</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller uses a POGO supplied in the request body as a JSON Payload</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">EmailCmd</span> : Email {
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    var recipient: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    var subject: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var cc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+
+    var bcc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+
+    var htmlBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var textBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var replyTo: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    override fun recipient(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.recipient
+    }
+
+    override fun cc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.cc
+    }
+
+    override fun bcc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.bcc
+    }
+
+    override fun subject(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.subject
+    }
+
+    override fun htmlBody(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.htmlBody
+    }
+
+    override fun textBody(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.textBody
+    }
+
+    override fun replyTo(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.replyTo
+    }
+
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="services">2.2 Email Service</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/services.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an interface - <code>EmailService</code>. Any email provider present in the application should implement it.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/kotlin/main/example/micronaut/EmailService.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">interface</span> <span class="namespace">EmailService</span> {
+    <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>)
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/kotlin/main/example/micronaut/Email.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">interface</span> <span class="namespace">Email</span> {
+    <span class="namespace">fun</span> <span class="namespace">recipient</span>(): <span class="namespace">String</span>?
+    <span class="namespace">fun</span> <span class="namespace">cc</span>(): <span class="namespace">List</span>&lt;<span class="namespace">String</span>&gt;?
+    <span class="namespace">fun</span> <span class="namespace">bcc</span>(): <span class="namespace">List</span>&lt;<span class="namespace">String</span>&gt;?
+    <span class="namespace">fun</span> <span class="namespace">subject</span>(): <span class="namespace">String</span>?
+    <span class="namespace">fun</span> <span class="namespace">htmlBody</span>(): <span class="namespace">String</span>?
+    <span class="namespace">fun</span> <span class="namespace">textBody</span>(): <span class="namespace">String</span>?
+    <span class="namespace">fun</span> <span class="namespace">replyTo</span>(): <span class="namespace">String</span>?
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="awsSesService">2.2.1 AWS SES</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/services/awsSesService.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Amazon Simple Email Service (Amazon SES) is a cloud-based email sending service designed to help digital marketers and application developers send marketing, notification, and transactional emails. It is a reliable, cost-effective service for businesses of all sizes that use email to keep in contact with their customers.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add a dependency to AWS SES SDK:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.amazonaws:aws-java-sdk-ses:1.11.285</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a service which encapsulates AWS credentials provider. The bean will not be loaded if the
+environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) or system properties ( <code>aws.accesskeyid</code>, <code>aws.secretkey</code>) are not present.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/AwsCredentialsProviderCondition.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.Condition</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.ConditionContext</span>
+
+<span class="namespace">class</span> <span class="namespace">AwsCredentialsProviderCondition</span> : <span class="namespace">Condition</span> {
+
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">matches</span>(<span class="namespace">context</span>: <span class="namespace">ConditionContext</span>&lt;*&gt;): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">envOrSystemProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
+                <span class="namespace">envOrSystemProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">envOrSystemProperty</span>(<span class="namespace">env</span>: <span class="namespace">String</span>, <span class="namespace">prop</span>: <span class="namespace">String</span>): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getProperty</span>(<span class="namespace">prop</span>)) || <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getenv</span>(<span class="namespace">env</span>))
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">str</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">str</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">str</span> != <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/AwsCredentialsProviderConditionSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertFalse</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+
+<span class="type">class</span> <span class="class">AwsCredentialsProviderConditionSpec</span>: Spek({
+
+    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">AwsCredentialsProviderService loaded if condition</span><span class="delimiter">&quot;</span></span>) {
+        val applicationContext = ApplicationContext.run(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)
+        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify AwsCredentialsProviderService is NOT loaded if system properties or environment properties are not set</span><span class="delimiter">&quot;</span></span>) {
+            var exceptionThrown = <span class="predefined-constant">false</span>
+            <span class="keyword">try</span> {
+                applicationContext.getBean(<span class="key">AwsCredentialsProviderService</span>::<span class="type">class</span>.java)
+            } <span class="class">catch</span> (<span class="key">e</span>: NoSuchBeanException) {
+                exceptionThrown = <span class="predefined-constant">true</span>
+            }
+            assertTrue(exceptionThrown)
+        }
+<span class="comment">//        on(&quot;Verify AwsCredentialsProviderService loaded if system properties are set&quot;) {</span>
+<span class="comment">//            System.setProperty(&quot;aws.accesskeyid&quot;, &quot;XXXX&quot;)</span>
+<span class="comment">//            System.setProperty(&quot;aws.secretkey&quot;, &quot;YYYY&quot;)</span>
+<span class="comment">//            var exceptionThrown = false</span>
+<span class="comment">//            try {</span>
+<span class="comment">//                val awsCredentialsProviderService = applicationContext.getBean(AwsCredentialsProviderService::class.java)</span>
+<span class="comment">//                assertTrue(awsCredentialsProviderService.secretKey == &quot;YYYY&quot;)</span>
+<span class="comment">//                assertTrue(awsCredentialsProviderService.accessKey == &quot;XXXX&quot;)</span>
+<span class="comment">//            } catch (e: NoSuchBeanException) {</span>
+<span class="comment">//                exceptionThrown = true</span>
+<span class="comment">//            }</span>
+<span class="comment">//            assertFalse(exceptionThrown)</span>
+<span class="comment">//</span>
+<span class="comment">//            System.setProperty(&quot;aws.accesskeyid&quot;, null)</span>
+<span class="comment">//            System.setProperty(&quot;aws.secretkey&quot;, null)</span>
+<span class="comment">//        }</span>
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/AwsCredentialsProviderService.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.auth.AWSCredentials</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.auth.AWSCredentialsProvider</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Requires</span>
+<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.auth.BasicAWSCredentials</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Value</span>
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(<span class="namespace">condition</span> = <span class="namespace">AwsCredentialsProviderCondition</span>::<span class="namespace">class</span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="namespace">class</span> <span class="namespace">AwsCredentialsProviderService</span>(<span class="annotation">@param</span>:<span class="namespace">Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{AWS_ACCESS_KEY_ID:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">val</span> <span class="namespace">accessKeyEnv</span> : <span class="namespace">String</span>,  <i class="conum" data-value="3"></i><b>(3)</b>
+                                    <span class="annotation">@param</span>:<span class="namespace">Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{AWS_SECRET_KEY:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">val</span> <span class="namespace">secretKeyEnv</span> : <span class="namespace">String</span>,
+                                    <span class="annotation">@param</span>:<span class="namespace">Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{aws.accesskeyid:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">val</span> <span class="namespace">accessKeyProp</span> : <span class="namespace">String</span>,
+                                    <span class="annotation">@param</span>:<span class="namespace">Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{aws.secretkey:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">val</span> <span class="namespace">secretKeyProp</span> : <span class="namespace">String</span>) : <span class="namespace">AWSCredentialsProvider</span> {
+    <span class="namespace">val</span> <span class="namespace">accessKey</span> : <span class="namespace">String</span>
+    <span class="namespace">val</span> <span class="namespace">secretKey</span> : <span class="namespace">String</span>
+
+    <span class="namespace">init</span> {
+        <span class="namespace">if</span> (<span class="namespace">accessKeyEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">accessKey</span> = <span class="namespace">accessKeyEnv</span>
+        } <span class="namespace">else</span> {
+            <span class="namespace">accessKey</span> = <span class="namespace">accessKeyProp</span>
+        }
+        <span class="namespace">if</span> (<span class="namespace">secretKeyEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">secretKey</span> = <span class="namespace">accessKeyEnv</span>
+        } <span class="namespace">else</span> {
+            <span class="namespace">secretKey</span> = <span class="namespace">secretKeyProp</span>
+        }
+    }
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">refresh</span>() {
+        <span class="namespace">TODO</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">not implemented</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">getCredentials</span>(): <span class="namespace">AWSCredentials</span> {
+        <span class="namespace">return</span> <span class="namespace">BasicAWSCredentials</span>(<span class="namespace">accessKey</span>, <span class="namespace">secretKey</span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless condition is met.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Values will be resolved from system properties.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a service which sends the email with AWS Simple Email Service. The bean will not be loaded if the
+environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) or system properties (<code>aws.region</code>, <code>aws.sourceemail</code>) are not present.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/AwsSesMailCondition.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.Condition</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.ConditionContext</span>
+
+<span class="namespace">class</span> <span class="namespace">AwsSesMailCondition</span> : <span class="namespace">Condition</span> {
+
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">matches</span>(<span class="namespace">context</span>: <span class="namespace">ConditionContext</span>&lt;*&gt;): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.sourceemail</span><span class="delimiter">&quot;</span></span>)
+        &amp;&amp;  <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_REGION</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.region</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="namespace">env</span>: <span class="namespace">String</span>?, <span class="namespace">prop</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getProperty</span>(<span class="namespace">prop</span>)) ||
+                <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getenv</span>(<span class="namespace">env</span>))
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">str</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">str</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">str</span> != <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/AwsSesMailConditionSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertFalse</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+
+<span class="type">class</span> <span class="class">AwsSesMailConditionSpec</span>: Spek({
+
+    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">AwsSesMailService loaded if condition</span><span class="delimiter">&quot;</span></span>) {
+        val applicationContext = ApplicationContext.run(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)
+        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify AwsSesMailService is NOT loaded if system properties or environment properties are not set</span><span class="delimiter">&quot;</span></span>) {
+            var exceptionThrown = <span class="predefined-constant">false</span>
+            <span class="keyword">try</span> {
+                applicationContext.getBean(<span class="key">AwsSesMailService</span>::<span class="type">class</span>.java)
+            } <span class="class">catch</span> (<span class="key">e</span>: NoSuchBeanException) {
+                exceptionThrown = <span class="predefined-constant">true</span>
+            }
+            assertTrue(exceptionThrown)
+        }
+<span class="comment">//        on(&quot;Verify AwsSesMailService loaded if system properties are set&quot;) {</span>
+<span class="comment">//            System.setProperty(&quot;aws.region&quot;, &quot;XXXX&quot;)</span>
+<span class="comment">//            System.setProperty(&quot;aws.sourceemail&quot;, &quot;me@micronaut.example&quot;)</span>
+<span class="comment">//            var exceptionThrown = false</span>
+<span class="comment">//            try {</span>
+<span class="comment">//                applicationContext.getBean(AwsSesMailService::class.java)</span>
+<span class="comment">//</span>
+<span class="comment">//            } catch (e: NoSuchBeanException) {</span>
+<span class="comment">//                exceptionThrown = true</span>
+<span class="comment">//            }</span>
+<span class="comment">//            assertFalse(exceptionThrown)</span>
+<span class="comment">//        }</span>
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/AwsSesMailService.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.model.Body</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.model.Content</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.model.Destination</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.model.Message</span>
+<span class="namespace">import</span> <span class="namespace">com.amazonaws.services.simpleemail.model.SendEmailRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Primary</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Requires</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Value</span>
+<span class="namespace">import</span> <span class="namespace">org.slf4j.LoggerFactory</span>
+<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(<span class="namespace">condition</span> = <span class="namespace">AwsSesMailCondition</span>::<span class="namespace">class</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@Primary</span> <i class="conum" data-value="3"></i><b>(3)</b>
+<span class="namespace">class</span> <span class="namespace">AwsSesMailService</span>(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{AWS_REGION:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">awsRegionEnv</span>: <span class="namespace">String</span>,  <i class="conum" data-value="4"></i><b>(4)</b>
+                        <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{AWS_SOURCE_EMAIL:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">sourceEmailEnv</span>: <span class="namespace">String</span>,
+                        <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{aws.region:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">awsRegionProp</span>: <span class="namespace">String</span>,
+                        <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{aws.sourceemail:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">sourceEmailProp</span>: <span class="namespace">String</span>,
+                        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">awsCredentialsProviderService</span>: <span class="namespace">AwsCredentialsProviderService</span>?) : <span class="namespace">EmailService</span> {
+
+    <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">awsRegion</span>: <span class="namespace">String</span> = <span class="namespace">if</span> (<span class="namespace">awsRegionEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">awsRegionEnv</span> <span class="namespace">else</span> <span class="namespace">awsRegionProp</span>
+    <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">sourceEmail</span>: <span class="namespace">String</span> = <span class="namespace">if</span> (<span class="namespace">sourceEmailEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">sourceEmailEnv</span> <span class="namespace">else</span> <span class="namespace">sourceEmailProp</span>
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">bodyOfEmail</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>): <span class="namespace">Body</span> {
+        <span class="namespace">if</span> (<span class="namespace">email.htmlBody</span>() != <span class="namespace">null</span> &amp;&amp; !<span class="namespace">email.htmlBody</span>()!!.<span class="namespace">isEmpty</span>()) {
+            <span class="namespace">val</span> <span class="namespace">htmlBody</span> = <span class="namespace">Content</span>().<span class="namespace">withData</span>(<span class="namespace">email.htmlBody</span>())
+            <span class="namespace">return</span> <span class="namespace">Body</span>().<span class="namespace">withHtml</span>(<span class="namespace">htmlBody</span>)
+        }
+        <span class="namespace">if</span> (<span class="namespace">email.textBody</span>() != <span class="namespace">null</span> &amp;&amp; !<span class="namespace">email.textBody</span>()!!.<span class="namespace">isEmpty</span>()) {
+            <span class="namespace">val</span> <span class="namespace">textBody</span> = <span class="namespace">Content</span>().<span class="namespace">withData</span>(<span class="namespace">email.textBody</span>())
+            <span class="namespace">return</span> <span class="namespace">Body</span>().<span class="namespace">withHtml</span>(<span class="namespace">textBody</span>)
+        }
+        <span class="namespace">return</span> <span class="namespace">Body</span>()
+    }
+
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>) {
+
+        <span class="namespace">if</span> (<span class="namespace">awsCredentialsProviderService</span> == <span class="namespace">null</span>) {
+            <span class="namespace">if</span> (<span class="namespace">LOG.isWarnEnabled</span>) {
+                <span class="namespace">LOG.warn</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS Credentials provider not configured</span><span class="delimiter">&quot;</span></span>)
+            }
+            <span class="namespace">return</span>
+        }
+
+        <span class="namespace">var</span> <span class="namespace">destination</span> = <span class="namespace">Destination</span>().<span class="namespace">withToAddresses</span>(<span class="namespace">email.recipient</span>())
+        <span class="namespace">if</span> (<span class="namespace">email.cc</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">destination</span> = <span class="namespace">destination.withCcAddresses</span>(<span class="namespace">email.cc</span>())
+        }
+        <span class="namespace">if</span> (<span class="namespace">email.bcc</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">destination</span> = <span class="namespace">destination.withBccAddresses</span>(<span class="namespace">email.bcc</span>())
+        }
+        <span class="namespace">val</span> <span class="namespace">subject</span> = <span class="namespace">Content</span>().<span class="namespace">withData</span>(<span class="namespace">email.subject</span>())
+        <span class="namespace">val</span> <span class="namespace">body</span> = <span class="namespace">bodyOfEmail</span>(<span class="namespace">email</span>)
+        <span class="namespace">val</span> <span class="namespace">message</span> = <span class="namespace">Message</span>().<span class="namespace">withSubject</span>(<span class="namespace">subject</span>).<span class="namespace">withBody</span>(<span class="namespace">body</span>)
+
+        <span class="namespace">var</span> <span class="namespace">request</span> = <span class="namespace">SendEmailRequest</span>()
+                .<span class="namespace">withSource</span>(<span class="namespace">sourceEmail</span>)
+                .<span class="namespace">withDestination</span>(<span class="namespace">destination</span>)
+                .<span class="namespace">withMessage</span>(<span class="namespace">message</span>)
+
+        <span class="namespace">if</span> (<span class="namespace">email.replyTo</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">request</span> = <span class="namespace">request.withReplyToAddresses</span>()
+        }
+
+        <span class="namespace">try</span> {
+            <span class="namespace">if</span> (<span class="namespace">LOG.isInfoEnabled</span>) {
+                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Attempting to send an email through Amazon SES by using the AWS SDK for Java...</span><span class="delimiter">&quot;</span></span>)
+            }
+
+            <span class="namespace">val</span> <span class="namespace">client</span> = <span class="namespace">AmazonSimpleEmailServiceClientBuilder.standard</span>()
+                    .<span class="namespace">withCredentials</span>(<span class="namespace">awsCredentialsProviderService</span>)
+                    .<span class="namespace">withRegion</span>(<span class="namespace">awsRegion</span>)
+                    .<span class="namespace">build</span>()
+
+            <span class="namespace">val</span> <span class="namespace">sendEmailResult</span> = <span class="namespace">client.sendEmail</span>(<span class="namespace">request</span>)
+
+            <span class="namespace">if</span> (<span class="namespace">LOG.isInfoEnabled</span>) {
+                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Email sent! {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">sendEmailResult.toString</span>())
+            }
+        } <span class="namespace">catch</span> (<span class="namespace">ex</span>: <span class="namespace">Exception</span>) {
+            <span class="namespace">if</span> (<span class="namespace">LOG.isWarnEnabled</span>) {
+                <span class="namespace">LOG.warn</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">The email was not sent.</span><span class="delimiter">&quot;</span></span>)
+                <span class="namespace">LOG.warn</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Error message: {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">ex.message</span>)
+            }
+        }
+    }
+
+    <span class="namespace">companion</span> <span class="namespace">object</span> {
+        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">LOG</span> = <span class="namespace">LoggerFactory.getLogger</span>(<span class="namespace">AwsSesMailService</span>::<span class="namespace">class.java</span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless condition is met.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>@Primary</code> is a qualifier that indicates that a bean is the primary bean that should be selected in the case of multiple possible interface implementations.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Values will be resolved from system properties.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/AwsSesMailServiceSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertFalse</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+
+<span class="type">class</span> <span class="class">AwsSesMailServiceSpec</span>: Spek({
+
+    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">AwsSesMailService load</span><span class="delimiter">&quot;</span></span>) {
+        val applicationContext = ApplicationContext.run(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)
+        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">AwsSesMailService is not loaded if system property is not present</span><span class="delimiter">&quot;</span></span>) {
+            var exceptionThrown = <span class="predefined-constant">false</span>
+            <span class="keyword">try</span> {
+                applicationContext.getBean(<span class="key">AwsSesMailService</span>::<span class="type">class</span>.java)
+            } <span class="class">catch</span> (<span class="key">e</span>: NoSuchBeanException) {
+                exceptionThrown = <span class="predefined-constant">true</span>
+            }
+            assertTrue(exceptionThrown)
+        }
+<span class="comment">//        on(&quot;Verify AwsSesMailService loaded if system properties are set&quot;) {</span>
+<span class="comment">//        System.setProperty(&quot;aws.region&quot;, &quot;XXXX&quot;)</span>
+<span class="comment">//        System.setProperty(&quot;aws.sourceemail&quot;, &quot;me@micronaut.example&quot;)</span>
+<span class="comment">//        System.setProperty(&quot;aws.accesskeyid&quot;, &quot;XXXX&quot;)</span>
+<span class="comment">//        System.setProperty(&quot;aws.secretkey&quot;, &quot;YYYY&quot;)</span>
+<span class="comment">//            var exceptionThrown = false</span>
+<span class="comment">//            try {</span>
+<span class="comment">//                applicationContext.getBean(AwsSesMailService::class.java)</span>
+<span class="comment">//</span>
+<span class="comment">//            } catch (e: NoSuchBeanException) {</span>
+<span class="comment">//                exceptionThrown = true</span>
+<span class="comment">//            }</span>
+<span class="comment">//            assertFalse(exceptionThrown)</span>
+<span class="comment">//        }</span>
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+
+
+<h2 id="sendGridService">2.2.2 SendGrid</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/services/sendGridService.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://sendgrid.com">SendGrid</a> is a transactional email service.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>SendGrid is responsible for sending billions of emails for some of the best and brightest companies in the world.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add a dependency to SendGrid SDK:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.sendgrid:sendgrid-java:4.1.2</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a service which encapsulates the integration with SendGrid. The bean will not be loaded if the
+system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>) or environment variables (<code>SENDGRID_APIKEY</code>, <code>SENDGRID_FROM_EMAIL</code>) are not present.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/SendGridEmailCondition.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.Condition</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.ConditionContext</span>
+
+<span class="namespace">class</span> <span class="namespace">SendGridEmailCondition</span> : <span class="namespace">Condition</span> {
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">matches</span>(<span class="namespace">context</span>: <span class="namespace">ConditionContext</span>&lt;*&gt;?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_APIKEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>)
+                &amp;&amp;  <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_FROM_EMAIL</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="namespace">env</span>: <span class="namespace">String</span>?, <span class="namespace">prop</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getProperty</span>(<span class="namespace">prop</span>)) ||
+                <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getenv</span>(<span class="namespace">env</span>))
+    }
+
+    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">str</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
+        <span class="namespace">return</span> <span class="namespace">str</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">str</span> != <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/SendGridEmailConditionSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertFalse</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+
+<span class="type">class</span> <span class="class">SendGridEmailConditionSpec</span>: Spek({
+
+    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">SendGridEmailService loaded if condition</span><span class="delimiter">&quot;</span></span>) {
+        val applicationContext = ApplicationContext.run(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)
+        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify SendGridEmailService is NOT loaded if system properties or environment properties are not set</span><span class="delimiter">&quot;</span></span>) {
+            var exceptionThrown = <span class="predefined-constant">false</span>
+            <span class="keyword">try</span> {
+                applicationContext.getBean(<span class="key">SendGridEmailService</span>::<span class="type">class</span>.java)
+            } <span class="class">catch</span> (<span class="key">e</span>: NoSuchBeanException) {
+                exceptionThrown = <span class="predefined-constant">true</span>
+            }
+            assertTrue(exceptionThrown)
+        }
+<span class="comment">//        on(&quot;Verify SendGridEmailService loaded if system properties are set&quot;) {</span>
+<span class="comment">//        System.setProperty(&quot;sendgrid.apikey&quot;, &quot;XXXX&quot;)</span>
+<span class="comment">//        System.setProperty(&quot;sendgrid.fromemail&quot;, &quot;me@micronaut.example&quot;)</span>
+<span class="comment">//            var exceptionThrown = false</span>
+<span class="comment">//            try {</span>
+<span class="comment">//                applicationContext.getBean(SendGridEmailService::class.java)</span>
+<span class="comment">//</span>
+<span class="comment">//            } catch (e: NoSuchBeanException) {</span>
+<span class="comment">//                exceptionThrown = true</span>
+<span class="comment">//            }</span>
+<span class="comment">//            assertFalse(exceptionThrown)</span>
+<span class="comment">//        }</span>
+        afterGroup {
+            applicationContext.close()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/SendGridEmailService.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.Content</span>
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.Mail</span>
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.Method</span>
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.Personalization</span>
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.Request</span>
+<span class="namespace">import</span> <span class="namespace">com.sendgrid.SendGrid</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Requires</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Value</span>
+<span class="namespace">import</span> <span class="namespace">org.slf4j.LoggerFactory</span>
+<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+<span class="namespace">import</span> <span class="namespace">java.io.IOException</span>
+
+<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Requires</span>(<span class="namespace">condition</span> = <span class="namespace">SendGridEmailCondition</span>::<span class="namespace">class</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="namespace">class</span> <span class="namespace">SendGridEmailService</span>(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{SENDGRID_APIKEY:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyEnv</span>: <span class="namespace">String</span>,  <i class="conum" data-value="3"></i><b>(3)</b>
+                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{SENDGRID_FROM_EMAIL:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailEnv</span>: <span class="namespace">String</span>,
+                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{sendgrid.apikey:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyProp</span>: <span class="namespace">String</span>,
+                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{sendgrid.fromemail:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailProp</span>: <span class="namespace">String</span>) : <span class="namespace">EmailService</span> {
+    <span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">apiKey</span>: <span class="namespace">String</span>
+    <span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">fromEmail</span>: <span class="namespace">String</span>
+
+    <span class="namespace">init</span> {
+        <span class="namespace">this.apiKey</span> = <span class="namespace">if</span> (<span class="namespace">apiKeyEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyEnv</span> <span class="namespace">else</span> <span class="namespace">apiKeyProp</span>
+        <span class="namespace">this.fromEmail</span> = <span class="namespace">if</span> (<span class="namespace">fromEmailEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailEnv</span> <span class="namespace">else</span> <span class="namespace">fromEmailProp</span>
+    }
+
+    <span class="namespace">protected</span> <span class="namespace">fun</span> <span class="namespace">contentOfEmail</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>): <span class="namespace">Content</span>? {
+        <span class="namespace">if</span> (<span class="namespace">email.textBody</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">return</span> <span class="namespace">Content</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>, <span class="namespace">email.textBody</span>())
+        }
+        <span class="namespace">return</span> <span class="namespace">if</span> (<span class="namespace">email.htmlBody</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">Content</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html</span><span class="delimiter">&quot;</span></span>, <span class="namespace">email.htmlBody</span>())
+        } <span class="namespace">else</span> <span class="namespace">null</span>
+    }
+
+    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>) {
+
+        <span class="namespace">val</span> <span class="namespace">personalization</span> = <span class="namespace">Personalization</span>()
+        <span class="namespace">personalization.subject</span> = <span class="namespace">email.subject</span>()
+
+        <span class="namespace">val</span> <span class="namespace">to</span> = <span class="namespace">com.sendgrid.Email</span>(<span class="namespace">email.recipient</span>())
+        <span class="namespace">personalization.addTo</span>(<span class="namespace">to</span>)
+
+        <span class="namespace">if</span> (<span class="namespace">email.cc</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">for</span> (<span class="namespace">cc</span> <span class="namespace">in</span> <span class="namespace">email.cc</span>()!!) {
+                <span class="namespace">val</span> <span class="namespace">ccEmail</span> = <span class="namespace">com.sendgrid.Email</span>()
+                <span class="namespace">ccEmail.email</span> = <span class="namespace">cc</span>
+                <span class="namespace">personalization.addCc</span>(<span class="namespace">ccEmail</span>)
+            }
+        }
+
+        <span class="namespace">if</span> (<span class="namespace">email.bcc</span>() != <span class="namespace">null</span>) {
+            <span class="namespace">for</span> (<span class="namespace">bcc</span> <span class="namespace">in</span> <span class="namespace">email.bcc</span>()!!) {
+                <span class="namespace">val</span> <span class="namespace">bccEmail</span> = <span class="namespace">com.sendgrid.Email</span>()
+                <span class="namespace">bccEmail.email</span> = <span class="namespace">bcc</span>
+                <span class="namespace">personalization.addBcc</span>(<span class="namespace">bccEmail</span>)
+            }
+        }
+
+        <span class="namespace">val</span> <span class="namespace">mail</span> = <span class="namespace">Mail</span>()
+        <span class="namespace">val</span> <span class="namespace">from</span> = <span class="namespace">com.sendgrid.Email</span>()
+        <span class="namespace">from.email</span> = <span class="namespace">fromEmail</span>
+        <span class="namespace">mail.from</span> = <span class="namespace">from</span>
+        <span class="namespace">mail.addPersonalization</span>(<span class="namespace">personalization</span>)
+        <span class="namespace">val</span> <span class="namespace">content</span> = <span class="namespace">contentOfEmail</span>(<span class="namespace">email</span>)
+        <span class="namespace">mail.addContent</span>(<span class="namespace">content</span>!!)
+
+        <span class="namespace">val</span> <span class="namespace">sg</span> = <span class="namespace">SendGrid</span>(<span class="namespace">apiKey</span>)
+        <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">Request</span>()
+        <span class="namespace">try</span> {
+            <span class="namespace">request.method</span> = <span class="namespace">Method.POST</span>
+            <span class="namespace">request.endpoint</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">mail/send</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">request.body</span> = <span class="namespace">mail.build</span>()
+
+            <span class="namespace">val</span> <span class="namespace">response</span> = <span class="namespace">sg.api</span>(<span class="namespace">request</span>)
+            <span class="namespace">if</span> (<span class="namespace">LOG.isInfoEnabled</span>) {
+                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Status Code: {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">response.statusCode.toString</span>())
+                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Body: {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">response.body</span>)
+                <span class="namespace">for</span> (<span class="namespace">k</span> <span class="namespace">in</span> <span class="namespace">response.headers.keys</span>) {
+                    <span class="namespace">val</span> <span class="namespace">v</span> = <span class="namespace">response.headers</span>[<span class="namespace">k</span>]
+                    <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Response Header {} =&gt; {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">k</span>, <span class="namespace">v</span>)
+                }
+            }
+
+
+        } <span class="namespace">catch</span> (<span class="namespace">ex</span>: <span class="namespace">IOException</span>) {
+            <span class="namespace">if</span> (<span class="namespace">LOG.isErrorEnabled</span>) {
+                <span class="namespace">LOG.error</span>(<span class="namespace">ex.message</span>)
+            }
+        }
+    }
+
+    <span class="namespace">companion</span> <span class="namespace">object</span> {
+        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">LOG</span> = <span class="namespace">LoggerFactory.getLogger</span>(<span class="namespace">SendGridEmailService</span>::<span class="namespace">class.java</span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bean will not loaded unless condition is met.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Values will be resolved from system properties.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="resources">2.3 Run the app</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/resources.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add a logger to get more visibility:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/logback.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;configuration&gt;</span>
+
+    <span class="tag">&lt;appender</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">STDOUT</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">ch.qos.logback.core.ConsoleAppender</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="comment">&lt;!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;</span>
+        <span class="tag">&lt;encoder&gt;</span>
+            <span class="tag">&lt;pattern&gt;</span>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n<span class="tag">&lt;/pattern&gt;</span>
+        <span class="tag">&lt;/encoder&gt;</span>
+    <span class="tag">&lt;/appender&gt;</span>
+
+    <span class="tag">&lt;root</span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">info</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;appender-ref</span> <span class="attribute-name">ref</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">STDOUT</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/root&gt;</span>
+
+    <span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">example.micronaut</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+
+<span class="tag">&lt;/configuration&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use SendGrid, setup the required environment variables and run the app</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ export SENDGRID_FROM_EMAIL=email@email.com
+$ export SENDGRID_APIKEY=XXXXXX
+$ ./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use AWS SES, setup the required environment variables and run the app</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ export AWS_REGION=eu-west-1
+$ export AWS_SOURCE_EMAIL=email@email.com
+$ export AWS_ACCESS_KEY_ID=XXXXXXXX
+$ export AWS_SECRET_KEY=XXXXXXXX
+$ ./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you supply both AWS SES and SendGrid  system properties, the AWS SES <code>EmailService</code> implementation will be used due to the <code>@Primary</code> annotation.</p>
+</div>
+
+
+<h2 id="test">2.4 Test</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://spekframework.org/">Speck</a> is a Kotlin Specification Framework for the JVM.</p>
+</div>
+<div class="paragraph">
+<p>To use Spek modify <code>build.gradle</code> file as described in the <a href="http://spekframework.org/docs/latest/#_gradle">Spek documentation</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+    repositories {
+      ...
+      ..
+    }
+    dependencies {
+      ...
+      ..
+        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.2.0</span><span class="delimiter">'</span></span>
+    }
+}
+...
+..
+.
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+
+junitPlatform {
+    filters {
+        engines {
+            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+        }
+    }
+}
+
+repositories {
+  ...
+  ..
+    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">https://jcenter.bintray.com</span><span class="delimiter">&quot;</span></span> }
+}
+
+dependencies {
+...
+..
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">&quot;</span></span>
+    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.kotlin:kotlin-test:1.1.0</span><span class="delimiter">'</span></span>
+}
+...
+..
+
+test {
+    useJUnitPlatform()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In our acceptance test, beans <code>SendGridEmailService</code> or <code>AwsSesMailService</code> will not be loaded since system properties are not present.</p>
+</div>
+<div class="paragraph">
+<p>Instead, we setup a Mock which we can verify interactions against.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/MockEmailService.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Primary</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>
+<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+
+<span class="annotation">@Primary</span>
+<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">spec.name</span><span class="delimiter">&quot;</span></span>, value = <span class="string"><span class="delimiter">&quot;</span><span class="content">mailcontroller</span><span class="delimiter">&quot;</span></span>)
+<span class="annotation">@Singleton</span>
+<span class="type">class</span> <span class="class">MockEmailService</span> : EmailService {
+    val emails = mutableListOf&lt;Email&gt;()
+
+    override fun send(<span class="key">email</span>: Email) {
+        emails.add(email)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create the next test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/MailControllerSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+
+<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
+<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertEquals</span>
+<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+
+<span class="type">class</span> <span class="class">MailControllerSpec</span>: Spek({
+
+    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">MailController</span><span class="delimiter">&quot;</span></span>) {
+
+        var embeddedServer : EmbeddedServer = ApplicationContext.run(<span class="key">EmbeddedServer</span>::<span class="type">class</span>.java, <span class="class">mapOf</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">spec.name</span><span class="delimiter">&quot;</span></span> to <span class="string"><span class="delimiter">&quot;</span><span class="content">mailcontroller</span><span class="delimiter">&quot;</span></span>),
+                <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="1"></i><b>(1)</b>
+        var client : RxHttpClient = RxHttpClient.create(embeddedServer.url)  <i class="conum" data-value="2"></i><b>(2)</b>
+
+        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send interacts once email service</span><span class="delimiter">&quot;</span></span>) {
+            val cmd = EmailCmd()
+            cmd.subject = <span class="string"><span class="delimiter">&quot;</span><span class="content">Test</span><span class="delimiter">&quot;</span></span>
+            cmd.recipient = <span class="string"><span class="delimiter">&quot;</span><span class="content">delamos@grails.example</span><span class="delimiter">&quot;</span></span>
+            cmd.textBody = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola hola</span><span class="delimiter">&quot;</span></span>
+
+            val request = HttpRequest.POST(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send</span><span class="delimiter">&quot;</span></span>, cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+
+            var emailServices = embeddedServer.applicationContext.getBeansOfType(<span class="key">EmailService</span>::<span class="type">class</span>.java)
+
+            <span class="class">assertTrue</span>(emailServices.size == <span class="integer">1</span>)
+
+            var emailService = embeddedServer.applicationContext.getBean(<span class="key">EmailService</span>::<span class="type">class</span>.java)
+
+            <span class="class">assertTrue</span>(emailService is MockEmailService)
+
+            val oldcount : Int  = (emailService <span class="keyword">as</span> MockEmailService).emails.size
+
+            val rsp : HttpResponse&lt;Any&gt; = client.toBlocking().exchange(request)
+
+            assertEquals(rsp.status, HttpStatus.OK)
+
+            val count : Int  = (emailService <span class="keyword">as</span> MockEmailService).emails.size
+            assertEquals(count, oldcount + <span class="integer">1</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+
+        afterGroup {
+            client.close()
+            embeddedServer.close()
+        }
+
+    }
+})</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>emailService.send</code> method is invoked once.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="validation">2.5 Validation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/validation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We want to ensure any email request contains a subject, recipient and a text body or html body.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+</div>
+<div class="paragraph">
+<p>Hibernate Validator is a reference implementation of the validation API.</p>
+</div>
+<div class="paragraph">
+<p>Add a dependency to it:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:validation</span><span class="delimiter">&quot;</span></span>
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-validator</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create the next test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/MailControllerValidationSpec.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.context.exceptions.NoSuchBeanException</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpStatus</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
+<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.xdescribe</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
+<span class="namespace">import</span> <span class="namespace">kotlin.test.assertTrue</span>
+
+<span class="namespace">class</span> <span class="namespace">MailControllerValidationSpec</span>: <span class="namespace">Spek</span>({
+
+    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">MailController Validation</span><span class="delimiter">&quot;</span></span>) {
+        <span class="namespace">var</span> <span class="namespace">embeddedServer</span> : <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>, <span class="namespace">mapOf</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">spec.name</span><span class="delimiter">&quot;</span></span> <span class="namespace">to</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">mailcontroller</span><span class="delimiter">&quot;</span></span>),
+                <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="namespace">var</span> <span class="namespace">client</span> : <span class="namespace">RxHttpClient</span> = <span class="namespace">RxHttpClient.create</span>(<span class="namespace">embeddedServer.url</span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without subject</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">val</span> <span class="namespace">cmd</span> = <span class="namespace">EmailCmd</span>()
+            <span class="namespace">cmd.recipient</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">delamos@micronaut.example</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">cmd.textBody</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola hola</span><span class="delimiter">&quot;</span></span>
+
+            <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send</span><span class="delimiter">&quot;</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+
+            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
+            <span class="namespace">try</span> {
+                <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">HttpResponse</span>::<span class="namespace">class.java</span>)
+            } <span class="namespace">catch</span> (<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {
+                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            }
+            <span class="namespace">assertTrue</span>(<span class="namespace">exceptionThrown</span>)
+        }
+
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without recipient</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">val</span> <span class="namespace">cmd</span> = <span class="namespace">EmailCmd</span>()
+            <span class="namespace">cmd.subject</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">cmd.textBody</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola hola</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send</span><span class="delimiter">&quot;</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+
+            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
+            <span class="namespace">try</span> {
+                <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">HttpResponse</span>::<span class="namespace">class.java</span>)
+            } <span class="namespace">catch</span> (<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {
+                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            }
+            <span class="namespace">assertTrue</span>(<span class="namespace">exceptionThrown</span>)
+        }
+
+        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without either textBody or htmlBody</span><span class="delimiter">&quot;</span></span>) {
+            <span class="namespace">val</span> <span class="namespace">cmd</span> = <span class="namespace">EmailCmd</span>()
+            <span class="namespace">cmd.subject</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">cmd.recipient</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">delamos@micronaut.example</span><span class="delimiter">&quot;</span></span>
+            <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send</span><span class="delimiter">&quot;</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+
+            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
+            <span class="namespace">try</span> {
+                <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">HttpResponse</span>::<span class="namespace">class.java</span>)
+            } <span class="namespace">catch</span> (<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {
+                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            }
+            <span class="namespace">assertTrue</span>(<span class="namespace">exceptionThrown</span>)
+        }
+
+<span class="comment">//        on(&quot;/mail/send can be invoked with textBody and not htmlBody&quot;) {</span>
+<span class="comment">//            val cmd = EmailCmd()</span>
+<span class="comment">//            cmd.subject = &quot;Hola&quot;</span>
+<span class="comment">//            cmd.recipient = &quot;delamos@micronaut.example&quot;</span>
+<span class="comment">//            cmd.textBody = &quot;Hello&quot;</span>
+<span class="comment">//</span>
+<span class="comment">//            val request = HttpRequest.POST(&quot;mail/send&quot;, cmd) </span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="comment">//</span>
+<span class="comment">//            val rsp = client.toBlocking().exchange(request, HttpResponse::class.java)</span>
+<span class="comment">//</span>
+<span class="comment">//            assertEquals(rsp.status(), HttpStatus.OK)</span>
+<span class="comment">//       }</span>
+<span class="comment">//</span>
+<span class="comment">//        on(&quot;/mail/send can be invoked with htmlBody and not textBody&quot;) {</span>
+<span class="comment">//            val cmd = EmailCmd()</span>
+<span class="comment">//            cmd.subject = &quot;Hola&quot;</span>
+<span class="comment">//            cmd.recipient = &quot;delamos@micronaut.example&quot;</span>
+<span class="comment">//            cmd.htmlBody = &quot;&lt;h1&gt;Hello&lt;/h1&gt;&quot;</span>
+<span class="comment">//            val request = HttpRequest.POST(&quot;/mail/send&quot;, cmd) </span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="comment">//</span>
+<span class="comment">//            val rsp = client.toBlocking().exchange(request, HttpResponse::class.java)</span>
+<span class="comment">//</span>
+<span class="comment">//            assertEquals(rsp.status(), HttpStatus.OK)</span>
+<span class="comment">//        }</span>
+
+        <span class="namespace">afterGroup</span> {
+            <span class="namespace">client.close</span>()
+            <span class="namespace">embeddedServer.close</span>()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In order to satisfy the test, create an email constraints annotation</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/EmailConstraints.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">javax.validation.Constraint</span>;
+<span class="keyword">import</span> <span class="include">javax.validation.Payload</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.ElementType</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.Retention</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.RetentionPolicy</span>;
+<span class="keyword">import</span> <span class="include">java.lang.annotation.Target</span>;
+
+<span class="annotation">@Constraint</span>(validatedBy = { EmailConstraintsValidator.class })
+<span class="annotation">@Target</span>( { <span class="predefined-type">ElementType</span>.TYPE })
+<span class="annotation">@Retention</span>(<span class="predefined-type">RetentionPolicy</span>.RUNTIME)
+<span class="directive">public</span> <span class="annotation">@interface</span> EmailConstraints {
+
+    <span class="predefined-type">String</span> message() <span class="keyword">default</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">{email.invalid}</span><span class="delimiter">&quot;</span></span>;
+    <span class="predefined-type">Class</span>&lt;?&gt;<span class="type">[]</span> groups() <span class="keyword">default</span> { };
+    <span class="predefined-type">Class</span>&lt;? <span class="directive">extends</span> Payload&gt;<span class="type">[]</span> payload() <span class="keyword">default</span> { };
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and a validator:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/EmailConstraintsValidator.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+
+<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidator</span>;
+<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidatorContext</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailConstraintsValidator</span> <span class="directive">implements</span> ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
+        <span class="keyword">return</span> email !=<span class="predefined-constant">null</span> &amp;&amp;
+                (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody()));
+    }
+
+    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
+        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Annotate Email with <code>EmailConstraints</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>
+<span class="include">import</span> <span class="include">javax.validation.constraints.NotNull</span>
+
+<span class="annotation">@EmailConstraints</span>
+<span class="include">class</span> <span class="include">EmailCmd</span> : <span class="include">Email</span> {
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    <span class="include">var</span> <span class="include">recipient</span>: <span class="include">String</span>? = <span class="include">null</span>
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    <span class="include">var</span> <span class="include">subject</span>: <span class="include">String</span>? = <span class="include">null</span>
+
+    <span class="include">var</span> <span class="include">cc</span>: <span class="include">List</span>&lt;<span class="include">String</span>&gt;? = <span class="include">null</span>
+
+    <span class="include">var</span> <span class="include">bcc</span>: <span class="include">List</span>&lt;<span class="include">String</span>&gt;? = <span class="include">null</span>
+
+    <span class="include">var</span> <span class="include">htmlBody</span>: <span class="include">String</span>? = <span class="include">null</span>
+
+    <span class="include">var</span> <span class="include">textBody</span>: <span class="include">String</span>? = <span class="include">null</span>
+
+    <span class="include">var</span> <span class="include">replyTo</span>: <span class="include">String</span>? = <span class="include">null</span>
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">recipient</span>(): <span class="include">String</span>? {
+        <span class="include">return</span> <span class="include">this.recipient</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">cc</span>(): <span class="include">List</span>&lt;<span class="include">String</span>&gt;? {
+        <span class="include">return</span> <span class="include">this.cc</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">bcc</span>(): <span class="include">List</span>&lt;<span class="include">String</span>&gt;? {
+        <span class="include">return</span> <span class="include">this.bcc</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">subject</span>(): <span class="include">String</span>? {
+        <span class="include">return</span> <span class="include">this.subject</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">htmlBody</span>(): <span class="include">String</span>? {
+        <span class="include">return</span> <span class="include">this.htmlBody</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">textBody</span>(): <span class="include">String</span>? {
+        <span class="include">return</span> <span class="include">this.textBody</span>
+    }
+
+    <span class="include">override</span> <span class="include">fun</span> <span class="include">replyTo</span>(): <span class="include">String</span>? {
+        <span class="include">return</span> <span class="include">this.replyTo</span>
+    }
+
+}</code></pre>
+</div>
+</div>
+
+
+<h1 id="testingTheApp">3 Testing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>

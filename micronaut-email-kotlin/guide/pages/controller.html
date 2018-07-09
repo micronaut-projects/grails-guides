@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.1 Controller null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Send Emails from Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.1 Controller</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="controller">2.1 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-email-kotlin/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create <code>MailController</code> which use a collaborator, <code>emailService</code> to send and email.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/MailController.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Body</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Post</span>
+<span class="namespace">import</span> <span class="namespace">io.micronaut.validation.Validated</span>
+<span class="namespace">import</span> <span class="namespace">javax.validation.Valid</span>
+
+<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="namespace">open</span> <span class="namespace">class</span> <span class="namespace">MailController</span>(<span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">emailService</span>: <span class="namespace">EmailService</span>) {  <i class="conum" data-value="3"></i><b>(3)</b>
+
+    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="namespace">open</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> <span class="namespace">cmd</span>: <span class="namespace">EmailCmd</span>): <span class="namespace">HttpResponse</span>&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="namespace">emailService.send</span>(<span class="namespace">cmd</span>)
+        <span class="namespace">return</span> <span class="namespace">HttpResponse.ok</span>&lt;<span class="namespace">Any</span>&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path /mail/send</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add @Validated annotation at the class level to any class that requires validation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Return 200 OK as the result</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller uses a POGO supplied in the request body as a JSON Payload</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">EmailCmd</span> : Email {
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    var recipient: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    <span class="annotation">@NotBlank</span>
+    <span class="annotation">@NotNull</span>
+    var subject: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var cc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+
+    var bcc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+
+    var htmlBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var textBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    var replyTo: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+
+    override fun recipient(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.recipient
+    }
+
+    override fun cc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.cc
+    }
+
+    override fun bcc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.bcc
+    }
+
+    override fun subject(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.subject
+    }
+
+    override fun htmlBody(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.htmlBody
+    }
+
+    override fun textBody(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.textBody
+    }
+
+    override fun replyTo(): <span class="predefined-type">String</span>? {
+        <span class="keyword">return</span> <span class="local-variable">this</span>.replyTo
+    }
+
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
