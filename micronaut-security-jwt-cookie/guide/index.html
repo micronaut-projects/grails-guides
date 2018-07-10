@@ -87,7 +87,7 @@
         <h1>Micronaut JWT authentication via Cookies</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) based authentication where the JWT tokens are transported via Cookies.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M1</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
     </header>
     
 
@@ -763,7 +763,7 @@ the necessary dependencies:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
 ...
 ..
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
+    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.5.0</span><span class="delimiter">&quot;</span></span>
     testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
 </div>
@@ -1027,8 +1027,8 @@ dependencies {
 }
 
 webdriverBinaries {
-    chromedriver <span class="string"><span class="delimiter">'</span><span class="content">2.38</span><span class="delimiter">'</span></span>
-    geckodriver <span class="string"><span class="delimiter">'</span><span class="content">0.20.1</span><span class="delimiter">'</span></span>
+    chromedriver <span class="string"><span class="delimiter">'</span><span class="content">2.40</span><span class="delimiter">'</span></span>
+    geckodriver <span class="string"><span class="delimiter">'</span><span class="content">0.21.0</span><span class="delimiter">'</span></span>
 }
 
 tasks.withType(Test) {
