@@ -284,7 +284,7 @@ function addJsClass() {
 
     <span class="annotation">@Override</span>
     <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
-        email &amp;&amp; (email.textBody || email.htmlBody) &amp;&amp; email.subject &amp;&amp; email.recipient
+        email &amp;&amp; (email.textBody || email.htmlBody)
     }
 }</code></pre>
 </div>
@@ -298,23 +298,27 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
 <span class="include">import</span> <span class="include">groovy.transform.ToString</span>
 <span class="include">import</span> <span class="include">javax.validation.Validation</span>
+<span class="include">import</span> <span class="include">javax.validation.constraints.NotBlank</span>
+<span class="include">import</span> <span class="include">javax.validation.constraints.NotNull</span>
 
 <span class="annotation">@ToString</span>
 <span class="annotation">@CompileStatic</span>
 <span class="annotation">@EmailConstraints</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="include">class</span> <span class="include">EmailCmd</span> <span class="include">implements</span> <span class="include">Email</span> {
 
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="include">String</span> <span class="include">recipient</span>
+
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="include">String</span> <span class="include">subject</span>
+
     <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">cc</span> = <span class="type">[]</span>
     <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">bcc</span> = <span class="type">[]</span>
     <span class="include">String</span> <span class="include">htmlBody</span>
     <span class="include">String</span> <span class="include">textBody</span>
     <span class="include">String</span> <span class="include">replyTo</span>
-
-    <span class="include">boolean</span> <span class="include">hasErrors</span>() {
-        <span class="include">Validation.buildDefaultValidatorFactory</span>().<span class="include">validator.validate</span>(<span class="include">this</span>)
-    }
 }</code></pre>
 </div>
 </div>

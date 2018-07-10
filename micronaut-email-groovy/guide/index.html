@@ -87,7 +87,7 @@
         <h1>Send Emails from Micronaut</h1>
         <p>Learn how to send emails with AWS SES and SendGrid from a Micronaut app and leverage @Requires annotation to load beans conditionally.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M1</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M2</p>
     </header>
     
 
@@ -213,7 +213,10 @@
 <p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example --features groovy</code></p>
+<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
 <p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
@@ -244,26 +247,27 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Body</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Post</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>
+<span class="keyword">import</span> <span class="include">javax.validation.Valid</span>
 
 <span class="annotation">@Slf4j</span>
 <span class="annotation">@CompileStatic</span>
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail</span><span class="delimiter">'</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
 <span class="type">class</span> <span class="class">MailController</span> {
 
     EmailService emailService
 
-    MailController( EmailService  emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
+    MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
         <span class="local-variable">this</span>.emailService = emailService
     }
 
-    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">'</span><span class="content">/send</span><span class="delimiter">'</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    HttpResponse send(<span class="annotation">@Body</span> EmailCmd cmd) {
-        <span class="keyword">if</span> ( cmd.hasErrors() ) {
-            <span class="keyword">return</span> HttpResponse.badRequest()
-        }
+
+    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">'</span><span class="content">/send</span><span class="delimiter">'</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
         log.info <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span>, cmd.toString()
         emailService.send(cmd)
-        HttpResponse.ok()  <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse.ok()  <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -276,18 +280,26 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Constructor injection</td>
+<td>Add @Validated annotation at the class level to any class that requires validation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
+<td>Constructor injection</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Use a POGO supplied as a JSON payload in the request to populate the email.</td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use a POGO supplied as a JSON payload in the request to populate the email.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Return 200 OK as the result</td>
 </tr>
 </table>
@@ -302,27 +314,22 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <span class="annotation">@CompileStatic</span>
 <span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
 
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="predefined-type">String</span> recipient
+
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="predefined-type">String</span> subject
+
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="type">[]</span>
     <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="type">[]</span>
     <span class="predefined-type">String</span> htmlBody
     <span class="predefined-type">String</span> textBody
     <span class="predefined-type">String</span> replyTo
 
-    <span class="type">boolean</span> hasErrors() { <i class="conum" data-value="1"></i><b>(1)</b>
-        <span class="predefined-constant">false</span>
-    }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>We will use a custom validation. See <a href="#validation">CustomValidation</a> section to learn more.</td>
-</tr>
-</table>
 </div>
 
 
@@ -1454,7 +1461,7 @@ $ ./gradlew run</code></pre>
 
     <span class="annotation">@Override</span>
     <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
-        email &amp;&amp; (email.textBody || email.htmlBody) &amp;&amp; email.subject &amp;&amp; email.recipient
+        email &amp;&amp; (email.textBody || email.htmlBody)
     }
 }</code></pre>
 </div>
@@ -1468,23 +1475,27 @@ $ ./gradlew run</code></pre>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
 <span class="include">import</span> <span class="include">groovy.transform.ToString</span>
 <span class="include">import</span> <span class="include">javax.validation.Validation</span>
+<span class="include">import</span> <span class="include">javax.validation.constraints.NotBlank</span>
+<span class="include">import</span> <span class="include">javax.validation.constraints.NotNull</span>
 
 <span class="annotation">@ToString</span>
 <span class="annotation">@CompileStatic</span>
 <span class="annotation">@EmailConstraints</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="include">class</span> <span class="include">EmailCmd</span> <span class="include">implements</span> <span class="include">Email</span> {
 
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="include">String</span> <span class="include">recipient</span>
+
+    <span class="annotation">@NotNull</span>
+    <span class="annotation">@NotBlank</span>
     <span class="include">String</span> <span class="include">subject</span>
+
     <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">cc</span> = <span class="type">[]</span>
     <span class="include">List</span>&lt;<span class="include">String</span>&gt; <span class="include">bcc</span> = <span class="type">[]</span>
     <span class="include">String</span> <span class="include">htmlBody</span>
     <span class="include">String</span> <span class="include">textBody</span>
     <span class="include">String</span> <span class="include">replyTo</span>
-
-    <span class="include">boolean</span> <span class="include">hasErrors</span>() {
-        <span class="include">Validation.buildDefaultValidatorFactory</span>().<span class="include">validator.validate</span>(<span class="include">this</span>)
-    }
 }</code></pre>
 </div>
 </div>
