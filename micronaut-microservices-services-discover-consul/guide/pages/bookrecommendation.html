@@ -242,10 +242,10 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.schedulers.Schedulers</span>;
 
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BookController</span> {
@@ -263,7 +263,7 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
     <span class="directive">public</span> Flowable&lt;BookRecommendation&gt; index() {
         <span class="keyword">return</span> bookCatalogueOperations.findAll()
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
-                                    .filter(rsp -&gt; rsp.body())
+                                    .filter(HttpResponse::body)
                                     .map(rsp -&gt; b))
                 .map(book -&gt; <span class="keyword">new</span> BookRecommendation(book.getName()));
     }

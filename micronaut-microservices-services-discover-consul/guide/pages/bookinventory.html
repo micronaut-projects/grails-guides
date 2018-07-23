@@ -134,13 +134,13 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/stock/{isbn}</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="directive">public</span> Single&lt;HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt;&gt; stock(<span class="annotation">@NotNull</span> <span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotNull</span> <span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
         <span class="keyword">if</span> (!bookInventoryOptional.isPresent()) {
-           <span class="keyword">return</span> Single.just(HttpResponse.notFound());
+           <span class="keyword">return</span> HttpResponse.notFound();
         }
         BookInventory bookInventory = bookInventoryOptional.get();
-        <span class="keyword">return</span> Single.just(HttpResponse.ok(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE));
+        <span class="keyword">return</span> HttpResponse.ok(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE);
     }
 
     <span class="directive">private</span> Optional&lt;BookInventory&gt; bookInventoryByIsbn(<span class="predefined-type">String</span> isbn) {
@@ -292,7 +292,7 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
         HttpClientResponseException ex = <span class="predefined-constant">null</span>;
         noExceptionThrown = <span class="predefined-constant">true</span>;
         <span class="keyword">try</span> {
-            rsp = rxHttpClient.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/XXXXX</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Boolean</span>.class);
+            rxHttpClient.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/XXXXX</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Boolean</span>.class);
         } <span class="keyword">catch</span> (HttpClientResponseException e) {
             noExceptionThrown = <span class="predefined-constant">false</span>;
             ex = e;

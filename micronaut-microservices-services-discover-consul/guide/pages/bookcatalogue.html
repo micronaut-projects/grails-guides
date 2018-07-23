@@ -107,15 +107,18 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
 
+<span class="keyword">import</span> <span class="include">java.util.Arrays</span>;
+<span class="keyword">import</span> <span class="include">java.util.List</span>;
+
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BooksController</span> {
 
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    Flowable&lt;<span class="predefined-type">Book</span>&gt; index() { <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; index() {
         <span class="predefined-type">Book</span> buildingMicroservices = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>);
         <span class="predefined-type">Book</span> releaseIt = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>);
         <span class="predefined-type">Book</span> cidelivery = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">0321601912</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Continuous Delivery:</span><span class="delimiter">&quot;</span></span>);
-        <span class="keyword">return</span> Flowable.just(buildingMicroservices, releaseIt, cidelivery);
+        <span class="keyword">return</span> <span class="predefined-type">Arrays</span>.asList(buildingMicroservices, releaseIt, cidelivery);
     }
 }</code></pre>
 </div>
@@ -234,7 +237,7 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
     }
 
     <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() {
         <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; books = client.jsonStream(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Book</span>.class).toList().blockingGet();
         assertEquals(<span class="integer">3</span>, books.size());
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>)));
