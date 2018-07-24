@@ -101,6 +101,52 @@ function addJsClass() {
 <p>In this guide, we are going to create three microservices and register them with Consul Service discovery.
 You will discover how Micronaut eases Consul integration.</p>
 </div>
+<div class="paragraph">
+<p>Lets describe the microservices:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order.  I uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Initially we are going to hardcode the addresses where the different services are in the <code>bookcatalogue</code> service.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/hardcoded.svg" alt="hardcoded">
+</div>
+</div>
+<div class="paragraph">
+<p>As shown in the previous image, the <code>bookcatalogue</code> hardcodes references to its collaborators.</p>
+</div>
+<div class="paragraph">
+<p>In the second part of this tutorial we are going to use a discovery service.</p>
+</div>
+<div class="paragraph">
+<p>The services register when they start up:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-registration.svg" alt="discovery service registration">
+</div>
+</div>
+<div class="paragraph">
+<p>When a service wants to do a request to other service, it uses the discovery service to retrieve the address.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-flow.svg" alt="discovery service flow">
+</div>
+</div>
 
 
 <h2 id="requirements">1.1 What you will need</h2>
