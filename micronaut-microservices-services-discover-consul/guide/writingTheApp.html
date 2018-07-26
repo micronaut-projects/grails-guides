@@ -813,8 +813,8 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
                         .onErrorResumeNext(throwable -&gt; {
                             <span class="keyword">if</span> (throwable <span class="keyword">instanceof</span> HttpClientResponseException) {
-                                HttpClientException ex = ((HttpClientResponseException) throwable);
-                                <span class="keyword">if</span> (((HttpClientResponseException) ex).getResponse().getStatus().equals(HttpStatus.NOT_FOUND)) {
+                                HttpClientResponseException ex = ((HttpClientResponseException) throwable);
+                                <span class="keyword">if</span> (ex.getResponse().getStatus().equals(HttpStatus.NOT_FOUND)) {
                                     <span class="keyword">return</span> Single.just(HttpResponse.ok(<span class="predefined-type">Boolean</span>.FALSE));
                                 }
                             }
