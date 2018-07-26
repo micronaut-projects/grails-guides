@@ -249,14 +249,9 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientException</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
-
-<span class="keyword">import</span> <span class="include">java.util.Collections</span>;
 
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BookController</span> {
@@ -277,7 +272,7 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
                         .onErrorResumeNext(throwable -&gt; {
                             <span class="keyword">if</span> (throwable <span class="keyword">instanceof</span> HttpClientResponseException) {
-                                HttpClientResponseException ex = ((HttpClientResponseException) throwable);
+                                HttpClientResponseException ex = (HttpClientResponseException) throwable;
                                 <span class="keyword">if</span> (ex.getResponse().getStatus().equals(HttpStatus.NOT_FOUND)) {
                                     <span class="keyword">return</span> Single.just(HttpResponse.ok(<span class="predefined-type">Boolean</span>.FALSE));
                                 }
