@@ -782,9 +782,17 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientException</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
+<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Collections</span>;
 
 <span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BookController</span> {
@@ -798,13 +806,23 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
         <span class="local-variable">this</span>.bookInventoryOperations = bookInventoryOperations;
     }
 
+
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="directive">public</span> Flowable&lt;BookRecommendation&gt; index() {
         <span class="keyword">return</span> bookCatalogueOperations.findAll()
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
-                                    .filter(HttpResponse::body)
-                                    .map(rsp -&gt; b))
-                .map(book -&gt; <span class="keyword">new</span> BookRecommendation(book.getName()));
+                        .onErrorResumeNext(throwable -&gt; {
+                            <span class="keyword">if</span> (throwable <span class="keyword">instanceof</span> HttpClientResponseException) {
+                                HttpClientException ex = ((HttpClientResponseException) throwable);
+                                <span class="keyword">if</span> (((HttpClientResponseException) ex).getResponse().getStatus().equals(HttpStatus.NOT_FOUND)) {
+                                    <span class="keyword">return</span> Single.just(HttpResponse.ok(<span class="predefined-type">Boolean</span>.FALSE));
+                                }
+                            }
+                            <span class="keyword">return</span> Single.error(throwable);
+                        })
+                        .filter(HttpResponse::body)
+                        .map(rsp -&gt; b)
+                ).map(book -&gt; <span class="keyword">new</span> BookRecommendation(book.getName()));
     }
 }</code></pre>
 </div>
