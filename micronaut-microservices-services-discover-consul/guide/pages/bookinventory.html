@@ -124,7 +124,9 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.QueryValue</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
 
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
@@ -137,13 +139,13 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/stock/{isbn}</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="directive">public</span> HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotNull</span> <span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
         <span class="keyword">if</span> (!bookInventoryOptional.isPresent()) {
-           <span class="keyword">return</span> HttpResponse.notFound();
+           <span class="keyword">return</span> Maybe.empty(); <i class="conum" data-value="5"></i><b>(5)</b>
         }
         BookInventory bookInventory = bookInventoryOptional.get();
-        <span class="keyword">return</span> HttpResponse.ok(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE);
+        <span class="keyword">return</span> Maybe.just(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE);
     }
 
     <span class="directive">private</span> Optional&lt;BookInventory&gt; bookInventoryByIsbn(<span class="predefined-type">String</span> isbn) {
@@ -270,10 +272,10 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> stopServer() {
-        <span class="keyword">if</span>(server != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (server != <span class="predefined-constant">null</span>) {
             server.stop();
         }
-        <span class="keyword">if</span>(rxHttpClient != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (rxHttpClient != <span class="predefined-constant">null</span>) {
             rxHttpClient.stop();
         }
     }
@@ -292,8 +294,12 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
         assertEquals(rsp.status(), HttpStatus.OK);
         assertTrue(rsp.body());
 
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> testBooksControllerWithNonExistingIsbn() {
         HttpClientResponseException ex = <span class="predefined-constant">null</span>;
-        noExceptionThrown = <span class="predefined-constant">true</span>;
+        <span class="type">boolean</span> noExceptionThrown = <span class="predefined-constant">true</span>;
         <span class="keyword">try</span> {
             rxHttpClient.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/XXXXX</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Boolean</span>.class);
         } <span class="keyword">catch</span> (HttpClientResponseException e) {
@@ -306,6 +312,7 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
         HttpResponse response = ex.getResponse();
 
         assertEquals(response.getStatus(), HttpStatus.NOT_FOUND);
+
     }
 }</code></pre>
 </div>
