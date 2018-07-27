@@ -34,6 +34,9 @@
     <loc>http://guides.micronaut.io/micronaut-http-client/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-microservices-services-discover-consul/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
