@@ -806,7 +806,6 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.QueryValue</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
 
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
@@ -821,12 +820,9 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.QueryValue</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
 
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
 
@@ -957,12 +953,8 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.context.env.Environment</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.QueryValue</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.retry.annotation.Fallback</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
-
 <span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
 
@@ -972,7 +964,7 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BookInventoryClientStub</span> <span class="directive">implements</span> BookInventoryOperations {
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@QueryValue</span> <span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         <span class="keyword">if</span>(isbn.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>)) {
             <span class="keyword">return</span> Maybe.just(<span class="predefined-type">Boolean</span>.TRUE);
 
