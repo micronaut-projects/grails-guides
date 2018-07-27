@@ -119,18 +119,12 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookinventory</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.QueryValue</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
-
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
-<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotNull</span>;
 <span class="keyword">import</span> <span class="include">java.util.Optional</span>;
 
 <span class="annotation">@Validated</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -139,13 +133,13 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/stock/{isbn}</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="directive">public</span> Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> <span class="predefined-type">Boolean</span> stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
         <span class="keyword">if</span> (!bookInventoryOptional.isPresent()) {
-           <span class="keyword">return</span> Maybe.empty(); <i class="conum" data-value="5"></i><b>(5)</b>
+           <span class="keyword">return</span> <span class="predefined-constant">null</span>; <i class="conum" data-value="5"></i><b>(5)</b>
         }
         BookInventory bookInventory = bookInventoryOptional.get();
-        <span class="keyword">return</span> Maybe.just(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE);
+        <span class="keyword">return</span> bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE;
     }
 
     <span class="directive">private</span> Optional&lt;BookInventory&gt; bookInventoryByIsbn(<span class="predefined-type">String</span> isbn) {
