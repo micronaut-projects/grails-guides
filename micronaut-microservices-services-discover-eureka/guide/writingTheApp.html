@@ -105,7 +105,60 @@ function addJsClass() {
 </div>
 
 
-
+<div class="paragraph">
+<p>Lets describe the microservices:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order.  I uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Initially we are going to hardcode the addresses where the different services are in the <code>bookcatalogue</code> service.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/hardcoded.svg" alt="hardcoded">
+</div>
+</div>
+<div class="paragraph">
+<p>As shown in the previous image, the <code>bookcatalogue</code> hardcodes references to its collaborators.</p>
+</div>
+<div class="paragraph">
+<p>In the second part of this tutorial we are going to use a discovery service.</p>
+</div>
+<div class="paragraph">
+<p>The services register when they start up:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-registration.svg" alt="discovery service registration">
+</div>
+</div>
+<div class="paragraph">
+<p>When a service wants to do a request to other service, it uses the discovery service to retrieve the address.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-flow.svg" alt="discovery service flow">
+</div>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
 
 
 <h2 id="bookcatalogue">2.1 Catalogue Microservice</h2>
@@ -231,7 +284,9 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>;
 <span class="keyword">import</span> <span class="include">org.junit.AfterClass</span>;
@@ -245,14 +300,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BooksControllerTest</span> {
     <span class="directive">private</span> <span class="directive">static</span> EmbeddedServer server;
-    <span class="directive">private</span> <span class="directive">static</span> RxStreamingHttpClient client;
+    <span class="directive">private</span> <span class="directive">static</span> HttpClient client;
 
     <span class="annotation">@BeforeClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> setupServer() {
         server = ApplicationContext.run(EmbeddedServer.class);
         client = server
                 .getApplicationContext()
-                .createBean(RxStreamingHttpClient.class, server.getURL());
+                .createBean(HttpClient.class, server.getURL());
     }
 
     <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -267,7 +322,8 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
     <span class="annotation">@Test</span>
     <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() {
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; books = client.jsonStream(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Book</span>.class).toList().blockingGet();
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="predefined-type">List</span> books = client.toBlocking().retrieve(request, Argument.of(<span class="predefined-type">List</span>.class, <span class="predefined-type">Book</span>.class)); <i class="conum" data-value="3"></i><b>(3)</b>
         assertEquals(<span class="integer">3</span>, books.size());
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>)));
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>)));
@@ -280,6 +336,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>For JUnit you can write methods to start and stop the server for the scope of the test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Parse easily JSON into Java objects.</td>
 </tr>
 </table>
 </div>
@@ -366,16 +430,12 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookinventory</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
-
 <span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
-<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotNull</span>;
 <span class="keyword">import</span> <span class="include">java.util.Optional</span>;
 
 <span class="annotation">@Validated</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -384,13 +444,13 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/stock/{isbn}</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="directive">public</span> HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotNull</span> <span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> <span class="predefined-type">Boolean</span> stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
         <span class="keyword">if</span> (!bookInventoryOptional.isPresent()) {
-           <span class="keyword">return</span> HttpResponse.notFound();
+           <span class="keyword">return</span> <span class="predefined-constant">null</span>; <i class="conum" data-value="5"></i><b>(5)</b>
         }
         BookInventory bookInventory = bookInventoryOptional.get();
-        <span class="keyword">return</span> HttpResponse.ok(bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE);
+        <span class="keyword">return</span> bookInventory.getStock() &gt; <span class="integer">0</span> ? <span class="predefined-type">Boolean</span>.TRUE : <span class="predefined-type">Boolean</span>.FALSE;
     }
 
     <span class="directive">private</span> Optional&lt;BookInventory&gt; bookInventoryByIsbn(<span class="predefined-type">String</span> isbn) {
@@ -517,10 +577,10 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
 
     <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> stopServer() {
-        <span class="keyword">if</span>(server != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (server != <span class="predefined-constant">null</span>) {
             server.stop();
         }
-        <span class="keyword">if</span>(rxHttpClient != <span class="predefined-constant">null</span>) {
+        <span class="keyword">if</span> (rxHttpClient != <span class="predefined-constant">null</span>) {
             rxHttpClient.stop();
         }
     }
@@ -539,8 +599,12 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
         assertEquals(rsp.status(), HttpStatus.OK);
         assertTrue(rsp.body());
 
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> testBooksControllerWithNonExistingIsbn() {
         HttpClientResponseException ex = <span class="predefined-constant">null</span>;
-        noExceptionThrown = <span class="predefined-constant">true</span>;
+        <span class="type">boolean</span> noExceptionThrown = <span class="predefined-constant">true</span>;
         <span class="keyword">try</span> {
             rxHttpClient.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/XXXXX</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Boolean</span>.class);
         } <span class="keyword">catch</span> (HttpClientResponseException e) {
@@ -553,6 +617,7 @@ default package: <code>example.micronaut.bookinventory</code>.</p>
         HttpResponse response = ex.getResponse();
 
         assertEquals(response.getStatus(), HttpStatus.NOT_FOUND);
+
     }
 }</code></pre>
 </div>
@@ -732,11 +797,12 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+
+<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
 
 <span class="directive">public</span> <span class="type">interface</span> <span class="class">BookInventoryOperations</span> {
-    Single&lt;HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt;&gt; stock(<span class="predefined-type">String</span> isbn);
+    Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn);
 }</code></pre>
 </div>
 </div>
@@ -745,16 +811,17 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+
+<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
 
 <span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8082</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">interface</span> <span class="class">BookInventoryClient</span> <span class="directive">extends</span> BookInventoryOperations {
 
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/{isbn}</span><span class="delimiter">&quot;</span></span>)
-    Single&lt;HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt;&gt; stock(<span class="predefined-type">String</span> isbn);
+    Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn);
 }</code></pre>
 </div>
 </div>
@@ -774,7 +841,6 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
 <span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
@@ -791,13 +857,14 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
         <span class="local-variable">this</span>.bookInventoryOperations = bookInventoryOperations;
     }
 
+
     <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="directive">public</span> Flowable&lt;BookRecommendation&gt; index() {
         <span class="keyword">return</span> bookCatalogueOperations.findAll()
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
-                                    .filter(HttpResponse::body)
-                                    .map(rsp -&gt; b))
-                .map(book -&gt; <span class="keyword">new</span> BookRecommendation(book.getName()));
+                        .filter(<span class="predefined-type">Boolean</span>::booleanValue)
+                        .map(rsp -&gt; b)
+                ).map(book -&gt; <span class="keyword">new</span> BookRecommendation(book.getName()));
     }
 }</code></pre>
 </div>
@@ -877,11 +944,10 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.context.env.Environment</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.retry.annotation.Fallback</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Single</span>;
-
+<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
 <span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
 
 <span class="annotation">@Requires</span>(env = Environment.TEST)
 <span class="annotation">@Fallback</span>
@@ -889,14 +955,14 @@ default package: <code>example.micronaut.bookrecommendation</code>.</p>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BookInventoryClientStub</span> <span class="directive">implements</span> BookInventoryOperations {
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> Single&lt;HttpResponse&lt;<span class="predefined-type">Boolean</span>&gt;&gt; stock(<span class="predefined-type">String</span> isbn) {
+    <span class="directive">public</span> Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn) {
         <span class="keyword">if</span>(isbn.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>)) {
-            <span class="keyword">return</span> Single.just(HttpResponse.ok(<span class="predefined-type">Boolean</span>.TRUE));
+            <span class="keyword">return</span> Maybe.just(<span class="predefined-type">Boolean</span>.TRUE);
 
         } <span class="keyword">else</span> <span class="keyword">if</span>(isbn.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>)) {
-            <span class="keyword">return</span> Single.just(HttpResponse.ok(<span class="predefined-type">Boolean</span>.FALSE));
+            <span class="keyword">return</span> Maybe.just(<span class="predefined-type">Boolean</span>.FALSE);
         }
-        <span class="keyword">return</span> Single.just(HttpResponse.notFound());
+        <span class="keyword">return</span> Maybe.empty();
     }
 }</code></pre>
 </div>
