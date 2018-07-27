@@ -205,7 +205,9 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>;
 <span class="keyword">import</span> <span class="include">org.junit.AfterClass</span>;
@@ -219,14 +221,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BooksControllerTest</span> {
     <span class="directive">private</span> <span class="directive">static</span> EmbeddedServer server;
-    <span class="directive">private</span> <span class="directive">static</span> RxStreamingHttpClient client;
+    <span class="directive">private</span> <span class="directive">static</span> HttpClient client;
 
     <span class="annotation">@BeforeClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> setupServer() {
         server = ApplicationContext.run(EmbeddedServer.class);
         client = server
                 .getApplicationContext()
-                .createBean(RxStreamingHttpClient.class, server.getURL());
+                .createBean(HttpClient.class, server.getURL());
     }
 
     <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -241,7 +243,8 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
     <span class="annotation">@Test</span>
     <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() {
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; books = client.jsonStream(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Book</span>.class).toList().blockingGet();
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="predefined-type">List</span> books = client.toBlocking().retrieve(request, Argument.of(<span class="predefined-type">List</span>.class, <span class="predefined-type">Book</span>.class)); <i class="conum" data-value="3"></i><b>(3)</b>
         assertEquals(<span class="integer">3</span>, books.size());
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>)));
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>)));
@@ -254,6 +257,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>For JUnit you can write methods to start and stop the server for the scope of the test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Parse easily JSON into Java objects.</td>
 </tr>
 </table>
 </div>

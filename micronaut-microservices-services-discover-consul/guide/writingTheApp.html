@@ -106,6 +106,61 @@ function addJsClass() {
 
 
 <div class="paragraph">
+<p>Lets describe the microservices you are going to build through the tutorial.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order.  I uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Initially we are going to hardcode the addresses where the different services are in the <code>bookcatalogue</code> service.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/hardcoded.svg" alt="hardcoded">
+</div>
+</div>
+<div class="paragraph">
+<p>As shown in the previous image, the <code>bookcatalogue</code> hardcodes references to its collaborators.</p>
+</div>
+<div class="paragraph">
+<p>In the second part of this tutorial we are going to use a discovery service.</p>
+</div>
+<div class="paragraph">
+<p>o learn about registration patterns:</p>
+</div>
+<div class="paragraph">
+<p>We will use a <strong>self‑registration pattern</strong>. Thus, each service instance is responsible for registering and
+deregistering itself with the service registry.
+Also, if required, a service instance sends heartbeat requests to prevent its registration from expiring.</p>
+</div>
+<div class="paragraph">
+<p>Services register when they start up:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-registration.svg" alt="discovery service registration">
+</div>
+</div>
+<div class="paragraph">
+<p>We will use <strong>client‑side service discovery</strong>, clients query the service registry,
+select an available instance, and make a request.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-flow.svg" alt="discovery service flow">
+</div>
+</div>
+<div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
 </div>
 <div class="imageblock">
@@ -238,7 +293,9 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
 
 <span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>;
 <span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>;
 <span class="keyword">import</span> <span class="include">org.junit.AfterClass</span>;
@@ -252,14 +309,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
 <span class="directive">public</span> <span class="type">class</span> <span class="class">BooksControllerTest</span> {
     <span class="directive">private</span> <span class="directive">static</span> EmbeddedServer server;
-    <span class="directive">private</span> <span class="directive">static</span> RxStreamingHttpClient client;
+    <span class="directive">private</span> <span class="directive">static</span> HttpClient client;
 
     <span class="annotation">@BeforeClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> setupServer() {
         server = ApplicationContext.run(EmbeddedServer.class);
         client = server
                 .getApplicationContext()
-                .createBean(RxStreamingHttpClient.class, server.getURL());
+                .createBean(HttpClient.class, server.getURL());
     }
 
     <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -274,7 +331,8 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
     <span class="annotation">@Test</span>
     <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() {
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; books = client.jsonStream(HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>), <span class="predefined-type">Book</span>.class).toList().blockingGet();
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="predefined-type">List</span> books = client.toBlocking().retrieve(request, Argument.of(<span class="predefined-type">List</span>.class, <span class="predefined-type">Book</span>.class)); <i class="conum" data-value="3"></i><b>(3)</b>
         assertEquals(<span class="integer">3</span>, books.size());
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>)));
         assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>)));
@@ -287,6 +345,14 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>For JUnit you can write methods to start and stop the server for the scope of the test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Parse easily JSON into Java objects.</td>
 </tr>
 </table>
 </div>
