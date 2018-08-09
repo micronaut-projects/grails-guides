@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath "org.grails:grails-docs:3.2.7"
-	classpath "gradle.plugin.org.aim42:htmlSanityCheck:0.9.7"
+	    classpath "gradle.plugin.org.aim42:htmlSanityCheck:0.9.7"
     }
 }
 
