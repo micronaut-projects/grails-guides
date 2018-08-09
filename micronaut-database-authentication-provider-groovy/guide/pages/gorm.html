@@ -120,21 +120,21 @@ testing and an automatic GraphQL schema generator.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
-    gormVersion = <span class="string"><span class="delimiter">'</span><span class="content">6.1.9.RELEASE</span><span class="delimiter">'</span></span>
-    h2Version = <span class="string"><span class="delimiter">'</span><span class="content">1.4.196</span><span class="delimiter">'</span></span>
-    tomcatJdbcVersion = <span class="string"><span class="delimiter">'</span><span class="content">8.5.28</span><span class="delimiter">'</span></span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
+    gormVersion = '6.1.9.RELEASE'
+    h2Version = '1.4.196'
+    tomcatJdbcVersion = '8.5.28'
 }
 
 dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-validator</span><span class="delimiter">&quot;</span></span>
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-gorm</span><span class="delimiter">&quot;</span></span>
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-datastore-gorm-hibernate5:</span><span class="inline"><span class="inline-delimiter">$</span>gormVersion</span><span class="delimiter">&quot;</span></span>
-    runtime <span class="string"><span class="delimiter">&quot;</span><span class="content">com.h2database:h2:</span><span class="inline"><span class="inline-delimiter">$</span>h2Version</span><span class="delimiter">&quot;</span></span>
-    runtime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.tomcat:tomcat-jdbc:</span><span class="inline"><span class="inline-delimiter">$</span>tomcatJdbcVersion</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut.configuration:hibernate-validator"
+    compile "io.micronaut.configuration:hibernate-gorm"
+    compile "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
+    runtime "com.h2database:h2:$h2Version"
+    runtime "org.apache.tomcat:tomcat-jdbc:$tomcatJdbcVersion"
 }</code></pre>
 </div>
 </div>
@@ -173,28 +173,28 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import io.micronaut.security.authentication.providers.UserState
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">User</span> <span class="directive">implements</span> GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> username
-    <span class="predefined-type">String</span> password
-    <span class="type">boolean</span> enabled = <span class="predefined-constant">true</span>
-    <span class="type">boolean</span> accountExpired = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> accountLocked = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> passwordExpired = <span class="predefined-constant">false</span>
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
+    String username
+    String password
+    boolean enabled = true
+    boolean accountExpired = false
+    boolean accountLocked = false
+    boolean passwordExpired = false
 
-    <span class="directive">static</span> constraints = {
-        username <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
-        password <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">password</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        username nullable: false, blank: false, unique: true
+        password nullable: false, blank: false, password: true
     }
 
-    <span class="directive">static</span> mapping = {
-        password <span class="key">column</span>: <span class="string"><span class="delimiter">'</span><span class="content">`password`</span><span class="delimiter">'</span></span>
+    static mapping = {
+        password column: '`password`'
     }
 }</code></pre>
 </div>
@@ -227,17 +227,17 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">Role</span> <span class="directive">implements</span> GormEntity&lt;<span class="predefined-type">Role</span>&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> authority
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+    String authority
 
-    <span class="directive">static</span> constraints = {
-        authority <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        authority nullable: false, unique: true
     }
 }</code></pre>
 </div>
@@ -270,19 +270,19 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">UserRole</span> <span class="directive">implements</span> GormEntity&lt;UserRole&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
     User user
-    <span class="predefined-type">Role</span> role
+    Role role
 
-    <span class="directive">static</span> constraints = {
-        user <span class="key">nullable</span>: <span class="predefined-constant">false</span>
-        role <span class="key">nullable</span>: <span class="predefined-constant">false</span>
+    static constraints = {
+        user nullable: false
+        role nullable: false
     }
 }</code></pre>
 </div>
@@ -322,21 +322,21 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.User
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(User) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> UserGormService {
+@Service(User) <i class="conum" data-value="1"></i><b>(1)</b>
+interface UserGormService {
 
-    User save(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> password)
+    User save(String username, String password)
 
-    User findByUsername(<span class="predefined-type">String</span> username)
+    User findByUsername(String username)
 
-    User findById(<span class="predefined-type">Serializable</span> id)
+    User findById(Serializable id)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -350,16 +350,16 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(<span class="predefined-type">Role</span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> RoleGormService {
-    <span class="predefined-type">Role</span> save(<span class="predefined-type">String</span> authority)
-    <span class="predefined-type">Role</span> find(<span class="predefined-type">String</span> authority)
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+@Service(Role) <i class="conum" data-value="1"></i><b>(1)</b>
+interface RoleGormService {
+    Role save(String authority)
+    Role find(String authority)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -373,29 +373,29 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.UserRole</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Query</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.services.Query
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(UserRole)
-<span class="type">interface</span> UserRoleGormService {
+@Service(UserRole)
+interface UserRoleGormService {
 
-    UserRole save(User user, <span class="predefined-type">Role</span> role)
+    UserRole save(User user, Role role)
 
-    UserRole find(User user, <span class="predefined-type">Role</span> role)
+    UserRole find(User user, Role role)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 
-    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">select </span><span class="inline"><span class="inline-delimiter">$</span>r</span><span class="content">.authority
-    from </span><span class="inline"><span class="inline-delimiter">${</span>UserRole ur<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span>User u = ur.user<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span><span class="predefined-type">Role</span> r = ur.role<span class="inline-delimiter">}</span></span><span class="content">
-    where </span><span class="inline"><span class="inline-delimiter">$</span>u</span><span class="content">.username = </span><span class="inline"><span class="inline-delimiter">$</span>username</span><span class="delimiter">&quot;&quot;&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; findAllAuthoritiesByUsername(<span class="predefined-type">String</span> username)
+    @Query("""select $r.authority
+    from ${UserRole ur}
+    inner join ${User u = ur.user}
+    inner join ${Role r = ur.role}
+    where $u.username = $username""") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;String&gt; findAllAuthoritiesByUsername(String username)
 }</code></pre>
 </div>
 </div>

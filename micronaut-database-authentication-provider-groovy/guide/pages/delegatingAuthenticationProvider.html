@@ -133,30 +133,30 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserFetcher</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.UserFetcher
+import io.micronaut.security.authentication.providers.UserState
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class UserFetcherService implements UserFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
+    protected final UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userGormService = userGormService
+        this.userGormService = userGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;UserState&gt; findByUsername(<span class="predefined-type">String</span> username) {
-        UserState user = userGormService.findByUsername(username) <span class="keyword">as</span> UserState
-        (user ? Flowable.just(user) : Flowable.empty()) <span class="keyword">as</span> Publisher&lt;UserState&gt;
+    @Override
+    Publisher&lt;UserState&gt; findByUsername(String username) {
+        UserState user = userGormService.findByUsername(username) as UserState
+        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
     }
 }</code></pre>
 </div>
@@ -190,25 +190,25 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.AuthoritiesFetcher</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import io.micronaut.security.authentication.providers.AuthoritiesFetcher
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthoritiesFetcherService implements AuthoritiesFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
+    protected final UserRoleGormService userRoleGormService
 
     AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
+        this.userRoleGormService = userRoleGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
+    @Override
+    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
         Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
     }
 }</code></pre>
@@ -246,41 +246,41 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
 ...
 ..
 .
-    springSecurityCryptoVersion=<span class="string"><span class="delimiter">'</span><span class="content">4.2.5.RELEASE</span><span class="delimiter">'</span></span>
+    springSecurityCryptoVersion='4.2.5.RELEASE'
 }
 dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.security:spring-security-crypto:</span><span class="inline"><span class="inline-delimiter">${</span>springSecurityCryptoVersion<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+    compile "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.PasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">BCryptPasswordEncoderService</span> <span class="directive">implements</span> PasswordEncoder {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class BCryptPasswordEncoderService implements PasswordEncoder {
 
-    org.springframework.security.crypto.password.PasswordEncoder delegate = <span class="keyword">new</span> BCryptPasswordEncoder()
+    org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder()
 
-    <span class="predefined-type">String</span> encode(<span class="predefined-type">String</span> rawPassword) {
-        <span class="keyword">return</span> delegate.encode(rawPassword)
+    String encode(String rawPassword) {
+        return delegate.encode(rawPassword)
     }
 
-    <span class="annotation">@Override</span>
-    <span class="type">boolean</span> matches(<span class="predefined-type">String</span> rawPassword, <span class="predefined-type">String</span> encodedPassword) {
-        <span class="keyword">return</span> delegate.matches(rawPassword, encodedPassword)
+    @Override
+    boolean matches(String rawPassword, String encodedPassword) {
+        return delegate.matches(rawPassword, encodedPassword)
     }
 }</code></pre>
 </div>

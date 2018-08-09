@@ -93,31 +93,31 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example
 
-<span class="keyword">import</span> <span class="include">example.micronaut.services.RegisterService</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.Micronaut</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.event.ApplicationEventListener</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.event.ServerStartupEvent</span>
+import example.micronaut.services.RegisterService
+import groovy.transform.CompileStatic
+import io.micronaut.runtime.Micronaut
+import javax.inject.Singleton
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.runtime.server.event.ServerStartupEvent
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">Application</span> <span class="directive">implements</span> ApplicationEventListener&lt;ServerStartupEvent&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+@CompileStatic
+@Singleton
+class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
 
-    <span class="directive">protected</span> <span class="directive">final</span> RegisterService registerService
+    protected final RegisterService registerService
 
     Application(RegisterService registerService) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.registerService = registerService
+        this.registerService = registerService
     }
 
-    <span class="annotation">@Override</span>
-    <span class="type">void</span> onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
-        registerService.register(<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>,[<span class="string"><span class="delimiter">'</span><span class="content">ROLE_GRAILS</span><span class="delimiter">'</span></span>]) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Override
+    void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
+        registerService.register('user','user',['ROLE_GRAILS']) <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
-    <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+    static void main(String[] args) {
         Micronaut.run(Application.class)
     }
 }</code></pre>
@@ -144,53 +144,53 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.UserRole</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.transactions.Transactional</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.PasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.transactions.Transactional
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">RegisterService</span> {
+@CompileStatic
+@Singleton
+class RegisterService {
 
-    <span class="directive">protected</span> <span class="directive">final</span> RoleGormService roleGormService
-    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
-    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
-    <span class="directive">protected</span> <span class="directive">final</span> PasswordEncoder passwordEncoder
+    protected final RoleGormService roleGormService
+    protected final UserGormService userGormService
+    protected final UserRoleGormService userRoleGormService
+    protected final PasswordEncoder passwordEncoder
 
     RegisterService(RoleGormService roleGormService,
                     UserGormService userGormService,
                     PasswordEncoder passwordEncoder,
                     UserRoleGormService userRoleGormService) {
-        <span class="local-variable">this</span>.roleGormService = roleGormService
-        <span class="local-variable">this</span>.userGormService = userGormService
-        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
-        <span class="local-variable">this</span>.passwordEncoder = passwordEncoder
+        this.roleGormService = roleGormService
+        this.userGormService = userGormService
+        this.userRoleGormService = userRoleGormService
+        this.passwordEncoder = passwordEncoder
     }
 
-    <span class="annotation">@Transactional</span>
-    <span class="type">void</span> register(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> rawPassword, <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; authorities) {
+    @Transactional
+    void register(String username, String rawPassword, List&lt;String&gt; authorities) {
 
         User user = userGormService.findByUsername(username)
-        <span class="keyword">if</span> ( !user ) {
-            <span class="directive">final</span> <span class="predefined-type">String</span> encodedPassword = passwordEncoder.encode(rawPassword)
+        if ( !user ) {
+            final String encodedPassword = passwordEncoder.encode(rawPassword)
             user = userGormService.save(username, encodedPassword)
         }
 
-        <span class="keyword">if</span> ( user &amp;&amp; authorities ) {
+        if ( user &amp;&amp; authorities ) {
 
-            <span class="keyword">for</span> ( <span class="predefined-type">String</span> authority : authorities ) {
-                <span class="predefined-type">Role</span> role = roleGormService.find(authority)
-                <span class="keyword">if</span> ( !role ) {
+            for ( String authority : authorities ) {
+                Role role = roleGormService.find(authority)
+                if ( !role ) {
                     role = roleGormService.save(authority)
                 }
                 UserRole userRole = userRoleGormService.find(user, role)
-                <span class="keyword">if</span> ( !userRole ) {
+                if ( !userRole ) {
                     userRoleGormService.save(user, role)
                 }
             }

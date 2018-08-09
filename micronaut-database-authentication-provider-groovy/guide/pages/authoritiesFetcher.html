@@ -94,25 +94,25 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.AuthoritiesFetcher</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import io.micronaut.security.authentication.providers.AuthoritiesFetcher
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthoritiesFetcherService implements AuthoritiesFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
+    protected final UserRoleGormService userRoleGormService
 
     AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
+        this.userRoleGormService = userRoleGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
+    @Override
+    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
         Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
     }
 }</code></pre>

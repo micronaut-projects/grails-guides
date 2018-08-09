@@ -100,21 +100,21 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.User
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(User) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> UserGormService {
+@Service(User) <i class="conum" data-value="1"></i><b>(1)</b>
+interface UserGormService {
 
-    User save(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> password)
+    User save(String username, String password)
 
-    User findByUsername(<span class="predefined-type">String</span> username)
+    User findByUsername(String username)
 
-    User findById(<span class="predefined-type">Serializable</span> id)
+    User findById(Serializable id)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -128,16 +128,16 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(<span class="predefined-type">Role</span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> RoleGormService {
-    <span class="predefined-type">Role</span> save(<span class="predefined-type">String</span> authority)
-    <span class="predefined-type">Role</span> find(<span class="predefined-type">String</span> authority)
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+@Service(Role) <i class="conum" data-value="1"></i><b>(1)</b>
+interface RoleGormService {
+    Role save(String authority)
+    Role find(String authority)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -151,29 +151,29 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.UserRole</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Query</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.services.Query
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(UserRole)
-<span class="type">interface</span> UserRoleGormService {
+@Service(UserRole)
+interface UserRoleGormService {
 
-    UserRole save(User user, <span class="predefined-type">Role</span> role)
+    UserRole save(User user, Role role)
 
-    UserRole find(User user, <span class="predefined-type">Role</span> role)
+    UserRole find(User user, Role role)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 
-    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">select </span><span class="inline"><span class="inline-delimiter">$</span>r</span><span class="content">.authority
-    from </span><span class="inline"><span class="inline-delimiter">${</span>UserRole ur<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span>User u = ur.user<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span><span class="predefined-type">Role</span> r = ur.role<span class="inline-delimiter">}</span></span><span class="content">
-    where </span><span class="inline"><span class="inline-delimiter">$</span>u</span><span class="content">.username = </span><span class="inline"><span class="inline-delimiter">$</span>username</span><span class="delimiter">&quot;&quot;&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; findAllAuthoritiesByUsername(<span class="predefined-type">String</span> username)
+    @Query("""select $r.authority
+    from ${UserRole ur}
+    inner join ${User u = ur.user}
+    inner join ${Role r = ur.role}
+    where $u.username = $username""") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;String&gt; findAllAuthoritiesByUsername(String username)
 }</code></pre>
 </div>
 </div>

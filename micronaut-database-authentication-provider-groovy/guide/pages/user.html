@@ -93,28 +93,28 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import io.micronaut.security.authentication.providers.UserState
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">User</span> <span class="directive">implements</span> GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> username
-    <span class="predefined-type">String</span> password
-    <span class="type">boolean</span> enabled = <span class="predefined-constant">true</span>
-    <span class="type">boolean</span> accountExpired = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> accountLocked = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> passwordExpired = <span class="predefined-constant">false</span>
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
+    String username
+    String password
+    boolean enabled = true
+    boolean accountExpired = false
+    boolean accountLocked = false
+    boolean passwordExpired = false
 
-    <span class="directive">static</span> constraints = {
-        username <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
-        password <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">password</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        username nullable: false, blank: false, unique: true
+        password nullable: false, blank: false, password: true
     }
 
-    <span class="directive">static</span> mapping = {
-        password <span class="key">column</span>: <span class="string"><span class="delimiter">'</span><span class="content">`password`</span><span class="delimiter">'</span></span>
+    static mapping = {
+        password column: '`password`'
     }
 }</code></pre>
 </div>

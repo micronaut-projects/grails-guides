@@ -94,30 +94,30 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserFetcher</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.UserFetcher
+import io.micronaut.security.authentication.providers.UserState
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class UserFetcherService implements UserFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
+    protected final UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userGormService = userGormService
+        this.userGormService = userGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;UserState&gt; findByUsername(<span class="predefined-type">String</span> username) {
-        UserState user = userGormService.findByUsername(username) <span class="keyword">as</span> UserState
-        (user ? Flowable.just(user) : Flowable.empty()) <span class="keyword">as</span> Publisher&lt;UserState&gt;
+    @Override
+    Publisher&lt;UserState&gt; findByUsername(String username) {
+        UserState user = userGormService.findByUsername(username) as UserState
+        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
     }
 }</code></pre>
 </div>

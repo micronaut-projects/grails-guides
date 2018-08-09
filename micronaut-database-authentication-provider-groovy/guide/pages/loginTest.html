@@ -94,54 +94,54 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/LoginControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpMethod</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.validator.JwtTokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.validator.TokenValidator</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.security.token.validator.TokenValidator
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">LoginControllerSpec</span> <span class="directive">extends</span> Specification {
+class LoginControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">attempt to access /login without supplying credentials server responds BAD REQUEST</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
         client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
+        then:
         HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == <span class="integer">400</span>
+        e.status.code == 400
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/login with valid credentials for a database user returns 200 and access token and refresh token</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void '/login with valid credentials for a database user returns 200 and access token and refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('user', 'user')) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
         rsp.body.get().refreshToken

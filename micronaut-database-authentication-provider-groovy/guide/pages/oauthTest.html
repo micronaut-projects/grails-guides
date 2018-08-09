@@ -94,92 +94,92 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/OauthControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpMethod</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.generator.claims.JwtClaims</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.validator.JwtTokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.validator.TokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.security.token.validator.TokenValidator
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">OauthControllerSpec</span> <span class="directive">extends</span> Specification {
+class OauthControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
     HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token endpoint returns BAD request if required parameters not present</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>)
+    void '/oauth/access_token endpoint returns BAD request if required parameters not present'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
                 .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
         client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
+        then:
         HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == <span class="integer">400</span>
+        e.status.code == 400
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">Users can generate a new token by requesting to /oauth/access_token with refresh token</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'Users can generate a new token by requesting to /oauth/access_token with refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>))  <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password'))  <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> accessToken = rsp.body.get().accessToken
-        <span class="predefined-type">String</span> refreshToken = rsp.body.get().refreshToken
+        when:
+        String accessToken = rsp.body.get().accessToken
+        String refreshToken = rsp.body.get().refreshToken
 
-        <span class="key">then</span>:
+        then:
         accessToken
         refreshToken
 
-        <span class="key">when</span>:
-        sleep(<span class="integer">1</span>_000)
-        request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>)
+        when:
+        sleep(1_000)
+        request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(<span class="keyword">new</span> TokenRefreshRequest(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, refreshToken)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new TokenRefreshRequest("refresh_token", refreshToken)) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; tokenRsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        tokenRsp.status.code == <span class="integer">200</span>
+        then:
+        tokenRsp.status.code == 200
         tokenRsp.body.isPresent()
 
-        <span class="key">and</span>: <span class="string"><span class="delimiter">'</span><span class="content">a new access token was generated</span><span class="delimiter">'</span></span>
+        and: 'a new access token was generated'
         tokenRsp.body.get().accessToken
         tokenRsp.body.get().accessToken != accessToken
 
-        <span class="key">when</span>:
+        when:
         TokenValidator tokenValidator = embeddedServer.applicationContext.getBean(JwtTokenValidator) <i class="conum" data-value="5"></i><b>(5)</b>
         Publisher authentication = tokenValidator.validateToken(accessToken)
 
-        <span class="key">then</span>:
+        then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
-        <span class="key">and</span>:
+        and:
         Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 }</code></pre>

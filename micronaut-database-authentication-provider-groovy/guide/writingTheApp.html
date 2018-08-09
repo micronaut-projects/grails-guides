@@ -178,14 +178,14 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
-    ldaptiveVersion = <span class="string"><span class="delimiter">'</span><span class="content">1.2.3</span><span class="delimiter">'</span></span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
+    ldaptiveVersion = '1.2.3'
 }
 dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.ldaptive:ldaptive:</span><span class="inline"><span class="inline-delimiter">${</span>ldaptiveVersion<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+    compile "org.ldaptive:ldaptive:${ldaptiveVersion}"
 }</code></pre>
 </div>
 </div>
@@ -198,10 +198,10 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">ldap</span>:
-  <span class="key">server</span>: <span class="string"><span class="content">ldap.forumsys.com</span></span>
-  <span class="key">port</span>: <span class="string"><span class="content">389</span></span>
-  <span class="key">basedn</span>: <span class="string"><span class="content">cn=read-only-admin,dc=example,dc=com</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">ldap:
+  server: ldap.forumsys.com
+  port: 389
+  basedn: cn=read-only-admin,dc=example,dc=com</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -210,101 +210,101 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/providers/LdapService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.providers
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.providers
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileDynamic</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.ConnectionConfig</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.Credential</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.DefaultConnectionFactory</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.auth.Authenticator</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.auth.FormatDnResolver</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.auth.PooledBindAuthenticationHandler</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.pool.BlockingConnectionPool</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.pool.IdlePruneStrategy</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.pool.PoolConfig</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.pool.PooledConnectionFactory</span>
-<span class="keyword">import</span> <span class="include">org.ldaptive.pool.SearchValidator</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import io.micronaut.context.annotation.Value
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import io.micronaut.security.authentication.UserDetails
+import io.reactivex.Flowable
+import org.ldaptive.ConnectionConfig
+import org.ldaptive.Credential
+import org.ldaptive.DefaultConnectionFactory
+import org.ldaptive.auth.Authenticator
+import org.ldaptive.auth.FormatDnResolver
+import org.ldaptive.auth.PooledBindAuthenticationHandler
+import org.ldaptive.pool.BlockingConnectionPool
+import org.ldaptive.pool.IdlePruneStrategy
+import org.ldaptive.pool.PoolConfig
+import org.ldaptive.pool.PooledConnectionFactory
+import org.ldaptive.pool.SearchValidator
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.annotation.PostConstruct</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.time.Duration</span>
+import javax.annotation.PostConstruct
+import javax.inject.Singleton
+import java.time.Duration
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">LdapService</span> <span class="directive">implements</span> AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class LdapService implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> ldapServer
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">Integer</span> ldapPort
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> baseDn
-    <span class="directive">private</span> <span class="predefined-type">Authenticator</span> ldaptiveAuthenticator
+    protected final String ldapServer
+    protected final Integer ldapPort
+    protected final String baseDn
+    private Authenticator ldaptiveAuthenticator
 
-    LdapService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${ldap.server}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> ldapServer, <i class="conum" data-value="3"></i><b>(3)</b>
-                <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${ldap.port}</span><span class="delimiter">'</span></span>) <span class="predefined-type">Integer</span> port,
-                <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">'</span><span class="content">${ldap.basedn}</span><span class="delimiter">'</span></span>) <span class="predefined-type">String</span> baseDn) {
-        <span class="local-variable">this</span>.ldapServer = ldapServer
-        <span class="local-variable">this</span>.ldapPort = port
-        <span class="local-variable">this</span>.baseDn = baseDn
+    LdapService(@Value('${ldap.server}') String ldapServer, <i class="conum" data-value="3"></i><b>(3)</b>
+                @Value('${ldap.port}') Integer port,
+                @Value('${ldap.basedn}') String baseDn) {
+        this.ldapServer = ldapServer
+        this.ldapPort = port
+        this.baseDn = baseDn
     }
 
-    <span class="annotation">@PostConstruct</span> <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="type">void</span> initialize() {
-        FormatDnResolver dnResolver = <span class="keyword">new</span> FormatDnResolver()
+    @PostConstruct <i class="conum" data-value="4"></i><b>(4)</b>
+    void initialize() {
+        FormatDnResolver dnResolver = new FormatDnResolver()
         dnResolver.setFormat(baseDn)
-        ConnectionConfig connectionConfig = <span class="keyword">new</span> ConnectionConfig()
+        ConnectionConfig connectionConfig = new ConnectionConfig()
         connectionConfig.with {
-            setConnectTimeout(<span class="predefined-type">Duration</span>.ofSeconds(<span class="integer">500</span>))
-            setResponseTimeout(<span class="predefined-type">Duration</span>.ofSeconds(<span class="integer">1000</span>))
-            setLdapUrl(<span class="string"><span class="delimiter">&quot;</span><span class="content">ldap://</span><span class="delimiter">&quot;</span></span> + ldapServer + <span class="string"><span class="delimiter">&quot;</span><span class="content">:</span><span class="delimiter">&quot;</span></span> + ldapPort)
+            setConnectTimeout(Duration.ofSeconds(500))
+            setResponseTimeout(Duration.ofSeconds(1000))
+            setLdapUrl("ldap://" + ldapServer + ":" + ldapPort)
         }
-        DefaultConnectionFactory connectionFactory = <span class="keyword">new</span> DefaultConnectionFactory()
+        DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory()
         connectionFactory.setConnectionConfig(connectionConfig)
-        PoolConfig poolConfig = <span class="keyword">new</span> PoolConfig()
+        PoolConfig poolConfig = new PoolConfig()
         poolConfig.with {
-            setMinPoolSize(<span class="integer">1</span>)
-            setMaxPoolSize(<span class="integer">2</span>)
-            setValidateOnCheckOut(<span class="predefined-constant">true</span>)
-            setValidateOnCheckIn(<span class="predefined-constant">true</span>)
-            setValidatePeriodically(<span class="predefined-constant">false</span>)
+            setMinPoolSize(1)
+            setMaxPoolSize(2)
+            setValidateOnCheckOut(true)
+            setValidateOnCheckIn(true)
+            setValidatePeriodically(false)
         }
-        SearchValidator searchValidator = <span class="keyword">new</span> SearchValidator()
-        IdlePruneStrategy pruneStrategy = <span class="keyword">new</span> IdlePruneStrategy()
-        BlockingConnectionPool connectionPool = <span class="keyword">new</span> BlockingConnectionPool()
+        SearchValidator searchValidator = new SearchValidator()
+        IdlePruneStrategy pruneStrategy = new IdlePruneStrategy()
+        BlockingConnectionPool connectionPool = new BlockingConnectionPool()
         connectionPool.with {
             setPoolConfig(poolConfig)
-            setBlockWaitTime(<span class="predefined-type">Duration</span>.ofSeconds(<span class="integer">1000</span>))
+            setBlockWaitTime(Duration.ofSeconds(1000))
             setValidator(searchValidator)
             setPruneStrategy(pruneStrategy)
             setConnectionFactory(connectionFactory)
             initialize()
         }
-        PooledConnectionFactory pooledConnectionFactory = <span class="keyword">new</span> PooledConnectionFactory()
+        PooledConnectionFactory pooledConnectionFactory = new PooledConnectionFactory()
         pooledConnectionFactory.setConnectionPool(connectionPool)
-        PooledBindAuthenticationHandler handler = <span class="keyword">new</span> PooledBindAuthenticationHandler()
+        PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler()
         handler.setConnectionFactory(pooledConnectionFactory)
-        ldaptiveAuthenticator = <span class="keyword">new</span> <span class="predefined-type">Authenticator</span>()
+        ldaptiveAuthenticator = new Authenticator()
         ldaptiveAuthenticator.setDnResolver(dnResolver)
         ldaptiveAuthenticator.setAuthenticationHandler(handler)
     }
 
-    <span class="annotation">@CompileDynamic</span>
-    <span class="annotation">@Override</span>
+    @CompileDynamic
+    @Override
     Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        <span class="directive">final</span> <span class="predefined-type">String</span> username = authenticationRequest.getIdentity() <span class="keyword">as</span> <span class="predefined-type">String</span>
-        <span class="directive">final</span> <span class="predefined-type">String</span> password = authenticationRequest.getSecret() <span class="keyword">as</span> <span class="predefined-type">String</span>
-        Credential credential = <span class="keyword">new</span> Credential(password)
-        org.ldaptive.auth.AuthenticationRequest req = <span class="keyword">new</span> org.ldaptive.auth.AuthenticationRequest(username, credential)
+        final String username = authenticationRequest.getIdentity() as String
+        final String password = authenticationRequest.getSecret() as String
+        Credential credential = new Credential(password)
+        org.ldaptive.auth.AuthenticationRequest req = new org.ldaptive.auth.AuthenticationRequest(username, credential)
         org.ldaptive.auth.AuthenticationResponse response = ldaptiveAuthenticator.authenticate(req)
-        Flowable.just(response.getResult() ? <span class="keyword">new</span> UserDetails(username, <span class="type">[]</span>) <i class="conum" data-value="5"></i><b>(5)</b>
-                : <span class="keyword">new</span> AuthenticationFailed())
+        Flowable.just(response.getResult() ? new UserDetails(username, []) <i class="conum" data-value="5"></i><b>(5)</b>
+                : new AuthenticationFailed())
     }
 }</code></pre>
 </div>
@@ -356,21 +356,21 @@ testing and an automatic GraphQL schema generator.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
-    gormVersion = <span class="string"><span class="delimiter">'</span><span class="content">6.1.9.RELEASE</span><span class="delimiter">'</span></span>
-    h2Version = <span class="string"><span class="delimiter">'</span><span class="content">1.4.196</span><span class="delimiter">'</span></span>
-    tomcatJdbcVersion = <span class="string"><span class="delimiter">'</span><span class="content">8.5.28</span><span class="delimiter">'</span></span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
+    gormVersion = '6.1.9.RELEASE'
+    h2Version = '1.4.196'
+    tomcatJdbcVersion = '8.5.28'
 }
 
 dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-validator</span><span class="delimiter">&quot;</span></span>
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-gorm</span><span class="delimiter">&quot;</span></span>
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-datastore-gorm-hibernate5:</span><span class="inline"><span class="inline-delimiter">$</span>gormVersion</span><span class="delimiter">&quot;</span></span>
-    runtime <span class="string"><span class="delimiter">&quot;</span><span class="content">com.h2database:h2:</span><span class="inline"><span class="inline-delimiter">$</span>h2Version</span><span class="delimiter">&quot;</span></span>
-    runtime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.tomcat:tomcat-jdbc:</span><span class="inline"><span class="inline-delimiter">$</span>tomcatJdbcVersion</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut.configuration:hibernate-validator"
+    compile "io.micronaut.configuration:hibernate-gorm"
+    compile "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
+    runtime "com.h2database:h2:$h2Version"
+    runtime "org.apache.tomcat:tomcat-jdbc:$tomcatJdbcVersion"
 }</code></pre>
 </div>
 </div>
@@ -409,28 +409,28 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import io.micronaut.security.authentication.providers.UserState
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">User</span> <span class="directive">implements</span> GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> username
-    <span class="predefined-type">String</span> password
-    <span class="type">boolean</span> enabled = <span class="predefined-constant">true</span>
-    <span class="type">boolean</span> accountExpired = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> accountLocked = <span class="predefined-constant">false</span>
-    <span class="type">boolean</span> passwordExpired = <span class="predefined-constant">false</span>
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
+    String username
+    String password
+    boolean enabled = true
+    boolean accountExpired = false
+    boolean accountLocked = false
+    boolean passwordExpired = false
 
-    <span class="directive">static</span> constraints = {
-        username <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
-        password <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">password</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        username nullable: false, blank: false, unique: true
+        password nullable: false, blank: false, password: true
     }
 
-    <span class="directive">static</span> mapping = {
-        password <span class="key">column</span>: <span class="string"><span class="delimiter">'</span><span class="content">`password`</span><span class="delimiter">'</span></span>
+    static mapping = {
+        password column: '`password`'
     }
 }</code></pre>
 </div>
@@ -463,17 +463,17 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">Role</span> <span class="directive">implements</span> GormEntity&lt;<span class="predefined-type">Role</span>&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> authority
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+    String authority
 
-    <span class="directive">static</span> constraints = {
-        authority <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        authority nullable: false, unique: true
     }
 }</code></pre>
 </div>
@@ -506,19 +506,19 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">UserRole</span> <span class="directive">implements</span> GormEntity&lt;UserRole&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
     User user
-    <span class="predefined-type">Role</span> role
+    Role role
 
-    <span class="directive">static</span> constraints = {
-        user <span class="key">nullable</span>: <span class="predefined-constant">false</span>
-        role <span class="key">nullable</span>: <span class="predefined-constant">false</span>
+    static constraints = {
+        user nullable: false
+        role nullable: false
     }
 }</code></pre>
 </div>
@@ -558,21 +558,21 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.User
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(User) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> UserGormService {
+@Service(User) <i class="conum" data-value="1"></i><b>(1)</b>
+interface UserGormService {
 
-    User save(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> password)
+    User save(String username, String password)
 
-    User findByUsername(<span class="predefined-type">String</span> username)
+    User findByUsername(String username)
 
-    User findById(<span class="predefined-type">Serializable</span> id)
+    User findById(Serializable id)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -586,16 +586,16 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(<span class="predefined-type">Role</span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">interface</span> RoleGormService {
-    <span class="predefined-type">Role</span> save(<span class="predefined-type">String</span> authority)
-    <span class="predefined-type">Role</span> find(<span class="predefined-type">String</span> authority)
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+@Service(Role) <i class="conum" data-value="1"></i><b>(1)</b>
+interface RoleGormService {
+    Role save(String authority)
+    Role find(String authority)
+    void delete(Serializable id)
 }</code></pre>
 </div>
 </div>
@@ -609,29 +609,29 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.UserRole</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Query</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.services.Service</span>
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.services.Query
+import grails.gorm.services.Service
 
-<span class="annotation">@Service</span>(UserRole)
-<span class="type">interface</span> UserRoleGormService {
+@Service(UserRole)
+interface UserRoleGormService {
 
-    UserRole save(User user, <span class="predefined-type">Role</span> role)
+    UserRole save(User user, Role role)
 
-    UserRole find(User user, <span class="predefined-type">Role</span> role)
+    UserRole find(User user, Role role)
 
-    <span class="type">void</span> delete(<span class="predefined-type">Serializable</span> id)
+    void delete(Serializable id)
 
-    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">select </span><span class="inline"><span class="inline-delimiter">$</span>r</span><span class="content">.authority
-    from </span><span class="inline"><span class="inline-delimiter">${</span>UserRole ur<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span>User u = ur.user<span class="inline-delimiter">}</span></span><span class="content">
-    inner join </span><span class="inline"><span class="inline-delimiter">${</span><span class="predefined-type">Role</span> r = ur.role<span class="inline-delimiter">}</span></span><span class="content">
-    where </span><span class="inline"><span class="inline-delimiter">$</span>u</span><span class="content">.username = </span><span class="inline"><span class="inline-delimiter">$</span>username</span><span class="delimiter">&quot;&quot;&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; findAllAuthoritiesByUsername(<span class="predefined-type">String</span> username)
+    @Query("""select $r.authority
+    from ${UserRole ur}
+    inner join ${User u = ur.user}
+    inner join ${Role r = ur.role}
+    where $u.username = $username""") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;String&gt; findAllAuthoritiesByUsername(String username)
 }</code></pre>
 </div>
 </div>
@@ -663,31 +663,31 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example
 
-<span class="keyword">import</span> <span class="include">example.micronaut.services.RegisterService</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.Micronaut</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.event.ApplicationEventListener</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.event.ServerStartupEvent</span>
+import example.micronaut.services.RegisterService
+import groovy.transform.CompileStatic
+import io.micronaut.runtime.Micronaut
+import javax.inject.Singleton
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.runtime.server.event.ServerStartupEvent
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">Application</span> <span class="directive">implements</span> ApplicationEventListener&lt;ServerStartupEvent&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+@CompileStatic
+@Singleton
+class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
 
-    <span class="directive">protected</span> <span class="directive">final</span> RegisterService registerService
+    protected final RegisterService registerService
 
     Application(RegisterService registerService) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.registerService = registerService
+        this.registerService = registerService
     }
 
-    <span class="annotation">@Override</span>
-    <span class="type">void</span> onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
-        registerService.register(<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>,[<span class="string"><span class="delimiter">'</span><span class="content">ROLE_GRAILS</span><span class="delimiter">'</span></span>]) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Override
+    void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
+        registerService.register('user','user',['ROLE_GRAILS']) <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
-    <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+    static void main(String[] args) {
         Micronaut.run(Application.class)
     }
 }</code></pre>
@@ -714,53 +714,53 @@ mapped onto an underlying database table.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.Role</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.User</span>
-<span class="keyword">import</span> <span class="include">example.micronaut.domain.UserRole</span>
-<span class="keyword">import</span> <span class="include">grails.gorm.transactions.Transactional</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.PasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.transactions.Transactional
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">RegisterService</span> {
+@CompileStatic
+@Singleton
+class RegisterService {
 
-    <span class="directive">protected</span> <span class="directive">final</span> RoleGormService roleGormService
-    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
-    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
-    <span class="directive">protected</span> <span class="directive">final</span> PasswordEncoder passwordEncoder
+    protected final RoleGormService roleGormService
+    protected final UserGormService userGormService
+    protected final UserRoleGormService userRoleGormService
+    protected final PasswordEncoder passwordEncoder
 
     RegisterService(RoleGormService roleGormService,
                     UserGormService userGormService,
                     PasswordEncoder passwordEncoder,
                     UserRoleGormService userRoleGormService) {
-        <span class="local-variable">this</span>.roleGormService = roleGormService
-        <span class="local-variable">this</span>.userGormService = userGormService
-        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
-        <span class="local-variable">this</span>.passwordEncoder = passwordEncoder
+        this.roleGormService = roleGormService
+        this.userGormService = userGormService
+        this.userRoleGormService = userRoleGormService
+        this.passwordEncoder = passwordEncoder
     }
 
-    <span class="annotation">@Transactional</span>
-    <span class="type">void</span> register(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> rawPassword, <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; authorities) {
+    @Transactional
+    void register(String username, String rawPassword, List&lt;String&gt; authorities) {
 
         User user = userGormService.findByUsername(username)
-        <span class="keyword">if</span> ( !user ) {
-            <span class="directive">final</span> <span class="predefined-type">String</span> encodedPassword = passwordEncoder.encode(rawPassword)
+        if ( !user ) {
+            final String encodedPassword = passwordEncoder.encode(rawPassword)
             user = userGormService.save(username, encodedPassword)
         }
 
-        <span class="keyword">if</span> ( user &amp;&amp; authorities ) {
+        if ( user &amp;&amp; authorities ) {
 
-            <span class="keyword">for</span> ( <span class="predefined-type">String</span> authority : authorities ) {
-                <span class="predefined-type">Role</span> role = roleGormService.find(authority)
-                <span class="keyword">if</span> ( !role ) {
+            for ( String authority : authorities ) {
+                Role role = roleGormService.find(authority)
+                if ( !role ) {
                     role = roleGormService.save(authority)
                 }
                 UserRole userRole = userRoleGormService.find(user, role)
-                <span class="keyword">if</span> ( !userRole ) {
+                if ( !userRole ) {
                     userRoleGormService.save(user, role)
                 }
             }
@@ -811,30 +811,30 @@ mapped onto an underlying database table.</p>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserFetcher</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.UserState</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.UserFetcher
+import io.micronaut.security.authentication.providers.UserState
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">UserFetcherService</span> <span class="directive">implements</span> UserFetcher {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class UserFetcherService implements UserFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserGormService userGormService
+    protected final UserGormService userGormService
 
     UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userGormService = userGormService
+        this.userGormService = userGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;UserState&gt; findByUsername(<span class="predefined-type">String</span> username) {
-        UserState user = userGormService.findByUsername(username) <span class="keyword">as</span> UserState
-        (user ? Flowable.just(user) : Flowable.empty()) <span class="keyword">as</span> Publisher&lt;UserState&gt;
+    @Override
+    Publisher&lt;UserState&gt; findByUsername(String username) {
+        UserState user = userGormService.findByUsername(username) as UserState
+        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
     }
 }</code></pre>
 </div>
@@ -868,25 +868,25 @@ mapped onto an underlying database table.</p>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.AuthoritiesFetcher</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
+import io.micronaut.security.authentication.providers.AuthoritiesFetcher
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">AuthoritiesFetcherService</span> <span class="directive">implements</span> AuthoritiesFetcher {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthoritiesFetcherService implements AuthoritiesFetcher {
 
-    <span class="directive">protected</span> <span class="directive">final</span> UserRoleGormService userRoleGormService
+    protected final UserRoleGormService userRoleGormService
 
     AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.userRoleGormService = userRoleGormService
+        this.userRoleGormService = userRoleGormService
     }
 
-    <span class="annotation">@Override</span>
-    Publisher&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; findAuthoritiesByUsername(<span class="predefined-type">String</span> username) {
+    @Override
+    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
         Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
     }
 }</code></pre>
@@ -924,41 +924,41 @@ mapped onto an underlying database table.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
 ...
 ..
 .
-    springSecurityCryptoVersion=<span class="string"><span class="delimiter">'</span><span class="content">4.2.5.RELEASE</span><span class="delimiter">'</span></span>
+    springSecurityCryptoVersion='4.2.5.RELEASE'
 }
 dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.security:spring-security-crypto:</span><span class="inline"><span class="inline-delimiter">${</span>springSecurityCryptoVersion<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+    compile "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.providers.PasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">BCryptPasswordEncoderService</span> <span class="directive">implements</span> PasswordEncoder {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class BCryptPasswordEncoderService implements PasswordEncoder {
 
-    org.springframework.security.crypto.password.PasswordEncoder delegate = <span class="keyword">new</span> BCryptPasswordEncoder()
+    org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder()
 
-    <span class="predefined-type">String</span> encode(<span class="predefined-type">String</span> rawPassword) {
-        <span class="keyword">return</span> delegate.encode(rawPassword)
+    String encode(String rawPassword) {
+        return delegate.encode(rawPassword)
     }
 
-    <span class="annotation">@Override</span>
-    <span class="type">boolean</span> matches(<span class="predefined-type">String</span> rawPassword, <span class="predefined-type">String</span> encodedPassword) {
-        <span class="keyword">return</span> delegate.matches(rawPassword, encodedPassword)
+    @Override
+    boolean matches(String rawPassword, String encodedPassword) {
+        return delegate.matches(rawPassword, encodedPassword)
     }
 }</code></pre>
 </div>
@@ -988,114 +988,114 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/LoginLdapSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpMethod</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.generator.claims.JwtClaims</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.validator.JwtTokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.validator.TokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.security.token.validator.TokenValidator
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">LoginLdapSpec</span> <span class="directive">extends</span> Specification {
+class LoginLdapSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/login with valid credentials returns 200 and access token and refresh token</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void '/login with valid credentials returns 200 and access token and refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
         rsp.body.get().refreshToken
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/login with invalid credentials returns UNAUTHORIZED</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void '/login with invalid credentials returns UNAUTHORIZED'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">bogus</span><span class="delimiter">'</span></span>))  <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'bogus'))  <i class="conum" data-value="4"></i><b>(4)</b>
         client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
+        then:
         HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == <span class="integer">401</span> <i class="conum" data-value="5"></i><b>(5)</b>
+        e.status.code == 401 <i class="conum" data-value="5"></i><b>(5)</b>
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">access token contains expiration date</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'access token contains expiration date'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
                 HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> accessToken = rsp.body.get().accessToken
+        when:
+        String accessToken = rsp.body.get().accessToken
 
-        <span class="key">then</span>:
+        then:
         accessToken
 
-        <span class="key">when</span>:
+        when:
         Publisher authentication = tokenValidator.validateToken(accessToken)
 
-        <span class="key">then</span>:
+        then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
-        <span class="key">and</span>:
+        and:
         Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">refresh token does not contain expiration date</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'refresh token does not contain expiration date'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> refreshToken = rsp.body.get().refreshToken
+        when:
+        String refreshToken = rsp.body.get().refreshToken
 
-        <span class="key">then</span>:
+        then:
         refreshToken
 
-        <span class="key">when</span>:
+        when:
         Publisher authentication = tokenValidator.validateToken(refreshToken)
 
-        <span class="key">then</span>:
+        then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
-        <span class="key">and</span>:
+        and:
         !Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 
@@ -1150,54 +1150,54 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/LoginControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpMethod</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.validator.JwtTokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.validator.TokenValidator</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.security.token.validator.TokenValidator
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">LoginControllerSpec</span> <span class="directive">extends</span> Specification {
+class LoginControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">attempt to access /login without supplying credentials server responds BAD REQUEST</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
         client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
+        then:
         HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == <span class="integer">400</span>
+        e.status.code == 400
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/login with valid credentials for a database user returns 200 and access token and refresh token</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void '/login with valid credentials for a database user returns 200 and access token and refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">user</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('user', 'user')) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
         rsp.body.get().refreshToken
@@ -1250,92 +1250,92 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/OauthControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpMethod</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.generator.claims.JwtClaims</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.validator.JwtTokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.validator.TokenValidator</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.security.token.validator.TokenValidator
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">OauthControllerSpec</span> <span class="directive">extends</span> Specification {
+class OauthControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
     HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token endpoint returns BAD request if required parameters not present</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>)
+    void '/oauth/access_token endpoint returns BAD request if required parameters not present'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
                 .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
         client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
+        then:
         HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == <span class="integer">400</span>
+        e.status.code == 400
     }
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">Users can generate a new token by requesting to /oauth/access_token with refresh token</span><span class="delimiter">'</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>)
+    void 'Users can generate a new token by requesting to /oauth/access_token with refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(<span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">'</span><span class="content">euler</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>))  <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password'))  <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
+        then:
+        rsp.status.code == 200
         rsp.body.isPresent()
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> accessToken = rsp.body.get().accessToken
-        <span class="predefined-type">String</span> refreshToken = rsp.body.get().refreshToken
+        when:
+        String accessToken = rsp.body.get().accessToken
+        String refreshToken = rsp.body.get().refreshToken
 
-        <span class="key">then</span>:
+        then:
         accessToken
         refreshToken
 
-        <span class="key">when</span>:
-        sleep(<span class="integer">1</span>_000)
-        request = HttpRequest.create(HttpMethod.POST, <span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>)
+        when:
+        sleep(1_000)
+        request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(<span class="keyword">new</span> TokenRefreshRequest(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, refreshToken)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new TokenRefreshRequest("refresh_token", refreshToken)) <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse&lt;AccessRefreshToken&gt; tokenRsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
-        <span class="key">then</span>:
-        tokenRsp.status.code == <span class="integer">200</span>
+        then:
+        tokenRsp.status.code == 200
         tokenRsp.body.isPresent()
 
-        <span class="key">and</span>: <span class="string"><span class="delimiter">'</span><span class="content">a new access token was generated</span><span class="delimiter">'</span></span>
+        and: 'a new access token was generated'
         tokenRsp.body.get().accessToken
         tokenRsp.body.get().accessToken != accessToken
 
-        <span class="key">when</span>:
+        when:
         TokenValidator tokenValidator = embeddedServer.applicationContext.getBean(JwtTokenValidator) <i class="conum" data-value="5"></i><b>(5)</b>
         Publisher authentication = tokenValidator.validateToken(accessToken)
 
-        <span class="key">then</span>:
+        then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
-        <span class="key">and</span>:
+        and:
         Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 }</code></pre>

@@ -93,17 +93,17 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.domain
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
-<span class="keyword">import</span> <span class="include">grails.gorm.annotation.Entity</span>
-<span class="keyword">import</span> <span class="include">org.grails.datastore.gorm.GormEntity</span>
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
 
-<span class="annotation">@Entity</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">Role</span> <span class="directive">implements</span> GormEntity&lt;<span class="predefined-type">Role</span>&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">String</span> authority
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+    String authority
 
-    <span class="directive">static</span> constraints = {
-        authority <span class="key">nullable</span>: <span class="predefined-constant">false</span>, <span class="key">unique</span>: <span class="predefined-constant">true</span>
+    static constraints = {
+        authority nullable: false, unique: true
     }
 }</code></pre>
 </div>
