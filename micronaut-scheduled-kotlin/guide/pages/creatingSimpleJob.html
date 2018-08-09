@@ -91,30 +91,30 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/HelloWorldJob.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="namespace">import</span> <span class="namespace">org.slf4j.LoggerFactory</span>
+import io.micronaut.scheduling.annotation.Scheduled
+import org.slf4j.LoggerFactory
 
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
-<span class="namespace">import</span> <span class="namespace">java.text.SimpleDateFormat</span>
-<span class="namespace">import</span> <span class="namespace">java.util.Date</span>
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
+import java.util.Date
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">HelloWorldJob</span> {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class HelloWorldJob {
 
-    <span class="annotation">@Scheduled</span>(<span class="namespace">fixedDelay</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">10s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="namespace">fun</span> <span class="namespace">executeEveryTen</span>() {
-        <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 10 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).<span class="namespace">format</span>(<span class="namespace">Date</span>()))
+    @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
+    fun executeEveryTen() {
+        LOG.info("Simple Job every 10 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
-    <span class="annotation">@Scheduled</span>(<span class="namespace">fixedDelay</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">45s</span><span class="delimiter">&quot;</span></span>, <span class="namespace">initialDelay</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">5s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="namespace">fun</span> <span class="namespace">executeEveryFourtyFive</span>() {
-        <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 45 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).<span class="namespace">format</span>(<span class="namespace">Date</span>()))
+    @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun executeEveryFourtyFive() {
+        LOG.info("Simple Job every 45 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
-    <span class="namespace">companion</span> <span class="namespace">object</span> {
-        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">LOG</span> = <span class="namespace">LoggerFactory.getLogger</span>(<span class="namespace">HelloWorldJob</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+    companion object {
+        private val LOG = LoggerFactory.getLogger(HelloWorldJob::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
     }
 }</code></pre>
 </div>
@@ -147,7 +147,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew run</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew run</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -155,7 +155,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">---
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">---
 ... Simple Job every 10 seconds :15/5/2018 12:48:02 <i class="conum" data-value="1"></i><b>(1)</b>
 ... Simple Job every 45 seconds :15/5/2018 12:48:07 <i class="conum" data-value="2"></i><b>(2)</b>
 ... Simple Job every 10 seconds :15/5/2018 12:48:12 <i class="conum" data-value="3"></i><b>(3)</b>

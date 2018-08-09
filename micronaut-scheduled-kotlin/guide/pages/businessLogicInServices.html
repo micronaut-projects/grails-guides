@@ -94,23 +94,23 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailUseCase.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">org.slf4j.LoggerFactory</span>
+import org.slf4j.LoggerFactory
 
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
-<span class="namespace">import</span> <span class="namespace">java.text.SimpleDateFormat</span>
-<span class="namespace">import</span> <span class="namespace">java.util.Date</span>
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
+import java.util.Date
 
-<span class="annotation">@Singleton</span>
-<span class="namespace">class</span> <span class="namespace">EmailUseCase</span> {
+@Singleton
+class EmailUseCase {
 
-    <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="namespace">user</span>: <span class="namespace">String</span>, <span class="namespace">message</span>: <span class="namespace">String</span>) {
-        <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sending email to {} : {} at {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">user</span>, <span class="namespace">message</span>, <span class="namespace">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).<span class="namespace">format</span>(<span class="namespace">Date</span>()))
+    fun send(user: String, message: String) {
+        LOG.info("Sending email to {} : {} at {}", user, message, SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
-    <span class="namespace">companion</span> <span class="namespace">object</span> {
-        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">LOG</span> = <span class="namespace">LoggerFactory.getLogger</span>(<span class="namespace">EmailUseCase</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+    companion object {
+        private val LOG = LoggerFactory.getLogger(EmailUseCase::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
     }
 }</code></pre>
 </div>
@@ -121,17 +121,17 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/DailyEmailJob.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+import io.micronaut.scheduling.annotation.Scheduled
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">DailyEmailJob</span>(<span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">emailUseCase</span>: <span class="namespace">EmailUseCase</span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class DailyEmailJob(protected val emailUseCase: EmailUseCase) { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Scheduled</span>(<span class="namespace">cron</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">0 30 4 1/1 * ?</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="namespace">fun</span> <span class="namespace">execute</span>() {
-        <span class="namespace">emailUseCase.send</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">john.doe@micronaut.example</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Test Message</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Scheduled(cron = "0 30 4 1/1 * ?") <i class="conum" data-value="3"></i><b>(3)</b>
+    fun execute() {
+        emailUseCase.send("john.doe@micronaut.example", "Test Message") <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
