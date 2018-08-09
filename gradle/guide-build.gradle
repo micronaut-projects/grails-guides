@@ -165,3 +165,17 @@ gradle.taskGraph.whenReady { graph ->
     }    
 }
 
+task outputTestResult {
+    doLast {
+        fileTree(dir: projectDir, include: '**/TEST*.xml').each {
+            def testsuite = new XmlSlurper().parseText(it.text)
+            logger.quiet("{} tests: {} skipped: {} failures: {}, errors: {}",
+                    testsuite["@name"],
+                    testsuite["@tests"],
+                    testsuite["@skipped"],
+                    testsuite["@failures"],
+                    testsuite["@errors"],
+            )
+        }
+    }
+}
