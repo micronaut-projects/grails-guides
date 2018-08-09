@@ -115,14 +115,14 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/BintrayPackage.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+import groovy.transform.CompileStatic
 
-<span class="annotation">@CompileStatic</span>
-<span class="type">class</span> <span class="class">BintrayPackage</span> {
-    <span class="predefined-type">String</span> name
-    <span class="type">boolean</span> linked
+@CompileStatic
+class BintrayPackage {
+    String name
+    boolean linked
 }</code></pre>
 </div>
 </div>
@@ -132,36 +132,36 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/BintrayLowLevelClient.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.uri.UriTemplate</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>
+import groovy.transform.CompileStatic
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.Client
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.uri.UriTemplate
+import io.reactivex.Flowable
+import io.reactivex.Maybe
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">BintrayLowLevelClient</span> {
-    <span class="directive">private</span> <span class="directive">final</span> RxHttpClient httpClient
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> uri
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class BintrayLowLevelClient {
+    private final RxHttpClient httpClient
+    private final String uri
 
-    BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient, <i class="conum" data-value="2"></i><b>(2)</b>
+    BintrayLowLevelClient(@Client(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient, <i class="conum" data-value="2"></i><b>(2)</b>
                           BintrayConfiguration configuration) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.httpClient = httpClient
-        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>
+        this.httpClient = httpClient
+        String path = "/api/{apiversion}/repos/{organization}/{repository}/packages"
         uri = UriTemplate.of(path).expand(configuration.toMap())
     }
 
-    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; fetchPackages() {
+    Maybe&lt;List&lt;BintrayPackage&gt;&gt; fetchPackages() {
         HttpRequest&lt;?&gt; req = HttpRequest.GET(uri) <i class="conum" data-value="4"></i><b>(4)</b>
-        Flowable flowable = httpClient.retrieve(req, Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
-        flowable.firstElement() <span class="keyword">as</span> Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; <i class="conum" data-value="6"></i><b>(6)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.of(List, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        flowable.firstElement() as Maybe&lt;List&lt;BintrayPackage&gt;&gt; <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
