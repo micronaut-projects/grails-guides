@@ -100,7 +100,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.configuration:hibernate-validator</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -109,106 +109,106 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/MailControllerValidationSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="namespace">import</span> <span class="namespace">spock.lang.AutoCleanup</span>
-<span class="namespace">import</span> <span class="namespace">spock.lang.Shared</span>
-<span class="namespace">import</span> <span class="namespace">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
 
-<span class="namespace">class</span> <span class="namespace">MailControllerValidationSpec</span> <span class="namespace">extends</span> <span class="namespace">Specification</span> {
+class MailControllerValidationSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="namespace">EmbeddedServer</span> <span class="namespace">embeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>, [
-            <span class="string"><span class="delimiter">'</span><span class="content">spec.name</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">mailcontroller</span><span class="delimiter">'</span></span>,
-    ], <span class="string"><span class="delimiter">'</span><span class="content">test</span><span class="delimiter">'</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
+            'spec.name': 'mailcontroller',
+    ], 'test')  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
-    <span class="namespace">RxHttpClient</span> <span class="namespace">client</span> = <span class="namespace">embeddedServer.applicationContext.createBean</span>(<span class="namespace">RxHttpClient</span>, <span class="namespace">embeddedServer.getURL</span>()) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Shared
+    @AutoCleanup
+    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
 
-    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without subject</span><span class="delimiter">&quot;</span></span>() {
-        <span class="namespace">given</span>:
-        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
-                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
-                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola hola</span><span class="delimiter">'</span></span>)
-        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send cannot be invoked without subject"() {
+        given:
+        EmailCmd cmd = new EmailCmd(
+                recipient: 'delamos@micronaut.example',
+                textBody: 'Hola hola')
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="namespace">when</span>:
-        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+        when:
+        client.toBlocking().exchange(request)
 
-        <span class="namespace">then</span>:
-        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
-        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 400
     }
 
-    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without recipient</span><span class="delimiter">&quot;</span></span>() {
-        <span class="namespace">given</span>:
-        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
-                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
-                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola hola</span><span class="delimiter">'</span></span>)
-        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send cannot be invoked without recipient"() {
+        given:
+        EmailCmd cmd = new EmailCmd(
+                subject: 'Hola',
+                textBody: 'Hola hola')
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="namespace">when</span>:
-        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+        when:
+        client.toBlocking().exchange(request)
 
-        <span class="namespace">then</span>:
-        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
-        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 400
     }
 
-    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send cannot be invoked without either textBody or htmlBody</span><span class="delimiter">&quot;</span></span>() {
-        <span class="namespace">given</span>:
-        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
-                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
-                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,)
-        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send cannot be invoked without either textBody or htmlBody"() {
+        given:
+        EmailCmd cmd = new EmailCmd(
+                subject: 'Hola',
+                recipient: 'delamos@micronaut.example',)
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="namespace">when</span>:
-        <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+        when:
+        client.toBlocking().exchange(request)
 
-        <span class="namespace">then</span>:
-        <span class="namespace">HttpClientResponseException</span> <span class="namespace">e</span> = <span class="namespace">thrown</span>(<span class="namespace">HttpClientResponseException</span>)
-        <span class="namespace">e.status.code</span> == <span class="integer">400</span>
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 400
     }
 
-    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send can be invoked without textBody and not htmlBody</span><span class="delimiter">&quot;</span></span>() {
-        <span class="namespace">given</span>:
-        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
-                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
-                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
-                <span class="namespace">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hello</span><span class="delimiter">'</span></span>)
-        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send can be invoked without textBody and not htmlBody"() {
+        given:
+        EmailCmd cmd = new EmailCmd(
+                subject: 'Hola',
+                recipient: 'delamos@micronaut.example',
+                textBody: 'Hello')
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="namespace">when</span>:
-        <span class="namespace">HttpResponse</span> <span class="namespace">rsp</span> = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+        when:
+        HttpResponse rsp = client.toBlocking().exchange(request)
 
-        <span class="namespace">then</span>:
-        <span class="namespace">rsp.status</span>().<span class="namespace">code</span> == <span class="integer">200</span>
+        then:
+        rsp.status().code == 200
     }
 
-    <span class="namespace">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send can be invoked without htmlBody and not textBody</span><span class="delimiter">&quot;</span></span>() {
-        <span class="namespace">given</span>:
-        <span class="namespace">EmailCmd</span> <span class="namespace">cmd</span> = <span class="namespace">new</span> <span class="namespace">EmailCmd</span>(
-                <span class="namespace">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola</span><span class="delimiter">'</span></span>,
-                <span class="namespace">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@micronaut.example</span><span class="delimiter">'</span></span>,
-                <span class="namespace">htmlBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">&lt;h1&gt;Hello&lt;/h1&gt;</span><span class="delimiter">'</span></span>)
-        <span class="namespace">HttpRequest</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, <span class="namespace">cmd</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send can be invoked without htmlBody and not textBody"() {
+        given:
+        EmailCmd cmd = new EmailCmd(
+                subject: 'Hola',
+                recipient: 'delamos@micronaut.example',
+                htmlBody: '&lt;h1&gt;Hello&lt;/h1&gt;')
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="namespace">when</span>:
-        <span class="namespace">HttpResponse</span> <span class="namespace">rsp</span> = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>)
+        when:
+        HttpResponse rsp = client.toBlocking().exchange(request)
 
-        <span class="namespace">then</span>:
-        <span class="namespace">rsp.status</span>().<span class="namespace">code</span> == <span class="integer">200</span>
+        then:
+        rsp.status().code == 200
     }
 }</code></pre>
 </div>
@@ -239,23 +239,23 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailConstraints.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">javax.validation.Constraint</span>;
-<span class="keyword">import</span> <span class="include">javax.validation.Payload</span>;
-<span class="keyword">import</span> <span class="include">java.lang.annotation.ElementType</span>;
-<span class="keyword">import</span> <span class="include">java.lang.annotation.Retention</span>;
-<span class="keyword">import</span> <span class="include">java.lang.annotation.RetentionPolicy</span>;
-<span class="keyword">import</span> <span class="include">java.lang.annotation.Target</span>;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-<span class="annotation">@Constraint</span>(validatedBy = { EmailConstraintsValidator.class })
-<span class="annotation">@Target</span>( { <span class="predefined-type">ElementType</span>.TYPE })
-<span class="annotation">@Retention</span>(<span class="predefined-type">RetentionPolicy</span>.RUNTIME)
-<span class="directive">public</span> <span class="annotation">@interface</span> EmailConstraints {
+@Constraint(validatedBy = { EmailConstraintsValidator.class })
+@Target( { ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EmailConstraints {
 
-    <span class="predefined-type">String</span> message() <span class="keyword">default</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">{email.invalid}</span><span class="delimiter">&quot;</span></span>;
-    <span class="predefined-type">Class</span>&lt;?&gt;<span class="type">[]</span> groups() <span class="keyword">default</span> { };
-    <span class="predefined-type">Class</span>&lt;? <span class="directive">extends</span> Payload&gt;<span class="type">[]</span> payload() <span class="keyword">default</span> { };
+    String message() default "{email.invalid}";
+    Class&lt;?&gt;[] groups() default { };
+    Class&lt;? extends Payload&gt;[] payload() default { };
 
 }</code></pre>
 </div>
@@ -266,21 +266,21 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailConstraintsValidator.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidator</span>;
-<span class="keyword">import</span> <span class="include">javax.validation.ConstraintValidatorContext</span>;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailConstraintsValidator</span> <span class="directive">implements</span> ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+public class EmailConstraintsValidator implements ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">boolean</span> isValid(EmailCmd email, ConstraintValidatorContext context) {
-        <span class="keyword">return</span> email !=<span class="predefined-constant">null</span> &amp;&amp;
+    @Override
+    public boolean isValid(EmailCmd email, ConstraintValidatorContext context) {
+        return email !=null &amp;&amp;
                 (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody()));
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
-        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    private boolean notBlankAndNotNull(String str) {
+        return str != null &amp;&amp; !str.equals("");
     }
 }</code></pre>
 </div>
@@ -291,25 +291,25 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@EmailConstraints</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@EmailConstraints
+public class EmailCmd implements Email {
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="directive">private</span> <span class="predefined-type">String</span> recipient;
+    @NotNull
+    @NotBlank
+    private String recipient;
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="directive">private</span> <span class="predefined-type">String</span> subject;
+    @NotNull
+    @NotBlank
+    private String subject;
 
-    <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
-    <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+    private List&lt;String&gt; cc = new ArrayList&lt;&gt;();
+    private List&lt;String&gt; bcc = new ArrayList&lt;&gt;();
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> htmlBody;
-    <span class="directive">private</span> <span class="predefined-type">String</span> textBody;
-    <span class="directive">private</span> <span class="predefined-type">String</span> replyTo;
+    private String htmlBody;
+    private String textBody;
+    private String replyTo;
 
-<span class="comment">// Getters &amp;&amp; Setters</span>
+// Getters &amp;&amp; Setters
 }</code></pre>
 </div>
 </div>

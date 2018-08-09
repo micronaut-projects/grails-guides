@@ -101,11 +101,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.4.15</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
+    testCompile "org.codehaus.groovy:groovy-all:2.4.15"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
 }</code></pre>
 </div>
 </div>
@@ -115,11 +115,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">groovy</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example
+---
+testFramework: spock
+sourceLanguage: groovy</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -131,22 +131,22 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/MockEmailService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Primary</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>
+import io.micronaut.context.annotation.Primary
+import io.micronaut.context.annotation.Requires
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import javax.inject.Singleton
 
-<span class="annotation">@Primary</span>
-<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">'</span><span class="content">spec.name</span><span class="delimiter">'</span></span>, value = <span class="string"><span class="delimiter">'</span><span class="content">mailcontroller</span><span class="delimiter">'</span></span>)
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">MockEmailService</span> <span class="directive">implements</span> EmailService {
+@Primary
+@Requires(property = 'spec.name', value = 'mailcontroller')
+@Singleton
+class MockEmailService implements EmailService {
 
-    <span class="predefined-type">List</span>&lt;Email&gt; emails = <span class="type">[]</span>
+    List&lt;Email&gt; emails = []
 
-    <span class="annotation">@Override</span>
-    <span class="type">void</span> send(Email email) {
+    @Override
+    void send(Email email) {
         emails &lt;&lt; email
     }
 }</code></pre>
@@ -158,57 +158,57 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/MailControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="keyword">import</span> <span class="include">javax.annotation.Nullable</span>
+import javax.annotation.Nullable
 
-<span class="type">class</span> <span class="class">MailControllerSpec</span> <span class="directive">extends</span> Specification {
+class MailControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            <span class="string"><span class="delimiter">'</span><span class="content">spec.name</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">mailcontroller</span><span class="delimiter">'</span></span>,
-    ], <span class="string"><span class="delimiter">'</span><span class="content">test</span><span class="delimiter">'</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+            'spec.name': 'mailcontroller',
+    ], 'test')  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send interacts once email service</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        EmailCmd cmd = <span class="keyword">new</span> EmailCmd(<span class="key">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">Test</span><span class="delimiter">'</span></span>,
-                <span class="key">recipient</span>: <span class="string"><span class="delimiter">'</span><span class="content">delamos@grails.example</span><span class="delimiter">'</span></span>,
-                <span class="key">textBody</span>: <span class="string"><span class="delimiter">'</span><span class="content">Hola hola</span><span class="delimiter">'</span></span>)
-        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/mail/send</span><span class="delimiter">'</span></span>, cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "/mail/send interacts once email service"() {
+        given:
+        EmailCmd cmd = new EmailCmd(subject: 'Test',
+                recipient: 'delamos@grails.example',
+                textBody: 'Hola hola')
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">when</span>:
-        <span class="predefined-type">Collection</span> emailServices = embeddedServer.applicationContext.getBeansOfType(EmailService)
+        when:
+        Collection emailServices = embeddedServer.applicationContext.getBeansOfType(EmailService)
 
-        <span class="key">then</span>:
-        !emailServices.any { <span class="local-variable">it</span> == SendGridEmailService.class}
-        !emailServices.any { <span class="local-variable">it</span> == AwsSesMailService.class}
+        then:
+        !emailServices.any { it == SendGridEmailService.class}
+        !emailServices.any { it == AwsSesMailService.class}
 
-        <span class="key">when</span>:
+        when:
         EmailService emailService = embeddedServer.applicationContext.getBean(EmailService)
 
-        <span class="key">then</span>:
-        emailService <span class="keyword">instanceof</span> MockEmailService
+        then:
+        emailService instanceof MockEmailService
 
-        <span class="key">when</span>:
+        when:
         HttpResponse rsp = client.toBlocking().exchange(request)
 
-        <span class="key">then</span>:
-        rsp.status.code == <span class="integer">200</span>
-        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + <span class="integer">1</span> <i class="conum" data-value="5"></i><b>(5)</b>
+        then:
+        rsp.status.code == 200
+        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="5"></i><b>(5)</b>
     }
 }</code></pre>
 </div>

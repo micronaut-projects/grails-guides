@@ -91,33 +91,33 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/MailController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Body</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Post</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
-<span class="keyword">import</span> <span class="include">javax.validation.Valid</span>;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.validation.Validated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.validation.Valid;
 
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">MailController</span> {
-    <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(MailController.class);
+@Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
+@Validated <i class="conum" data-value="2"></i><b>(2)</b>
+public class MailController {
+    private static final Logger LOG = LoggerFactory.getLogger(MailController.class);
 
-    <span class="directive">protected</span> <span class="directive">final</span> EmailService emailService;
+    protected final EmailService emailService;
 
-    <span class="directive">public</span> MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.emailService = emailService;
+    public MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.emailService = emailService;
     }
 
-    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="directive">public</span> HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
+    @Post("/send") <i class="conum" data-value="4"></i><b>(4)</b>
+    public HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
 
         emailService.send(cmd);
-        <span class="keyword">return</span> HttpResponse.ok();  <i class="conum" data-value="6"></i><b>(6)</b>
+        return HttpResponse.ok();  <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -156,84 +156,84 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">class EmailCmd implements Email {
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="directive">private</span> <span class="predefined-type">String</span> recipient;
+    @NotNull
+    @NotBlank
+    private String recipient;
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="directive">private</span> <span class="predefined-type">String</span> subject;
+    @NotNull
+    @NotBlank
+    private String subject;
 
-    <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
-    <span class="directive">private</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+    private List&lt;String&gt; cc = new ArrayList&lt;&gt;();
+    private List&lt;String&gt; bcc = new ArrayList&lt;&gt;();
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> htmlBody;
-    <span class="directive">private</span> <span class="predefined-type">String</span> textBody;
-    <span class="directive">private</span> <span class="predefined-type">String</span> replyTo;
+    private String htmlBody;
+    private String textBody;
+    private String replyTo;
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">String</span> getRecipient() {
-        <span class="keyword">return</span> recipient;
+    @Override
+    public String getRecipient() {
+        return recipient;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setRecipient(<span class="predefined-type">String</span> recipient) {
-        <span class="local-variable">this</span>.recipient = recipient;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">String</span> getSubject() {
-        <span class="keyword">return</span> subject;
+    @Override
+    public String getSubject() {
+        return subject;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setSubject(<span class="predefined-type">String</span> subject) {
-        <span class="local-variable">this</span>.subject = subject;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; getCc() {
-        <span class="keyword">return</span> cc;
+    @Override
+    public List&lt;String&gt; getCc() {
+        return cc;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setCc(<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc) {
-        <span class="local-variable">this</span>.cc = cc;
+    public void setCc(List&lt;String&gt; cc) {
+        this.cc = cc;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; getBcc() {
-        <span class="keyword">return</span> bcc;
+    @Override
+    public List&lt;String&gt; getBcc() {
+        return bcc;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setBcc(<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc) {
-        <span class="local-variable">this</span>.bcc = bcc;
+    public void setBcc(List&lt;String&gt; bcc) {
+        this.bcc = bcc;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">String</span> getHtmlBody() {
-        <span class="keyword">return</span> htmlBody;
+    @Override
+    public String getHtmlBody() {
+        return htmlBody;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setHtmlBody(<span class="predefined-type">String</span> htmlBody) {
-        <span class="local-variable">this</span>.htmlBody = htmlBody;
+    public void setHtmlBody(String htmlBody) {
+        this.htmlBody = htmlBody;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">String</span> getTextBody() {
-        <span class="keyword">return</span> textBody;
+    @Override
+    public String getTextBody() {
+        return textBody;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setTextBody(<span class="predefined-type">String</span> textBody) {
-        <span class="local-variable">this</span>.textBody = textBody;
+    public void setTextBody(String textBody) {
+        this.textBody = textBody;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">String</span> getReplyTo() {
-        <span class="keyword">return</span> replyTo;
+    @Override
+    public String getReplyTo() {
+        return replyTo;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setReplyTo(<span class="predefined-type">String</span> replyTo) {
-        <span class="local-variable">this</span>.replyTo = replyTo;
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
     }
 
 }</code></pre>

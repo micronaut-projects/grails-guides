@@ -102,28 +102,28 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/java/main/example/micronaut/EmailService.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">EmailService</span> {
-    <span class="type">void</span> send(Email email);
+public interface EmailService {
+    void send(Email email);
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/java/main/example/micronaut/Email.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
+import java.util.List;
 
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">Email</span> {
-    <span class="predefined-type">String</span> getRecipient();
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; getCc();
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; getBcc();
-    <span class="predefined-type">String</span> getSubject();
-    <span class="predefined-type">String</span> getHtmlBody();
-    <span class="predefined-type">String</span> getTextBody();
-    <span class="predefined-type">String</span> getReplyTo();
+public interface Email {
+    String getRecipient();
+    List&lt;String&gt; getCc();
+    List&lt;String&gt; getBcc();
+    String getSubject();
+    String getHtmlBody();
+    String getTextBody();
+    String getReplyTo();
 }</code></pre>
 </div>
 </div>
@@ -151,7 +151,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.amazonaws:aws-java-sdk-ses:1.11.285</span><span class="delimiter">'</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -161,25 +161,25 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsCredentialsProviderCondition.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.Condition</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.ConditionContext</span>;
+import io.micronaut.context.condition.Condition;
+import io.micronaut.context.condition.ConditionContext;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AwsCredentialsProviderCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
+public class AwsCredentialsProviderCondition implements Condition {
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
-        <span class="keyword">return</span> envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_ACCESS_KEY_ID</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
-                envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SECRET_KEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>);
+    @Override
+    public boolean matches(ConditionContext context) {
+        return envOrSystemProperty("AWS_ACCESS_KEY_ID", "aws.accesskeyid") &amp;&amp;
+                envOrSystemProperty("AWS_SECRET_KEY", "aws.secretkey");
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> envOrSystemProperty(<span class="predefined-type">String</span> env, <span class="predefined-type">String</span> prop) {
-        <span class="keyword">return</span> notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(prop)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(env));
+    private boolean envOrSystemProperty(String env, String prop) {
+        return notBlankAndNotNull(System.getProperty(prop)) || notBlankAndNotNull(System.getenv(env));
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
-        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    private boolean notBlankAndNotNull(String str) {
+        return str != null &amp;&amp; !str.equals("");
     }
 }</code></pre>
 </div>
@@ -190,31 +190,31 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderConditionSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">AwsCredentialsProviderConditionSpec</span> <span class="directive">extends</span> Specification {
+class AwsCredentialsProviderConditionSpec extends Specification {
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is true if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">YYYY</span><span class="delimiter">&quot;</span></span>)
+    @RestoreSystemProperties
+    def "condition is true if system properties are present"() {
+        given:
+        System.setProperty("aws.accesskeyid", "XXXX")
+        System.setProperty("aws.secretkey", "YYYY")
 
-        AwsCredentialsProviderCondition condition = <span class="keyword">new</span> AwsCredentialsProviderCondition()
+        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
 
-        <span class="key">expect</span>:
-        condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        condition.matches(null)
     }
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is false if system properties are not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        AwsCredentialsProviderCondition condition = <span class="keyword">new</span> AwsCredentialsProviderCondition()
+    def "condition is false if system properties are not present"() {
+        given:
+        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
 
-        <span class="key">expect</span>:
-        !condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        !condition.matches(null)
     }
 }</code></pre>
 </div>
@@ -222,37 +222,37 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsCredentialsProviderService.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">com.amazonaws.auth.AWSCredentials</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.auth.AWSCredentialsProvider</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.auth.BasicAWSCredentials</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Value;
+import javax.inject.Singleton;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(condition = AwsCredentialsProviderCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AwsCredentialsProviderService</span> <span class="directive">implements</span> AWSCredentialsProvider {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(condition = AwsCredentialsProviderCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
+public class AwsCredentialsProviderService implements AWSCredentialsProvider {
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> accessKey;
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> secretKey;
+    protected final String accessKey;
+    protected final String secretKey;
 
-    <span class="directive">public</span> AwsCredentialsProviderService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_ACCESS_KEY_ID:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> accessKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
-                                  <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_SECRET_KEY:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> secretKeyEnv,
-                                  <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${aws.accesskeyid:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> accessKeyProp,
-                                  <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${aws.secretkey:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> secretKeyProp) {
-        <span class="local-variable">this</span>.accessKey = accessKeyEnv != <span class="predefined-constant">null</span> &amp;&amp; !accessKeyEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) ? accessKeyEnv : accessKeyProp;
-        <span class="local-variable">this</span>.secretKey = secretKeyEnv != <span class="predefined-constant">null</span> &amp;&amp; !secretKeyEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>)  ? accessKeyEnv : secretKeyProp;
+    public AwsCredentialsProviderService(@Value("${AWS_ACCESS_KEY_ID:none}") String accessKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
+                                  @Value("${AWS_SECRET_KEY:none}") String secretKeyEnv,
+                                  @Value("${aws.accesskeyid:none}") String accessKeyProp,
+                                  @Value("${aws.secretkey:none}") String secretKeyProp) {
+        this.accessKey = accessKeyEnv != null &amp;&amp; !accessKeyEnv.equals("none") ? accessKeyEnv : accessKeyProp;
+        this.secretKey = secretKeyEnv != null &amp;&amp; !secretKeyEnv.equals("none")  ? accessKeyEnv : secretKeyProp;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> AWSCredentials getCredentials() {
-        <span class="keyword">return</span> <span class="keyword">new</span> BasicAWSCredentials(accessKey, secretKey);
+    @Override
+    public AWSCredentials getCredentials() {
+        return new BasicAWSCredentials(accessKey, secretKey);
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">void</span> refresh() {
+    @Override
+    public void refresh() {
 
     }
 }</code></pre>
@@ -280,46 +280,46 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderServiceSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">AwsCredentialsProviderServiceSpec</span> <span class="directive">extends</span> Specification {
+class AwsCredentialsProviderServiceSpec extends Specification {
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AwsCredentialsProviderService is not loaded if system property is not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
+    def "AwsCredentialsProviderService is not loaded if system property is not present"() {
+        given:
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
 
-        <span class="key">then</span>:
+        then:
         thrown(NoSuchBeanException)
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AwsCredentialsProviderService is loaded if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">YYYY</span><span class="delimiter">&quot;</span></span>)
+    @RestoreSystemProperties
+    def "AwsCredentialsProviderService is loaded if system properties are present"() {
+        given:
+        System.setProperty("aws.accesskeyid", "XXXX")
+        System.setProperty("aws.secretkey", "YYYY")
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         AwsCredentialsProviderService bean = embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown()
-        bean.secretKey == <span class="string"><span class="delimiter">'</span><span class="content">YYYY</span><span class="delimiter">'</span></span>
-        bean.accessKey == <span class="string"><span class="delimiter">'</span><span class="content">XXXX</span><span class="delimiter">'</span></span>
+        bean.secretKey == 'YYYY'
+        bean.accessKey == 'XXXX'
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 }</code></pre>
@@ -332,21 +332,21 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsSesMailCondition.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.Condition</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.ConditionContext</span>;
+import io.micronaut.context.condition.Condition;
+import io.micronaut.context.condition.ConditionContext;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AwsSesMailCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
+public class AwsSesMailCondition implements Condition {
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
-        <span class="keyword">return</span> (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.sourceemail</span><span class="delimiter">&quot;</span></span>)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_SOURCE_EMAIL</span><span class="delimiter">&quot;</span></span>))) &amp;&amp;
-                (notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.region</span><span class="delimiter">&quot;</span></span>)) ||  notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS_REGION</span><span class="delimiter">&quot;</span></span>)));
+    @Override
+    public boolean matches(ConditionContext context) {
+        return (notBlankAndNotNull(System.getProperty("aws.sourceemail")) || notBlankAndNotNull(System.getenv("AWS_SOURCE_EMAIL"))) &amp;&amp;
+                (notBlankAndNotNull(System.getProperty("aws.region")) ||  notBlankAndNotNull(System.getenv("AWS_REGION")));
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
-        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    private boolean notBlankAndNotNull(String str) {
+        return str != null &amp;&amp; !str.equals("");
     }
 }</code></pre>
 </div>
@@ -357,30 +357,30 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AwsSesMailConditionSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">AwsSesMailConditionSpec</span> <span class="directive">extends</span> Specification {
+class AwsSesMailConditionSpec extends Specification {
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is true if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.region</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.sourceemail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">me@micronaut.example</span><span class="delimiter">&quot;</span></span>)
-        AwsSesMailCondition condition = <span class="keyword">new</span> AwsSesMailCondition()
+    @RestoreSystemProperties
+    def "condition is true if system properties are present"() {
+        given:
+        System.setProperty("aws.region", "XXXX")
+        System.setProperty("aws.sourceemail", "me@micronaut.example")
+        AwsSesMailCondition condition = new AwsSesMailCondition()
 
-        <span class="key">expect</span>:
-        condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        condition.matches(null)
     }
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is false if system properties are not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        AwsSesMailCondition condition = <span class="keyword">new</span> AwsSesMailCondition()
+    def "condition is false if system properties are not present"() {
+        given:
+        AwsSesMailCondition condition = new AwsSesMailCondition()
 
-        <span class="key">expect</span>:
-        !condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        !condition.matches(null)
     }
 }</code></pre>
 </div>
@@ -388,95 +388,95 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsSesMailService.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.SendEmailResult</span>;
+import com.amazonaws.services.simpleemail.model.SendEmailResult;
 
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.AmazonSimpleEmailService</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Body</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Content</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Destination</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.Message</span>;
-<span class="keyword">import</span> <span class="include">com.amazonaws.services.simpleemail.model.SendEmailRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Primary</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.Body;
+import com.amazonaws.services.simpleemail.model.Content;
+import com.amazonaws.services.simpleemail.model.Destination;
+import com.amazonaws.services.simpleemail.model.Message;
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+import javax.inject.Singleton;
 
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(beans = AwsCredentialsProviderService.class) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="annotation">@Requires</span>(condition = AwsSesMailCondition.class)  <i class="conum" data-value="3"></i><b>(3)</b>
-<span class="annotation">@Primary</span> <i class="conum" data-value="4"></i><b>(4)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AwsSesMailService</span> <span class="directive">implements</span> EmailService {
-    <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(AwsSesMailService.class);
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(beans = AwsCredentialsProviderService.class) <i class="conum" data-value="2"></i><b>(2)</b>
+@Requires(condition = AwsSesMailCondition.class)  <i class="conum" data-value="3"></i><b>(3)</b>
+@Primary <i class="conum" data-value="4"></i><b>(4)</b>
+public class AwsSesMailService implements EmailService {
+    private static final Logger LOG = LoggerFactory.getLogger(AwsSesMailService.class);
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> awsRegion;
+    protected final String awsRegion;
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> sourceEmail;
+    protected final String sourceEmail;
 
-    <span class="directive">protected</span> <span class="directive">final</span> AwsCredentialsProviderService awsCredentialsProviderService;
+    protected final AwsCredentialsProviderService awsCredentialsProviderService;
 
-    <span class="directive">public</span> AwsSesMailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_REGION:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> awsRegionEnv, <i class="conum" data-value="5"></i><b>(5)</b>
-                      <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${AWS_SOURCE_EMAIL:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> sourceEmailEnv,
-                      <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${aws.region:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> awsRegionProp,
-                      <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${aws.sourceemail:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> sourceEmailProp,
+    public AwsSesMailService(@Value("${AWS_REGION:none}") String awsRegionEnv, <i class="conum" data-value="5"></i><b>(5)</b>
+                      @Value("${AWS_SOURCE_EMAIL:none}") String sourceEmailEnv,
+                      @Value("${aws.region:none}") String awsRegionProp,
+                      @Value("${aws.sourceemail:none}") String sourceEmailProp,
                       AwsCredentialsProviderService awsCredentialsProviderService
                       ) {
-        <span class="local-variable">this</span>.awsRegion = awsRegionEnv != <span class="predefined-constant">null</span> &amp;&amp; !awsRegionEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) ? awsRegionEnv : awsRegionProp;
-        <span class="local-variable">this</span>.sourceEmail = sourceEmailEnv != <span class="predefined-constant">null</span> &amp;&amp; !sourceEmailEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) ? sourceEmailEnv : sourceEmailProp;
-        <span class="local-variable">this</span>.awsCredentialsProviderService = awsCredentialsProviderService;
+        this.awsRegion = awsRegionEnv != null &amp;&amp; !awsRegionEnv.equals("none") ? awsRegionEnv : awsRegionProp;
+        this.sourceEmail = sourceEmailEnv != null &amp;&amp; !sourceEmailEnv.equals("none") ? sourceEmailEnv : sourceEmailProp;
+        this.awsCredentialsProviderService = awsCredentialsProviderService;
     }
 
-    <span class="directive">private</span> Body bodyOfEmail(Email email) {
-        <span class="keyword">if</span> (email.getHtmlBody() != <span class="predefined-constant">null</span> &amp;&amp; !email.getHtmlBody().isEmpty()) {
-            Content htmlBody = <span class="keyword">new</span> Content().withData(email.getHtmlBody());
-            <span class="keyword">return</span> <span class="keyword">new</span> Body().withHtml(htmlBody);
+    private Body bodyOfEmail(Email email) {
+        if (email.getHtmlBody() != null &amp;&amp; !email.getHtmlBody().isEmpty()) {
+            Content htmlBody = new Content().withData(email.getHtmlBody());
+            return new Body().withHtml(htmlBody);
         }
-        <span class="keyword">if</span> (email.getTextBody() != <span class="predefined-constant">null</span> &amp;&amp; !email.getTextBody().isEmpty()) {
-            Content textBody = <span class="keyword">new</span> Content().withData(email.getTextBody());
-            <span class="keyword">return</span> <span class="keyword">new</span> Body().withHtml(textBody);
+        if (email.getTextBody() != null &amp;&amp; !email.getTextBody().isEmpty()) {
+            Content textBody = new Content().withData(email.getTextBody());
+            return new Body().withHtml(textBody);
         }
-        <span class="keyword">return</span> <span class="keyword">new</span> Body();
+        return new Body();
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">void</span> send(Email email) {
+    @Override
+    public void send(Email email) {
 
-        <span class="keyword">if</span> ( awsCredentialsProviderService == <span class="predefined-constant">null</span> ) {
-            <span class="keyword">if</span> (LOG.isWarnEnabled()) {
-                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">AWS Credentials provider not configured</span><span class="delimiter">&quot;</span></span>);
+        if ( awsCredentialsProviderService == null ) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("AWS Credentials provider not configured");
             }
-            <span class="keyword">return</span>;
+            return;
         }
 
-        <span class="predefined-type">Destination</span> destination = <span class="keyword">new</span> <span class="predefined-type">Destination</span>().withToAddresses(email.getRecipient());
-        <span class="keyword">if</span> ( email.getCc() !=<span class="predefined-constant">null</span>) {
+        Destination destination = new Destination().withToAddresses(email.getRecipient());
+        if ( email.getCc() !=null) {
             destination = destination.withCcAddresses(email.getCc());
         }
-        <span class="keyword">if</span> ( email.getBcc() != <span class="predefined-constant">null</span> ) {
+        if ( email.getBcc() != null ) {
             destination = destination.withBccAddresses(email.getBcc());
         }
-        Content subject = <span class="keyword">new</span> Content().withData(email.getSubject());
+        Content subject = new Content().withData(email.getSubject());
         Body body = bodyOfEmail(email);
-        Message message = <span class="keyword">new</span> Message().withSubject(subject).withBody(body);
+        Message message = new Message().withSubject(subject).withBody(body);
 
-        SendEmailRequest request = <span class="keyword">new</span> SendEmailRequest()
+        SendEmailRequest request = new SendEmailRequest()
                 .withSource(sourceEmail)
                 .withDestination(destination)
                 .withMessage(message);
 
-        <span class="keyword">if</span> ( email.getReplyTo() != <span class="predefined-constant">null</span> ) {
+        if ( email.getReplyTo() != null ) {
             request = request.withReplyToAddresses();
         }
 
-        <span class="keyword">try</span> {
-            <span class="keyword">if</span> (LOG.isInfoEnabled()) {
-                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Attempting to send an email through Amazon SES by using the AWS SDK for Java...</span><span class="delimiter">&quot;</span></span>);
+        try {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
             }
 
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
@@ -486,13 +486,13 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 
             SendEmailResult sendEmailResult = client.sendEmail(request);
 
-            <span class="keyword">if</span> (LOG.isInfoEnabled()) {
-                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Email sent! {}</span><span class="delimiter">&quot;</span></span>, sendEmailResult.toString());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Email sent! {}", sendEmailResult.toString());
             }
-        } <span class="keyword">catch</span> (<span class="exception">Exception</span> ex) {
-            <span class="keyword">if</span> (LOG.isWarnEnabled()) {
-                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">The email was not sent.</span><span class="delimiter">&quot;</span></span>);
-                LOG.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">Error message: {}</span><span class="delimiter">&quot;</span></span>, ex.getMessage());
+        } catch (Exception ex) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("The email was not sent.");
+                LOG.warn("Error message: {}", ex.getMessage());
             }
         }
     }
@@ -529,49 +529,49 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AwsSesMailServiceSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">AwsSesMailServiceSpec</span> <span class="directive">extends</span> Specification {
+class AwsSesMailServiceSpec extends Specification {
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AwsSesMailService is not loaded if system property is not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
+    def "AwsSesMailService is not loaded if system property is not present"() {
+        given:
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         embeddedServer.applicationContext.getBean(AwsSesMailService)
 
-        <span class="key">then</span>:
+        then:
         thrown(NoSuchBeanException)
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AwsSesMailService is loaded if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.region</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.sourceemail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">me@micronaut.example</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.accesskeyid</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">aws.secretkey</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">YYYY</span><span class="delimiter">&quot;</span></span>)
+    @RestoreSystemProperties
+    def "AwsSesMailService is loaded if system properties are present"() {
+        given:
+        System.setProperty("aws.region", "XXXX")
+        System.setProperty("aws.sourceemail", "me@micronaut.example")
+        System.setProperty("aws.accesskeyid", "XXXX")
+        System.setProperty("aws.secretkey", "YYYY")
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
         AwsSesMailService bean = embeddedServer.applicationContext.getBean(AwsSesMailService)
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown()
-        bean.sourceEmail == <span class="string"><span class="delimiter">'</span><span class="content">me@micronaut.example</span><span class="delimiter">'</span></span>
-        bean.awsRegion == <span class="string"><span class="delimiter">'</span><span class="content">XXXX</span><span class="delimiter">'</span></span>
+        bean.sourceEmail == 'me@micronaut.example'
+        bean.awsRegion == 'XXXX'
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 }</code></pre>
@@ -604,7 +604,7 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.sendgrid:sendgrid-java:4.1.2</span><span class="delimiter">'</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -614,24 +614,24 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/SendGridEmailCondition.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.Condition</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.condition.ConditionContext</span>;
+import io.micronaut.context.condition.Condition;
+import io.micronaut.context.condition.ConditionContext;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">SendGridEmailCondition</span> <span class="directive">implements</span> <span class="predefined-type">Condition</span> {
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">boolean</span> matches(ConditionContext context) {
-        <span class="keyword">return</span> envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_APIKEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
-                envOrSystemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_FROM_EMAIL</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>);
+public class SendGridEmailCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context) {
+        return envOrSystemProperty("SENDGRID_APIKEY", "sendgrid.apikey") &amp;&amp;
+                envOrSystemProperty("SENDGRID_FROM_EMAIL", "sendgrid.fromemail");
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> envOrSystemProperty(<span class="predefined-type">String</span> env, <span class="predefined-type">String</span> prop) {
-        <span class="keyword">return</span> notBlankAndNotNull(<span class="predefined-type">System</span>.getProperty(prop)) || notBlankAndNotNull(<span class="predefined-type">System</span>.getenv(env));
+    private boolean envOrSystemProperty(String env, String prop) {
+        return notBlankAndNotNull(System.getProperty(prop)) || notBlankAndNotNull(System.getenv(env));
     }
 
-    <span class="directive">private</span> <span class="type">boolean</span> notBlankAndNotNull(<span class="predefined-type">String</span> str) {
-        <span class="keyword">return</span> str != <span class="predefined-constant">null</span> &amp;&amp; !str.equals(<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>);
+    private boolean notBlankAndNotNull(String str) {
+        return str != null &amp;&amp; !str.equals("");
     }
 }</code></pre>
 </div>
@@ -642,30 +642,30 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/SendGridEmailConditionSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">SendGridEmailConditionSpec</span> <span class="directive">extends</span> Specification {
+class SendGridEmailConditionSpec extends Specification {
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is true if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">me@micronaut.example</span><span class="delimiter">&quot;</span></span>)
-        SendGridEmailCondition condition = <span class="keyword">new</span> SendGridEmailCondition()
+    @RestoreSystemProperties
+    def "condition is true if system properties are present"() {
+        given:
+        System.setProperty("sendgrid.apikey", "XXXX")
+        System.setProperty("sendgrid.fromemail", "me@micronaut.example")
+        SendGridEmailCondition condition = new SendGridEmailCondition()
 
-        <span class="key">expect</span>:
-        condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        condition.matches(null)
     }
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">condition is false if system properties are not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        SendGridEmailCondition condition = <span class="keyword">new</span> SendGridEmailCondition()
+    def "condition is false if system properties are not present"() {
+        given:
+        SendGridEmailCondition condition = new SendGridEmailCondition()
 
-        <span class="key">expect</span>:
-        !condition.matches(<span class="predefined-constant">null</span>)
+        expect:
+        !condition.matches(null)
     }
 }</code></pre>
 </div>
@@ -673,104 +673,104 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/SendGridEmailService.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">com.sendgrid.Personalization</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.Content</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.Mail</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.SendGrid</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.Request</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.Response</span>;
-<span class="keyword">import</span> <span class="include">com.sendgrid.Method</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Value</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
+import com.sendgrid.Personalization;
+import com.sendgrid.Content;
+import com.sendgrid.Mail;
+import com.sendgrid.SendGrid;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.Method;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+import javax.inject.Singleton;
+import java.io.IOException;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(condition = SendGridEmailCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">SendGridEmailService</span> <span class="directive">implements</span> EmailService {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(condition = SendGridEmailCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
+class SendGridEmailService implements EmailService {
 
-    <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(SendGridEmailService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendGridEmailService.class);
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> apiKey;
+    protected final String apiKey;
 
-    <span class="directive">protected</span> <span class="directive">final</span> <span class="predefined-type">String</span> fromEmail;
+    protected final String fromEmail;
 
-    SendGridEmailService(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${SENDGRID_APIKEY:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> apiKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${SENDGRID_FROM_EMAIL:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> fromEmailEnv,
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${sendgrid.apikey:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> apiKeyProp,
-                         <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">${sendgrid.fromemail:none}</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> fromEmailProp) {
-        <span class="local-variable">this</span>.apiKey = apiKeyEnv != <span class="predefined-constant">null</span> &amp;&amp; !apiKeyEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) ? apiKeyEnv : apiKeyProp;
-        <span class="local-variable">this</span>.fromEmail = fromEmailEnv != <span class="predefined-constant">null</span> &amp;&amp; !fromEmailEnv.equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>)  ? fromEmailEnv: fromEmailProp;
+    SendGridEmailService(@Value("${SENDGRID_APIKEY:none}") String apiKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
+                         @Value("${SENDGRID_FROM_EMAIL:none}") String fromEmailEnv,
+                         @Value("${sendgrid.apikey:none}") String apiKeyProp,
+                         @Value("${sendgrid.fromemail:none}") String fromEmailProp) {
+        this.apiKey = apiKeyEnv != null &amp;&amp; !apiKeyEnv.equals("none") ? apiKeyEnv : apiKeyProp;
+        this.fromEmail = fromEmailEnv != null &amp;&amp; !fromEmailEnv.equals("none")  ? fromEmailEnv: fromEmailProp;
     }
 
-    <span class="directive">protected</span> Content contentOfEmail(Email email) {
-        <span class="keyword">if</span> ( email.getTextBody() !=<span class="predefined-constant">null</span> ) {
-            <span class="keyword">return</span> <span class="keyword">new</span> Content(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>, email.getTextBody());
+    protected Content contentOfEmail(Email email) {
+        if ( email.getTextBody() !=null ) {
+            return new Content("text/plain", email.getTextBody());
         }
-        <span class="keyword">if</span> ( email.getHtmlBody() !=<span class="predefined-constant">null</span> ) {
-            <span class="keyword">return</span> <span class="keyword">new</span> Content(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html</span><span class="delimiter">&quot;</span></span>, email.getHtmlBody());
+        if ( email.getHtmlBody() !=null ) {
+            return new Content("text/html", email.getHtmlBody());
         }
-        <span class="keyword">return</span> <span class="predefined-constant">null</span>;
+        return null;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">void</span> send(Email email) {
+    @Override
+    public void send(Email email) {
 
-        Personalization personalization = <span class="keyword">new</span> Personalization();
+        Personalization personalization = new Personalization();
         personalization.setSubject(email.getSubject());
 
-        com.sendgrid.Email to = <span class="keyword">new</span> com.sendgrid.Email(email.getRecipient());
+        com.sendgrid.Email to = new com.sendgrid.Email(email.getRecipient());
         personalization.addTo(to);
 
-        <span class="keyword">if</span> ( email.getCc() != <span class="predefined-constant">null</span> ) {
-            <span class="keyword">for</span> ( <span class="predefined-type">String</span> cc : email.getCc() ) {
-                com.sendgrid.Email ccEmail = <span class="keyword">new</span> com.sendgrid.Email();
+        if ( email.getCc() != null ) {
+            for ( String cc : email.getCc() ) {
+                com.sendgrid.Email ccEmail = new com.sendgrid.Email();
                 ccEmail.setEmail(cc);
                 personalization.addCc(ccEmail);
             }
         }
 
-        <span class="keyword">if</span> ( email.getBcc()  != <span class="predefined-constant">null</span> ) {
-            <span class="keyword">for</span> ( <span class="predefined-type">String</span> bcc : email.getBcc() ) {
-                com.sendgrid.Email bccEmail = <span class="keyword">new</span> com.sendgrid.Email();
+        if ( email.getBcc()  != null ) {
+            for ( String bcc : email.getBcc() ) {
+                com.sendgrid.Email bccEmail = new com.sendgrid.Email();
                 bccEmail.setEmail(bcc);
                 personalization.addBcc(bccEmail);
             }
         }
 
-        Mail mail = <span class="keyword">new</span> Mail();
-        com.sendgrid.Email from = <span class="keyword">new</span> com.sendgrid.Email();
+        Mail mail = new Mail();
+        com.sendgrid.Email from = new com.sendgrid.Email();
         from.setEmail(fromEmail);
         mail.from = from;
         mail.addPersonalization(personalization);
         Content content = contentOfEmail(email);
         mail.addContent(content);
 
-        SendGrid sg = <span class="keyword">new</span> SendGrid(apiKey);
-        Request request = <span class="keyword">new</span> Request();
-        <span class="keyword">try</span> {
-            request.setMethod(<span class="predefined-type">Method</span>.POST);
-            request.setEndpoint(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail/send</span><span class="delimiter">&quot;</span></span>);
+        SendGrid sg = new SendGrid(apiKey);
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
             request.setBody(mail.build());
 
             Response response = sg.api(request);
-            <span class="keyword">if</span> (LOG.isInfoEnabled()) {
-                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Status Code: {}</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.valueOf(response.getStatusCode()));
-                LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Body: {}</span><span class="delimiter">&quot;</span></span>, response.getBody());
-                <span class="keyword">for</span> ( <span class="predefined-type">String</span> k : response.getHeaders().keySet()) {
-                    <span class="predefined-type">String</span> v = response.getHeaders().get(k);
-                    LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Response Header {} =&gt; {}</span><span class="delimiter">&quot;</span></span>, k, v);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Status Code: {}", String.valueOf(response.getStatusCode()));
+                LOG.info("Body: {}", response.getBody());
+                for ( String k : response.getHeaders().keySet()) {
+                    String v = response.getHeaders().get(k);
+                    LOG.info("Response Header {} =&gt; {}", k, v);
                 }
             }
 
 
-        } <span class="keyword">catch</span> (<span class="exception">IOException</span> ex) {
-            <span class="keyword">if</span> (LOG.isErrorEnabled()) {
+        } catch (IOException ex) {
+            if (LOG.isErrorEnabled()) {
                 LOG.error(ex.getMessage());
             }
         }
@@ -800,46 +800,46 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/SendGridEmailServiceSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">spock.util.environment.RestoreSystemProperties</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
-<span class="type">class</span> <span class="class">SendGridEmailServiceSpec</span> <span class="directive">extends</span> Specification {
+class SendGridEmailServiceSpec extends Specification {
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">SendGridEmailService is not loaded if system property is not present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
+    def "SendGridEmailService is not loaded if system property is not present"() {
+        given:
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         embeddedServer.applicationContext.getBean(SendGridEmailService)
 
-        <span class="key">then</span>:
+        then:
         thrown(NoSuchBeanException)
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 
-    <span class="annotation">@RestoreSystemProperties</span>
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">SendGridEmailService is loaded if system properties are present</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">XXXX</span><span class="delimiter">&quot;</span></span>)
-        <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">me@micronaut.example</span><span class="delimiter">&quot;</span></span>)
+    @RestoreSystemProperties
+    def "SendGridEmailService is loaded if system properties are present"() {
+        given:
+        System.setProperty("sendgrid.apikey", "XXXX")
+        System.setProperty("sendgrid.fromemail", "me@micronaut.example")
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-        <span class="key">when</span>:
+        when:
         SendGridEmailService bean = embeddedServer.applicationContext.getBean(SendGridEmailService)
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown()
-        bean.apiKey == <span class="string"><span class="delimiter">'</span><span class="content">XXXX</span><span class="delimiter">'</span></span>
-        bean.fromEmail == <span class="string"><span class="delimiter">'</span><span class="content">me@micronaut.example</span><span class="delimiter">'</span></span>
+        bean.apiKey == 'XXXX'
+        bean.fromEmail == 'me@micronaut.example'
 
-        <span class="key">cleanup</span>:
+        cleanup:
         embeddedServer.close()
     }
 }</code></pre>
