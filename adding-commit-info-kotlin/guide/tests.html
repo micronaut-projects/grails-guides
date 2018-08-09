@@ -109,7 +109,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
     repositories {
       ...
       ..
@@ -117,18 +117,18 @@ function addJsClass() {
     dependencies {
       ...
       ..
-        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.2.0</span><span class="delimiter">'</span></span>
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
     }
 }
 ...
 ..
 .
-apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 junitPlatform {
     filters {
         engines {
-            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+            include 'spek'
         }
     }
 }
@@ -136,15 +136,15 @@ junitPlatform {
 repositories {
   ...
   ..
-    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">https://jcenter.bintray.com</span><span class="delimiter">&quot;</span></span> }
+    maven { url "https://jcenter.bintray.com" }
 }
 
 dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">&quot;</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.kotlin:kotlin-test:1.1.0</span><span class="delimiter">'</span></span>
+    testCompile "org.jetbrains.spek:spek-api:1.1.5"
+    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
+    testCompile 'org.jetbrains.kotlin:kotlin-test:1.1.0'
 }
 ...
 ..
@@ -159,23 +159,23 @@ dependencies {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="json">{
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">git</span><span class="delimiter">&quot;</span></span>: {
-    <span class="key"><span class="delimiter">&quot;</span><span class="content">dirty</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span>,
-    <span class="key"><span class="delimiter">&quot;</span><span class="content">commit</span><span class="delimiter">&quot;</span></span>: {
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">7368906193527fbf2b45f1ed5b08c56631f5b155</span><span class="delimiter">&quot;</span></span>,
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">describe</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">7368906-dirty</span><span class="delimiter">&quot;</span></span>,
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1527429126</span><span class="delimiter">&quot;</span></span>,
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>: {
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">short</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Initial version</span><span class="delimiter">&quot;</span></span>,
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">full</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Initial version</span><span class="delimiter">&quot;</span></span>
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+  "git": {
+    "dirty": "true",
+    "commit": {
+      "id": "7368906193527fbf2b45f1ed5b08c56631f5b155",
+      "describe": "7368906-dirty",
+      "time": "1527429126",
+      "message": {
+        "short": "Initial version",
+        "full": "Initial version"
       },
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">user</span><span class="delimiter">&quot;</span></span>: {
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">sdelamo</span><span class="delimiter">&quot;</span></span>,
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">email</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">sergio.delamo@softamo.com</span><span class="delimiter">&quot;</span></span>
+      "user": {
+        "name": "sdelamo",
+        "email": "sergio.delamo@softamo.com"
       }
     },
-    <span class="key"><span class="delimiter">&quot;</span><span class="content">branch</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">master</span><span class="delimiter">&quot;</span></span>
+    "branch": "master"
   }
 }</code></pre>
 </div>
@@ -186,40 +186,40 @@ dependencies {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/InfoSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertEquals</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertNotNull</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.HttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
-<span class="type">class</span> <span class="class">HomeControllerSpec</span>: Spek({
-    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">info endpoint</span><span class="delimiter">&quot;</span></span>) {
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(<span class="key">EmbeddedServer</span>::<span class="type">class</span>.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        <span class="class">var</span> client : HttpClient  = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
-        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">test git commit info appears in JSON</span><span class="delimiter">&quot;</span></span>) {
-            val <span class="key">request</span>: HttpRequest&lt;Any&gt; = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/info</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-            var rsp = client.toBlocking().exchange(request, <span class="predefined-type">Map</span>::<span class="type">class</span>.java)
+class HomeControllerSpec: Spek({
+    describe("info endpoint") {
+        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client : HttpClient  = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+        on("test git commit info appears in JSON") {
+            val request: HttpRequest&lt;Any&gt; = HttpRequest.GET("/info") <i class="conum" data-value="3"></i><b>(3)</b>
+            var rsp = client.toBlocking().exchange(request, Map::class.java)
 
-            <span class="class">assertEquals</span>(rsp.status(), HttpStatus.OK)
+            assertEquals(rsp.status(), HttpStatus.OK)
 
-            val json : <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, Any&gt; = rsp.body() <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, Any&gt;<i class="conum" data-value="4"></i><b>(4)</b>
+            val json : Map&lt;String, Any&gt; = rsp.body() as Map&lt;String, Any&gt;<i class="conum" data-value="4"></i><b>(4)</b>
 
-            assertNotNull(json[<span class="string"><span class="delimiter">&quot;</span><span class="content">git</span><span class="delimiter">&quot;</span></span>])
+            assertNotNull(json["git"])
 
-            val mapCommit = (json[<span class="string"><span class="delimiter">&quot;</span><span class="content">git</span><span class="delimiter">&quot;</span></span>] <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, Any&gt;)[<span class="string"><span class="delimiter">&quot;</span><span class="content">commit</span><span class="delimiter">&quot;</span></span>] <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt;
+            val mapCommit = (json["git"] as Map&lt;String, Any&gt;)["commit"] as Map&lt;String, Object&gt;
             assertNotNull(mapCommit)
-            assertNotNull(mapCommit[<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>])
-            assertNotNull(mapCommit[<span class="string"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>])
-            assertNotNull(mapCommit[<span class="string"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>])
-            assertNotNull(mapCommit[<span class="string"><span class="delimiter">&quot;</span><span class="content">user</span><span class="delimiter">&quot;</span></span>])
-            assertNotNull((json[<span class="string"><span class="delimiter">&quot;</span><span class="content">git</span><span class="delimiter">&quot;</span></span>] <span class="keyword">as</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, Any&gt;)[<span class="string"><span class="delimiter">&quot;</span><span class="content">branch</span><span class="delimiter">&quot;</span></span>])
+            assertNotNull(mapCommit["message"])
+            assertNotNull(mapCommit["time"])
+            assertNotNull(mapCommit["id"])
+            assertNotNull(mapCommit["user"])
+            assertNotNull((json["git"] as Map&lt;String, Any&gt;)["branch"])
 
         }
         afterGroup {
