@@ -91,27 +91,27 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/HelloWorldJob.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+import groovy.util.logging.Slf4j
+import io.micronaut.scheduling.annotation.Scheduled
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
+import groovy.transform.CompileStatic
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Slf4j</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">HelloWorldJob</span> {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Slf4j <i class="conum" data-value="2"></i><b>(2)</b>
+class HelloWorldJob {
 
-    <span class="annotation">@Scheduled</span>(fixedDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">10s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="type">void</span> executeEveryTen() {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 10 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
+    void executeEveryTen() {
+        log.info("Simple Job every 10 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 
-    <span class="annotation">@Scheduled</span>(fixedDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">45s</span><span class="delimiter">&quot;</span></span>, initialDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">5s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="type">void</span> executeEveryFourtyFive() {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 45 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
+    void executeEveryFourtyFive() {
+        log.info("Simple Job every 45 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -144,7 +144,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew run</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew run</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -152,7 +152,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">---
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">---
 ... Simple Job every 10 seconds :15/5/2018 12:48:02 <i class="conum" data-value="1"></i><b>(1)</b>
 ... Simple Job every 45 seconds :15/5/2018 12:48:07 <i class="conum" data-value="2"></i><b>(2)</b>
 ... Simple Job every 10 seconds :15/5/2018 12:48:12 <i class="conum" data-value="3"></i><b>(3)</b>

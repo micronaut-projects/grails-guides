@@ -94,20 +94,20 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailUseCase.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
 
-<span class="annotation">@Slf4j</span>
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">EmailUseCase</span> {
+@Slf4j
+@CompileStatic
+@Singleton
+class EmailUseCase {
 
-    <span class="type">void</span> send(<span class="predefined-type">String</span> user, <span class="predefined-type">String</span> message) {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sending email to {} : {} at {}</span><span class="delimiter">&quot;</span></span>, user, message, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    void send(String user, String message) {
+        log.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -118,25 +118,25 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/DailyEmailJob.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import groovy.transform.CompileStatic
+import io.micronaut.scheduling.annotation.Scheduled
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">DailyEmailJob</span> {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class DailyEmailJob {
 
-    <span class="directive">protected</span> <span class="directive">final</span> EmailUseCase emailUseCase
+    protected final EmailUseCase emailUseCase
 
     DailyEmailJob(EmailUseCase emailUseCase) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.emailUseCase = emailUseCase
+        this.emailUseCase = emailUseCase
     }
 
-    <span class="annotation">@Scheduled</span>(cron = <span class="string"><span class="delimiter">&quot;</span><span class="content">0 30 4 1/1 * ?</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="type">void</span> execute() {
-        emailUseCase.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">john.doe@micronaut.example</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Test Message</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Scheduled(cron = "0 30 4 1/1 * ?") <i class="conum" data-value="3"></i><b>(3)</b>
+    void execute() {
+        emailUseCase.send("john.doe@micronaut.example", "Test Message") <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>

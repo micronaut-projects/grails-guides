@@ -135,12 +135,12 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/logback.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;configuration&gt;</span>
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
 ...
 ..
 .
-    <span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">example.micronaut</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">info</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
-<span class="tag">&lt;/configuration&gt;</span></code></pre>
+    &lt;logger name="example.micronaut" level="info" /&gt;
+&lt;/configuration&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -163,27 +163,27 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/HelloWorldJob.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+import groovy.util.logging.Slf4j
+import io.micronaut.scheduling.annotation.Scheduled
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
+import groovy.transform.CompileStatic
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Slf4j</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">HelloWorldJob</span> {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Slf4j <i class="conum" data-value="2"></i><b>(2)</b>
+class HelloWorldJob {
 
-    <span class="annotation">@Scheduled</span>(fixedDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">10s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="type">void</span> executeEveryTen() {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 10 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
+    void executeEveryTen() {
+        log.info("Simple Job every 10 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 
-    <span class="annotation">@Scheduled</span>(fixedDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">45s</span><span class="delimiter">&quot;</span></span>, initialDelay = <span class="string"><span class="delimiter">&quot;</span><span class="content">5s</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="type">void</span> executeEveryFourtyFive() {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple Job every 45 seconds :{}</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
+    void executeEveryFourtyFive() {
+        log.info("Simple Job every 45 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -216,7 +216,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew run</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew run</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -224,7 +224,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">---
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">---
 ... Simple Job every 10 seconds :15/5/2018 12:48:02 <i class="conum" data-value="1"></i><b>(1)</b>
 ... Simple Job every 45 seconds :15/5/2018 12:48:07 <i class="conum" data-value="2"></i><b>(2)</b>
 ... Simple Job every 10 seconds :15/5/2018 12:48:12 <i class="conum" data-value="3"></i><b>(3)</b>
@@ -276,20 +276,20 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailUseCase.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
 
-<span class="annotation">@Slf4j</span>
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">EmailUseCase</span> {
+@Slf4j
+@CompileStatic
+@Singleton
+class EmailUseCase {
 
-    <span class="type">void</span> send(<span class="predefined-type">String</span> user, <span class="predefined-type">String</span> message) {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sending email to {} : {} at {}</span><span class="delimiter">&quot;</span></span>, user, message, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
+    void send(String user, String message) {
+        log.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -300,25 +300,25 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/DailyEmailJob.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.annotation.Scheduled</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import groovy.transform.CompileStatic
+import io.micronaut.scheduling.annotation.Scheduled
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">DailyEmailJob</span> {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class DailyEmailJob {
 
-    <span class="directive">protected</span> <span class="directive">final</span> EmailUseCase emailUseCase
+    protected final EmailUseCase emailUseCase
 
     DailyEmailJob(EmailUseCase emailUseCase) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.emailUseCase = emailUseCase
+        this.emailUseCase = emailUseCase
     }
 
-    <span class="annotation">@Scheduled</span>(cron = <span class="string"><span class="delimiter">&quot;</span><span class="content">0 30 4 1/1 * ?</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="type">void</span> execute() {
-        emailUseCase.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">john.doe@micronaut.example</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Test Message</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Scheduled(cron = "0 30 4 1/1 * ?") <i class="conum" data-value="3"></i><b>(3)</b>
+    void execute() {
+        emailUseCase.send("john.doe@micronaut.example", "Test Message") <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -369,36 +369,36 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/Application.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.event.ApplicationEventListener</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.Micronaut</span>
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.event.ServerStartupEvent</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.runtime.Micronaut
+import groovy.transform.CompileStatic
+import io.micronaut.runtime.server.event.ServerStartupEvent
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">Application</span> <span class="directive">implements</span> ApplicationEventListener&lt;ServerStartupEvent&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="directive">private</span> <span class="directive">final</span> RegisterUseCase registerUseCase
+    private final RegisterUseCase registerUseCase
 
     Application(RegisterUseCase registerUseCase) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.registerUseCase = registerUseCase
+        this.registerUseCase = registerUseCase
     }
 
-    <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+    static void main(String[] args) {
         Micronaut.run(Application.class)
     }
 
 
-    <span class="annotation">@Override</span>
-    <span class="type">void</span> onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">try</span> {
-            registerUseCase.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">harry@micronaut.example</span><span class="delimiter">&quot;</span></span>)
-            <span class="predefined-type">Thread</span>.sleep(<span class="integer">20000</span>)
-            registerUseCase.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">ron@micronaut.example</span><span class="delimiter">&quot;</span></span>)
-        } <span class="keyword">catch</span> (<span class="exception">InterruptedException</span> e) {
+    @Override
+    void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="4"></i><b>(4)</b>
+        try {
+            registerUseCase.register("harry@micronaut.example")
+            Thread.sleep(20000)
+            registerUseCase.register("ron@micronaut.example")
+        } catch (InterruptedException e) {
             e.printStackTrace()
         }
     }
@@ -437,19 +437,19 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailTask.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+import groovy.transform.CompileStatic
 
-<span class="annotation">@CompileStatic</span>
-<span class="type">class</span> <span class="class">EmailTask</span> <span class="directive">implements</span> <span class="predefined-type">Runnable</span> {
+@CompileStatic
+class EmailTask implements Runnable {
 
-    <span class="predefined-type">String</span> email
-    <span class="predefined-type">String</span> message
+    String email
+    String message
     EmailUseCase emailUseCase
 
-    <span class="annotation">@Override</span>
-    <span class="type">void</span> run() {
+    @Override
+    void run() {
         emailUseCase.send(email, message)
     }
 }</code></pre>
@@ -461,39 +461,39 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/RegisterUseCase.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.TaskExecutors</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.TaskScheduler</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Named</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>
-<span class="keyword">import</span> <span class="include">java.time.Duration</span>
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import io.micronaut.scheduling.TaskExecutors
+import io.micronaut.scheduling.TaskScheduler
+import javax.inject.Named
+import javax.inject.Singleton
+import java.text.SimpleDateFormat
+import java.time.Duration
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Slf4j</span>
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">RegisterUseCase</span> {
+@CompileStatic
+@Slf4j
+@Singleton
+class RegisterUseCase {
 
-    <span class="directive">protected</span> <span class="directive">final</span> TaskScheduler taskScheduler
-    <span class="directive">protected</span> <span class="directive">final</span> EmailUseCase emailUseCase
+    protected final TaskScheduler taskScheduler
+    protected final EmailUseCase emailUseCase
 
     RegisterUseCase(EmailUseCase emailUseCase, <i class="conum" data-value="1"></i><b>(1)</b>
-                           <span class="annotation">@Named</span>(TaskExecutors.SCHEDULED) TaskScheduler taskScheduler) { <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.emailUseCase = emailUseCase
-        <span class="local-variable">this</span>.taskScheduler = taskScheduler
+                           @Named(TaskExecutors.SCHEDULED) TaskScheduler taskScheduler) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.emailUseCase = emailUseCase
+        this.taskScheduler = taskScheduler
     }
 
-    <span class="type">void</span> register(<span class="predefined-type">String</span> email) {
-        log.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">saving {} at {}</span><span class="delimiter">&quot;</span></span>, email, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()))
-        scheduleFollowupEmail(email, <span class="string"><span class="delimiter">&quot;</span><span class="content">Welcome to Micronaut</span><span class="delimiter">&quot;</span></span>)
+    void register(String email) {
+        log.info("saving {} at {}", email, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
+        scheduleFollowupEmail(email, "Welcome to Micronaut")
     }
 
-    <span class="directive">private</span> <span class="type">void</span> scheduleFollowupEmail(<span class="predefined-type">String</span> email, <span class="predefined-type">String</span> message) {
-        EmailTask task = <span class="keyword">new</span> EmailTask(<span class="key">emailUseCase</span>: emailUseCase, <span class="key">email</span>: email, <span class="key">message</span>: message) <i class="conum" data-value="3"></i><b>(3)</b>
-        taskScheduler.schedule(<span class="predefined-type">Duration</span>.ofMinutes(<span class="integer">1</span>), task) <i class="conum" data-value="4"></i><b>(4)</b>
+    private void scheduleFollowupEmail(String email, String message) {
+        EmailTask task = new EmailTask(emailUseCase: emailUseCase, email: email, message: message) <i class="conum" data-value="3"></i><b>(3)</b>
+        taskScheduler.schedule(Duration.ofMinutes(1), task) <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -523,7 +523,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">INFO  example.micronaut.RegisterUseCase - saving harry@micronaut.example at 15/5/2018 06:25:14
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">INFO  example.micronaut.RegisterUseCase - saving harry@micronaut.example at 15/5/2018 06:25:14
 INFO  example.micronaut.RegisterUseCase - saving ron@micronaut.example at 15/5/2018 06:25:34
 INFO  example.micronaut.EmailUseCase - Sending email to harry@micronaut.example : Welcome to Micronaut at 15/5/2018 06:26:14
 INFO  example.micronaut.EmailUseCase - Sending email to ron@micronaut.example : Welcome to Micronaut at 15/5/2018 06:26:34</code></pre>
