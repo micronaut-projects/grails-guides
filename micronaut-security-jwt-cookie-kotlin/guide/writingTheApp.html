@@ -187,11 +187,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security-jwt</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -212,26 +212,26 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
-      <span class="key">logout</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="key">token</span>:
-      <span class="key">jwt</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="key">bearer</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="key">cookie</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
-          <span class="key">loginFailureTargetUrl</span>: <span class="string"><span class="content">/login/authFailed </span></span><i class="conum" data-value="7"></i><b>(7)</b>
-        <span class="key">signatures</span>:
-          <span class="key">secret</span>:
-            <span class="key">generator</span>: <i class="conum" data-value="8"></i><b>(8)</b>
-              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+      logout:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+        bearer:
+          enabled: false <i class="conum" data-value="5"></i><b>(5)</b>
+        cookie:
+          enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+          loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="7"></i><b>(7)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="8"></i><b>(8)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -291,27 +291,27 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationProvider</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationRequest</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationResponse</span>
-<span class="namespace">import</span> <span class="namespace">org.reactivestreams.Publisher</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationFailed</span>
-<span class="namespace">import</span> <span class="namespace">io.reactivex.Flowable</span>
-<span class="namespace">import</span> <span class="namespace">java.util.ArrayList</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.UserDetails</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import org.reactivestreams.Publisher
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.reactivex.Flowable
+import java.util.ArrayList
+import io.micronaut.security.authentication.UserDetails
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">AuthenticationProviderUserPassword</span> : <span class="namespace">AuthenticationProvider</span> { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">authenticate</span>(<span class="namespace">authenticationRequest</span>: <span class="namespace">AuthenticationRequest</span>&lt;*, *&gt;?): <span class="namespace">Publisher</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt; {
-        <span class="namespace">if</span> (<span class="namespace">authenticationRequest</span>!=<span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.identity</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> != <span class="namespace">null</span>) {
-            <span class="namespace">if</span> ( <span class="namespace">authenticationRequest.identity</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> ) {
-                <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">UserDetails</span>(<span class="namespace">authenticationRequest.identity</span> <span class="namespace">as</span> <span class="namespace">String</span>, <span class="namespace">ArrayList</span>()))
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
+        if (authenticationRequest!=null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
             }
         }
-        <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">AuthenticationFailed</span>())
+        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
     }
 }</code></pre>
 </div>
@@ -360,11 +360,11 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity:velocity-engine-core:2.0</span><span class="delimiter">&quot;</span></span>
+    compile "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -374,63 +374,63 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
-        <span class="tag">&lt;title&gt;</span>Home<span class="tag">&lt;/title&gt;</span>
-    <span class="tag">&lt;/head&gt;</span>
-    <span class="tag">&lt;body&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Home&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
         #if( $loggedIn )
-            <span class="tag">&lt;h1&gt;</span>username: <span class="tag">&lt;span&gt;</span>$username<span class="tag">&lt;/span&gt;</span><span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;username: &lt;span&gt;$username&lt;/span&gt;&lt;/h1&gt;
         #else
-            <span class="tag">&lt;h1&gt;</span>You are not logged in<span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;You are not logged in&lt;/h1&gt;
         #end
         #if( $loggedIn )
-            <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/form&gt;</span>
+            &lt;form action="logout" method="POST"&gt;
+                &lt;input type="submit" value="Logout"/&gt;
+            &lt;/form&gt;
         #else
-            <span class="tag">&lt;p&gt;</span><span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/p&gt;</span>
+            &lt;p&gt;&lt;a href="/login/auth"&gt;Login&lt;/a&gt;&lt;/p&gt;
         #end
-    <span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
         #if( $errors )
-            <span class="tag">&lt;title&gt;</span>Login Failed<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login Failed&lt;/title&gt;
         #else
-            <span class="tag">&lt;title&gt;</span>Login<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login&lt;/title&gt;
         #end
-    <span class="tag">&lt;/head&gt;</span>
-<span class="tag">&lt;body&gt;</span>
-    <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-        <span class="tag">&lt;ol&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Username<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Password<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
+    &lt;/head&gt;
+&lt;body&gt;
+    &lt;form action="/login" method="POST"&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;label for="username"&gt;Username&lt;/label&gt;
+                &lt;input type="text" name="username" id="username"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;label for="password"&gt;Password&lt;/label&gt;
+                &lt;input type="password" name="password" id="password"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;input type="submit" value="Login"/&gt;
+            &lt;/li&gt;
             #if( $errors )
-                <span class="tag">&lt;li</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                    <span class="tag">&lt;span</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">color</span>: <span class="value">red</span>;<span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login Failed<span class="tag">&lt;/span&gt;</span>
-                <span class="tag">&lt;/li&gt;</span>
+                &lt;li id="errors"&gt;
+                    &lt;span style="color: red;"&gt;Login Failed&lt;/span&gt;
+                &lt;/li&gt;
             #end
-        <span class="tag">&lt;/ol&gt;</span>
-    <span class="tag">&lt;/form&gt;</span>
-<span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+        &lt;/ol&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -439,35 +439,35 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
-<span class="namespace">import</span> <span class="namespace">org.apache.velocity.VelocityContext</span>
-<span class="namespace">import</span> <span class="namespace">org.apache.velocity.app.VelocityEngine</span>
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.VelocityEngine
 
-<span class="namespace">import</span> <span class="namespace">javax.annotation.PostConstruct</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
-<span class="namespace">import</span> <span class="namespace">java.io.StringWriter</span>
-<span class="namespace">import</span> <span class="namespace">java.nio.charset.StandardCharsets</span>
-<span class="namespace">import</span> <span class="namespace">java.util.Properties</span>
+import javax.annotation.PostConstruct
+import javax.inject.Singleton
+import java.io.StringWriter
+import java.nio.charset.StandardCharsets
+import java.util.Properties
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">VelocityService</span> {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class VelocityService {
 
-    <span class="namespace">private</span> <span class="namespace">var</span> <span class="namespace">velocityEngine</span>: <span class="namespace">VelocityEngine</span>? = <span class="namespace">null</span>
+    private var velocityEngine: VelocityEngine? = null
 
-    <span class="annotation">@PostConstruct</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="namespace">internal</span> <span class="namespace">fun</span> <span class="namespace">initialize</span>() {
-        <span class="namespace">val</span> <span class="namespace">p</span> = <span class="namespace">Properties</span>()
-        <span class="namespace">p.setProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">resource.loader</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">class</span><span class="delimiter">&quot;</span></span>)
-        <span class="namespace">p.setProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">class.resource.loader.class</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</span><span class="delimiter">&quot;</span></span>)
-        <span class="namespace">velocityEngine</span> = <span class="namespace">VelocityEngine</span>(<span class="namespace">p</span>)
+    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
+    internal fun initialize() {
+        val p = Properties()
+        p.setProperty("resource.loader", "class")
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
+        velocityEngine = VelocityEngine(p)
     }
 
-    <span class="namespace">fun</span> <span class="namespace">render</span>(<span class="namespace">name</span>: <span class="namespace">String</span>, <span class="namespace">data</span>: <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt;): <span class="namespace">String</span> {
-        <span class="namespace">val</span> <span class="namespace">writer</span> = <span class="namespace">StringWriter</span>()
-        <span class="namespace">val</span> <span class="namespace">velocityContext</span> = <span class="namespace">VelocityContext</span>(<span class="namespace">data</span>)
-        <span class="namespace">velocityEngine</span>!!.<span class="namespace">mergeTemplate</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">templates/$name</span><span class="delimiter">&quot;</span></span>, <span class="namespace">StandardCharsets.UTF_8.name</span>(), <span class="namespace">velocityContext</span>, <span class="namespace">writer</span>)
-        <span class="namespace">return</span> <span class="namespace">writer.toString</span>()
+    fun render(name: String, data: Map&lt;String, Any&gt;): String {
+        val writer = StringWriter()
+        val velocityContext = VelocityContext(data)
+        velocityEngine!!.mergeTemplate("templates/$name", StandardCharsets.UTF_8.name(), velocityContext, writer)
+        return writer.toString()
     }
 }</code></pre>
 </div>
@@ -501,33 +501,33 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/controllers/HomeController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">java.security.Principal</span>
+import example.micronaut.services.VelocityService
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.security.Principal
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">HomeController</span>(<span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">velocityService</span>: <span class="namespace">VelocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">fun</span> <span class="namespace">index</span>(<span class="namespace">principal</span>: <span class="namespace">Principal</span>?): <span class="namespace">String</span> { <i class="conum" data-value="6"></i><b>(6)</b>
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">home.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">homeModel</span>(<span class="namespace">principal</span>))
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    fun index(principal: Principal?): String { <i class="conum" data-value="6"></i><b>(6)</b>
+        return velocityService.render("home.vm", homeModel(principal))
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">homeModel</span>(<span class="namespace">principal</span>: <span class="namespace">Principal</span>?): <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt; {
-        <span class="namespace">val</span> <span class="namespace">data</span> = <span class="namespace">mutableMapOf</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt;()
-        <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">loggedIn</span><span class="delimiter">&quot;</span></span>] = (<span class="namespace">principal</span> != <span class="namespace">null</span>) <span class="namespace">as</span> <span class="namespace">Any</span>
-        <span class="namespace">if</span> (<span class="namespace">principal</span> != <span class="namespace">null</span>) {
-            <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>] = <span class="namespace">principal.name</span> <span class="namespace">as</span> <span class="namespace">Any</span>
+    private fun homeModel(principal: Principal?): Map&lt;String, Any&gt; {
+        val data = mutableMapOf&lt;String, Any&gt;()
+        data["loggedIn"] = (principal != null) as Any
+        if (principal != null) {
+            data["username"] = principal.name as Any
         }
-        <span class="namespace">return</span> <span class="namespace">data</span>
+        return data
     }
 }</code></pre>
 </div>
@@ -568,35 +568,35 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/controllers/LoginAuthController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">java.util.HashMap</span>
+import example.micronaut.services.VelocityService
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.util.HashMap
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">LoginAuthController</span>(<span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">velocityService</span>: <span class="namespace">VelocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
+class LoginAuthController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/auth</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">fun</span> <span class="namespace">auth</span>(): <span class="namespace">String</span> {
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">HashMap</span>()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/auth") <i class="conum" data-value="5"></i><b>(5)</b>
+    fun auth(): String {
+        return velocityService.render("auth.vm", HashMap()) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/authFailed</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
-    <span class="namespace">fun</span> <span class="namespace">authFailed</span>(): <span class="namespace">String</span> {
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">authFailedModel</span>()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/authFailed") <i class="conum" data-value="7"></i><b>(7)</b>
+    fun authFailed(): String {
+        return velocityService.render("auth.vm", authFailedModel()) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">authFailedModel</span>(): <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt; {
-        <span class="namespace">return</span> <span class="namespace">mapOf</span>(<span class="namespace">Pair</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span>, <span class="namespace">true</span>))
+    private fun authFailedModel(): Map&lt;String, Any&gt; {
+        return mapOf(Pair("errors", true))
     }
 }</code></pre>
 </div>

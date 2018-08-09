@@ -97,26 +97,26 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
-      <span class="key">logout</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="key">token</span>:
-      <span class="key">jwt</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="key">bearer</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="key">cookie</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
-          <span class="key">loginFailureTargetUrl</span>: <span class="string"><span class="content">/login/authFailed </span></span><i class="conum" data-value="7"></i><b>(7)</b>
-        <span class="key">signatures</span>:
-          <span class="key">secret</span>:
-            <span class="key">generator</span>: <i class="conum" data-value="8"></i><b>(8)</b>
-              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+      logout:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+        bearer:
+          enabled: false <i class="conum" data-value="5"></i><b>(5)</b>
+        cookie:
+          enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+          loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="7"></i><b>(7)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="8"></i><b>(8)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

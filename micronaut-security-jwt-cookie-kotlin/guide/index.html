@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Micronaut JWT authentication via Cookies | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Micronaut JWT authentication via Cookies. Learn how to secure a Micronaut app using JWT (JSON Web Token) based authentication where the JWT tokens are transported via Cookies.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -260,11 +263,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security-jwt</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -285,26 +288,26 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
-      <span class="key">logout</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="key">token</span>:
-      <span class="key">jwt</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="key">bearer</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="key">cookie</span>:
-          <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
-          <span class="key">loginFailureTargetUrl</span>: <span class="string"><span class="content">/login/authFailed </span></span><i class="conum" data-value="7"></i><b>(7)</b>
-        <span class="key">signatures</span>:
-          <span class="key">secret</span>:
-            <span class="key">generator</span>: <i class="conum" data-value="8"></i><b>(8)</b>
-              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+      logout:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+        bearer:
+          enabled: false <i class="conum" data-value="5"></i><b>(5)</b>
+        cookie:
+          enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+          loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="7"></i><b>(7)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="8"></i><b>(8)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -364,27 +367,27 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationProvider</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationRequest</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationResponse</span>
-<span class="namespace">import</span> <span class="namespace">org.reactivestreams.Publisher</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationFailed</span>
-<span class="namespace">import</span> <span class="namespace">io.reactivex.Flowable</span>
-<span class="namespace">import</span> <span class="namespace">java.util.ArrayList</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.UserDetails</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import org.reactivestreams.Publisher
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.reactivex.Flowable
+import java.util.ArrayList
+import io.micronaut.security.authentication.UserDetails
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">AuthenticationProviderUserPassword</span> : <span class="namespace">AuthenticationProvider</span> { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">authenticate</span>(<span class="namespace">authenticationRequest</span>: <span class="namespace">AuthenticationRequest</span>&lt;*, *&gt;?): <span class="namespace">Publisher</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt; {
-        <span class="namespace">if</span> (<span class="namespace">authenticationRequest</span>!=<span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.identity</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> != <span class="namespace">null</span>) {
-            <span class="namespace">if</span> ( <span class="namespace">authenticationRequest.identity</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> ) {
-                <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">UserDetails</span>(<span class="namespace">authenticationRequest.identity</span> <span class="namespace">as</span> <span class="namespace">String</span>, <span class="namespace">ArrayList</span>()))
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
+        if (authenticationRequest!=null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
             }
         }
-        <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">AuthenticationFailed</span>())
+        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
     }
 }</code></pre>
 </div>
@@ -433,11 +436,11 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity:velocity-engine-core:2.0</span><span class="delimiter">&quot;</span></span>
+    compile "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -447,63 +450,63 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
-        <span class="tag">&lt;title&gt;</span>Home<span class="tag">&lt;/title&gt;</span>
-    <span class="tag">&lt;/head&gt;</span>
-    <span class="tag">&lt;body&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Home&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
         #if( $loggedIn )
-            <span class="tag">&lt;h1&gt;</span>username: <span class="tag">&lt;span&gt;</span>$username<span class="tag">&lt;/span&gt;</span><span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;username: &lt;span&gt;$username&lt;/span&gt;&lt;/h1&gt;
         #else
-            <span class="tag">&lt;h1&gt;</span>You are not logged in<span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;You are not logged in&lt;/h1&gt;
         #end
         #if( $loggedIn )
-            <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/form&gt;</span>
+            &lt;form action="logout" method="POST"&gt;
+                &lt;input type="submit" value="Logout"/&gt;
+            &lt;/form&gt;
         #else
-            <span class="tag">&lt;p&gt;</span><span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/p&gt;</span>
+            &lt;p&gt;&lt;a href="/login/auth"&gt;Login&lt;/a&gt;&lt;/p&gt;
         #end
-    <span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
         #if( $errors )
-            <span class="tag">&lt;title&gt;</span>Login Failed<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login Failed&lt;/title&gt;
         #else
-            <span class="tag">&lt;title&gt;</span>Login<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login&lt;/title&gt;
         #end
-    <span class="tag">&lt;/head&gt;</span>
-<span class="tag">&lt;body&gt;</span>
-    <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-        <span class="tag">&lt;ol&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Username<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Password<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
+    &lt;/head&gt;
+&lt;body&gt;
+    &lt;form action="/login" method="POST"&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;label for="username"&gt;Username&lt;/label&gt;
+                &lt;input type="text" name="username" id="username"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;label for="password"&gt;Password&lt;/label&gt;
+                &lt;input type="password" name="password" id="password"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;input type="submit" value="Login"/&gt;
+            &lt;/li&gt;
             #if( $errors )
-                <span class="tag">&lt;li</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                    <span class="tag">&lt;span</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">color</span>: <span class="value">red</span>;<span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login Failed<span class="tag">&lt;/span&gt;</span>
-                <span class="tag">&lt;/li&gt;</span>
+                &lt;li id="errors"&gt;
+                    &lt;span style="color: red;"&gt;Login Failed&lt;/span&gt;
+                &lt;/li&gt;
             #end
-        <span class="tag">&lt;/ol&gt;</span>
-    <span class="tag">&lt;/form&gt;</span>
-<span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+        &lt;/ol&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -512,35 +515,35 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
-<span class="namespace">import</span> <span class="namespace">org.apache.velocity.VelocityContext</span>
-<span class="namespace">import</span> <span class="namespace">org.apache.velocity.app.VelocityEngine</span>
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.VelocityEngine
 
-<span class="namespace">import</span> <span class="namespace">javax.annotation.PostConstruct</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
-<span class="namespace">import</span> <span class="namespace">java.io.StringWriter</span>
-<span class="namespace">import</span> <span class="namespace">java.nio.charset.StandardCharsets</span>
-<span class="namespace">import</span> <span class="namespace">java.util.Properties</span>
+import javax.annotation.PostConstruct
+import javax.inject.Singleton
+import java.io.StringWriter
+import java.nio.charset.StandardCharsets
+import java.util.Properties
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">VelocityService</span> {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class VelocityService {
 
-    <span class="namespace">private</span> <span class="namespace">var</span> <span class="namespace">velocityEngine</span>: <span class="namespace">VelocityEngine</span>? = <span class="namespace">null</span>
+    private var velocityEngine: VelocityEngine? = null
 
-    <span class="annotation">@PostConstruct</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="namespace">internal</span> <span class="namespace">fun</span> <span class="namespace">initialize</span>() {
-        <span class="namespace">val</span> <span class="namespace">p</span> = <span class="namespace">Properties</span>()
-        <span class="namespace">p.setProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">resource.loader</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">class</span><span class="delimiter">&quot;</span></span>)
-        <span class="namespace">p.setProperty</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">class.resource.loader.class</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</span><span class="delimiter">&quot;</span></span>)
-        <span class="namespace">velocityEngine</span> = <span class="namespace">VelocityEngine</span>(<span class="namespace">p</span>)
+    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
+    internal fun initialize() {
+        val p = Properties()
+        p.setProperty("resource.loader", "class")
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
+        velocityEngine = VelocityEngine(p)
     }
 
-    <span class="namespace">fun</span> <span class="namespace">render</span>(<span class="namespace">name</span>: <span class="namespace">String</span>, <span class="namespace">data</span>: <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt;): <span class="namespace">String</span> {
-        <span class="namespace">val</span> <span class="namespace">writer</span> = <span class="namespace">StringWriter</span>()
-        <span class="namespace">val</span> <span class="namespace">velocityContext</span> = <span class="namespace">VelocityContext</span>(<span class="namespace">data</span>)
-        <span class="namespace">velocityEngine</span>!!.<span class="namespace">mergeTemplate</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">templates/$name</span><span class="delimiter">&quot;</span></span>, <span class="namespace">StandardCharsets.UTF_8.name</span>(), <span class="namespace">velocityContext</span>, <span class="namespace">writer</span>)
-        <span class="namespace">return</span> <span class="namespace">writer.toString</span>()
+    fun render(name: String, data: Map&lt;String, Any&gt;): String {
+        val writer = StringWriter()
+        val velocityContext = VelocityContext(data)
+        velocityEngine!!.mergeTemplate("templates/$name", StandardCharsets.UTF_8.name(), velocityContext, writer)
+        return writer.toString()
     }
 }</code></pre>
 </div>
@@ -574,33 +577,33 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/controllers/HomeController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">java.security.Principal</span>
+import example.micronaut.services.VelocityService
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.security.Principal
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">HomeController</span>(<span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">velocityService</span>: <span class="namespace">VelocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">fun</span> <span class="namespace">index</span>(<span class="namespace">principal</span>: <span class="namespace">Principal</span>?): <span class="namespace">String</span> { <i class="conum" data-value="6"></i><b>(6)</b>
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">home.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">homeModel</span>(<span class="namespace">principal</span>))
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    fun index(principal: Principal?): String { <i class="conum" data-value="6"></i><b>(6)</b>
+        return velocityService.render("home.vm", homeModel(principal))
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">homeModel</span>(<span class="namespace">principal</span>: <span class="namespace">Principal</span>?): <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt; {
-        <span class="namespace">val</span> <span class="namespace">data</span> = <span class="namespace">mutableMapOf</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt;()
-        <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">loggedIn</span><span class="delimiter">&quot;</span></span>] = (<span class="namespace">principal</span> != <span class="namespace">null</span>) <span class="namespace">as</span> <span class="namespace">Any</span>
-        <span class="namespace">if</span> (<span class="namespace">principal</span> != <span class="namespace">null</span>) {
-            <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>] = <span class="namespace">principal.name</span> <span class="namespace">as</span> <span class="namespace">Any</span>
+    private fun homeModel(principal: Principal?): Map&lt;String, Any&gt; {
+        val data = mutableMapOf&lt;String, Any&gt;()
+        data["loggedIn"] = (principal != null) as Any
+        if (principal != null) {
+            data["username"] = principal.name as Any
         }
-        <span class="namespace">return</span> <span class="namespace">data</span>
+        return data
     }
 }</code></pre>
 </div>
@@ -641,35 +644,35 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/controllers/LoginAuthController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">java.util.HashMap</span>
+import example.micronaut.services.VelocityService
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.util.HashMap
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">LoginAuthController</span>(<span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">velocityService</span>: <span class="namespace">VelocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
+class LoginAuthController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/auth</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">fun</span> <span class="namespace">auth</span>(): <span class="namespace">String</span> {
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">HashMap</span>()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/auth") <i class="conum" data-value="5"></i><b>(5)</b>
+    fun auth(): String {
+        return velocityService.render("auth.vm", HashMap()) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/authFailed</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
-    <span class="namespace">fun</span> <span class="namespace">authFailed</span>(): <span class="namespace">String</span> {
-        <span class="namespace">return</span> <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">authFailedModel</span>()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/authFailed") <i class="conum" data-value="7"></i><b>(7)</b>
+    fun authFailed(): String {
+        return velocityService.render("auth.vm", authFailedModel()) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">authFailedModel</span>(): <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Any</span>&gt; {
-        <span class="namespace">return</span> <span class="namespace">mapOf</span>(<span class="namespace">Pair</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span>, <span class="namespace">true</span>))
+    private fun authFailedModel(): Map&lt;String, Any&gt; {
+        return mapOf(Pair("errors", true))
     }
 }</code></pre>
 </div>
@@ -730,13 +733,13 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">groovy</span><span class="delimiter">&quot;</span></span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">apply plugin:"groovy"
 
 dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.5.0</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
+    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
 }</code></pre>
 </div>
 </div>
@@ -746,11 +749,11 @@ dependencies {
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example.micronaut</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">kotlin</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example.micronaut
+---
+testFramework: spock
+sourceLanguage: kotlin</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -762,15 +765,15 @@ dependencies {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.gebish:geb-spock:2.1</span><span class="delimiter">&quot;</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-chrome-driver:3.6.0</span><span class="delimiter">&quot;</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-firefox-driver:3.6.0</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-support:3.6.0</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-api:3.6.0</span><span class="delimiter">&quot;</span></span>
+    testCompile "org.gebish:geb-spock:2.1"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
+    testCompile "org.seleniumhq.selenium:selenium-support:3.6.0"
+    testCompile "org.seleniumhq.selenium:selenium-api:3.6.0"
 }</code></pre>
 </div>
 </div>
@@ -779,39 +782,39 @@ dependencies {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeDriver</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeOptions</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxDriver</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxOptions</span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 
 environments {
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=chrome test”</span>
+    // run via “./gradlew -Dgeb.env=chrome test”
     chrome {
-        driver = { <span class="keyword">new</span> ChromeDriver() }
+        driver = { new ChromeDriver() }
     }
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=chromeHeadless test”</span>
+    // run via “./gradlew -Dgeb.env=chromeHeadless test”
     chromeHeadless {
         driver = {
-            ChromeOptions o = <span class="keyword">new</span> ChromeOptions()
-            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">headless</span><span class="delimiter">'</span></span>)
-            <span class="keyword">new</span> ChromeDriver(o)
+            ChromeOptions o = new ChromeOptions()
+            o.addArguments('headless')
+            new ChromeDriver(o)
         }
     }
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=firefoxHeadless test”</span>
+    // run via “./gradlew -Dgeb.env=firefoxHeadless test”
     firefoxHeadless {
         driver = {
-            FirefoxOptions o = <span class="keyword">new</span> FirefoxOptions()
-            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">-headless</span><span class="delimiter">'</span></span>)
-            <span class="keyword">new</span> FirefoxDriver(o)
+            FirefoxOptions o = new FirefoxOptions()
+            o.addArguments('-headless')
+            new FirefoxDriver(o)
         }
     }
 
-    <span class="comment">// run via “./gradlew -Dgeb.env=firefox test”</span>
+    // run via “./gradlew -Dgeb.env=firefox test”
     firefox {
-        driver = { <span class="keyword">new</span> FirefoxDriver() }
+        driver = { new FirefoxDriver() }
     }
 }</code></pre>
 </div>
@@ -825,34 +828,34 @@ environments {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">geb.Page</span>
+import geb.Page
 
-<span class="type">class</span> <span class="class">HomePage</span> <span class="directive">extends</span> Page {
+class HomePage extends Page {
 
-    <span class="directive">static</span> url = <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+    static url = '/'
 
-    <span class="directive">static</span> at = { title == <span class="string"><span class="delimiter">'</span><span class="content">Home</span><span class="delimiter">'</span></span> }
+    static at = { title == 'Home' }
 
-    <span class="directive">static</span> content = {
-        loginLink { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>, <span class="key">text</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login</span><span class="delimiter">'</span></span>) }
-        logoutButton { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">input</span><span class="delimiter">'</span></span>, <span class="key">type</span>: <span class="string"><span class="delimiter">'</span><span class="content">submit</span><span class="delimiter">'</span></span>, <span class="key">value</span>: <span class="string"><span class="delimiter">'</span><span class="content">Logout</span><span class="delimiter">'</span></span>) }
-        usernameElement(<span class="key">required</span>: <span class="predefined-constant">false</span>) { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">h1 span</span><span class="delimiter">'</span></span>, <span class="integer">0</span>) }
+    static content = {
+        loginLink { $('a', text: 'Login') }
+        logoutButton { $('input', type: 'submit', value: 'Logout') }
+        usernameElement(required: false) { $('h1 span', 0) }
     }
 
-    <span class="predefined-type">String</span> username() {
-        <span class="keyword">if</span> ( usernameElement.empty ) {
-            <span class="keyword">return</span> <span class="predefined-constant">null</span>
+    String username() {
+        if ( usernameElement.empty ) {
+            return null
         }
         usernameElement.text()
     }
 
-    <span class="type">void</span> login() {
+    void login() {
         loginLink.click()
     }
 
-    <span class="type">void</span> logout() {
+    void logout() {
         logoutButton.click()
     }
 }</code></pre>
@@ -861,28 +864,28 @@ environments {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/LoginPage.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">geb.Page</span>
+import geb.Page
 
-<span class="type">class</span> <span class="class">LoginPage</span> <span class="directive">extends</span> Page {
+class LoginPage extends Page {
 
-    <span class="directive">static</span> url = <span class="string"><span class="delimiter">'</span><span class="content">/login/auth</span><span class="delimiter">'</span></span>
+    static url = '/login/auth'
 
-    <span class="directive">static</span> at = { title.contains <span class="string"><span class="delimiter">'</span><span class="content">Login</span><span class="delimiter">'</span></span> }
+    static at = { title.contains 'Login' }
 
-    <span class="directive">static</span> content = {
-        usernameInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">#username</span><span class="delimiter">'</span></span>) }
-        passwordInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">#password</span><span class="delimiter">'</span></span>) }
-        submitInput { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">input</span><span class="delimiter">'</span></span>, <span class="key">type</span>: <span class="string"><span class="delimiter">'</span><span class="content">submit</span><span class="delimiter">'</span></span>) }
-        errorsLi(<span class="key">required</span>: <span class="predefined-constant">false</span>) { <span class="error">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">li#errors</span><span class="delimiter">'</span></span>) }
+    static content = {
+        usernameInput { $('#username') }
+        passwordInput { $('#password') }
+        submitInput { $('input', type: 'submit') }
+        errorsLi(required: false) { $('li#errors') }
     }
 
-    <span class="type">boolean</span> hasErrors() {
+    boolean hasErrors() {
         !errorsLi.empty
     }
 
-    <span class="type">void</span> login(<span class="predefined-type">String</span> username, <span class="predefined-type">String</span> password) {
+    void login(String username, String password) {
         usernameInput = username
         passwordInput = password
         submitInput.click()
@@ -896,68 +899,68 @@ environments {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AuthenticationSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">AuthenticationSpec</span> <span class="directive">extends</span> GebSpec {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">class AuthenticationSpec extends GebSpec {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-    <span class="annotation">@IgnoreIf</span>({ !sys[<span class="string"><span class="delimiter">'</span><span class="content">geb.env</span><span class="delimiter">'</span></span>] })
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">verify session based authentication works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">given</span>:
-        browser.baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:</span><span class="inline"><span class="inline-delimiter">${</span>embeddedServer.port<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+    @IgnoreIf({ !sys['geb.env'] })
+    def "verify session based authentication works"() {
+        given:
+        browser.baseUrl = "http://localhost:${embeddedServer.port}"
 
-        <span class="key">when</span>:
+        when:
         to HomePage
 
-        <span class="key">then</span>:
+        then:
         at HomePage
 
-        <span class="key">when</span>:
+        when:
         HomePage homePage = browser.page HomePage
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">As we are not logged in, there is no username</span><span class="delimiter">'</span></span>
-        homePage.username() == <span class="predefined-constant">null</span>
+        then: 'As we are not logged in, there is no username'
+        homePage.username() == null
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">click the login link</span><span class="delimiter">'</span></span>
+        when: 'click the login link'
         homePage.login()
 
-        <span class="key">then</span>:
+        then:
         at LoginPage
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">fill the login form, with invalid credentials</span><span class="delimiter">'</span></span>
+        when: 'fill the login form, with invalid credentials'
         LoginPage loginPage = browser.page LoginPage
-        loginPage.login(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>)
+        loginPage.login('foo', 'foo')
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the user is still in the login form</span><span class="delimiter">'</span></span>
+        then: 'the user is still in the login form'
         at LoginPage
 
-        <span class="key">and</span>: <span class="string"><span class="delimiter">'</span><span class="content">and error is displayed</span><span class="delimiter">'</span></span>
+        and: 'and error is displayed'
         loginPage.hasErrors()
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">fill the form with valid credentials</span><span class="delimiter">'</span></span>
-        loginPage.login(<span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">password</span><span class="delimiter">'</span></span>)
+        when: 'fill the form with valid credentials'
+        loginPage.login('sherlock', 'password')
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">we get redirected to the home page</span><span class="delimiter">'</span></span>
+        then: 'we get redirected to the home page'
         at HomePage
 
-        <span class="key">when</span>:
+        when:
         homePage = browser.page HomePage
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the username is populated</span><span class="delimiter">'</span></span>
-        homePage.username() == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+        then: 'the username is populated'
+        homePage.username() == 'sherlock'
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">click the logout button</span><span class="delimiter">'</span></span>
+        when: 'click the logout button'
         homePage.logout()
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">we are in the home page</span><span class="delimiter">'</span></span>
+        then: 'we are in the home page'
         at HomePage
 
-        <span class="key">when</span>:
+        when:
         homePage = browser.page HomePage
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">but we are no longer logged in</span><span class="delimiter">'</span></span>
-        homePage.username() == <span class="predefined-constant">null</span>
+        then: 'but we are no longer logged in'
+        homePage.username() == null
     }
 }</code></pre>
 </div>
@@ -980,17 +983,17 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
     repositories {
 ...
 ..
     }
     dependencies {
-        classpath <span class="string"><span class="delimiter">&quot;</span><span class="content">gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4</span><span class="delimiter">&quot;</span></span>
+        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
     }
 }
 
-apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">com.energizedwork.webdriver-binaries</span><span class="delimiter">&quot;</span></span>
+apply plugin:"com.energizedwork.webdriver-binaries"
 
 
 dependencies {
@@ -1000,14 +1003,14 @@ dependencies {
 }
 
 webdriverBinaries {
-    chromedriver <span class="string"><span class="delimiter">'</span><span class="content">2.40</span><span class="delimiter">'</span></span>
-    geckodriver <span class="string"><span class="delimiter">'</span><span class="content">0.21.0</span><span class="delimiter">'</span></span>
+    chromedriver '2.40'
+    geckodriver '0.21.0'
 }
 
 tasks.withType(Test) {
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">geb.env</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">geb.env</span><span class="delimiter">'</span></span>)
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">'</span></span>)
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">'</span></span>)
+    systemProperty "geb.env", System.getProperty('geb.env')
+    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
 }</code></pre>
 </div>
 </div>
@@ -1027,7 +1030,7 @@ tasks.withType(Test) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew -Dgeb.env=chrome test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew -Dgeb.env=chrome test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
