@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Creating your first Micronaut app | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Creating your first Micronaut app. Learn how to create a Hello World Micronaut app with Java with a controller and a functional test.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -79,7 +82,7 @@
         <h1>Creating your first Micronaut app</h1>
         <p>Learn how to create a Hello World Micronaut app with Java with a controller and a functional test.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -205,13 +208,13 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/Application.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.Micronaut</span>;
+import io.micronaut.runtime.Micronaut;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Application</span> {
+public class Application {
 
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+    public static void main(String[] args) {
         Micronaut.run(Application.class);
     }
 }</code></pre>
@@ -237,19 +240,19 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/HelloController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/hello</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloController</span> {
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="directive">public</span> <span class="predefined-type">String</span> index() {
-        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>; <i class="conum" data-value="4"></i><b>(4)</b>
+@Controller("/hello") <i class="conum" data-value="1"></i><b>(1)</b>
+public class HelloController {
+    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    public String index() {
+        return "Hello World"; <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -291,49 +294,49 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/HelloControllerTest.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>;
-<span class="keyword">import</span> <span class="include">org.junit.AfterClass</span>;
-<span class="keyword">import</span> <span class="include">org.junit.BeforeClass</span>;
-<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
-<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertEquals</span>;
-<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertNotNull</span>;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.runtime.server.EmbeddedServer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloControllerTest</span> {
+public class HelloControllerTest {
 
-    <span class="directive">private</span> <span class="directive">static</span> EmbeddedServer server;
-    <span class="directive">private</span> <span class="directive">static</span> HttpClient client;
+    private static EmbeddedServer server;
+    private static HttpClient client;
 
-    <span class="annotation">@BeforeClass</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> setupServer() {
+    @BeforeClass
+    public static void setupServer() {
         server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
         client = server
                 .getApplicationContext()
                 .createBean(HttpClient.class, server.getURL());  <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
-    <span class="annotation">@AfterClass</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> stopServer() {
-        <span class="keyword">if</span> (server != <span class="predefined-constant">null</span>) {
+    @AfterClass
+    public static void stopServer() {
+        if (server != null) {
             server.stop();
         }
-        <span class="keyword">if</span> (client != <span class="predefined-constant">null</span>) {
+        if (client != null) {
             client.stop();
         }
     }
 
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testHello() <span class="directive">throws</span> <span class="exception">Exception</span> {
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/hello</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="predefined-type">String</span> body = client.toBlocking().retrieve(request);
+    @Test
+    public void testHello() throws Exception {
+        HttpRequest request = HttpRequest.GET("/hello"); <i class="conum" data-value="3"></i><b>(3)</b>
+        String body = client.toBlocking().retrieve(request);
         assertNotNull(body);
         assertEquals(
                 body,
-                <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>
+                "Hello World"
         );
     }
 }</code></pre>
@@ -371,7 +374,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
