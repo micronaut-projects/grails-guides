@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Creating your first Micronaut Kotlin app | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Creating your first Micronaut Kotlin app. Learn how to create a Micronaut app with Kotlin with a controller and a functional test.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -77,7 +80,7 @@
         <h1>Creating your first Micronaut Kotlin app</h1>
         <p>Learn how to create a Micronaut app with Kotlin with a controller and a functional test.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -244,20 +247,20 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/HelloController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 
-@Controller(&quot;/hello&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/hello") <i class="conum" data-value="1"></i><b>(1)</b>
 class HelloController {
 
-    @Get(&quot;/&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/")  <i class="conum" data-value="2"></i><b>(2)</b>
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     fun index(): String {
-        return &quot;Hello World&quot;  <i class="conum" data-value="4"></i><b>(4)</b>
+        return "Hello World"  <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -302,7 +305,7 @@ class HelloController {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
     repositories {
       ...
       ..
@@ -310,18 +313,18 @@ class HelloController {
     dependencies {
       ...
       ..
-        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.0.0</span><span class="delimiter">'</span></span>
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 ...
 ..
 .
-apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 junitPlatform {
     filters {
         engines {
-            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+            include 'spek'
         }
     }
 }
@@ -329,14 +332,14 @@ junitPlatform {
 repositories {
   ...
   ..
-    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">http://dl.bintray.com/jetbrains/spek</span><span class="delimiter">&quot;</span></span> }
+    maven { url "http://dl.bintray.com/jetbrains/spek" }
 }
 
 dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">'</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.junit.jupiter:junit-jupiter-engine:5.1.0</span><span class="delimiter">&quot;</span></span>
+    testCompile 'org.jetbrains.spek:spek-api:1.1.5'
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.1.0"
 }
 ...
 ..
@@ -352,7 +355,7 @@ test {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/HelloControllerSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.http.client.HttpClient
@@ -363,12 +366,12 @@ import org.jetbrains.spek.api.dsl.on
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class HomeControllerSpec: Spek({
-    describe(&quot;HelloController&quot;) {
+    describe("HelloController") {
         var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
         var client : HttpClient  = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
-        on(&quot;test /hello responds Hello World&quot;) {
-            var rsp : String = client.toBlocking().retrieve(&quot;/hello&quot;)
-            assertEquals(rsp, &quot;Hello World&quot;)
+        on("test /hello responds Hello World") {
+            var rsp : String = client.toBlocking().retrieve("/hello")
+            assertEquals(rsp, "Hello World")
         }
         afterGroup {
             client.close()
@@ -407,7 +410,7 @@ class HomeControllerSpec: Spek({
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
@@ -428,8 +431,8 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">...
-mainClassName = <span class="string"><span class="delimiter">&quot;</span><span class="content">example.micronaut.Application</span><span class="delimiter">&quot;</span></span>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+mainClassName = "example.micronaut.Application"
 ...</code></pre>
 </div>
 </div>
