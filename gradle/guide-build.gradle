@@ -11,10 +11,6 @@ buildscript {
     }
 }
 
-publishGuide {
-    properties['source-highlighter'] = 'highlightjs'
-}
-
 import groovy.json.*
 
 apply plugin:'base'
@@ -69,10 +65,11 @@ task publishGuide(type: grails.doc.gradle.PublishGuide) {
     resourcesDir = project.file("${localResourcesDir}/src/main/resources")
     properties = [   
         'safe':'UNSAFE',
+        'source-highlighter': 'highlightjs'
         'commondir':project.file("${localResourcesDir}/src/main/docs"),
         'sourceDir':project.file('complete').absolutePath,     
-        'javaee': 'https://docs.oracle.com/javaee/7/api/',
-        'javase': 'https://docs.oracle.com/javase/7/docs/api/',
+        'javaee': 'https://docs.oracle.com/javaee/8/api/',
+        'javase': 'https://docs.oracle.com/javase/8/docs/api/',
         'groovyapi': 'http://docs.groovy-lang.org/latest/html/gapi/',
         'micronautapi': 'http://docs.micronaut.io/latest/api/',
         'springapi': 'https://docs.spring.io/spring/docs/current/javadoc-api/'
