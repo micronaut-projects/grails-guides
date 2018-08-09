@@ -112,11 +112,11 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity:velocity-engine-core:2.0</span><span class="delimiter">&quot;</span></span>
+    compile "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -126,63 +126,63 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
-        <span class="tag">&lt;title&gt;</span>Home<span class="tag">&lt;/title&gt;</span>
-    <span class="tag">&lt;/head&gt;</span>
-    <span class="tag">&lt;body&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Home&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
         #if( $loggedIn )
-            <span class="tag">&lt;h1&gt;</span>username: <span class="tag">&lt;span&gt;</span>$username<span class="tag">&lt;/span&gt;</span><span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;username: &lt;span&gt;$username&lt;/span&gt;&lt;/h1&gt;
         #else
-            <span class="tag">&lt;h1&gt;</span>You are not logged in<span class="tag">&lt;/h1&gt;</span>
+            &lt;h1&gt;You are not logged in&lt;/h1&gt;
         #end
         #if( $loggedIn )
-            <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">logout</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Logout</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/form&gt;</span>
+            &lt;form action="logout" method="POST"&gt;
+                &lt;input type="submit" value="Logout"/&gt;
+            &lt;/form&gt;
         #else
-            <span class="tag">&lt;p&gt;</span><span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login/auth</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/p&gt;</span>
+            &lt;p&gt;&lt;a href="/login/auth"&gt;Login&lt;/a&gt;&lt;/p&gt;
         #end
-    <span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html&gt;</span>
-    <span class="tag">&lt;head&gt;</span>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
         #if( $errors )
-            <span class="tag">&lt;title&gt;</span>Login Failed<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login Failed&lt;/title&gt;
         #else
-            <span class="tag">&lt;title&gt;</span>Login<span class="tag">&lt;/title&gt;</span>
+            &lt;title&gt;Login&lt;/title&gt;
         #end
-    <span class="tag">&lt;/head&gt;</span>
-<span class="tag">&lt;body&gt;</span>
-    <span class="tag">&lt;form</span> <span class="attribute-name">action</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">method</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">POST</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-        <span class="tag">&lt;ol&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Username<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;label</span> <span class="attribute-name">for</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Password<span class="tag">&lt;/label&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;</span>
-                <span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Login</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;/li&gt;</span>
+    &lt;/head&gt;
+&lt;body&gt;
+    &lt;form action="/login" method="POST"&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;label for="username"&gt;Username&lt;/label&gt;
+                &lt;input type="text" name="username" id="username"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;label for="password"&gt;Password&lt;/label&gt;
+                &lt;input type="password" name="password" id="password"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;input type="submit" value="Login"/&gt;
+            &lt;/li&gt;
             #if( $errors )
-                <span class="tag">&lt;li</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">errors</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-                    <span class="tag">&lt;span</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">color</span>: <span class="value">red</span>;<span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Login Failed<span class="tag">&lt;/span&gt;</span>
-                <span class="tag">&lt;/li&gt;</span>
+                &lt;li id="errors"&gt;
+                    &lt;span style="color: red;"&gt;Login Failed&lt;/span&gt;
+                &lt;/li&gt;
             #end
-        <span class="tag">&lt;/ol&gt;</span>
-    <span class="tag">&lt;/form&gt;</span>
-<span class="tag">&lt;/body&gt;</span>
-<span class="tag">&lt;/html&gt;</span></code></pre>
+        &lt;/ol&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -191,33 +191,33 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/VelocityService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">org.apache.velocity.VelocityContext</span>
-<span class="keyword">import</span> <span class="include">org.apache.velocity.app.VelocityEngine</span>
-<span class="keyword">import</span> <span class="include">javax.annotation.PostConstruct</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
-<span class="keyword">import</span> <span class="include">java.nio.charset.StandardCharsets</span>
+import groovy.transform.CompileStatic
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.VelocityEngine
+import javax.annotation.PostConstruct
+import javax.inject.Singleton
+import java.nio.charset.StandardCharsets
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">VelocityService</span> {
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class VelocityService {
 
-    <span class="directive">private</span> VelocityEngine velocityEngine
+    private VelocityEngine velocityEngine
 
-    <span class="annotation">@PostConstruct</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="type">void</span> initialize() {
-        <span class="directive">final</span> <span class="predefined-type">Properties</span> p = <span class="keyword">new</span> <span class="predefined-type">Properties</span>()
-        p.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">resource.loader</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">class</span><span class="delimiter">&quot;</span></span>)
-        p.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">class.resource.loader.class</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</span><span class="delimiter">&quot;</span></span>)
-        velocityEngine = <span class="keyword">new</span> VelocityEngine(p)
+    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
+    void initialize() {
+        final Properties p = new Properties()
+        p.setProperty("resource.loader", "class")
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
+        velocityEngine = new VelocityEngine(p)
     }
 
-    <span class="predefined-type">String</span> render(<span class="directive">final</span> <span class="predefined-type">String</span> name, <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; data) {
-        <span class="directive">final</span> <span class="predefined-type">StringWriter</span> writer = <span class="keyword">new</span> <span class="predefined-type">StringWriter</span>()
-        <span class="directive">final</span> VelocityContext velocityContext = <span class="keyword">new</span> VelocityContext(data)
-        velocityEngine.mergeTemplate(<span class="string"><span class="delimiter">&quot;</span><span class="content">templates/</span><span class="inline"><span class="inline-delimiter">$</span>name</span><span class="delimiter">&quot;</span></span>,
+    String render(final String name, Map&lt;String, Object&gt; data) {
+        final StringWriter writer = new StringWriter()
+        final VelocityContext velocityContext = new VelocityContext(data)
+        velocityEngine.mergeTemplate("templates/$name",
                 StandardCharsets.UTF_8.name(),
                 velocityContext,
                 writer)

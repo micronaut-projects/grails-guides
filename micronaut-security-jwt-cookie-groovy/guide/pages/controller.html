@@ -97,42 +97,42 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">groovy.transform.CompileStatic</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">javax.annotation.Nullable</span>
-<span class="namespace">import</span> <span class="namespace">java.security.Principal</span>
+import example.micronaut.services.VelocityService
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import javax.annotation.Nullable
+import java.security.Principal
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">HomeController</span> {
+@CompileStatic
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController {
 
-    <span class="namespace">protected</span> <span class="namespace">final</span> <span class="namespace">VelocityService</span> <span class="namespace">velocityService</span>
+    protected final VelocityService velocityService
 
-    <span class="namespace">HomeController</span>(<span class="namespace">VelocityService</span> <span class="namespace">velocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="namespace">this.velocityService</span> = <span class="namespace">velocityService</span>
+    HomeController(VelocityService velocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.velocityService = velocityService
     }
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">String</span> <span class="namespace">index</span>(<span class="annotation">@Nullable</span> <span class="namespace">Principal</span> <span class="namespace">principal</span>) { <i class="conum" data-value="6"></i><b>(6)</b>
-        <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">home.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">homeModel</span>(<span class="namespace">principal</span>))
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    String index(@Nullable Principal principal) { <i class="conum" data-value="6"></i><b>(6)</b>
+        velocityService.render("home.vm", homeModel(principal))
     }
 
-    <span class="namespace">private</span> <span class="namespace">Map</span> <span class="namespace">homeModel</span>(<span class="annotation">@Nullable</span> <span class="namespace">Principal</span> <span class="namespace">principal</span>) {
-        <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Object</span>&gt; <span class="namespace">data</span> = [:]
-        <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">loggedIn</span><span class="delimiter">&quot;</span></span>] = <span class="namespace">principal</span> != <span class="namespace">null</span>
-        <span class="namespace">if</span> (<span class="namespace">principal</span>) {
-            <span class="namespace">data</span>[<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>] = <span class="namespace">principal.name</span>
+    private Map homeModel(@Nullable Principal principal) {
+        Map&lt;String, Object&gt; data = [:]
+        data["loggedIn"] = principal != null
+        if (principal) {
+            data["username"] = principal.name
         }
-        <span class="namespace">data</span>
+        data
     }
 }</code></pre>
 </div>
@@ -173,41 +173,41 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/controllers/LoginAuthController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
 
-<span class="namespace">import</span> <span class="namespace">example.micronaut.services.VelocityService</span>
-<span class="namespace">import</span> <span class="namespace">groovy.transform.CompileStatic</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
+import example.micronaut.services.VelocityService
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAnonymous()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">LoginAuthController</span> {
+@CompileStatic
+@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
+class LoginAuthController {
 
-    <span class="namespace">protected</span> <span class="namespace">final</span> <span class="namespace">VelocityService</span> <span class="namespace">velocityService</span>
+    protected final VelocityService velocityService
 
-    <span class="namespace">LoginAuthController</span>(<span class="namespace">VelocityService</span> <span class="namespace">velocityService</span>) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="namespace">this.velocityService</span> = <span class="namespace">velocityService</span>
+    LoginAuthController(VelocityService velocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.velocityService = velocityService
     }
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/auth</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
-    <span class="namespace">String</span> <span class="namespace">auth</span>() {
-        <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, [:]) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/auth") <i class="conum" data-value="5"></i><b>(5)</b>
+    String auth() {
+        velocityService.render("auth.vm", [:]) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_HTML</span>)
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/authFailed</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
-    <span class="namespace">String</span> <span class="namespace">authFailed</span>() {
-        <span class="namespace">velocityService.render</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">auth.vm</span><span class="delimiter">&quot;</span></span>, <span class="namespace">authFailedModel</span>())
+    @Produces(MediaType.TEXT_HTML)
+    @Get("/authFailed") <i class="conum" data-value="7"></i><b>(7)</b>
+    String authFailed() {
+        velocityService.render("auth.vm", authFailedModel())
     }
 
-    <span class="namespace">private</span> <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Object</span>&gt; <span class="namespace">authFailedModel</span>() {
-        [<span class="namespace">errors</span>: <span class="namespace">true</span>] <span class="namespace">as</span> <span class="namespace">Map</span>&lt;<span class="namespace">String</span>, <span class="namespace">Object</span>&gt;
+    private Map&lt;String, Object&gt; authFailedModel() {
+        [errors: true] as Map&lt;String, Object&gt;
     }
 }</code></pre>
 </div>
