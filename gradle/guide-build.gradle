@@ -65,7 +65,7 @@ task publishGuide(type: grails.doc.gradle.PublishGuide) {
     resourcesDir = project.file("${localResourcesDir}/src/main/resources")
     properties = [   
         'safe':'UNSAFE',
-        'source-highlighter': 'highlightjs'
+        'source-highlighter': 'highlightjs',
         'commondir':project.file("${localResourcesDir}/src/main/docs"),
         'sourceDir':project.file('complete').absolutePath,     
         'javaee': 'https://docs.oracle.com/javaee/8/api/',
