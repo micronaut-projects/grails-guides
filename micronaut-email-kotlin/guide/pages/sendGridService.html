@@ -101,7 +101,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">    compile <span class="string"><span class="delimiter">'</span><span class="content">com.sendgrid:sendgrid-java:4.1.2</span><span class="delimiter">'</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -111,24 +111,24 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/SendGridEmailCondition.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.Condition</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.condition.ConditionContext</span>
+import io.micronaut.context.condition.Condition
+import io.micronaut.context.condition.ConditionContext
 
-<span class="namespace">class</span> <span class="namespace">SendGridEmailCondition</span> : <span class="namespace">Condition</span> {
-    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">matches</span>(<span class="namespace">context</span>: <span class="namespace">ConditionContext</span>&lt;*&gt;?): <span class="namespace">Boolean</span> {
-        <span class="namespace">return</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_APIKEY</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.apikey</span><span class="delimiter">&quot;</span></span>)
-                &amp;&amp;  <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">SENDGRID_FROM_EMAIL</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sendgrid.fromemail</span><span class="delimiter">&quot;</span></span>)
+class SendGridEmailCondition : Condition {
+    override fun matches(context: ConditionContext&lt;*&gt;?): Boolean {
+        return envOrSysPropNotBlankAndNotNull("SENDGRID_APIKEY", "sendgrid.apikey")
+                &amp;&amp;  envOrSysPropNotBlankAndNotNull("SENDGRID_FROM_EMAIL", "sendgrid.fromemail")
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">envOrSysPropNotBlankAndNotNull</span>(<span class="namespace">env</span>: <span class="namespace">String</span>?, <span class="namespace">prop</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
-        <span class="namespace">return</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getProperty</span>(<span class="namespace">prop</span>)) ||
-                <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">System.getenv</span>(<span class="namespace">env</span>))
+    private fun envOrSysPropNotBlankAndNotNull(env: String?, prop: String?): Boolean {
+        return notBlankAndNotNull(System.getProperty(prop)) ||
+                notBlankAndNotNull(System.getenv(env))
     }
 
-    <span class="namespace">private</span> <span class="namespace">fun</span> <span class="namespace">notBlankAndNotNull</span>(<span class="namespace">str</span>: <span class="namespace">String</span>?): <span class="namespace">Boolean</span> {
-        <span class="namespace">return</span> <span class="namespace">str</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">str</span> != <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
+    private fun notBlankAndNotNull(str: String?): Boolean {
+        return str != null &amp;&amp; str != ""
     }
 
 }</code></pre>
@@ -140,41 +140,41 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/SendGridEmailConditionSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.exceptions.NoSuchBeanException</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertFalse</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.NoSuchBeanException
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-<span class="type">class</span> <span class="class">SendGridEmailConditionSpec</span>: Spek({
+class SendGridEmailConditionSpec: Spek({
 
-    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">SendGridEmailService loaded if condition</span><span class="delimiter">&quot;</span></span>) {
-        val applicationContext = ApplicationContext.run(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)
-        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify SendGridEmailService is NOT loaded if system properties or environment properties are not set</span><span class="delimiter">&quot;</span></span>) {
-            var exceptionThrown = <span class="predefined-constant">false</span>
-            <span class="keyword">try</span> {
-                applicationContext.getBean(<span class="key">SendGridEmailService</span>::<span class="type">class</span>.java)
-            } <span class="class">catch</span> (<span class="key">e</span>: NoSuchBeanException) {
-                exceptionThrown = <span class="predefined-constant">true</span>
+    describe("SendGridEmailService loaded if condition") {
+        val applicationContext = ApplicationContext.run("test")
+        on("Verify SendGridEmailService is NOT loaded if system properties or environment properties are not set") {
+            var exceptionThrown = false
+            try {
+                applicationContext.getBean(SendGridEmailService::class.java)
+            } catch (e: NoSuchBeanException) {
+                exceptionThrown = true
             }
             assertTrue(exceptionThrown)
         }
-<span class="comment">//        on(&quot;Verify SendGridEmailService loaded if system properties are set&quot;) {</span>
-<span class="comment">//        System.setProperty(&quot;sendgrid.apikey&quot;, &quot;XXXX&quot;)</span>
-<span class="comment">//        System.setProperty(&quot;sendgrid.fromemail&quot;, &quot;me@micronaut.example&quot;)</span>
-<span class="comment">//            var exceptionThrown = false</span>
-<span class="comment">//            try {</span>
-<span class="comment">//                applicationContext.getBean(SendGridEmailService::class.java)</span>
-<span class="comment">//</span>
-<span class="comment">//            } catch (e: NoSuchBeanException) {</span>
-<span class="comment">//                exceptionThrown = true</span>
-<span class="comment">//            }</span>
-<span class="comment">//            assertFalse(exceptionThrown)</span>
-<span class="comment">//        }</span>
+//        on("Verify SendGridEmailService loaded if system properties are set") {
+//        System.setProperty("sendgrid.apikey", "XXXX")
+//        System.setProperty("sendgrid.fromemail", "me@micronaut.example")
+//            var exceptionThrown = false
+//            try {
+//                applicationContext.getBean(SendGridEmailService::class.java)
+//
+//            } catch (e: NoSuchBeanException) {
+//                exceptionThrown = true
+//            }
+//            assertFalse(exceptionThrown)
+//        }
         afterGroup {
             applicationContext.close()
         }
@@ -185,102 +185,102 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/SendGridEmailService.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.Content</span>
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.Mail</span>
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.Method</span>
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.Personalization</span>
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.Request</span>
-<span class="namespace">import</span> <span class="namespace">com.sendgrid.SendGrid</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Requires</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.annotation.Value</span>
-<span class="namespace">import</span> <span class="namespace">org.slf4j.LoggerFactory</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
-<span class="namespace">import</span> <span class="namespace">java.io.IOException</span>
+import com.sendgrid.Content
+import com.sendgrid.Mail
+import com.sendgrid.Method
+import com.sendgrid.Personalization
+import com.sendgrid.Request
+import com.sendgrid.SendGrid
+import io.micronaut.context.annotation.Requires
+import io.micronaut.context.annotation.Value
+import org.slf4j.LoggerFactory
+import javax.inject.Singleton
+import java.io.IOException
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(<span class="namespace">condition</span> = <span class="namespace">SendGridEmailCondition</span>::<span class="namespace">class</span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">SendGridEmailService</span>(<span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{SENDGRID_APIKEY:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyEnv</span>: <span class="namespace">String</span>,  <i class="conum" data-value="3"></i><b>(3)</b>
-                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{SENDGRID_FROM_EMAIL:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailEnv</span>: <span class="namespace">String</span>,
-                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{sendgrid.apikey:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyProp</span>: <span class="namespace">String</span>,
-                                    <span class="annotation">@Value</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">\$</span><span class="content">{sendgrid.fromemail:none}</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailProp</span>: <span class="namespace">String</span>) : <span class="namespace">EmailService</span> {
-    <span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">apiKey</span>: <span class="namespace">String</span>
-    <span class="namespace">protected</span> <span class="namespace">val</span> <span class="namespace">fromEmail</span>: <span class="namespace">String</span>
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(condition = SendGridEmailCondition::class) <i class="conum" data-value="2"></i><b>(2)</b>
+class SendGridEmailService(@Value("\${SENDGRID_APIKEY:none}") apiKeyEnv: String,  <i class="conum" data-value="3"></i><b>(3)</b>
+                                    @Value("\${SENDGRID_FROM_EMAIL:none}") fromEmailEnv: String,
+                                    @Value("\${sendgrid.apikey:none}") apiKeyProp: String,
+                                    @Value("\${sendgrid.fromemail:none}") fromEmailProp: String) : EmailService {
+    protected val apiKey: String
+    protected val fromEmail: String
 
-    <span class="namespace">init</span> {
-        <span class="namespace">this.apiKey</span> = <span class="namespace">if</span> (<span class="namespace">apiKeyEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">apiKeyEnv</span> <span class="namespace">else</span> <span class="namespace">apiKeyProp</span>
-        <span class="namespace">this.fromEmail</span> = <span class="namespace">if</span> (<span class="namespace">fromEmailEnv</span> != <span class="string"><span class="delimiter">&quot;</span><span class="content">none</span><span class="delimiter">&quot;</span></span>) <span class="namespace">fromEmailEnv</span> <span class="namespace">else</span> <span class="namespace">fromEmailProp</span>
+    init {
+        this.apiKey = if (apiKeyEnv != "none") apiKeyEnv else apiKeyProp
+        this.fromEmail = if (fromEmailEnv != "none") fromEmailEnv else fromEmailProp
     }
 
-    <span class="namespace">protected</span> <span class="namespace">fun</span> <span class="namespace">contentOfEmail</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>): <span class="namespace">Content</span>? {
-        <span class="namespace">if</span> (<span class="namespace">email.textBody</span>() != <span class="namespace">null</span>) {
-            <span class="namespace">return</span> <span class="namespace">Content</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>, <span class="namespace">email.textBody</span>())
+    protected fun contentOfEmail(email: Email): Content? {
+        if (email.textBody() != null) {
+            return Content("text/plain", email.textBody())
         }
-        <span class="namespace">return</span> <span class="namespace">if</span> (<span class="namespace">email.htmlBody</span>() != <span class="namespace">null</span>) {
-            <span class="namespace">Content</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html</span><span class="delimiter">&quot;</span></span>, <span class="namespace">email.htmlBody</span>())
-        } <span class="namespace">else</span> <span class="namespace">null</span>
+        return if (email.htmlBody() != null) {
+            Content("text/html", email.htmlBody())
+        } else null
     }
 
-    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="namespace">email</span>: <span class="namespace">Email</span>) {
+    override fun send(email: Email) {
 
-        <span class="namespace">val</span> <span class="namespace">personalization</span> = <span class="namespace">Personalization</span>()
-        <span class="namespace">personalization.subject</span> = <span class="namespace">email.subject</span>()
+        val personalization = Personalization()
+        personalization.subject = email.subject()
 
-        <span class="namespace">val</span> <span class="namespace">to</span> = <span class="namespace">com.sendgrid.Email</span>(<span class="namespace">email.recipient</span>())
-        <span class="namespace">personalization.addTo</span>(<span class="namespace">to</span>)
+        val to = com.sendgrid.Email(email.recipient())
+        personalization.addTo(to)
 
-        <span class="namespace">if</span> (<span class="namespace">email.cc</span>() != <span class="namespace">null</span>) {
-            <span class="namespace">for</span> (<span class="namespace">cc</span> <span class="namespace">in</span> <span class="namespace">email.cc</span>()!!) {
-                <span class="namespace">val</span> <span class="namespace">ccEmail</span> = <span class="namespace">com.sendgrid.Email</span>()
-                <span class="namespace">ccEmail.email</span> = <span class="namespace">cc</span>
-                <span class="namespace">personalization.addCc</span>(<span class="namespace">ccEmail</span>)
+        if (email.cc() != null) {
+            for (cc in email.cc()!!) {
+                val ccEmail = com.sendgrid.Email()
+                ccEmail.email = cc
+                personalization.addCc(ccEmail)
             }
         }
 
-        <span class="namespace">if</span> (<span class="namespace">email.bcc</span>() != <span class="namespace">null</span>) {
-            <span class="namespace">for</span> (<span class="namespace">bcc</span> <span class="namespace">in</span> <span class="namespace">email.bcc</span>()!!) {
-                <span class="namespace">val</span> <span class="namespace">bccEmail</span> = <span class="namespace">com.sendgrid.Email</span>()
-                <span class="namespace">bccEmail.email</span> = <span class="namespace">bcc</span>
-                <span class="namespace">personalization.addBcc</span>(<span class="namespace">bccEmail</span>)
+        if (email.bcc() != null) {
+            for (bcc in email.bcc()!!) {
+                val bccEmail = com.sendgrid.Email()
+                bccEmail.email = bcc
+                personalization.addBcc(bccEmail)
             }
         }
 
-        <span class="namespace">val</span> <span class="namespace">mail</span> = <span class="namespace">Mail</span>()
-        <span class="namespace">val</span> <span class="namespace">from</span> = <span class="namespace">com.sendgrid.Email</span>()
-        <span class="namespace">from.email</span> = <span class="namespace">fromEmail</span>
-        <span class="namespace">mail.from</span> = <span class="namespace">from</span>
-        <span class="namespace">mail.addPersonalization</span>(<span class="namespace">personalization</span>)
-        <span class="namespace">val</span> <span class="namespace">content</span> = <span class="namespace">contentOfEmail</span>(<span class="namespace">email</span>)
-        <span class="namespace">mail.addContent</span>(<span class="namespace">content</span>!!)
+        val mail = Mail()
+        val from = com.sendgrid.Email()
+        from.email = fromEmail
+        mail.from = from
+        mail.addPersonalization(personalization)
+        val content = contentOfEmail(email)
+        mail.addContent(content!!)
 
-        <span class="namespace">val</span> <span class="namespace">sg</span> = <span class="namespace">SendGrid</span>(<span class="namespace">apiKey</span>)
-        <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">Request</span>()
-        <span class="namespace">try</span> {
-            <span class="namespace">request.method</span> = <span class="namespace">Method.POST</span>
-            <span class="namespace">request.endpoint</span> = <span class="string"><span class="delimiter">&quot;</span><span class="content">mail/send</span><span class="delimiter">&quot;</span></span>
-            <span class="namespace">request.body</span> = <span class="namespace">mail.build</span>()
+        val sg = SendGrid(apiKey)
+        val request = Request()
+        try {
+            request.method = Method.POST
+            request.endpoint = "mail/send"
+            request.body = mail.build()
 
-            <span class="namespace">val</span> <span class="namespace">response</span> = <span class="namespace">sg.api</span>(<span class="namespace">request</span>)
-            <span class="namespace">if</span> (<span class="namespace">LOG.isInfoEnabled</span>) {
-                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Status Code: {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">response.statusCode.toString</span>())
-                <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Body: {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">response.body</span>)
-                <span class="namespace">for</span> (<span class="namespace">k</span> <span class="namespace">in</span> <span class="namespace">response.headers.keys</span>) {
-                    <span class="namespace">val</span> <span class="namespace">v</span> = <span class="namespace">response.headers</span>[<span class="namespace">k</span>]
-                    <span class="namespace">LOG.info</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Response Header {} =&gt; {}</span><span class="delimiter">&quot;</span></span>, <span class="namespace">k</span>, <span class="namespace">v</span>)
+            val response = sg.api(request)
+            if (LOG.isInfoEnabled) {
+                LOG.info("Status Code: {}", response.statusCode.toString())
+                LOG.info("Body: {}", response.body)
+                for (k in response.headers.keys) {
+                    val v = response.headers[k]
+                    LOG.info("Response Header {} =&gt; {}", k, v)
                 }
             }
 
 
-        } <span class="namespace">catch</span> (<span class="namespace">ex</span>: <span class="namespace">IOException</span>) {
-            <span class="namespace">if</span> (<span class="namespace">LOG.isErrorEnabled</span>) {
-                <span class="namespace">LOG.error</span>(<span class="namespace">ex.message</span>)
+        } catch (ex: IOException) {
+            if (LOG.isErrorEnabled) {
+                LOG.error(ex.message)
             }
         }
     }
 
-    <span class="namespace">companion</span> <span class="namespace">object</span> {
-        <span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">LOG</span> = <span class="namespace">LoggerFactory.getLogger</span>(<span class="namespace">SendGridEmailService</span>::<span class="namespace">class.java</span>)
+    companion object {
+        private val LOG = LoggerFactory.getLogger(SendGridEmailService::class.java)
     }
 }</code></pre>
 </div>

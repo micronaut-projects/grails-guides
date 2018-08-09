@@ -91,23 +91,23 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/MailController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Body</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Post</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.validation.Validated</span>
-<span class="namespace">import</span> <span class="namespace">javax.validation.Valid</span>
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Post
+import io.micronaut.validation.Validated
+import javax.validation.Valid
 
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">open</span> <span class="namespace">class</span> <span class="namespace">MailController</span>(<span class="namespace">private</span> <span class="namespace">val</span> <span class="namespace">emailService</span>: <span class="namespace">EmailService</span>) {  <i class="conum" data-value="3"></i><b>(3)</b>
+@Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
+@Validated <i class="conum" data-value="2"></i><b>(2)</b>
+open class MailController(private val emailService: EmailService) {  <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/send</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="namespace">open</span> <span class="namespace">fun</span> <span class="namespace">send</span>(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> <span class="namespace">cmd</span>: <span class="namespace">EmailCmd</span>): <span class="namespace">HttpResponse</span>&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="namespace">emailService.send</span>(<span class="namespace">cmd</span>)
-        <span class="namespace">return</span> <span class="namespace">HttpResponse.ok</span>&lt;<span class="namespace">Any</span>&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
+    @Post("/send") <i class="conum" data-value="4"></i><b>(4)</b>
+    open fun send(@Body @Valid cmd: EmailCmd): HttpResponse&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
+        emailService.send(cmd)
+        return HttpResponse.ok&lt;Any&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -146,52 +146,52 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">EmailCmd</span> : Email {
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">class EmailCmd : Email {
 
-    <span class="annotation">@NotBlank</span>
-    <span class="annotation">@NotNull</span>
-    var recipient: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+    @NotBlank
+    @NotNull
+    var recipient: String? = null
 
-    <span class="annotation">@NotBlank</span>
-    <span class="annotation">@NotNull</span>
-    var subject: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+    @NotBlank
+    @NotNull
+    var subject: String? = null
 
-    var cc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+    var cc: List&lt;String&gt;? = null
 
-    var bcc: <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? = <span class="predefined-constant">null</span>
+    var bcc: List&lt;String&gt;? = null
 
-    var htmlBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+    var htmlBody: String? = null
 
-    var textBody: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+    var textBody: String? = null
 
-    var replyTo: <span class="predefined-type">String</span>? = <span class="predefined-constant">null</span>
+    var replyTo: String? = null
 
-    override fun recipient(): <span class="predefined-type">String</span>? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.recipient
+    override fun recipient(): String? {
+        return this.recipient
     }
 
-    override fun cc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.cc
+    override fun cc(): List&lt;String&gt;? {
+        return this.cc
     }
 
-    override fun bcc(): <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.bcc
+    override fun bcc(): List&lt;String&gt;? {
+        return this.bcc
     }
 
-    override fun subject(): <span class="predefined-type">String</span>? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.subject
+    override fun subject(): String? {
+        return this.subject
     }
 
-    override fun htmlBody(): <span class="predefined-type">String</span>? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.htmlBody
+    override fun htmlBody(): String? {
+        return this.htmlBody
     }
 
-    override fun textBody(): <span class="predefined-type">String</span>? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.textBody
+    override fun textBody(): String? {
+        return this.textBody
     }
 
-    override fun replyTo(): <span class="predefined-type">String</span>? {
-        <span class="keyword">return</span> <span class="local-variable">this</span>.replyTo
+    override fun replyTo(): String? {
+        return this.replyTo
     }
 
 }</code></pre>

@@ -94,7 +94,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
     repositories {
       ...
       ..
@@ -102,18 +102,18 @@ function addJsClass() {
     dependencies {
       ...
       ..
-        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.2.0</span><span class="delimiter">'</span></span>
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
     }
 }
 ...
 ..
 .
-apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 junitPlatform {
     filters {
         engines {
-            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+            include 'spek'
         }
     }
 }
@@ -121,15 +121,15 @@ junitPlatform {
 repositories {
   ...
   ..
-    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">https://jcenter.bintray.com</span><span class="delimiter">&quot;</span></span> }
+    maven { url "https://jcenter.bintray.com" }
 }
 
 dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">&quot;</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-junit-platform-engine:1.1.5</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.jetbrains.kotlin:kotlin-test:1.1.0</span><span class="delimiter">'</span></span>
+    testCompile "org.jetbrains.spek:spek-api:1.1.5"
+    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
+    testCompile 'org.jetbrains.kotlin:kotlin-test:1.1.0'
 }
 ...
 ..
@@ -148,19 +148,19 @@ test {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/MockEmailService.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Primary</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import io.micronaut.context.annotation.Primary
+import io.micronaut.context.annotation.Requires
+import javax.inject.Singleton
 
-<span class="annotation">@Primary</span>
-<span class="annotation">@Requires</span>(property = <span class="string"><span class="delimiter">&quot;</span><span class="content">spec.name</span><span class="delimiter">&quot;</span></span>, value = <span class="string"><span class="delimiter">&quot;</span><span class="content">mailcontroller</span><span class="delimiter">&quot;</span></span>)
-<span class="annotation">@Singleton</span>
-<span class="type">class</span> <span class="class">MockEmailService</span> : EmailService {
+@Primary
+@Requires(property = "spec.name", value = "mailcontroller")
+@Singleton
+class MockEmailService : EmailService {
     val emails = mutableListOf&lt;Email&gt;()
 
-    override fun send(<span class="key">email</span>: Email) {
+    override fun send(email: Email) {
         emails.add(email)
     }
 }</code></pre>
@@ -172,54 +172,54 @@ test {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/MailControllerSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.Spek</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.describe</span>
-<span class="keyword">import</span> <span class="include">org.jetbrains.spek.api.dsl.on</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertEquals</span>
-<span class="keyword">import</span> <span class="include">kotlin.test.assertTrue</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.reactivex.Flowable
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-<span class="type">class</span> <span class="class">MailControllerSpec</span>: Spek({
+class MailControllerSpec: Spek({
 
-    describe(<span class="string"><span class="delimiter">&quot;</span><span class="content">MailController</span><span class="delimiter">&quot;</span></span>) {
+    describe("MailController") {
 
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(<span class="key">EmbeddedServer</span>::<span class="type">class</span>.java, <span class="class">mapOf</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">spec.name</span><span class="delimiter">&quot;</span></span> to <span class="string"><span class="delimiter">&quot;</span><span class="content">mailcontroller</span><span class="delimiter">&quot;</span></span>),
-                <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="1"></i><b>(1)</b>
+        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java, mapOf("spec.name" to "mailcontroller"),
+                "test")  <i class="conum" data-value="1"></i><b>(1)</b>
         var client : RxHttpClient = RxHttpClient.create(embeddedServer.url)  <i class="conum" data-value="2"></i><b>(2)</b>
 
-        on(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send interacts once email service</span><span class="delimiter">&quot;</span></span>) {
+        on("/mail/send interacts once email service") {
             val cmd = EmailCmd()
-            cmd.subject = <span class="string"><span class="delimiter">&quot;</span><span class="content">Test</span><span class="delimiter">&quot;</span></span>
-            cmd.recipient = <span class="string"><span class="delimiter">&quot;</span><span class="content">delamos@grails.example</span><span class="delimiter">&quot;</span></span>
-            cmd.textBody = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hola hola</span><span class="delimiter">&quot;</span></span>
+            cmd.subject = "Test"
+            cmd.recipient = "delamos@grails.example"
+            cmd.textBody = "Hola hola"
 
-            val request = HttpRequest.POST(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail/send</span><span class="delimiter">&quot;</span></span>, cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+            val request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            var emailServices = embeddedServer.applicationContext.getBeansOfType(<span class="key">EmailService</span>::<span class="type">class</span>.java)
+            var emailServices = embeddedServer.applicationContext.getBeansOfType(EmailService::class.java)
 
-            <span class="class">assertTrue</span>(emailServices.size == <span class="integer">1</span>)
+            assertTrue(emailServices.size == 1)
 
-            var emailService = embeddedServer.applicationContext.getBean(<span class="key">EmailService</span>::<span class="type">class</span>.java)
+            var emailService = embeddedServer.applicationContext.getBean(EmailService::class.java)
 
-            <span class="class">assertTrue</span>(emailService is MockEmailService)
+            assertTrue(emailService is MockEmailService)
 
-            val oldcount : Int  = (emailService <span class="keyword">as</span> MockEmailService).emails.size
+            val oldcount : Int  = (emailService as MockEmailService).emails.size
 
             val rsp : HttpResponse&lt;Any&gt; = client.toBlocking().exchange(request)
 
             assertEquals(rsp.status, HttpStatus.OK)
 
-            val count : Int  = (emailService <span class="keyword">as</span> MockEmailService).emails.size
-            assertEquals(count, oldcount + <span class="integer">1</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+            val count : Int  = (emailService as MockEmailService).emails.size
+            assertEquals(count, oldcount + 1) <i class="conum" data-value="4"></i><b>(4)</b>
         }
 
         afterGroup {
