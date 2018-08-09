@@ -97,18 +97,18 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="2"></i><b>(2)</b>
-      <span class="key">logout</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="key">session</span>:
-      <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="4"></i><b>(4)</b>
-      <span class="key">loginSuccessTargetUrl</span>: <span class="regexp"><span class="delimiter">/</span><span class="content"> </span></span><span class="error"><i class="conum" data-value="5"></i><b>(5)</b>
-</span>      <span class="key">loginFailureTargetUrl</span>: <span class="regexp"><span class="delimiter">/</span><span class="content">login</span><span class="delimiter">/</span></span>authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+      logout:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    session:
+      enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+      loginSuccessTargetUrl: / <i class="conum" data-value="5"></i><b>(5)</b>
+      loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
