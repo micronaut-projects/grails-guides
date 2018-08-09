@@ -100,17 +100,17 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/AppClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Header</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.Client</span>
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.client.Client
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-<span class="namespace">interface</span> <span class="namespace">AppClient</span> {
+@Client("/")
+interface AppClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-    <span class="namespace">fun</span> <span class="namespace">home</span>(<span class="annotation">@Header</span> <span class="namespace">authorization</span>: <span class="namespace">String</span>): <span class="namespace">String</span>
+    @Get("/")
+    fun home(@Header authorization: String): String
 }</code></pre>
 </div>
 </div>
@@ -120,73 +120,73 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpRequest</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpResponse</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.HttpStatus</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.RxHttpClient</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertFalse</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertNotNull</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertTrue</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
-<span class="namespace">class</span> <span class="namespace">DeclarativeHttpClientWithJwtSpec</span>: <span class="namespace">Spek</span>({
-    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT authentication works with declarative @Client</span><span class="delimiter">&quot;</span></span>) {
+class DeclarativeHttpClientWithJwtSpec: Spek({
+    describe("Verify JWT authentication works with declarative @Client") {
 
-        <span class="namespace">var</span> <span class="namespace">embeddedServer</span>: <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="1"></i><b>(1)</b>
-        <span class="namespace">var</span> <span class="namespace">client</span>: <span class="namespace">RxHttpClient</span> = <span class="namespace">RxHttpClient.create</span>(<span class="namespace">embeddedServer.url</span>) <i class="conum" data-value="2"></i><b>(2)</b>
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
 
-        <span class="namespace">var</span> <span class="namespace">appClient</span> : <span class="namespace">AppClient</span>? = <span class="namespace">null</span>
-        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">AppClient Bean can be retrieved from Application context</span><span class="delimiter">&quot;</span></span>) {
-            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
-            <span class="namespace">try</span> {
-                <span class="namespace">appClient</span> = <span class="namespace">embeddedServer.applicationContext.getBean</span>(<span class="namespace">AppClient</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+        var appClient : AppClient? = null
+        on("AppClient Bean can be retrieved from Application context") {
+            var exceptionThrown = false
+            try {
+                appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            } <span class="namespace">catch</span>(<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {
-                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            } catch(e: HttpClientResponseException) {
+                exceptionThrown = true
             }
-            <span class="namespace">assertFalse</span>(<span class="namespace">exceptionThrown</span>)
+            assertFalse(exceptionThrown)
         }
-        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Accessing a secured URL without authenticating returns unauthorized</span><span class="delimiter">&quot;</span></span>) {
-            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
-            <span class="namespace">try</span> {
-                <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.GET</span>&lt;<span class="namespace">Any</span>&gt;(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-                <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>, <span class="namespace">String</span>::<span class="namespace">class.java</span>)
-            } <span class="namespace">catch</span>(<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {
-                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+        on("Accessing a secured URL without authenticating returns unauthorized") {
+            var exceptionThrown = false
+            try {
+                val request = HttpRequest.GET&lt;Any&gt;("/")
+                client.toBlocking().exchange(request, String::class.java)
+            } catch(e: HttpClientResponseException) {
+                exceptionThrown = true
             }
-            <span class="namespace">assertTrue</span>(<span class="namespace">exceptionThrown</span>)
+            assertTrue(exceptionThrown)
         }
-        <span class="namespace">var</span> <span class="namespace">accessToken</span>: <span class="namespace">String</span>? = <span class="namespace">null</span>
-        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">User can login</span><span class="delimiter">&quot;</span></span>) {
-            <span class="namespace">val</span> <span class="namespace">creds</span> = <span class="namespace">UsernamePasswordCredentials</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
-            <span class="namespace">val</span> <span class="namespace">request</span> = <span class="namespace">HttpRequest.POST</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/login</span><span class="delimiter">&quot;</span></span>, <span class="namespace">creds</span>) <i class="conum" data-value="4"></i><b>(4)</b>
+        var accessToken: String? = null
+        on("User can login") {
+            val creds = UsernamePasswordCredentials("sherlock", "password")
+            val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
 
-            <span class="namespace">val</span> <span class="namespace">rsp</span>: <span class="namespace">HttpResponse</span>&lt;<span class="namespace">BearerAccessRefreshToken</span>&gt; = <span class="namespace">client.toBlocking</span>().<span class="namespace">exchange</span>(<span class="namespace">request</span>,
-                    <span class="namespace">BearerAccessRefreshToken</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="5"></i><b>(5)</b>
+            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
+                    BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
 
-            <span class="namespace">assertEquals</span>(<span class="namespace">rsp.status</span>()!!, <span class="namespace">HttpStatus.OK</span>)
-            <span class="namespace">assertNotNull</span>(<span class="namespace">rsp.body</span>()!!.<span class="namespace">accessToken</span>)
+            assertEquals(rsp.status()!!, HttpStatus.OK)
+            assertNotNull(rsp.body()!!.accessToken)
 
-            <span class="namespace">accessToken</span> = <span class="namespace">rsp.body</span>()!!.<span class="namespace">accessToken</span> <i class="conum" data-value="6"></i><b>(6)</b>
+            accessToken = rsp.body()!!.accessToken <i class="conum" data-value="6"></i><b>(6)</b>
         }
-        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Access / endpoint with appClient</span><span class="delimiter">&quot;</span></span>) {
-            <span class="namespace">var</span> <span class="namespace">msg</span>: <span class="namespace">String</span> = <span class="namespace">appClient</span>!!.<span class="namespace">home</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Bearer ${accessToken!!}</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
-            <span class="namespace">assertTrue</span>(<span class="namespace">msg</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>)
+        on("Access / endpoint with appClient") {
+            var msg: String = appClient!!.home("Bearer ${accessToken!!}") <i class="conum" data-value="7"></i><b>(7)</b>
+            assertTrue(msg == "sherlock")
         }
 
-        <span class="namespace">afterGroup</span> {
-            <span class="namespace">client.close</span>()
-            <span class="namespace">embeddedServer.close</span>()
+        afterGroup {
+            client.close()
+            embeddedServer.close()
         }
     }
 })</code></pre>
