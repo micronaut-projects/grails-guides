@@ -1,7 +1,9 @@
 buildscript {
+    ext.htmlSanityCheckVersion=0.9.7
     repositories {
         mavenLocal()
         maven { url = "http://repo.grails.org/grails/core" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
@@ -16,6 +18,8 @@ publishGuide {
 import groovy.json.*
 
 apply plugin:'base'
+apply plugin: 'org.aim42.htmlSanityCheck'
+
 def MICRONAUT_GUIDES_GROUP = 'X - Micronaut Guides'
 
 def commonGithubOrg = 'micronaut-projects'
@@ -164,4 +168,9 @@ gradle.taskGraph.whenReady { graph ->
         }
     }    
 }
+
+htmlSanityCheck {
+    sourceDir = new File("${project.buildDir}/docs")
+}
+publishGuide.finalizedBy(htmlSanityCheck)
 
