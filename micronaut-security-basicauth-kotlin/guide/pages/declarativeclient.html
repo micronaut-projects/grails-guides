@@ -100,17 +100,17 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/AppClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.Client</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Header</span>
+import io.micronaut.http.client.Client
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-<span class="namespace">interface</span> <span class="namespace">AppClient</span> {
+@Client("/")
+interface AppClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-    <span class="namespace">fun</span> <span class="namespace">home</span>(<span class="annotation">@Header</span> <span class="namespace">authorization</span>: <span class="namespace">String</span>): <span class="namespace">String</span>
+    @Get("/")
+    fun home(@Header authorization: String): String
 }</code></pre>
 </div>
 </div>
@@ -120,37 +120,37 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/BasicAuthClientSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.context.ApplicationContext</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.Spek</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.describe</span>
-<span class="namespace">import</span> <span class="namespace">org.jetbrains.spek.api.dsl.on</span>
-<span class="namespace">import</span> <span class="namespace">java.util.Base64</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertEquals</span>
-<span class="namespace">import</span> <span class="namespace">kotlin.test.assertFalse</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.on
+import java.util.Base64
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
-<span class="namespace">class</span> <span class="namespace">BasicAuthClientSpec</span>: <span class="namespace">Spek</span>({
-    <span class="namespace">describe</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>) {
+class BasicAuthClientSpec: Spek({
+    describe("Verify HTTP Basic Auth works") {
 
-        <span class="namespace">val</span> <span class="namespace">embeddedServer</span> : <span class="namespace">EmbeddedServer</span> = <span class="namespace">ApplicationContext.run</span>(<span class="namespace">EmbeddedServer</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="1"></i><b>(1)</b>
-        <span class="namespace">on</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Accessing a secured URL using a @Client which supplies basic auth in Authorization header</span><span class="delimiter">&quot;</span></span>) {
-            <span class="namespace">val</span> <span class="namespace">credsEncoded</span>: <span class="namespace">String</span> = <span class="namespace">Base64.getEncoder</span>().<span class="namespace">encodeToString</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock:password</span><span class="delimiter">&quot;</span></span>.<span class="namespace">byteInputStream</span>().<span class="namespace">readBytes</span>())
+        val embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        on("Accessing a secured URL using a @Client which supplies basic auth in Authorization header") {
+            val credsEncoded: String = Base64.getEncoder().encodeToString("sherlock:password".byteInputStream().readBytes())
 
-            <span class="namespace">var</span> <span class="namespace">exceptionThrown</span> = <span class="namespace">false</span>
-            <span class="namespace">try</span> {
-                <span class="namespace">val</span> <span class="namespace">appClient</span>: <span class="namespace">AppClient</span> = <span class="namespace">embeddedServer.applicationContext.getBean</span>(<span class="namespace">AppClient</span>::<span class="namespace">class.java</span>) <i class="conum" data-value="2"></i><b>(2)</b>
-                <span class="namespace">val</span> <span class="namespace">rsp</span> : <span class="namespace">String</span> = <span class="namespace">appClient.home</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Basic $credsEncoded</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-                <span class="namespace">assertEquals</span>(<span class="namespace">rsp</span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>)
-            } <span class="namespace">catch</span>(<span class="namespace">e</span>: <span class="namespace">HttpClientResponseException</span>) {  <i class="conum" data-value="4"></i><b>(4)</b>
-                <span class="namespace">exceptionThrown</span> = <span class="namespace">true</span>
+            var exceptionThrown = false
+            try {
+                val appClient: AppClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
+                val rsp : String = appClient.home("Basic $credsEncoded") <i class="conum" data-value="3"></i><b>(3)</b>
+                assertEquals(rsp, "sherlock")
+            } catch(e: HttpClientResponseException) {  <i class="conum" data-value="4"></i><b>(4)</b>
+                exceptionThrown = true
             }
-            <span class="namespace">assertFalse</span>(<span class="namespace">exceptionThrown</span>)
+            assertFalse(exceptionThrown)
         }
-        <span class="namespace">afterGroup</span> {
-            <span class="namespace">embeddedServer.close</span>()
+        afterGroup {
+            embeddedServer.close()
         }
     }
 })</code></pre>

@@ -184,11 +184,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security"
 }</code></pre>
 </div>
 </div>
@@ -209,12 +209,12 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="predefined-constant">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="predefined-constant">true</span>  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -246,27 +246,27 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationProvider</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationRequest</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationResponse</span>
-<span class="namespace">import</span> <span class="namespace">org.reactivestreams.Publisher</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.AuthenticationFailed</span>
-<span class="namespace">import</span> <span class="namespace">io.reactivex.Flowable</span>
-<span class="namespace">import</span> <span class="namespace">java.util.ArrayList</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.authentication.UserDetails</span>
-<span class="namespace">import</span> <span class="namespace">javax.inject.Singleton</span>
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import org.reactivestreams.Publisher
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.reactivex.Flowable
+import java.util.ArrayList
+import io.micronaut.security.authentication.UserDetails
+import javax.inject.Singleton
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="namespace">class</span> <span class="namespace">AuthenticationProviderUserPassword</span> : <span class="namespace">AuthenticationProvider</span> { <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="namespace">override</span> <span class="namespace">fun</span> <span class="namespace">authenticate</span>(<span class="namespace">authenticationRequest</span>: <span class="namespace">AuthenticationRequest</span>&lt;*, *&gt;?): <span class="namespace">Publisher</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt; {
-        <span class="namespace">if</span> (<span class="namespace">authenticationRequest</span>!=<span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.identity</span> != <span class="namespace">null</span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> != <span class="namespace">null</span>) {
-            <span class="namespace">if</span> ( <span class="namespace">authenticationRequest.identity</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp; <span class="namespace">authenticationRequest.secret</span> == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span> ) {
-                <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">UserDetails</span>(<span class="namespace">authenticationRequest.identity</span> <span class="namespace">as</span> <span class="namespace">String</span>, <span class="namespace">ArrayList</span>()))
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
+        if (authenticationRequest!=null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
             }
         }
-        <span class="namespace">return</span> <span class="namespace">Flowable.just</span>&lt;<span class="namespace">AuthenticationResponse</span>&gt;(<span class="namespace">AuthenticationFailed</span>())
+        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
     }
 }</code></pre>
 </div>
@@ -300,23 +300,23 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/HomeController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.MediaType</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Controller</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Produces</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.security.Secured</span>
-<span class="namespace">import</span> <span class="namespace">java.security.Principal</span>
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.security.Principal
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="namespace">class</span> <span class="namespace">HomeController</span> {
+@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController {
 
-    <span class="annotation">@Produces</span>(<span class="namespace">MediaType.TEXT_PLAIN</span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="namespace">fun</span> <span class="namespace">index</span>(<span class="namespace">principal</span>: <span class="namespace">Principal</span>) : <span class="namespace">String</span> {  <i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="namespace">return</span> <span class="namespace">principal.name</span>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/")  <i class="conum" data-value="4"></i><b>(4)</b>
+    fun index(principal: Principal) : String {  <i class="conum" data-value="5"></i><b>(5)</b>
+        return principal.name
     }
 }</code></pre>
 </div>
