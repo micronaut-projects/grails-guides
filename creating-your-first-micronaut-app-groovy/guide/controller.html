@@ -103,21 +103,21 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/HelloController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+import groovy.transform.CompileStatic
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.http.MediaType
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/hello</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">HelloController</span> {
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="predefined-type">String</span> index() {
-        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="4"></i><b>(4)</b>
+@CompileStatic
+@Controller("/hello") <i class="conum" data-value="1"></i><b>(1)</b>
+class HelloController {
+    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    String index() {
+        "Hello World" <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>

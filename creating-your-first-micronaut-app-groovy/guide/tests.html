@@ -100,34 +100,34 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/HelloControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">HelloControllerSpec</span> <span class="directive">extends</span> Specification {
+class HelloControllerSpec extends Specification {
 
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">test hello world response</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/hello</span><span class="delimiter">'</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="predefined-type">String</span> rsp  = client.toBlocking().retrieve(request)
+    void "test hello world response"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/hello') <i class="conum" data-value="4"></i><b>(4)</b>
+        String rsp  = client.toBlocking().retrieve(request)
 
-        <span class="key">then</span>:
-        rsp == <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>
+        then:
+        rsp == "Hello World"
     }
 
 }</code></pre>

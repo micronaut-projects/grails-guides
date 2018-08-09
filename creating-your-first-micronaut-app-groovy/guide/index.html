@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Creating your first Micronaut Groovy app | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Creating your first Micronaut Groovy app. Learn how to create a Hello World Micronaut app with Groovy with a controller and a functional test.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -77,7 +80,7 @@
         <h1>Creating your first Micronaut Groovy app</h1>
         <p>Learn how to create a Hello World Micronaut app with Groovy with a controller and a functional test.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -198,21 +201,21 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/HelloController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
+import groovy.transform.CompileStatic
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.http.MediaType
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/hello</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">HelloController</span> {
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="predefined-type">String</span> index() {
-        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="4"></i><b>(4)</b>
+@CompileStatic
+@Controller("/hello") <i class="conum" data-value="1"></i><b>(1)</b>
+class HelloController {
+    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    String index() {
+        "Hello World" <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -254,34 +257,34 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/HelloControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">HelloControllerSpec</span> <span class="directive">extends</span> Specification {
+class HelloControllerSpec extends Specification {
 
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="type">void</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">test hello world response</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/hello</span><span class="delimiter">'</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="predefined-type">String</span> rsp  = client.toBlocking().retrieve(request)
+    void "test hello world response"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/hello') <i class="conum" data-value="4"></i><b>(4)</b>
+        String rsp  = client.toBlocking().retrieve(request)
 
-        <span class="key">then</span>:
-        rsp == <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>
+        then:
+        rsp == "Hello World"
     }
 
 }</code></pre>
@@ -323,7 +326,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
