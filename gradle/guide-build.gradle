@@ -9,6 +9,10 @@ buildscript {
     }
 }
 
+publishGuide {
+    properties['source-highlighter'] = 'highlightjs'
+}
+
 import groovy.json.*
 
 apply plugin:'base'
