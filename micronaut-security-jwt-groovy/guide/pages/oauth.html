@@ -97,50 +97,50 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">OauthAccessTokenSpec</span> <span class="directive">extends</span> Specification {
+class OauthAccessTokenSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL())
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT access token refresh works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
-        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
-        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds)
+    def "Verify JWT access token refresh works"() {
+        when: 'login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
 
-        <span class="key">when</span>:
-        sleep(<span class="integer">1</span>_000) <span class="comment">// sleep for one second to give time for the issued at `iat` Claim to change</span>
-        <span class="predefined-type">String</span> refreshToken = rsp.body().refreshToken
-        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
+        when:
+        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
+        String refreshToken = rsp.body().refreshToken
+        String accessToken = rsp.body().accessToken
 
-        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>,
-                <span class="keyword">new</span> TokenRefreshRequest(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST('/oauth/access_token',
+                new TokenRefreshRequest("refresh_token", refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
 
-        <span class="key">then</span>:
+        then:
         response.status == HttpStatus.OK
         response.body().accessToken
         response.body().accessToken != accessToken <i class="conum" data-value="2"></i><b>(2)</b>

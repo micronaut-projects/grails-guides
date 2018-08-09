@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Micronaut JWT Authentication | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Micronaut JWT Authentication. Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -87,7 +90,7 @@
         <h1>Micronaut JWT Authentication</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -216,11 +219,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security-jwt</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -241,21 +244,21 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="2"></i><b>(2)</b>
-      <span class="key">oauth</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="key">token</span>:
-      <span class="key">jwt</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="key">signatures</span>:
-          <span class="key">secret</span>:
-            <span class="key">generator</span>: <i class="conum" data-value="5"></i><b>(5)</b>
-              <span class="key">secret</span>: <span class="string"><span class="content">pleaseChangeThisSecretForANewOne </span></span> <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+      oauth:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="5"></i><b>(5)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -303,30 +306,30 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/services/AuthenticationProviderUserPassword.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import io.micronaut.security.authentication.UserDetails
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import javax.inject.Singleton
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Override</span>
+    @Override
     Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        <span class="keyword">if</span> ( authenticationRequest.identity == <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span> &amp;&amp;
-                authenticationRequest.secret == <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) {
-            UserDetails userDetails = <span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.identity, <span class="type">[]</span>)
-            <span class="keyword">return</span> Flowable.just(userDetails)  <span class="keyword">as</span> Publisher&lt;AuthenticationResponse&gt;
+        if ( authenticationRequest.identity == "sherlock" &amp;&amp;
+                authenticationRequest.secret == "password") {
+            UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, [])
+            return Flowable.just(userDetails)  as Publisher&lt;AuthenticationResponse&gt;
         }
-        Flowable.just(<span class="keyword">new</span> AuthenticationFailed()) <span class="keyword">as</span> Publisher&lt;AuthenticationResponse&gt;
+        Flowable.just(new AuthenticationFailed()) as Publisher&lt;AuthenticationResponse&gt;
     }
 }</code></pre>
 </div>
@@ -360,25 +363,25 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.controllers
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
 
-<span class="keyword">import</span> <span class="include">java.security.Principal</span>
+import java.security.Principal
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">HomeController</span> {
+@CompileStatic
+@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController {
 
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN)
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="predefined-type">String</span> index(<span class="predefined-type">Principal</span> principal) { <i class="conum" data-value="4"></i><b>(4)</b>
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    String index(Principal principal) { <i class="conum" data-value="4"></i><b>(4)</b>
         principal.name
     }
 }</code></pre>
@@ -421,63 +424,63 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/JwtAuthenticationSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">com.nimbusds.jwt.JWTParser</span>
-<span class="keyword">import</span> <span class="include">com.nimbusds.jwt.SignedJWT</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpHeaders</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.HttpRequest
 
-<span class="type">class</span> <span class="class">JwtAuthenticationSpec</span> <span class="directive">extends</span> Specification {
+class JwtAuthenticationSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT authentication works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">'</span></span>
-        client.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>, )) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "Verify JWT authentication works"() {
+        when: 'Accessing a secured URL without authenticating'
+        client.toBlocking().exchange(HttpRequest.GET('/', )) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">returns unauthorized</span><span class="delimiter">'</span></span>
+        then: 'returns unauthorized'
         HttpClientResponseException e = thrown(HttpClientResponseException)
         e.status == HttpStatus.UNAUTHORIZED
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
-        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
-        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds) <i class="conum" data-value="5"></i><b>(5)</b>
+        when: 'Login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="5"></i><b>(5)</b>
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
-        rsp.body().username == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+        rsp.body().username == 'sherlock'
         rsp.body().accessToken
-        JWTParser.parse(rsp.body().accessToken) <span class="keyword">instanceof</span> SignedJWT
+        JWTParser.parse(rsp.body().accessToken) instanceof SignedJWT
         rsp.body().refreshToken
-        JWTParser.parse(rsp.body().refreshToken) <span class="keyword">instanceof</span> SignedJWT
+        JWTParser.parse(rsp.body().refreshToken) instanceof SignedJWT
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
-        HttpRequest requestWithAuthorization = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span> ).header(HttpHeaders.AUTHORIZATION, <span class="string"><span class="delimiter">&quot;</span><span class="content">Bearer </span><span class="inline"><span class="inline-delimiter">$</span>accessToken</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="7"></i><b>(7)</b>
-        HttpResponse&lt;<span class="predefined-type">String</span>&gt; response = client.toBlocking().exchange(requestWithAuthorization, <span class="predefined-type">String</span>)
+        when:
+        String accessToken = rsp.body().accessToken
+        HttpRequest requestWithAuthorization = HttpRequest.GET('/' ).header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken") <i class="conum" data-value="7"></i><b>(7)</b>
+        HttpResponse&lt;String&gt; response = client.toBlocking().exchange(requestWithAuthorization, String)
 
-        <span class="key">then</span>:
+        then:
         response.status == HttpStatus.OK
-        response.body() == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span> <i class="conum" data-value="8"></i><b>(8)</b>
+        response.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
     }
 }</code></pre>
 </div>
@@ -535,50 +538,50 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.AccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">OauthAccessTokenSpec</span> <span class="directive">extends</span> Specification {
+class OauthAccessTokenSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL())
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT access token refresh works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
-        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
-        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds)
+    def "Verify JWT access token refresh works"() {
+        when: 'login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
 
-        <span class="key">when</span>:
-        sleep(<span class="integer">1</span>_000) <span class="comment">// sleep for one second to give time for the issued at `iat` Claim to change</span>
-        <span class="predefined-type">String</span> refreshToken = rsp.body().refreshToken
-        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
+        when:
+        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
+        String refreshToken = rsp.body().refreshToken
+        String accessToken = rsp.body().accessToken
 
-        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/oauth/access_token</span><span class="delimiter">'</span></span>,
-                <span class="keyword">new</span> TokenRefreshRequest(<span class="string"><span class="delimiter">&quot;</span><span class="content">refresh_token</span><span class="delimiter">&quot;</span></span>, refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST('/oauth/access_token',
+                new TokenRefreshRequest("refresh_token", refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
 
-        <span class="key">then</span>:
+        then:
         response.status == HttpStatus.OK
         response.body().accessToken
         response.body().accessToken != accessToken <i class="conum" data-value="2"></i><b>(2)</b>
@@ -619,19 +622,19 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AppClient.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
-<span class="namespace">import</span> <span class="namespace">groovy.transform.CompileStatic</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Get</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.annotation.Header</span>
-<span class="namespace">import</span> <span class="namespace">io.micronaut.http.client.Client</span>
+import groovy.transform.CompileStatic
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.client.Client
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-<span class="namespace">interface</span> <span class="namespace">AppClient</span> {
+@CompileStatic
+@Client("/")
+interface AppClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-    <span class="namespace">String</span> <span class="namespace">home</span>(<span class="annotation">@Header</span> <span class="namespace">String</span> <span class="namespace">authorization</span>)
+    @Get("/")
+    String home(@Header String authorization)
 }</code></pre>
 </div>
 </div>
@@ -641,61 +644,61 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/DeclarativeHttpClientWithJwtSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UsernamePasswordCredentials</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.token.jwt.render.BearerAccessRefreshToken</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">DeclarativeHttpClientWithJwtSpec</span> <span class="directive">extends</span> Specification {
+class DeclarativeHttpClientWithJwtSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify JWT authentication works with declarative @Client</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
+    def "Verify JWT authentication works with declarative @Client"() {
+        when:
         AppClient appClient = embeddedServer.applicationContext.getBean(AppClient) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown()
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">'</span></span>
-        client.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>, ))
+        when: 'Accessing a secured URL without authenticating'
+        client.toBlocking().exchange(HttpRequest.GET('/', ))
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">returns unauthorized</span><span class="delimiter">'</span></span>
+        then: 'returns unauthorized'
         HttpClientResponseException e = thrown(HttpClientResponseException)
         e.status == HttpStatus.UNAUTHORIZED
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Login endpoint is called with valid credentials</span><span class="delimiter">'</span></span>
-        UsernamePasswordCredentials creds = <span class="keyword">new</span> UsernamePasswordCredentials(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>)
-        HttpRequest request = HttpRequest.POST(<span class="string"><span class="delimiter">'</span><span class="content">/login</span><span class="delimiter">'</span></span>, creds) <i class="conum" data-value="5"></i><b>(5)</b>
+        when: 'Login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="5"></i><b>(5)</b>
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
         rsp.body().accessToken
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> accessToken = rsp.body().accessToken
-        <span class="predefined-type">String</span> authorizationValue = <span class="string"><span class="delimiter">&quot;</span><span class="content">Bearer </span><span class="inline"><span class="inline-delimiter">$</span>accessToken</span><span class="delimiter">&quot;</span></span>
-        <span class="predefined-type">String</span> msg = appClient.home(authorizationValue) <i class="conum" data-value="7"></i><b>(7)</b>
+        when:
+        String accessToken = rsp.body().accessToken
+        String authorizationValue = "Bearer $accessToken"
+        String msg = appClient.home(authorizationValue) <i class="conum" data-value="7"></i><b>(7)</b>
 
-        <span class="key">then</span>:
-        msg == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span> <i class="conum" data-value="8"></i><b>(8)</b>
+        then:
+        msg == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
     }
 }</code></pre>
 </div>
@@ -752,7 +755,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
