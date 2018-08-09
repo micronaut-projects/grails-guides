@@ -94,21 +94,21 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailUseCase.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">org.slf4j.Logger</span>;
-<span class="keyword">import</span> <span class="include">org.slf4j.LoggerFactory</span>;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.text.SimpleDateFormat</span>;
-<span class="keyword">import</span> <span class="include">java.util.Date</span>;
+import javax.inject.Singleton;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-<span class="annotation">@Singleton</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailUseCase</span> {
-    <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> LOG = LoggerFactory.getLogger(EmailUseCase.class); <i class="conum" data-value="2"></i><b>(2)</b>
+@Singleton
+public class EmailUseCase {
+    private static final Logger LOG = LoggerFactory.getLogger(EmailUseCase.class); <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="type">void</span> send(<span class="predefined-type">String</span> user, <span class="predefined-type">String</span> message) {
-        LOG.info(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sending email to {} : {} at {}</span><span class="delimiter">&quot;</span></span>, user, message, <span class="keyword">new</span> <span class="predefined-type">SimpleDateFormat</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dd/M/yyyy hh:mm:ss</span><span class="delimiter">&quot;</span></span>).format(<span class="keyword">new</span> <span class="predefined-type">Date</span>()));
+    void send(String user, String message) {
+        LOG.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 }</code></pre>
 </div>
@@ -119,24 +119,24 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/DailyEmailJob.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.scheduling.annotation.Scheduled</span>;
+import io.micronaut.scheduling.annotation.Scheduled;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
+import javax.inject.Singleton;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">DailyEmailJob</span> {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DailyEmailJob {
 
-    <span class="directive">protected</span> <span class="directive">final</span> EmailUseCase emailUseCase;
+    protected final EmailUseCase emailUseCase;
 
-    <span class="directive">public</span> DailyEmailJob(EmailUseCase emailUseCase) {  <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="local-variable">this</span>.emailUseCase = emailUseCase;
+    public DailyEmailJob(EmailUseCase emailUseCase) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.emailUseCase = emailUseCase;
     }
 
-    <span class="annotation">@Scheduled</span>(cron = <span class="string"><span class="delimiter">&quot;</span><span class="content">0 30 4 1/1 * ?</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="type">void</span> execute() {
-        emailUseCase.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">john.doe@micronaut.example</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Test Message</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="4"></i><b>(4)</b>
+    @Scheduled(cron = "0 30 4 1/1 * ?") <i class="conum" data-value="3"></i><b>(3)</b>
+    void execute() {
+        emailUseCase.send("john.doe@micronaut.example", "Test Message"); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
