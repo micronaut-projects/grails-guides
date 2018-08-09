@@ -115,9 +115,9 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayPackage.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-data class BintrayPackage(var name: String = &quot;&quot;,
+data class BintrayPackage(var name: String = "",
                           var linked: Boolean = false) {
 }</code></pre>
 </div>
@@ -128,7 +128,7 @@ data class BintrayPackage(var name: String = &quot;&quot;,
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayLowLevelClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
@@ -144,7 +144,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
     private val uri: String
 
     init {
-        val path = &quot;/api/{apiversion}/repos/{organization}/{repository}/packages&quot;
+        val path = "/api/{apiversion}/repos/{organization}/{repository}/packages"
         uri = UriTemplate.of(path).expand(bintrayConfiguration.toMap())
     }
 

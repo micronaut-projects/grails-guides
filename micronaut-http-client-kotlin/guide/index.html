@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Micronaut HTTP Client | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Micronaut HTTP Client. Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -85,7 +88,7 @@
         <h1>Micronaut HTTP Client</h1>
         <p>Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -268,10 +271,10 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
-    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
-    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
-    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -280,7 +283,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayConfiguration.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import example.micronaut.BintrayConfiguration.Companion.PREFIX
 import io.micronaut.context.annotation.ConfigurationProperties
@@ -288,8 +291,8 @@ import io.micronaut.context.annotation.ConfigurationProperties
 @ConfigurationProperties(PREFIX)
 class BintrayConfiguration {
     companion object {
-        const val PREFIX = &quot;bintray&quot;
-        const val BINTRAY_URL = &quot;https://bintray.com&quot;
+        const val PREFIX = "bintray"
+        const val BINTRAY_URL = "https://bintray.com"
     }
 
     var apiversion: String? = null
@@ -301,19 +304,19 @@ class BintrayConfiguration {
     fun toMap(): MutableMap&lt;String, Any&gt; {
         val m = HashMap&lt;String, Any&gt;()
         if (apiversion != null) {
-            m[&quot;apiversion&quot;] = apiversion!!
+            m["apiversion"] = apiversion!!
         }
         if (organization != null) {
-            m[&quot;organization&quot;] = organization!!
+            m["organization"] = organization!!
         }
         if (repository != null) {
-            m[&quot;repository&quot;] = repository!!
+            m["repository"] = repository!!
         }
         if (username != null) {
-            m[&quot;username&quot;] = username!!
+            m["username"] = username!!
         }
         if (token != null) {
-            m[&quot;token&quot;] = token!!
+            m["token"] = token!!
         }
         return m
     }
@@ -346,9 +349,9 @@ class BintrayConfiguration {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayPackage.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-data class BintrayPackage(var name: String = &quot;&quot;,
+data class BintrayPackage(var name: String = "",
                           var linked: Boolean = false) {
 }</code></pre>
 </div>
@@ -359,7 +362,7 @@ data class BintrayPackage(var name: String = &quot;&quot;,
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayLowLevelClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
@@ -375,7 +378,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
     private val uri: String
 
     init {
-        val path = &quot;/api/{apiversion}/repos/{organization}/{repository}/packages&quot;
+        val path = "/api/{apiversion}/repos/{organization}/{repository}/packages"
         uri = UriTemplate.of(path).expand(bintrayConfiguration.toMap())
     }
 
@@ -452,7 +455,7 @@ For example, <code>jsonStream().firstElement()</code> will only parse the first 
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.client.Client
 import io.reactivex.Flowable
@@ -461,7 +464,7 @@ import io.micronaut.http.annotation.Get
 @Client(BintrayConfiguration.BINTRAY_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 interface BintrayClient {
 
-    @Get(&quot;/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages")  <i class="conum" data-value="2"></i><b>(2)</b>
     fun fetchPackages(): Flowable&lt;BintrayPackage&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
@@ -510,7 +513,7 @@ compose multiple HTTP client calls without blocking (which will limit the throug
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
@@ -518,16 +521,16 @@ import io.micronaut.http.annotation.Get
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 
-@Controller(&quot;/bintray&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/bintray") <i class="conum" data-value="1"></i><b>(1)</b>
 class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClient,  <i class="conum" data-value="2"></i><b>(2)</b>
                         private val bintrayClient: BintrayClient) {
 
-    @Get(&quot;/packages-lowlevel&quot;)  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/packages-lowlevel")  <i class="conum" data-value="3"></i><b>(3)</b>
     fun packagesWithLowLevelClient(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {  <i class="conum" data-value="4"></i><b>(4)</b>
         return bintrayLowLevelClient.fetchPackages()
     }
 
-    @Get(uri = &quot;/packages&quot;, produces = arrayOf(MediaType.APPLICATION_JSON_STREAM))  <i class="conum" data-value="5"></i><b>(5)</b>
+    @Get(uri = "/packages", produces = arrayOf(MediaType.APPLICATION_JSON_STREAM))  <i class="conum" data-value="5"></i><b>(5)</b>
     internal fun packages(): Flowable&lt;BintrayPackage&gt; {  <i class="conum" data-value="6"></i><b>(6)</b>
         return bintrayClient.fetchPackages()
     }
@@ -582,7 +585,7 @@ class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClien
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
     repositories {
       ...
       ..
@@ -590,18 +593,18 @@ class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClien
     dependencies {
       ...
       ..
-        classpath <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform:junit-platform-gradle-plugin:1.0.0</span><span class="delimiter">'</span></span>
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 ...
 ..
 .
-apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.platform.gradle.plugin</span><span class="delimiter">'</span></span>
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 junitPlatform {
     filters {
         engines {
-            include <span class="string"><span class="delimiter">'</span><span class="content">spek</span><span class="delimiter">'</span></span>
+            include 'spek'
         }
     }
 }
@@ -609,14 +612,14 @@ junitPlatform {
 repositories {
   ...
   ..
-    maven { url <span class="string"><span class="delimiter">&quot;</span><span class="content">https://jcenter.bintray.com</span><span class="delimiter">&quot;</span></span> }
+    maven { url "https://jcenter.bintray.com" }
 }
 
 dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.jetbrains.spek:spek-api:1.1.5</span><span class="delimiter">&quot;</span></span>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.junit.jupiter:junit-jupiter-engine:5.1.0</span><span class="delimiter">&quot;</span></span>
+    testCompile "org.jetbrains.spek:spek-api:1.1.5"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.1.0"
 }
 ...
 ..
@@ -632,7 +635,7 @@ test {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/BintrayControllerSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
@@ -647,13 +650,13 @@ import org.jetbrains.spek.api.dsl.on
 import org.junit.jupiter.api.Assertions.*
 
 class BintrayControllerSpec: Spek({
-    val expectedProfileNames = arrayOf(&quot;base&quot;, &quot;federation&quot;, &quot;function&quot;, &quot;function-aws&quot;, &quot;service&quot;)
-    describe(&quot;BintrayController&quot;) {
+    val expectedProfileNames = arrayOf("base", "federation", "function", "function-aws", "service")
+    describe("BintrayController") {
 
         var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
         var client : RxStreamingHttpClient = RxStreamingHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
-        on(&quot;Verify bintray packages can be fetched with low level HttpClient&quot;) {
-            val request = HttpRequest.GET&lt;Any&gt;(&quot;/bintray/packages-lowlevel&quot;)
+        on("Verify bintray packages can be fetched with low level HttpClient") {
+            val request = HttpRequest.GET&lt;Any&gt;("/bintray/packages-lowlevel")
             val rsp = client.toBlocking().exchange(request,   <i class="conum" data-value="3"></i><b>(3)</b>
                     Argument.of(List::class.java, BintrayPackage::class.java))  <i class="conum" data-value="4"></i><b>(4)</b>
 
@@ -671,8 +674,8 @@ class BintrayControllerSpec: Spek({
                 assertTrue(found)
             }
         }
-        on(&quot;Verify bintray packages can be fetched with compile-time autogenerated @Client&quot;) {
-            val request = HttpRequest.GET&lt;Any&gt;(&quot;/bintray/packages&quot;)
+        on("Verify bintray packages can be fetched with compile-time autogenerated @Client") {
+            val request = HttpRequest.GET&lt;Any&gt;("/bintray/packages")
             val bintrayPackageStream : Flowable&lt;BintrayPackage&gt; = client.jsonStream(request, BintrayPackage::class.java)  <i class="conum" data-value="7"></i><b>(7)</b>
             val bintrayPackages : Iterable&lt;BintrayPackage&gt; = bintrayPackageStream.blockingIterable()
 
@@ -745,7 +748,7 @@ class BintrayControllerSpec: Spek({
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
@@ -782,7 +785,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayFilter.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
@@ -793,7 +796,7 @@ import io.micronaut.http.filter.ClientFilterChain
 import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
 
-@Filter(&quot;/api/\${bintray.apiversion}/repos/**&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Filter("/api/\${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
 @Requires(condition = BintrayFilterCondition::class)
 class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClientFilter {
 
@@ -835,7 +838,7 @@ Instead, we use a condition class.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayFilterCondition.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.condition.Condition
 import io.micronaut.context.condition.ConditionContext
@@ -865,7 +868,7 @@ class BintrayFilterCondition : Condition {
 <div class="listingblock">
 <div class="title">src/test/kotlin/example/micronaut/BintrayFilterConditionSpec.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -876,9 +879,9 @@ import io.micronaut.context.exceptions.NoSuchBeanException
 
 class BintrayFilterConditionSpec: Spek({
 
-    describe(&quot;BintrayFilter is loaded&quot;) {
-        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair(&quot;bintray.username&quot;, &quot;john&quot;), Pair(&quot;bintray.token&quot;, &quot;XXX&quot;)), &quot;test&quot;)
-         on(&quot;Verify BintrayFilter is loaded if bintray.username/bintray.token are set&quot;) {
+    describe("BintrayFilter is loaded") {
+        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair("bintray.username", "john"), Pair("bintray.token", "XXX")), "test")
+         on("Verify BintrayFilter is loaded if bintray.username/bintray.token are set") {
              Assertions.assertNotNull(applicationContext.getBean(BintrayFilter::class.java))
         }
         afterGroup {
@@ -886,9 +889,9 @@ class BintrayFilterConditionSpec: Spek({
         }
     }
 
-    describe(&quot;BintrayFilter is not loaded&quot;) {
-        val applicationContext = ApplicationContext.run(&quot;test&quot;)
-        on(&quot;Verify BintrayFilter is NOT loaded if bintray.username and bintray.token are not set&quot;) {
+    describe("BintrayFilter is not loaded") {
+        val applicationContext = ApplicationContext.run("test")
+        on("Verify BintrayFilter is NOT loaded if bintray.username and bintray.token are not set") {
             var exceptionThrown = false
             try {
                 applicationContext.getBean(BintrayFilter::class.java)
@@ -911,12 +914,12 @@ class BintrayFilterConditionSpec: Spek({
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
-    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
-    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
-    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span>
-    <span class="key">username</span>: <span class="string"><span class="content">yourbintrayusername</span></span>
-    <span class="key">token</span>: <span class="string"><span class="content">XXXXXXXXXXX</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1
+    username: yourbintrayusername
+    token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -924,7 +927,7 @@ class BintrayFilterConditionSpec: Spek({
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.http.client</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;logger name="io.micronaut.http.client" level="TRACE"/&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -932,7 +935,7 @@ class BintrayFilterConditionSpec: Spek({
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
 </div>
 </div>
 </div>

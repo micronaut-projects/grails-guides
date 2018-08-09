@@ -131,10 +131,10 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
-    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
-    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
-    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -143,7 +143,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayConfiguration.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import example.micronaut.BintrayConfiguration.Companion.PREFIX
 import io.micronaut.context.annotation.ConfigurationProperties
@@ -151,8 +151,8 @@ import io.micronaut.context.annotation.ConfigurationProperties
 @ConfigurationProperties(PREFIX)
 class BintrayConfiguration {
     companion object {
-        const val PREFIX = &quot;bintray&quot;
-        const val BINTRAY_URL = &quot;https://bintray.com&quot;
+        const val PREFIX = "bintray"
+        const val BINTRAY_URL = "https://bintray.com"
     }
 
     var apiversion: String? = null
@@ -164,19 +164,19 @@ class BintrayConfiguration {
     fun toMap(): MutableMap&lt;String, Any&gt; {
         val m = HashMap&lt;String, Any&gt;()
         if (apiversion != null) {
-            m[&quot;apiversion&quot;] = apiversion!!
+            m["apiversion"] = apiversion!!
         }
         if (organization != null) {
-            m[&quot;organization&quot;] = organization!!
+            m["organization"] = organization!!
         }
         if (repository != null) {
-            m[&quot;repository&quot;] = repository!!
+            m["repository"] = repository!!
         }
         if (username != null) {
-            m[&quot;username&quot;] = username!!
+            m["username"] = username!!
         }
         if (token != null) {
-            m[&quot;token&quot;] = token!!
+            m["token"] = token!!
         }
         return m
     }

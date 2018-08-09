@@ -123,7 +123,7 @@ compose multiple HTTP client calls without blocking (which will limit the throug
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayController.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
@@ -131,16 +131,16 @@ import io.micronaut.http.annotation.Get
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 
-@Controller(&quot;/bintray&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/bintray") <i class="conum" data-value="1"></i><b>(1)</b>
 class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClient,  <i class="conum" data-value="2"></i><b>(2)</b>
                         private val bintrayClient: BintrayClient) {
 
-    @Get(&quot;/packages-lowlevel&quot;)  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/packages-lowlevel")  <i class="conum" data-value="3"></i><b>(3)</b>
     fun packagesWithLowLevelClient(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {  <i class="conum" data-value="4"></i><b>(4)</b>
         return bintrayLowLevelClient.fetchPackages()
     }
 
-    @Get(uri = &quot;/packages&quot;, produces = arrayOf(MediaType.APPLICATION_JSON_STREAM))  <i class="conum" data-value="5"></i><b>(5)</b>
+    @Get(uri = "/packages", produces = arrayOf(MediaType.APPLICATION_JSON_STREAM))  <i class="conum" data-value="5"></i><b>(5)</b>
     internal fun packages(): Flowable&lt;BintrayPackage&gt; {  <i class="conum" data-value="6"></i><b>(6)</b>
         return bintrayClient.fetchPackages()
     }

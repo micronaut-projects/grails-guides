@@ -115,7 +115,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/BintrayClient.kt</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="kotlin">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.client.Client
 import io.reactivex.Flowable
@@ -124,7 +124,7 @@ import io.micronaut.http.annotation.Get
 @Client(BintrayConfiguration.BINTRAY_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 interface BintrayClient {
 
-    @Get(&quot;/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages&quot;)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/api/\${bintray.apiversion}/repos/\${bintray.organization}/\${bintray.repository}/packages")  <i class="conum" data-value="2"></i><b>(2)</b>
     fun fetchPackages(): Flowable&lt;BintrayPackage&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
