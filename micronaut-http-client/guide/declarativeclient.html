@@ -115,16 +115,16 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.Client;
+import io.reactivex.Flowable;
 
-<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">BintrayClient</span> {
+@Client(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
+public interface BintrayClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages")  <i class="conum" data-value="2"></i><b>(2)</b>
     Flowable&lt;BintrayPackage&gt; fetchPackages(); <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>

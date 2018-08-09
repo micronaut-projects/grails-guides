@@ -128,30 +128,30 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayFilter.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Filter</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.ClientFilterChain</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.HttpClientFilter</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.ClientFilterChain;
+import io.micronaut.http.filter.HttpClientFilter;
+import org.reactivestreams.Publisher;
 
-<span class="annotation">@Filter</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/**</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.username</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.token</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayFilter</span>  <span class="directive">implements</span> HttpClientFilter {
+@Filter("/api/${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(property = BintrayConfiguration.PREFIX + ".username") <i class="conum" data-value="2"></i><b>(2)</b>
+@Requires(property = BintrayConfiguration.PREFIX + ".token") <i class="conum" data-value="2"></i><b>(2)</b>
+public class BintrayFilter  implements HttpClientFilter {
 
-    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration;
+    private final BintrayConfiguration configuration;
 
-    <span class="directive">public</span> BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.configuration = configuration;
+    public BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.configuration = configuration;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> Publisher&lt;? <span class="directive">extends</span> HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
-        <span class="keyword">return</span> chain.proceed(request.basicAuth(configuration.getUsername(), configuration.getToken())); <i class="conum" data-value="4"></i><b>(4)</b>
+    @Override
+    public Publisher&lt;? extends HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
+        return chain.proceed(request.basicAuth(configuration.getUsername(), configuration.getToken())); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -183,12 +183,12 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
-    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
-    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
-    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span>
-    <span class="key">username</span>: <span class="string"><span class="content">yourbintrayusername</span></span>
-    <span class="key">token</span>: <span class="string"><span class="content">XXXXXXXXXXX</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1
+    username: yourbintrayusername
+    token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -196,7 +196,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.http.client</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;logger name="io.micronaut.http.client" level="TRACE"/&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -204,7 +204,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
 </div>
 </div>
 </div>

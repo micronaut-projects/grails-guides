@@ -122,11 +122,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>, {
-        exclude <span class="key">module</span>:<span class="string"><span class="delimiter">'</span><span class="content">groovy-all</span><span class="delimiter">'</span></span>
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4", {
+        exclude module:'groovy-all'
     }
 }</code></pre>
 </div>
@@ -137,11 +137,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example.micronaut</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example.micronaut
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -150,63 +150,63 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/BintrayControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxStreamingHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.reactivex.Flowable
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">BintrayControllerSpec</span> <span class="directive">extends</span> Specification {
+class BintrayControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxStreamingHttpClient client = embeddedServer.applicationContext.createBean(RxStreamingHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; expectedProfileNames = [<span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">federation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function-aws</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">service</span><span class="delimiter">'</span></span>]
+    @Shared
+    List&lt;String&gt; expectedProfileNames = ['base', 'federation', 'function', 'function-aws', 'service']
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with low level HttpClient</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages-lowlevel</span><span class="delimiter">'</span></span>)
+    def "Verify bintray packages can be fetched with low level HttpClient"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/bintray/packages-lowlevel')
 
-        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
-                Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;List&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
+                Argument.of(List, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK  <i class="conum" data-value="6"></i><b>(6)</b>
         rsp.body() <i class="conum" data-value="7"></i><b>(7)</b>
 
-        <span class="key">when</span>:
-        <span class="predefined-type">List</span>&lt;BintrayPackage&gt; packages = rsp.body()
+        when:
+        List&lt;BintrayPackage&gt; packages = rsp.body()
 
-        <span class="key">then</span>:
-        <span class="keyword">for</span> (<span class="predefined-type">String</span> name : expectedProfileNames) {
-            <span class="keyword">assert</span> packages*.name.contains(name)
+        then:
+        for (String name : expectedProfileNames) {
+            assert packages*.name.contains(name)
         }
     }
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with compile-time autogenerated @Client</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages</span><span class="delimiter">'</span></span>)
+    def "Verify bintray packages can be fetched with compile-time autogenerated @Client"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/bintray/packages')
 
         Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="8"></i><b>(8)</b>
-        <span class="predefined-type">Iterable</span>&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
+        Iterable&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
 
-        <span class="key">then</span>:
-        <span class="keyword">for</span> (<span class="predefined-type">String</span> name : expectedProfileNames) {
-            <span class="keyword">assert</span> bintrayPackages*.name.contains(name)
+        then:
+        for (String name : expectedProfileNames) {
+            assert bintrayPackages*.name.contains(name)
         }
     }
 }</code></pre>

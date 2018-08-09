@@ -131,7 +131,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">bintray:
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">bintray:
     organization: micronaut
     repository: profiles
     apiversion: v1</code></pre>
@@ -143,79 +143,79 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayConfiguration.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.ConfigurationProperties</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 
-<span class="keyword">import</span> <span class="include">java.util.HashMap</span>;
-<span class="keyword">import</span> <span class="include">java.util.Map</span>;
+import java.util.HashMap;
+import java.util.Map;
 
-<span class="annotation">@ConfigurationProperties</span>(BintrayConfiguration.PREFIX)
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayConfiguration</span> {
+@ConfigurationProperties(BintrayConfiguration.PREFIX)
+@Requires(property = BintrayConfiguration.PREFIX)
+public class BintrayConfiguration {
 
-    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> PREFIX = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray</span><span class="delimiter">&quot;</span></span>;
-    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> BINTRAY_API_URL = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://bintray.com</span><span class="delimiter">&quot;</span></span>;
+    public static final String PREFIX = "bintray";
+    public static final String BINTRAY_API_URL = "https://bintray.com";
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> apiversion;
+    private String apiversion;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> organization;
+    private String organization;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> repository;
+    private String repository;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> username;
+    private String username;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> token;
+    private String token;
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getApiversion() {
-        <span class="keyword">return</span> apiversion;
+    public String getApiversion() {
+        return apiversion;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setApiversion(<span class="predefined-type">String</span> apiversion) {
-        <span class="local-variable">this</span>.apiversion = apiversion;
+    public void setApiversion(String apiversion) {
+        this.apiversion = apiversion;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getOrganization() {
-        <span class="keyword">return</span> organization;
+    public String getOrganization() {
+        return organization;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setOrganization(<span class="predefined-type">String</span> organization) {
-        <span class="local-variable">this</span>.organization = organization;
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getRepository() {
-        <span class="keyword">return</span> repository;
+    public String getRepository() {
+        return repository;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setRepository(<span class="predefined-type">String</span> repository) {
-        <span class="local-variable">this</span>.repository = repository;
+    public void setRepository(String repository) {
+        this.repository = repository;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getUsername() {
-        <span class="keyword">return</span> username;
+    public String getUsername() {
+        return username;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setUsername(<span class="predefined-type">String</span> username) {
-        <span class="local-variable">this</span>.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getToken() {
-        <span class="keyword">return</span> token;
+    public String getToken() {
+        return token;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setToken(<span class="predefined-type">String</span> token) {
-        <span class="local-variable">this</span>.token = token;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; toMap() {
-        <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; m = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>&lt;&gt;();
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">apiversion</span><span class="delimiter">&quot;</span></span>, getApiversion());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">organization</span><span class="delimiter">&quot;</span></span>, getOrganization());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">repository</span><span class="delimiter">&quot;</span></span>, getRepository());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>, getUsername());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">token</span><span class="delimiter">&quot;</span></span>, getToken());
-        <span class="keyword">return</span> m;
+    public Map&lt;String, Object&gt; toMap() {
+        Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();
+        m.put("apiversion", getApiversion());
+        m.put("organization", getOrganization());
+        m.put("repository", getRepository());
+        m.put("username", getUsername());
+        m.put("token", getToken());
+        return m;
     }
 }</code></pre>
 </div>

@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Micronaut HTTP Client | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Micronaut HTTP Client. Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -85,7 +88,7 @@
         <h1>Micronaut HTTP Client</h1>
         <p>Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -230,7 +233,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">bintray:
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">bintray:
     organization: micronaut
     repository: profiles
     apiversion: v1</code></pre>
@@ -242,79 +245,79 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayConfiguration.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.ConfigurationProperties</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 
-<span class="keyword">import</span> <span class="include">java.util.HashMap</span>;
-<span class="keyword">import</span> <span class="include">java.util.Map</span>;
+import java.util.HashMap;
+import java.util.Map;
 
-<span class="annotation">@ConfigurationProperties</span>(BintrayConfiguration.PREFIX)
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayConfiguration</span> {
+@ConfigurationProperties(BintrayConfiguration.PREFIX)
+@Requires(property = BintrayConfiguration.PREFIX)
+public class BintrayConfiguration {
 
-    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> PREFIX = <span class="string"><span class="delimiter">&quot;</span><span class="content">bintray</span><span class="delimiter">&quot;</span></span>;
-    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> BINTRAY_API_URL = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://bintray.com</span><span class="delimiter">&quot;</span></span>;
+    public static final String PREFIX = "bintray";
+    public static final String BINTRAY_API_URL = "https://bintray.com";
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> apiversion;
+    private String apiversion;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> organization;
+    private String organization;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> repository;
+    private String repository;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> username;
+    private String username;
 
-    <span class="directive">private</span> <span class="predefined-type">String</span> token;
+    private String token;
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getApiversion() {
-        <span class="keyword">return</span> apiversion;
+    public String getApiversion() {
+        return apiversion;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setApiversion(<span class="predefined-type">String</span> apiversion) {
-        <span class="local-variable">this</span>.apiversion = apiversion;
+    public void setApiversion(String apiversion) {
+        this.apiversion = apiversion;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getOrganization() {
-        <span class="keyword">return</span> organization;
+    public String getOrganization() {
+        return organization;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setOrganization(<span class="predefined-type">String</span> organization) {
-        <span class="local-variable">this</span>.organization = organization;
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getRepository() {
-        <span class="keyword">return</span> repository;
+    public String getRepository() {
+        return repository;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setRepository(<span class="predefined-type">String</span> repository) {
-        <span class="local-variable">this</span>.repository = repository;
+    public void setRepository(String repository) {
+        this.repository = repository;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getUsername() {
-        <span class="keyword">return</span> username;
+    public String getUsername() {
+        return username;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setUsername(<span class="predefined-type">String</span> username) {
-        <span class="local-variable">this</span>.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getToken() {
-        <span class="keyword">return</span> token;
+    public String getToken() {
+        return token;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setToken(<span class="predefined-type">String</span> token) {
-        <span class="local-variable">this</span>.token = token;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; toMap() {
-        <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; m = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>&lt;&gt;();
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">apiversion</span><span class="delimiter">&quot;</span></span>, getApiversion());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">organization</span><span class="delimiter">&quot;</span></span>, getOrganization());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">repository</span><span class="delimiter">&quot;</span></span>, getRepository());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>, getUsername());
-        m.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">token</span><span class="delimiter">&quot;</span></span>, getToken());
-        <span class="keyword">return</span> m;
+    public Map&lt;String, Object&gt; toMap() {
+        Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();
+        m.put("apiversion", getApiversion());
+        m.put("organization", getOrganization());
+        m.put("repository", getRepository());
+        m.put("username", getUsername());
+        m.put("token", getToken());
+        return m;
     }
 }</code></pre>
 </div>
@@ -345,26 +348,26 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayPackage.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayPackage</span> {
-    <span class="predefined-type">String</span> name;
-    <span class="type">boolean</span> linked;
+public class BintrayPackage {
+    String name;
+    boolean linked;
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
-        <span class="keyword">return</span> name;
+    public String getName() {
+        return name;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setName(<span class="predefined-type">String</span> name) {
-        <span class="local-variable">this</span>.name = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    <span class="directive">public</span> <span class="type">boolean</span> isLinked() {
-        <span class="keyword">return</span> linked;
+    public boolean isLinked() {
+        return linked;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setLinked(<span class="type">boolean</span> linked) {
-        <span class="local-variable">this</span>.linked = linked;
+    public void setLinked(boolean linked) {
+        this.linked = linked;
     }
 }</code></pre>
 </div>
@@ -375,38 +378,38 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayLowLevelClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.uri.UriTemplate</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.client.Client;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.uri.UriTemplate;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
+import javax.inject.Singleton;
+import java.util.List;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayLowLevelClient</span> {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class BintrayLowLevelClient {
 
 
-    <span class="directive">private</span> <span class="directive">final</span> RxHttpClient httpClient;
-    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> uri;
+    private final RxHttpClient httpClient;
+    private final String uri;
 
-    <span class="directive">public</span> BintrayLowLevelClient(<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
+    public BintrayLowLevelClient(@Client(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
                                  BintrayConfiguration configuration) {  <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.httpClient = httpClient;
-        <span class="predefined-type">String</span> path = <span class="string"><span class="delimiter">&quot;</span><span class="content">/api/{apiversion}/repos/{organization}/{repository}/packages</span><span class="delimiter">&quot;</span></span>;
+        this.httpClient = httpClient;
+        String path = "/api/{apiversion}/repos/{organization}/{repository}/packages";
         uri = UriTemplate.of(path).expand(configuration.toMap());
     }
 
-    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; fetchPackages() {
+    Maybe&lt;List&lt;BintrayPackage&gt;&gt; fetchPackages() {
         HttpRequest&lt;?&gt; req = HttpRequest.GET(uri);  <i class="conum" data-value="4"></i><b>(4)</b>
-        Flowable flowable = httpClient.retrieve(req, Argument.of(<span class="predefined-type">List</span>.class, BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="keyword">return</span> (Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt;) flowable.firstElement(); <i class="conum" data-value="6"></i><b>(6)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.of(List.class, BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
+        return (Maybe&lt;List&lt;BintrayPackage&gt;&gt;) flowable.firstElement(); <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
 }</code></pre>
@@ -476,16 +479,16 @@ For example, <code>jsonStream().firstElement()</code> will only parse the first 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.Client;
+import io.reactivex.Flowable;
 
-<span class="annotation">@Client</span>(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">BintrayClient</span> {
+@Client(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
+public interface BintrayClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages")  <i class="conum" data-value="2"></i><b>(2)</b>
     Flowable&lt;BintrayPackage&gt; fetchPackages(); <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
@@ -534,37 +537,37 @@ compose multiple HTTP client calls without blocking (which will limit the throug
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
+import java.util.List;
 
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/bintray</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayController</span> {
+@Controller("/bintray") <i class="conum" data-value="1"></i><b>(1)</b>
+public class BintrayController {
 
-    <span class="directive">private</span> <span class="directive">final</span> BintrayLowLevelClient bintrayLowLevelClient;
+    private final BintrayLowLevelClient bintrayLowLevelClient;
 
-    <span class="directive">private</span> <span class="directive">final</span> BintrayClient bintrayClient;
+    private final BintrayClient bintrayClient;
 
-    <span class="directive">public</span> BintrayController(BintrayLowLevelClient bintrayLowLevelClient, <i class="conum" data-value="2"></i><b>(2)</b>
+    public BintrayController(BintrayLowLevelClient bintrayLowLevelClient, <i class="conum" data-value="2"></i><b>(2)</b>
                              BintrayClient bintrayClient) {
-        <span class="local-variable">this</span>.bintrayLowLevelClient = bintrayLowLevelClient;
-        <span class="local-variable">this</span>.bintrayClient = bintrayClient;
+        this.bintrayLowLevelClient = bintrayLowLevelClient;
+        this.bintrayClient = bintrayClient;
     }
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/packages-lowlevel</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
-    Maybe&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; packagesWithLowLevelClient() { <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">return</span> bintrayLowLevelClient.fetchPackages();
+    @Get("/packages-lowlevel") <i class="conum" data-value="3"></i><b>(3)</b>
+    Maybe&lt;List&lt;BintrayPackage&gt;&gt; packagesWithLowLevelClient() { <i class="conum" data-value="4"></i><b>(4)</b>
+        return bintrayLowLevelClient.fetchPackages();
     }
 
-    <span class="annotation">@Get</span>(uri = <span class="string"><span class="delimiter">&quot;</span><span class="content">/packages</span><span class="delimiter">&quot;</span></span>, produces = MediaType.APPLICATION_JSON_STREAM)  <i class="conum" data-value="5"></i><b>(5)</b>
+    @Get(uri = "/packages", produces = MediaType.APPLICATION_JSON_STREAM)  <i class="conum" data-value="5"></i><b>(5)</b>
     Flowable&lt;BintrayPackage&gt; packages() { <i class="conum" data-value="6"></i><b>(6)</b>
-        <span class="keyword">return</span> bintrayClient.fetchPackages();
+        return bintrayClient.fetchPackages();
     }
 }</code></pre>
 </div>
@@ -624,11 +627,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>, {
-        exclude <span class="key">module</span>:<span class="string"><span class="delimiter">'</span><span class="content">groovy-all</span><span class="delimiter">'</span></span>
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4", {
+        exclude module:'groovy-all'
     }
 }</code></pre>
 </div>
@@ -639,11 +642,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example.micronaut</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example.micronaut
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -652,63 +655,63 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/BintrayControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxStreamingHttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.reactivex.Flowable
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">BintrayControllerSpec</span> <span class="directive">extends</span> Specification {
+class BintrayControllerSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxStreamingHttpClient client = embeddedServer.applicationContext.createBean(RxStreamingHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; expectedProfileNames = [<span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">federation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">function-aws</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">service</span><span class="delimiter">'</span></span>]
+    @Shared
+    List&lt;String&gt; expectedProfileNames = ['base', 'federation', 'function', 'function-aws', 'service']
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with low level HttpClient</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages-lowlevel</span><span class="delimiter">'</span></span>)
+    def "Verify bintray packages can be fetched with low level HttpClient"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/bintray/packages-lowlevel')
 
-        HttpResponse&lt;<span class="predefined-type">List</span>&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
-                Argument.of(<span class="predefined-type">List</span>, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;List&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
+                Argument.of(List, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK  <i class="conum" data-value="6"></i><b>(6)</b>
         rsp.body() <i class="conum" data-value="7"></i><b>(7)</b>
 
-        <span class="key">when</span>:
-        <span class="predefined-type">List</span>&lt;BintrayPackage&gt; packages = rsp.body()
+        when:
+        List&lt;BintrayPackage&gt; packages = rsp.body()
 
-        <span class="key">then</span>:
-        <span class="keyword">for</span> (<span class="predefined-type">String</span> name : expectedProfileNames) {
-            <span class="keyword">assert</span> packages*.name.contains(name)
+        then:
+        for (String name : expectedProfileNames) {
+            assert packages*.name.contains(name)
         }
     }
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify bintray packages can be fetched with compile-time autogenerated @Client</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/bintray/packages</span><span class="delimiter">'</span></span>)
+    def "Verify bintray packages can be fetched with compile-time autogenerated @Client"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/bintray/packages')
 
         Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="8"></i><b>(8)</b>
-        <span class="predefined-type">Iterable</span>&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
+        Iterable&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
 
-        <span class="key">then</span>:
-        <span class="keyword">for</span> (<span class="predefined-type">String</span> name : expectedProfileNames) {
-            <span class="keyword">assert</span> bintrayPackages*.name.contains(name)
+        then:
+        for (String name : expectedProfileNames) {
+            assert bintrayPackages*.name.contains(name)
         }
     }
 }</code></pre>
@@ -766,7 +769,7 @@ the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
@@ -803,30 +806,30 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BintrayFilter.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.annotation.Requires</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Filter</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.ClientFilterChain</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.filter.HttpClientFilter</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.ClientFilterChain;
+import io.micronaut.http.filter.HttpClientFilter;
+import org.reactivestreams.Publisher;
 
-<span class="annotation">@Filter</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/${bintray.apiversion}/repos/**</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.username</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="annotation">@Requires</span>(property = BintrayConfiguration.PREFIX + <span class="string"><span class="delimiter">&quot;</span><span class="content">.token</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BintrayFilter</span>  <span class="directive">implements</span> HttpClientFilter {
+@Filter("/api/${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(property = BintrayConfiguration.PREFIX + ".username") <i class="conum" data-value="2"></i><b>(2)</b>
+@Requires(property = BintrayConfiguration.PREFIX + ".token") <i class="conum" data-value="2"></i><b>(2)</b>
+public class BintrayFilter  implements HttpClientFilter {
 
-    <span class="directive">private</span> <span class="directive">final</span> BintrayConfiguration configuration;
+    private final BintrayConfiguration configuration;
 
-    <span class="directive">public</span> BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.configuration = configuration;
+    public BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.configuration = configuration;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> Publisher&lt;? <span class="directive">extends</span> HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
-        <span class="keyword">return</span> chain.proceed(request.basicAuth(configuration.getUsername(), configuration.getToken())); <i class="conum" data-value="4"></i><b>(4)</b>
+    @Override
+    public Publisher&lt;? extends HttpResponse&lt;?&gt;&gt; doFilter(MutableHttpRequest&lt;?&gt; request, ClientFilterChain chain) {
+        return chain.proceed(request.basicAuth(configuration.getUsername(), configuration.getToken())); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
@@ -858,12 +861,12 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">bintray</span>:
-    <span class="key">organization</span>: <span class="string"><span class="content">micronaut</span></span>
-    <span class="key">repository</span>: <span class="string"><span class="content">profiles</span></span>
-    <span class="key">apiversion</span>: <span class="string"><span class="content">v1</span></span>
-    <span class="key">username</span>: <span class="string"><span class="content">yourbintrayusername</span></span>
-    <span class="key">token</span>: <span class="string"><span class="content">XXXXXXXXXXX</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1
+    username: yourbintrayusername
+    token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -871,7 +874,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;logger</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut.http.client</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">level</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;logger name="io.micronaut.http.client" level="TRACE"/&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -879,7 +882,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">13:21:08.981 [nioEventLoopGroup-1-14] TRACE i.m.http.client.DefaultHttpClient - Authorization: Basic XXXXXXXXXXXXXX</code></pre>
 </div>
 </div>
 </div>
