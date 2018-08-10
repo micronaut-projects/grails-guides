@@ -146,11 +146,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security"
 }</code></pre>
 </div>
 </div>
@@ -171,12 +171,12 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -208,29 +208,29 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.authentication.AuthenticationResponse;
+import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.util.ArrayList</span>;
+import javax.inject.Singleton;
+import java.util.ArrayList;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        <span class="keyword">if</span> ( authenticationRequest.getIdentity().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
-                authenticationRequest.getSecret().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) ) {
-            <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.getIdentity(), <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;()));
+    @Override
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password") ) {
+            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
         }
-        <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> AuthenticationFailed());
+        return Flowable.just(new AuthenticationFailed());
     }
 }</code></pre>
 </div>
@@ -264,20 +264,20 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/controllers/HomeController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>;
-<span class="keyword">import</span> <span class="include">java.security.Principal</span>;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.Secured;
+import java.security.Principal;
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HomeController</span> {
+@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
+public class HomeController {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="predefined-type">String</span> index(<span class="predefined-type">Principal</span> principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">return</span> principal.getName();
+    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
+        return principal.getName();
     }
 }</code></pre>
 </div>

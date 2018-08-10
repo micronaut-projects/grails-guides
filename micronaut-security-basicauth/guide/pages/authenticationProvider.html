@@ -97,29 +97,29 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.authentication.AuthenticationResponse;
+import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.util.ArrayList</span>;
+import javax.inject.Singleton;
+import java.util.ArrayList;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        <span class="keyword">if</span> ( authenticationRequest.getIdentity().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
-                authenticationRequest.getSecret().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) ) {
-            <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.getIdentity(), <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;()));
+    @Override
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password") ) {
+            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
         }
-        <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> AuthenticationFailed());
+        return Flowable.just(new AuthenticationFailed());
     }
 }</code></pre>
 </div>

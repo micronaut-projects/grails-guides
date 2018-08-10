@@ -7,6 +7,9 @@
     <meta charset='UTF-8' />
     <title>Micronaut Basic Auth | Micronaut Guides | Micronaut Framework</title>
     <meta name='description' content='Micronaut Basic Auth. Learn how to secure a Micronaut app using 'Basic' HTTP Authentication Scheme.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <link rel='stylesheet' href='../css/main.css' />
     <link rel='stylesheet' href='../css/screen.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
@@ -85,7 +88,7 @@
         <h1>Micronaut Basic Auth</h1>
         <p>Learn how to secure a Micronaut app using 'Basic' HTTP Authentication Scheme.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
     </header>
     
 
@@ -214,11 +217,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:security</span><span class="delimiter">&quot;</span></span>
+    compile "io.micronaut:security"
 }</code></pre>
 </div>
 </div>
@@ -239,12 +242,12 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-  <span class="key">security</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">endpoints</span>:
-      <span class="key">login</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true </span></span> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -276,29 +279,29 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.services</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationFailed</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationProvider</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.AuthenticationResponse</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.authentication.UserDetails</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
-<span class="keyword">import</span> <span class="include">org.reactivestreams.Publisher</span>;
+import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.authentication.AuthenticationResponse;
+import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
 
-<span class="keyword">import</span> <span class="include">javax.inject.Singleton</span>;
-<span class="keyword">import</span> <span class="include">java.util.ArrayList</span>;
+import javax.inject.Singleton;
+import java.util.ArrayList;
 
-<span class="annotation">@Singleton</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">AuthenticationProviderUserPassword</span> <span class="directive">implements</span> AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        <span class="keyword">if</span> ( authenticationRequest.getIdentity().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>) &amp;&amp;
-                authenticationRequest.getSecret().equals(<span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) ) {
-            <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> UserDetails((<span class="predefined-type">String</span>) authenticationRequest.getIdentity(), <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;()));
+    @Override
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password") ) {
+            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
         }
-        <span class="keyword">return</span> Flowable.just(<span class="keyword">new</span> AuthenticationFailed());
+        return Flowable.just(new AuthenticationFailed());
     }
 }</code></pre>
 </div>
@@ -332,20 +335,20 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/controllers/HomeController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.controllers</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>;
-<span class="keyword">import</span> <span class="include">java.security.Principal</span>;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.Secured;
+import java.security.Principal;
 
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HomeController</span> {
+@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
+public class HomeController {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)  <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="predefined-type">String</span> index(<span class="predefined-type">Principal</span> principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
-        <span class="keyword">return</span> principal.getName();
+    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
+        return principal.getName();
     }
 }</code></pre>
 </div>
@@ -397,11 +400,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-all:2.5.0</span><span class="delimiter">&quot;</span></span>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework:spock-core:1.1-groovy-2.4</span><span class="delimiter">&quot;</span></span>
+    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
 }</code></pre>
 </div>
 </div>
@@ -411,11 +414,11 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">profile</span>: <span class="string"><span class="content">service</span></span>
-<span class="key">defaultPackage</span>: <span class="string"><span class="content">example</span></span>
-<span class="head"><span class="head">---</span></span>
-<span class="key">testFramework</span>: <span class="string"><span class="content">spock</span></span>
-<span class="key">sourceLanguage</span>: <span class="string"><span class="content">java</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -424,45 +427,45 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/BasicAuthSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.HttpRequest
 
-<span class="type">class</span> <span class="class">BasicAuthSpec</span> <span class="directive">extends</span> Specification {
+class BasicAuthSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span>
+    @Shared
+    @AutoCleanup
     RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">Accessing a secured URL without authenticating</span><span class="delimiter">'</span></span>
-        client.toBlocking().exchange(HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>)) <i class="conum" data-value="4"></i><b>(4)</b>
+    def "Verify HTTP Basic Auth works"() {
+        when: 'Accessing a secured URL without authenticating'
+        client.toBlocking().exchange(HttpRequest.GET('/')) <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">returns unauthorized</span><span class="delimiter">'</span></span>
+        then: 'returns unauthorized'
         HttpClientResponseException e = thrown(HttpClientResponseException) <i class="conum" data-value="5"></i><b>(5)</b>
         e.status == HttpStatus.UNAUTHORIZED
 
-        <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">A secured URL is accessed with Basic Auth</span><span class="delimiter">'</span></span>
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>)
-                .basicAuth(<span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="6"></i><b>(6)</b>
-        HttpResponse&lt;<span class="predefined-type">String</span>&gt; rsp = client.toBlocking().exchange(request, <span class="predefined-type">String</span>) <i class="conum" data-value="7"></i><b>(7)</b>
+        when: 'A secured URL is accessed with Basic Auth'
+        HttpRequest request = HttpRequest.GET('/')
+                .basicAuth("sherlock", "password") <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(request, String) <i class="conum" data-value="7"></i><b>(7)</b>
 
-        <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the endpoint can be accessed</span><span class="delimiter">'</span></span>
+        then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
-        rsp.body() == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span> <i class="conum" data-value="8"></i><b>(8)</b>
+        rsp.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
     }
 }
 }</code></pre>
@@ -524,17 +527,17 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/AppClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Header</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.Client;
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">AppClient</span> {
+@Client("/")
+public interface AppClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-    <span class="predefined-type">String</span> home(<span class="annotation">@Header</span> <span class="predefined-type">String</span> authorization);
+    @Get("/")
+    String home(@Header String authorization);
 }</code></pre>
 </div>
 </div>
@@ -544,40 +547,40 @@ the necessary dependencies:</p>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/BasicAuthClientSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpHeaders</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpMessage</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.MutableHttpMessage
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">BasicAuthClientSpec</span> <span class="directive">extends</span> Specification {
+class BasicAuthClientSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
+    def "Verify HTTP Basic Auth works"() {
+        when:
         AppClient appClient = embeddedServer.applicationContext.getBean(AppClient) <i class="conum" data-value="3"></i><b>(3)</b>
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown() <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> credsEncoded = <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock:password</span><span class="delimiter">&quot;</span></span>.bytes.encodeBase64().toString()
-        <span class="predefined-type">String</span> rsp = appClient.home(<span class="string"><span class="delimiter">&quot;</span><span class="content">Basic </span><span class="inline"><span class="inline-delimiter">${</span>credsEncoded<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
+        when:
+        String credsEncoded = "sherlock:password".bytes.encodeBase64().toString()
+        String rsp = appClient.home("Basic ${credsEncoded}") <i class="conum" data-value="5"></i><b>(5)</b>
 
-        <span class="key">then</span>:
-        rsp == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+        then:
+        rsp == 'sherlock'
     }
 }</code></pre>
 </div>
@@ -622,7 +625,7 @@ the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew test
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
 $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>

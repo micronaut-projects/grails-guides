@@ -100,17 +100,17 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/AppClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Header</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.Client;
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">AppClient</span> {
+@Client("/")
+public interface AppClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
-    <span class="predefined-type">String</span> home(<span class="annotation">@Header</span> <span class="predefined-type">String</span> authorization);
+    @Get("/")
+    String home(@Header String authorization);
 }</code></pre>
 </div>
 </div>
@@ -120,40 +120,40 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/BasicAuthClientSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpHeaders</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpStatus</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MutableHttpMessage</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxHttpClient</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.exceptions.HttpClientResponseException</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>
-<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Shared</span>
-<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.MutableHttpMessage
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
 
-<span class="type">class</span> <span class="class">BasicAuthClientSpec</span> <span class="directive">extends</span> Specification {
+class BasicAuthClientSpec extends Specification {
 
-    <span class="annotation">@Shared</span>
-    <span class="annotation">@AutoCleanup</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    @Shared
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
 
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Verify HTTP Basic Auth works</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">when</span>:
+    def "Verify HTTP Basic Auth works"() {
+        when:
         AppClient appClient = embeddedServer.applicationContext.getBean(AppClient) <i class="conum" data-value="3"></i><b>(3)</b>
 
-        <span class="key">then</span>:
+        then:
         noExceptionThrown() <i class="conum" data-value="4"></i><b>(4)</b>
 
-        <span class="key">when</span>:
-        <span class="predefined-type">String</span> credsEncoded = <span class="string"><span class="delimiter">&quot;</span><span class="content">sherlock:password</span><span class="delimiter">&quot;</span></span>.bytes.encodeBase64().toString()
-        <span class="predefined-type">String</span> rsp = appClient.home(<span class="string"><span class="delimiter">&quot;</span><span class="content">Basic </span><span class="inline"><span class="inline-delimiter">${</span>credsEncoded<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
+        when:
+        String credsEncoded = "sherlock:password".bytes.encodeBase64().toString()
+        String rsp = appClient.home("Basic ${credsEncoded}") <i class="conum" data-value="5"></i><b>(5)</b>
 
-        <span class="key">then</span>:
-        rsp == <span class="string"><span class="delimiter">'</span><span class="content">sherlock</span><span class="delimiter">'</span></span>
+        then:
+        rsp == 'sherlock'
     }
 }</code></pre>
 </div>
