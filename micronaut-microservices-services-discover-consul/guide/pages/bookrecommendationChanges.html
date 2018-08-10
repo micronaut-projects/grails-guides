@@ -97,11 +97,11 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">bookrecommendation/build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
     ...
     ..
     .
-    runtime <span class="string"><span class="delimiter">&quot;</span><span class="content">io.micronaut:discovery-client</span><span class="delimiter">&quot;</span></span>
+    runtime "io.micronaut:discovery-client"
 }</code></pre>
 </div>
 </div>
@@ -111,11 +111,11 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">consul</span>:
-  <span class="key">client</span>:
-    <span class="key">registration</span>:
-      <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
-    <span class="key">defaultZone</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">consul:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -124,17 +124,17 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">bookrecommendation/src/main/java/example/micronaut/bookrecommendation/BookCatalogueClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.Client;
+import io.reactivex.Flowable;
 
-<span class="annotation">@Client</span>(id = <span class="string"><span class="delimiter">&quot;</span><span class="content">bookcatalogue</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">BookCatalogueClient</span> <span class="directive">extends</span> BookCatalogueOperations {
+@Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+public interface BookCatalogueClient extends BookCatalogueOperations {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>)
-    Flowable&lt;<span class="predefined-type">Book</span>&gt; findAll();
+    @Get("/books")
+    Flowable&lt;Book&gt; findAll();
 }</code></pre>
 </div>
 </div>
@@ -149,19 +149,19 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">bookrecommendation/src/main/java/example/micronaut/bookrecommendation/BookInventoryClient.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookrecommendation</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.Client</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Maybe</span>;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.Client;
+import io.reactivex.Maybe;
 
-<span class="keyword">import</span> <span class="include">javax.validation.constraints.NotBlank</span>;
+import javax.validation.constraints.NotBlank;
 
-<span class="annotation">@Client</span>(id = <span class="string"><span class="delimiter">&quot;</span><span class="content">bookinventory</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">interface</span> <span class="class">BookInventoryClient</span> <span class="directive">extends</span> BookInventoryOperations {
+@Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+public interface BookInventoryClient extends BookInventoryOperations {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books/stock/{isbn}</span><span class="delimiter">&quot;</span></span>)
-    Maybe&lt;<span class="predefined-type">Boolean</span>&gt; stock(<span class="annotation">@NotBlank</span> <span class="predefined-type">String</span> isbn);
+    @Get("/books/stock/{isbn}")
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn);
 }</code></pre>
 </div>
 </div>
@@ -179,10 +179,10 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">consul</span>:
-    <span class="key">client</span>:
-        <span class="key">registration</span>:
-            <span class="key">enabled</span>: <span class="string"><span class="content">false</span></span></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">consul:
+    client:
+        registration:
+            enabled: false</code></pre>
 </div>
 </div>
 
