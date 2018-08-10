@@ -94,33 +94,33 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/MailController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">groovy.util.logging.Slf4j</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpResponse</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Body</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Post</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.validation.Validated</span>
-<span class="keyword">import</span> <span class="include">javax.validation.Valid</span>
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Post
+import io.micronaut.validation.Validated
+import javax.validation.Valid
 
-<span class="annotation">@Slf4j</span>
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">'</span><span class="content">/mail</span><span class="delimiter">'</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Validated</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">MailController</span> {
+@Slf4j
+@CompileStatic
+@Controller('/mail') <i class="conum" data-value="1"></i><b>(1)</b>
+@Validated <i class="conum" data-value="2"></i><b>(2)</b>
+class MailController {
 
     EmailService emailService
 
     MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="local-variable">this</span>.emailService = emailService
+        this.emailService = emailService
     }
 
 
-    <span class="annotation">@Post</span>(<span class="string"><span class="delimiter">'</span><span class="content">/send</span><span class="delimiter">'</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    HttpResponse send(<span class="annotation">@Body</span> <span class="annotation">@Valid</span> EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
-        log.info <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span>, cmd.toString()
+    @Post('/send') <i class="conum" data-value="4"></i><b>(4)</b>
+    HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
+        log.info '{}', cmd.toString()
         emailService.send(cmd)
         HttpResponse.ok()  <i class="conum" data-value="6"></i><b>(6)</b>
     }
@@ -165,23 +165,23 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/EmailCmd.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@ToString</span>
-<span class="annotation">@CompileStatic</span>
-<span class="type">class</span> <span class="class">EmailCmd</span> <span class="directive">implements</span> Email {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@ToString
+@CompileStatic
+class EmailCmd implements Email {
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="predefined-type">String</span> recipient
+    @NotNull
+    @NotBlank
+    String recipient
 
-    <span class="annotation">@NotNull</span>
-    <span class="annotation">@NotBlank</span>
-    <span class="predefined-type">String</span> subject
+    @NotNull
+    @NotBlank
+    String subject
 
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; cc = <span class="type">[]</span>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; bcc = <span class="type">[]</span>
-    <span class="predefined-type">String</span> htmlBody
-    <span class="predefined-type">String</span> textBody
-    <span class="predefined-type">String</span> replyTo
+    List&lt;String&gt; cc = []
+    List&lt;String&gt; bcc = []
+    String htmlBody
+    String textBody
+    String replyTo
 
 }</code></pre>
 </div>

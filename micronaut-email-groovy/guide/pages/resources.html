@@ -94,26 +94,26 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/logback.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">...
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
 ..
 .
 &lt;configuration&gt;
 
-    &lt;appender name=<span class="string"><span class="delimiter">&quot;</span><span class="content">STDOUT</span><span class="delimiter">&quot;</span></span> <span class="type">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">ch.qos.logback.core.ConsoleAppender</span><span class="delimiter">&quot;</span></span>&gt;
-        &lt;!-- <span class="class">encoders</span> are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by <span class="keyword">default</span> --&gt;
+    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
         &lt;encoder&gt;
-            &lt;pattern&gt;%d{<span class="key">HH</span>:<span class="key">mm</span>:ss.SSS} [%thread] %-<span class="integer">5l</span>evel %logger{<span class="integer">36</span>} - %msg%n&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">pattern&gt;</span></span><span class="error">
-</span>        &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">encoder&gt;</span></span><span class="error">
-</span>    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">appender&gt;</span></span><span class="error">
-</span>
-    &lt;root level=<span class="string"><span class="delimiter">&quot;</span><span class="content">info</span><span class="delimiter">&quot;</span></span>&gt;
-        &lt;appender-ref ref=<span class="string"><span class="delimiter">&quot;</span><span class="content">STDOUT</span><span class="delimiter">&quot;</span></span> /&gt;
-    &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">root&gt;</span></span><span class="error">
-</span>
-    &lt;logger name=<span class="string"><span class="delimiter">&quot;</span><span class="content">example.micronaut</span><span class="delimiter">&quot;</span></span> level=<span class="string"><span class="delimiter">&quot;</span><span class="content">TRACE</span><span class="delimiter">&quot;</span></span>/&gt;
+            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
 
-&lt;<span class="regexp"><span class="delimiter">/</span><span class="content">configuration&gt;</span></span></code></pre>
+    &lt;root level="info"&gt;
+        &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;/root&gt;
+
+    &lt;logger name="example.micronaut" level="TRACE"/&gt;
+
+&lt;/configuration&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -121,7 +121,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ export SENDGRID_FROM_EMAIL=email@email.com
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ export SENDGRID_FROM_EMAIL=email@email.com
 $ export SENDGRID_APIKEY=XXXXXX
 $ ./gradlew run</code></pre>
 </div>
@@ -131,7 +131,7 @@ $ ./gradlew run</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ export AWS_REGION=eu-west-1
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ export AWS_REGION=eu-west-1
 $ export AWS_SOURCE_EMAIL=email@email.com
 $ export AWS_ACCESS_KEY_ID=XXXXXXXX
 $ export AWS_SECRET_KEY=XXXXXXXX
