@@ -97,24 +97,24 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/HomeController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.MediaType</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Produces</span>
-<span class="keyword">import</span> <span class="include">io.micronaut.security.Secured</span>
-<span class="keyword">import</span> <span class="include">java.security.Principal</span>
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.security.Secured
+import java.security.Principal
 
-<span class="annotation">@CompileStatic</span>
-<span class="annotation">@Secured</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">isAuthenticated()</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="type">class</span> <span class="class">HomeController</span> {
+@CompileStatic
+@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+class HomeController {
 
-    <span class="annotation">@Produces</span>(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="4"></i><b>(4)</b>
-    <span class="predefined-type">String</span> index(<span class="predefined-type">Principal</span> principal) { <i class="conum" data-value="5"></i><b>(5)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/") <i class="conum" data-value="4"></i><b>(4)</b>
+    String index(Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
         principal.name
     }
 }</code></pre>
