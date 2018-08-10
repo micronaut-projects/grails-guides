@@ -104,24 +104,24 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/BooksController.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Controller</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>;
-<span class="keyword">import</span> <span class="include">io.reactivex.Flowable</span>;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.reactivex.Flowable;
 
-<span class="keyword">import</span> <span class="include">java.util.Arrays</span>;
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
+import java.util.Arrays;
+import java.util.List;
 
-<span class="annotation">@Controller</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BooksController</span> {
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+public class BooksController {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; index() {
-        <span class="predefined-type">Book</span> buildingMicroservices = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>);
-        <span class="predefined-type">Book</span> releaseIt = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>);
-        <span class="predefined-type">Book</span> cidelivery = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">0321601912</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Continuous Delivery:</span><span class="delimiter">&quot;</span></span>);
-        <span class="keyword">return</span> <span class="predefined-type">Arrays</span>.asList(buildingMicroservices, releaseIt, cidelivery);
+    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;Book&gt; index() {
+        Book buildingMicroservices = new Book("1491950358", "Building Microservices");
+        Book releaseIt = new Book("1680502395", "Release It!");
+        Book cidelivery = new Book("0321601912", "Continuous Delivery:");
+        return Arrays.asList(buildingMicroservices, releaseIt, cidelivery);
     }
 }</code></pre>
 </div>
@@ -148,50 +148,50 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/Book.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
-<span class="keyword">import</span> <span class="include">java.util.Objects</span>;
+import java.util.Objects;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Book</span> {
-    <span class="directive">private</span> <span class="predefined-type">String</span> isbn;
-    <span class="directive">private</span> <span class="predefined-type">String</span> name;
+public class Book {
+    private String isbn;
+    private String name;
 
-    <span class="directive">public</span> <span class="predefined-type">Book</span>() {}
+    public Book() {}
 
-    <span class="directive">public</span> <span class="predefined-type">Book</span>(<span class="predefined-type">String</span> isbn, <span class="predefined-type">String</span> name) {
-        <span class="local-variable">this</span>.isbn = isbn;
-        <span class="local-variable">this</span>.name =  name;
+    public Book(String isbn, String name) {
+        this.isbn = isbn;
+        this.name =  name;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getIsbn() {
-        <span class="keyword">return</span> isbn;
+    public String getIsbn() {
+        return isbn;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setIsbn(<span class="predefined-type">String</span> isbn) {
-        <span class="local-variable">this</span>.isbn = isbn;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
-    <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
-        <span class="keyword">return</span> name;
+    public String getName() {
+        return name;
     }
 
-    <span class="directive">public</span> <span class="type">void</span> setName(<span class="predefined-type">String</span> name) {
-        <span class="local-variable">this</span>.name = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">boolean</span> equals(<span class="predefined-type">Object</span> o) {
-        <span class="keyword">if</span> (<span class="local-variable">this</span> == o) <span class="keyword">return</span> <span class="predefined-constant">true</span>;
-        <span class="keyword">if</span> (o == <span class="predefined-constant">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="predefined-constant">false</span>;
-        <span class="predefined-type">Book</span> book = (<span class="predefined-type">Book</span>) o;
-        <span class="keyword">return</span> Objects.equals(isbn, book.isbn) &amp;&amp;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(isbn, book.isbn) &amp;&amp;
                 Objects.equals(name, book.name);
     }
 
-    <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="type">int</span> hashCode() {
+    @Override
+    public int hashCode() {
 
-        <span class="keyword">return</span> Objects.hash(isbn, name);
+        return Objects.hash(isbn, name);
     }
 }</code></pre>
 </div>
@@ -202,52 +202,52 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/test/java/example/micronaut/bookcatalogue/BooksControllerTest.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">example.micronaut.bookcatalogue</span>;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
-<span class="keyword">import</span> <span class="include">io.micronaut.context.ApplicationContext</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.core.type.Argument</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.HttpRequest</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.HttpClient</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.http.client.RxStreamingHttpClient</span>;
-<span class="keyword">import</span> <span class="include">io.micronaut.runtime.server.EmbeddedServer</span>;
-<span class="keyword">import</span> <span class="include">org.junit.AfterClass</span>;
-<span class="keyword">import</span> <span class="include">org.junit.BeforeClass</span>;
-<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.RxStreamingHttpClient;
+import io.micronaut.runtime.server.EmbeddedServer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-<span class="keyword">import</span> <span class="include">java.util.List</span>;
+import java.util.List;
 
-<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertEquals</span>;
-<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertTrue</span>;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">BooksControllerTest</span> {
-    <span class="directive">private</span> <span class="directive">static</span> EmbeddedServer server;
-    <span class="directive">private</span> <span class="directive">static</span> HttpClient client;
+public class BooksControllerTest {
+    private static EmbeddedServer server;
+    private static HttpClient client;
 
-    <span class="annotation">@BeforeClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> setupServer() {
+    @BeforeClass <i class="conum" data-value="1"></i><b>(1)</b>
+    public static void setupServer() {
         server = ApplicationContext.run(EmbeddedServer.class);
         client = server
                 .getApplicationContext()
                 .createBean(HttpClient.class, server.getURL());
     }
 
-    <span class="annotation">@AfterClass</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> stopServer() {
-        <span class="keyword">if</span>(server != <span class="predefined-constant">null</span>) {
+    @AfterClass <i class="conum" data-value="1"></i><b>(1)</b>
+    public static void stopServer() {
+        if(server != null) {
             server.stop();
         }
-        <span class="keyword">if</span>(client != <span class="predefined-constant">null</span>) {
+        if(client != null) {
             client.stop();
         }
     }
 
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testRetrieveBooks() {
-        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/books</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="2"></i><b>(2)</b>
-        <span class="predefined-type">List</span> books = client.toBlocking().retrieve(request, Argument.of(<span class="predefined-type">List</span>.class, <span class="predefined-type">Book</span>.class)); <i class="conum" data-value="3"></i><b>(3)</b>
-        assertEquals(<span class="integer">3</span>, books.size());
-        assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1491950358</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Building Microservices</span><span class="delimiter">&quot;</span></span>)));
-        assertTrue(books.contains(<span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">1680502395</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Release It!</span><span class="delimiter">&quot;</span></span>)));
+    @Test
+    public void testRetrieveBooks() {
+        HttpRequest request = HttpRequest.GET("/books"); <i class="conum" data-value="2"></i><b>(2)</b>
+        List books = client.toBlocking().retrieve(request, Argument.of(List.class, Book.class)); <i class="conum" data-value="3"></i><b>(3)</b>
+        assertEquals(3, books.size());
+        assertTrue(books.contains(new Book("1491950358", "Building Microservices")));
+        assertTrue(books.contains(new Book("1680502395", "Release It!")));
     }
 }</code></pre>
 </div>
@@ -274,11 +274,11 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-    <span class="key">application</span>:
-        <span class="key">name</span>: <span class="string"><span class="content">bookcatalogue </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="key">server</span>:
-        <span class="key">port</span>: <span class="string"><span class="content">8081 </span></span> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    application:
+        name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
+    server:
+        port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -299,9 +299,9 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">micronaut</span>:
-    <span class="key">server</span>:
-        <span class="key">port</span>: <span class="string"><span class="content">-1 </span></span> <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    server:
+        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
