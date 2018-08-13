@@ -602,14 +602,14 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>bookrecommendation $ ./gradlew run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
 Starting a Gradle Daemon, 2 busy and 2 stopped Daemons could not be reused, use --status for details
 
 &gt; Task :bookrecommendation:compileJava
 Note: Creating bean classes for 3 type elements
 
 &gt; Task :bookrecommendation:run
-14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</pre>
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -666,7 +666,7 @@ Note: Creating bean classes for 3 type elements
 <p>As you have seen in this tutorial, without any annotations you get distributing tracing up-and-running fast with Micronaut.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut includes several annotations to give you more flexibility. We introduced the <code>@ContinueSpan</code>, <code>@SpanTag</code> annotations. Also, you have at your disposal also the <code>@NewSpan</code> annotation which will create a new span, wrapping the method call or reactive type.</p>
+<p>Micronaut includes several annotations to give you more flexibility. We introduced the <code>@ContinueSpan</code>, <code>@SpanTag</code> annotations. Also, you have at your disposal the <code>@NewSpan</code> annotation which will create a new span, wrapping the method call or reactive type.</p>
 </div>
 <div class="paragraph">
 <p>Make sure to read more about <a href="https://docs.micronaut.io/snapshot/guide/index.html#jaeger">Tracing with Jaeger</a> inside Micronaut.</p>
