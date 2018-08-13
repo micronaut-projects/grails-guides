@@ -107,7 +107,7 @@ going to produce HTML in our controllers.</p>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Add a dependency to velocity:</p>
+<p>Add a dependency to Micronaut&#8217;s <a href="https://docs.micronaut.io/latest/guide/index.html#views">Server Side View Rendering Module</a> and to Velocity:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -121,68 +121,18 @@ going to produce HTML in our controllers.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Create two velocity templates:</p>
+<p>Create two velocity templates in <code>src/main/resources/views</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Home&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        #if( $loggedIn )
-            &lt;h1&gt;username: &lt;span&gt;$username&lt;/span&gt;&lt;/h1&gt;
-        #else
-            &lt;h1&gt;You are not logged in&lt;/h1&gt;
-        #end
-        #if( $loggedIn )
-            &lt;form action="logout" method="POST"&gt;
-                &lt;input type="submit" value="Logout"/&gt;
-            &lt;/form&gt;
-        #else
-            &lt;p&gt;&lt;a href="/login/auth"&gt;Login&lt;/a&gt;&lt;/p&gt;
-        #end
-    &lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/resources/templates/home.vm[]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        #if( $errors )
-            &lt;title&gt;Login Failed&lt;/title&gt;
-        #else
-            &lt;title&gt;Login&lt;/title&gt;
-        #end
-    &lt;/head&gt;
-&lt;body&gt;
-    &lt;form action="/login" method="POST"&gt;
-        &lt;ol&gt;
-            &lt;li&gt;
-                &lt;label for="username"&gt;Username&lt;/label&gt;
-                &lt;input type="text" name="username" id="username"/&gt;
-            &lt;/li&gt;
-            &lt;li&gt;
-                &lt;label for="password"&gt;Password&lt;/label&gt;
-                &lt;input type="password" name="password" id="password"/&gt;
-            &lt;/li&gt;
-            &lt;li&gt;
-                &lt;input type="submit" value="Login"/&gt;
-            &lt;/li&gt;
-            #if( $errors )
-                &lt;li id="errors"&gt;
-                    &lt;span style="color: red;"&gt;Login Failed&lt;/span&gt;
-                &lt;/li&gt;
-            #end
-        &lt;/ol&gt;
-    &lt;/form&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/resources/templates/auth.vm[]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -191,37 +141,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
-
-import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.VelocityEngine
-
-import javax.annotation.PostConstruct
-import javax.inject.Singleton
-import java.io.StringWriter
-import java.nio.charset.StandardCharsets
-import java.util.Properties
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class VelocityService {
-
-    private var velocityEngine: VelocityEngine? = null
-
-    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
-    internal fun initialize() {
-        val p = Properties()
-        p.setProperty("resource.loader", "class")
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
-        velocityEngine = VelocityEngine(p)
-    }
-
-    fun render(name: String, data: Map&lt;String, Any&gt;): String {
-        val writer = StringWriter()
-        val velocityContext = VelocityContext(data)
-        velocityEngine!!.mergeTemplate("templates/$name", StandardCharsets.UTF_8.name(), velocityContext, writer)
-        return writer.toString()
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/kotlin/example/micronaut/services/VelocityService.kt[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">

@@ -191,6 +191,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
+    compile "io.micronaut:views"
     compile "io.micronaut:security-jwt"
 }</code></pre>
 </div>
@@ -355,7 +356,7 @@ going to produce HTML in our controllers.</p>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Add a dependency to velocity:</p>
+<p>Add a dependency to Micronaut&#8217;s <a href="https://docs.micronaut.io/latest/guide/index.html#views">Server Side View Rendering Module</a> and to Velocity:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -369,68 +370,18 @@ going to produce HTML in our controllers.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Create two velocity templates:</p>
+<p>Create two velocity templates in <code>src/main/resources/views</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/home.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Home&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        #if( $loggedIn )
-            &lt;h1&gt;username: &lt;span&gt;$username&lt;/span&gt;&lt;/h1&gt;
-        #else
-            &lt;h1&gt;You are not logged in&lt;/h1&gt;
-        #end
-        #if( $loggedIn )
-            &lt;form action="logout" method="POST"&gt;
-                &lt;input type="submit" value="Logout"/&gt;
-            &lt;/form&gt;
-        #else
-            &lt;p&gt;&lt;a href="/login/auth"&gt;Login&lt;/a&gt;&lt;/p&gt;
-        #end
-    &lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/resources/templates/home.vm[]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/templates/auth.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        #if( $errors )
-            &lt;title&gt;Login Failed&lt;/title&gt;
-        #else
-            &lt;title&gt;Login&lt;/title&gt;
-        #end
-    &lt;/head&gt;
-&lt;body&gt;
-    &lt;form action="/login" method="POST"&gt;
-        &lt;ol&gt;
-            &lt;li&gt;
-                &lt;label for="username"&gt;Username&lt;/label&gt;
-                &lt;input type="text" name="username" id="username"/&gt;
-            &lt;/li&gt;
-            &lt;li&gt;
-                &lt;label for="password"&gt;Password&lt;/label&gt;
-                &lt;input type="password" name="password" id="password"/&gt;
-            &lt;/li&gt;
-            &lt;li&gt;
-                &lt;input type="submit" value="Login"/&gt;
-            &lt;/li&gt;
-            #if( $errors )
-                &lt;li id="errors"&gt;
-                    &lt;span style="color: red;"&gt;Login Failed&lt;/span&gt;
-                &lt;/li&gt;
-            #end
-        &lt;/ol&gt;
-    &lt;/form&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/resources/templates/auth.vm[]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -439,37 +390,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
-
-import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.VelocityEngine
-
-import javax.annotation.PostConstruct
-import javax.inject.Singleton
-import java.io.StringWriter
-import java.nio.charset.StandardCharsets
-import java.util.Properties
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class VelocityService {
-
-    private var velocityEngine: VelocityEngine? = null
-
-    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
-    internal fun initialize() {
-        val p = Properties()
-        p.setProperty("resource.loader", "class")
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader")
-        velocityEngine = VelocityEngine(p)
-    }
-
-    fun render(name: String, data: Map&lt;String, Any&gt;): String {
-        val writer = StringWriter()
-        val velocityContext = VelocityContext(data)
-        velocityEngine!!.mergeTemplate("templates/$name", StandardCharsets.UTF_8.name(), velocityContext, writer)
-        return writer.toString()
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/kotlin/example/micronaut/services/VelocityService.kt[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -503,25 +424,21 @@ class VelocityService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-import example.micronaut.services.VelocityService
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.security.Secured
 import java.security.Principal
+import io.micronaut.views.View
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
-class HomeController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+class HomeController {
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/") <i class="conum" data-value="5"></i><b>(5)</b>
-    fun index(principal: Principal?): String { <i class="conum" data-value="6"></i><b>(6)</b>
-        return velocityService.render("home.vm", homeModel(principal))
-    }
-
-    private fun homeModel(principal: Principal?): Map&lt;String, Any&gt; {
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @View("home")<i class="conum" data-value="4"></i><b>(4)</b>
+    fun index(principal: Principal?): Map&lt;String, Any&gt; { <i class="conum" data-value="5"></i><b>(5)</b>
         val data = mutableMapOf&lt;String, Any&gt;()
         data["loggedIn"] = (principal != null) as Any
         if (principal != null) {
@@ -544,18 +461,14 @@ class HomeController(protected val velocityService: VelocityService) { <i class=
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>VelocityService</code> is injected via constructor injection.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>By default a controller&#8217;s action produces JSON, however you can define its produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>You can specify the HTTP verb for which a controller&#8217;s action responds to. To respond to a GET request, use <code>io.micronaut.http.annotation.Get</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>If you are authenticated, you can use the <code>java.security.Principal</code> as a parameter type. For parameters which maybe null, use <code>javax.annotation.Nullable</code>.</td>
 </tr>
 </table>
@@ -570,32 +483,25 @@ class HomeController(protected val velocityService: VelocityService) { <i class=
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-
-import example.micronaut.services.VelocityService
-import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Produces
 import io.micronaut.security.Secured
+import io.micronaut.views.View
 import java.util.HashMap
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
-class LoginAuthController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+class LoginAuthController {
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/auth") <i class="conum" data-value="5"></i><b>(5)</b>
-    fun auth(): String {
-        return velocityService.render("auth.vm", HashMap()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Get("/auth") <i class="conum" data-value="3"></i><b>(3)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun auth(): Map&lt;String, Any&gt; {
+        return HashMap()
     }
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/authFailed") <i class="conum" data-value="7"></i><b>(7)</b>
-    fun authFailed(): String {
-        return velocityService.render("auth.vm", authFailedModel()) <i class="conum" data-value="6"></i><b>(6)</b>
-    }
-
-    private fun authFailedModel(): Map&lt;String, Any&gt; {
+    @Get("/authFailed") <i class="conum" data-value="5"></i><b>(5)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun authFailed(): Map&lt;String, Any&gt; {
         return mapOf(Pair("errors", true))
     }
 }</code></pre>
@@ -613,22 +519,14 @@ class LoginAuthController(protected val velocityService: VelocityService) { <i c
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>VelocityService</code> is injected via constructor injection.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>By default a controller&#8217;s action produces JSON, however you can define its produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>responds to GET requests at <code>/login/auth</code></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Render velocity template <code>auth.vm</code></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>responds to GET requests at <code>/login/authFailed</code></td>
 </tr>
 </table>
