@@ -107,7 +107,7 @@ going to produce HTML in our controllers.</p>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Add a dependency to velocity:</p>
+<p>Add a dependency to <a href="https://docs.micronaut.io/latest/guide/index.html#views">Server Side View Rendering Module</a> and to Velocity:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -116,15 +116,16 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "org.apache.velocity:velocity-engine-core:2.0"
+    compile "io.micronaut:views"
+    runtime "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Create two velocity templates:</p>
+<p>Create two velocity templates in <code>src/main/resources/views</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/templates/home.vm</div>
+<div class="title">src/main/resources/views/home.vm</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -149,7 +150,7 @@ going to produce HTML in our controllers.</p>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/templates/auth.vm</div>
+<div class="title">src/main/resources/views/auth.vm</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -184,65 +185,6 @@ going to produce HTML in our controllers.</p>
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>To render those templates, create <code>VelocityService.java</code></p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/services/VelocityService.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Properties;
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class VelocityService {
-
-    private VelocityEngine velocityEngine;
-
-    @PostConstruct <i class="conum" data-value="2"></i><b>(2)</b>
-    void initialize() {
-        final Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        velocityEngine = new VelocityEngine(p);
-    }
-
-    public String render(final String name, Map&lt;String, Object&gt; data) {
-        final StringWriter writer = new StringWriter();
-        final VelocityContext velocityContext = new VelocityContext(data);
-        velocityEngine.mergeTemplate(templateName(name), StandardCharsets.UTF_8.name(), velocityContext, writer);
-        return writer.toString();
-    }
-
-    String templateName(final String name) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("templates/");
-        sb.append(name);
-        return sb.toString();
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To create a Sigleton bean use the <code>javax.inject.Singleton</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the <code>javax.annotation.PostConstruct</code> annotation to trigger the method execution after dependency injection is done. Typically to perform any initialization.</td>
-</tr>
-</table>
 </div>
 
 
