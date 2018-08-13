@@ -99,25 +99,19 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-import example.micronaut.services.VelocityService
-import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Produces
 import io.micronaut.security.Secured
+import io.micronaut.views.View
 import java.security.Principal
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
-class HomeController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+class HomeController {
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/") <i class="conum" data-value="5"></i><b>(5)</b>
-    fun index(principal: Principal?): String { <i class="conum" data-value="6"></i><b>(6)</b>
-        return velocityService.render("home.vm", homeModel(principal))
-    }
-
-    private fun homeModel(principal: Principal?): Map&lt;String, Any&gt; {
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun index(principal: Principal?): Map&lt;String, Any&gt; { <i class="conum" data-value="5"></i><b>(5)</b>
         val data = mutableMapOf&lt;String, Any&gt;()
         data["loggedIn"] = (principal != null) as Any
         if (principal != null) {
@@ -140,18 +134,14 @@ class HomeController(protected val velocityService: VelocityService) { <i class=
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>VelocityService</code> is injected via constructor injection.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>By default a controller&#8217;s action produces JSON, however you can define that it produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>You can specify the HTTP verb for which a controller&#8217;s action responds to. To respond to a GET request, use <code>io.micronaut.http.annotation.Get</code></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>If you are authenticated, you can use the <code>java.security.Principal</code> as a parameter type. For parameters which maybe null, use <code>javax.annotation.Nullable</code>.</td>
 </tr>
 </table>
@@ -166,32 +156,25 @@ class HomeController(protected val velocityService: VelocityService) { <i class=
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-
-import example.micronaut.services.VelocityService
-import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Produces
 import io.micronaut.security.Secured
+import io.micronaut.views.View
 import java.util.HashMap
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
-class LoginAuthController(protected val velocityService: VelocityService) { <i class="conum" data-value="3"></i><b>(3)</b>
+class LoginAuthController {
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/auth") <i class="conum" data-value="5"></i><b>(5)</b>
-    fun auth(): String {
-        return velocityService.render("auth.vm", HashMap()) <i class="conum" data-value="6"></i><b>(6)</b>
+    @Get("/auth") <i class="conum" data-value="3"></i><b>(3)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun auth(): Map&lt;String, Any&gt; {
+        return HashMap()
     }
 
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="4"></i><b>(4)</b>
-    @Get("/authFailed") <i class="conum" data-value="7"></i><b>(7)</b>
-    fun authFailed(): String {
-        return velocityService.render("auth.vm", authFailedModel()) <i class="conum" data-value="6"></i><b>(6)</b>
-    }
-
-    private fun authFailedModel(): Map&lt;String, Any&gt; {
+    @Get("/authFailed") <i class="conum" data-value="5"></i><b>(5)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
+    fun authFailed(): Map&lt;String, Any&gt; {
         return mapOf(Pair("errors", true))
     }
 }</code></pre>
@@ -209,22 +192,14 @@ class LoginAuthController(protected val velocityService: VelocityService) { <i c
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>VelocityService</code> is injected via constructor injection.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>By default a controller&#8217;s action produces JSON, however you can define that it  produces HTML with <code>io.micronaut.http.annotation.Produces</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Responds to GET requests at <code>/login/auth</code></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Render velocity template <code>auth.vm</code></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Responds to GET requests at <code>/login/authFailed</code></td>
 </tr>
 </table>
