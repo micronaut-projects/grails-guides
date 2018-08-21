@@ -86,40 +86,38 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p><a href="http://spekframework.org/">Speck</a> is a Kotlin Specification Framework for the JVM.</p>
-</div>
-<div class="paragraph">
-<p>To use Spek modify <code>build.gradle</code> file as described in the <a href="http://spekframework.org/docs/latest/#_gradle">Spek documentation</a>:</p>
+<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
 </div>
 <div class="listingblock">
-<div class="title">build.gradle</div>
+<div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
-      ...
-      ..
-    }
-    dependencies {
-      ...
-      ..
-    }
-}
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.M4
+kotlinVersion=1.2.61
+spekVersion=2.0.0-alpha.1</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
 ...
 ..
-.
-
-
-repositories {
-  ...
-  ..
+    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
 }
-
 dependencies {
-...
-..
+    ...
+    ..
+    .
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
 }
-...
-..</code></pre>
+
+test {
+    useJUnitPlatform {
+        includeEngines 'spek2'
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
