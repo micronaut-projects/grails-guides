@@ -449,12 +449,7 @@ public class BooksController {
     @Get("/stock/{isbn}")
     @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
     public Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) { <i class="conum" data-value="2"></i><b>(2)</b>
-        Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
-        if (!bookInventoryOptional.isPresent()) {
-            return null;
-        }
-        BookInventory bookInventory = bookInventoryOptional.get();
-        return bookInventory.getStock() &gt; 0 ? Boolean.TRUE : Boolean.FALSE;
+        return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null);
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
