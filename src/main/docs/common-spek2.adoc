@@ -13,15 +13,15 @@ include::{sourceDir}/gradle.properties[]
 repositories {
 ...
 ..
-include::{sourceDir}/bookcatalogue/build.gradle[tag=spekrepository]
+include::{sourceDir}/build.gradle[tag=spekrepository]
 }
 dependencies {
     ...
     ..
     .
-include::{sourceDir}/bookcatalogue/build.gradle[tag=spek]
+include::{sourceDir}/build.gradle[tag=spek]
 }
 
-include::{sourceDir}/bookcatalogue/build.gradle[tag=junitplatform]
+include::{sourceDir}/build.gradle[tag=junitplatform]
 ----
 
