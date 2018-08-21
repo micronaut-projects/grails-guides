@@ -464,17 +464,15 @@ class AwsCredentialsProviderCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
-import kotlin.test.assertFalse
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertTrue
 
 class AwsCredentialsProviderConditionSpec: Spek({
 
     describe("AwsCredentialsProviderService loaded if condition") {
         val applicationContext = ApplicationContext.run("test")
-        on("Verify AwsCredentialsProviderService is NOT loaded if system properties or environment properties are not set") {
+        it("Verify AwsCredentialsProviderService is NOT loaded if system properties or environment properties are not set") {
             var exceptionThrown = false
             try {
                 applicationContext.getBean(AwsCredentialsProviderService::class.java)
@@ -483,22 +481,6 @@ class AwsCredentialsProviderConditionSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-//        on("Verify AwsCredentialsProviderService loaded if system properties are set") {
-//            System.setProperty("aws.accesskeyid", "XXXX")
-//            System.setProperty("aws.secretkey", "YYYY")
-//            var exceptionThrown = false
-//            try {
-//                val awsCredentialsProviderService = applicationContext.getBean(AwsCredentialsProviderService::class.java)
-//                assertTrue(awsCredentialsProviderService.secretKey == "YYYY")
-//                assertTrue(awsCredentialsProviderService.accessKey == "XXXX")
-//            } catch (e: NoSuchBeanException) {
-//                exceptionThrown = true
-//            }
-//            assertFalse(exceptionThrown)
-//
-//            System.setProperty("aws.accesskeyid", null)
-//            System.setProperty("aws.secretkey", null)
-//        }
         afterGroup {
             applicationContext.close()
         }
@@ -605,17 +587,15 @@ class AwsSesMailCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
-import kotlin.test.assertFalse
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertTrue
 
 class AwsSesMailConditionSpec: Spek({
 
     describe("AwsSesMailService loaded if condition") {
         val applicationContext = ApplicationContext.run("test")
-        on("Verify AwsSesMailService is NOT loaded if system properties or environment properties are not set") {
+        it("Verify AwsSesMailService is NOT loaded if system properties or environment properties are not set") {
             var exceptionThrown = false
             try {
                 applicationContext.getBean(AwsSesMailService::class.java)
@@ -624,18 +604,6 @@ class AwsSesMailConditionSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-//        on("Verify AwsSesMailService loaded if system properties are set") {
-//            System.setProperty("aws.region", "XXXX")
-//            System.setProperty("aws.sourceemail", "me@micronaut.example")
-//            var exceptionThrown = false
-//            try {
-//                applicationContext.getBean(AwsSesMailService::class.java)
-//
-//            } catch (e: NoSuchBeanException) {
-//                exceptionThrown = true
-//            }
-//            assertFalse(exceptionThrown)
-//        }
         afterGroup {
             applicationContext.close()
         }
@@ -772,17 +740,15 @@ class AwsSesMailService(@Value("\${AWS_REGION:none}") awsRegionEnv: String,  <i 
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
-import kotlin.test.assertFalse
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertTrue
 
 class AwsSesMailServiceSpec: Spek({
 
     describe("AwsSesMailService load") {
         val applicationContext = ApplicationContext.run("test")
-        on("AwsSesMailService is not loaded if system property is not present") {
+        it("AwsSesMailService is not loaded if system property is not present") {
             var exceptionThrown = false
             try {
                 applicationContext.getBean(AwsSesMailService::class.java)
@@ -791,20 +757,6 @@ class AwsSesMailServiceSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-//        on("Verify AwsSesMailService loaded if system properties are set") {
-//        System.setProperty("aws.region", "XXXX")
-//        System.setProperty("aws.sourceemail", "me@micronaut.example")
-//        System.setProperty("aws.accesskeyid", "XXXX")
-//        System.setProperty("aws.secretkey", "YYYY")
-//            var exceptionThrown = false
-//            try {
-//                applicationContext.getBean(AwsSesMailService::class.java)
-//
-//            } catch (e: NoSuchBeanException) {
-//                exceptionThrown = true
-//            }
-//            assertFalse(exceptionThrown)
-//        }
         afterGroup {
             applicationContext.close()
         }
@@ -882,17 +834,15 @@ class SendGridEmailCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
-import kotlin.test.assertFalse
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertTrue
 
 class SendGridEmailConditionSpec: Spek({
 
     describe("SendGridEmailService loaded if condition") {
         val applicationContext = ApplicationContext.run("test")
-        on("Verify SendGridEmailService is NOT loaded if system properties or environment properties are not set") {
+        it("Verify SendGridEmailService is NOT loaded if system properties or environment properties are not set") {
             var exceptionThrown = false
             try {
                 applicationContext.getBean(SendGridEmailService::class.java)
@@ -901,18 +851,6 @@ class SendGridEmailConditionSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-//        on("Verify SendGridEmailService loaded if system properties are set") {
-//        System.setProperty("sendgrid.apikey", "XXXX")
-//        System.setProperty("sendgrid.fromemail", "me@micronaut.example")
-//            var exceptionThrown = false
-//            try {
-//                applicationContext.getBean(SendGridEmailService::class.java)
-//
-//            } catch (e: NoSuchBeanException) {
-//                exceptionThrown = true
-//            }
-//            assertFalse(exceptionThrown)
-//        }
         afterGroup {
             applicationContext.close()
         }
@@ -1128,41 +1066,24 @@ $ ./gradlew run</code></pre>
     dependencies {
       ...
       ..
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
     }
 }
 ...
 ..
 .
-apply plugin: 'org.junit.platform.gradle.plugin'
 
-junitPlatform {
-    filters {
-        engines {
-            include 'spek'
-        }
-    }
-}
 
 repositories {
   ...
   ..
-    maven { url "https://jcenter.bintray.com" }
 }
 
 dependencies {
 ...
 ..
-    testCompile "org.jetbrains.spek:spek-api:1.1.5"
-    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
-    testCompile 'org.jetbrains.kotlin:kotlin-test:1.1.0'
 }
 ...
-..
-
-test {
-    useJUnitPlatform()
-}</code></pre>
+..</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1201,16 +1122,13 @@ class MockEmailService : EmailService {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -1222,7 +1140,7 @@ class MailControllerSpec: Spek({
                 "test")  <i class="conum" data-value="1"></i><b>(1)</b>
         var client : RxHttpClient = RxHttpClient.create(embeddedServer.url)  <i class="conum" data-value="2"></i><b>(2)</b>
 
-        on("/mail/send interacts once email service") {
+        it("/mail/send interacts once email service") {
             val cmd = EmailCmd()
             cmd.subject = "Test"
             cmd.recipient = "delamos@grails.example"
@@ -1316,18 +1234,13 @@ class MailControllerSpec: Spek({
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.api.dsl.xdescribe
-import kotlin.test.assertEquals
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertTrue
 
 class MailControllerValidationSpec: Spek({
@@ -1337,7 +1250,7 @@ class MailControllerValidationSpec: Spek({
                 "test")  <i class="conum" data-value="1"></i><b>(1)</b>
         var client : RxHttpClient = RxHttpClient.create(embeddedServer.url)  <i class="conum" data-value="2"></i><b>(2)</b>
 
-        on("/mail/send cannot be invoked without subject") {
+        it("/mail/send cannot be invoked without subject") {
             val cmd = EmailCmd()
             cmd.recipient = "delamos@micronaut.example"
             cmd.textBody = "Hola hola"
@@ -1353,7 +1266,7 @@ class MailControllerValidationSpec: Spek({
             assertTrue(exceptionThrown)
         }
 
-        on("/mail/send cannot be invoked without recipient") {
+        it("/mail/send cannot be invoked without recipient") {
             val cmd = EmailCmd()
             cmd.subject = "Hola"
             cmd.textBody = "Hola hola"
@@ -1368,7 +1281,7 @@ class MailControllerValidationSpec: Spek({
             assertTrue(exceptionThrown)
         }
 
-        on("/mail/send cannot be invoked without either textBody or htmlBody") {
+        it("/mail/send cannot be invoked without either textBody or htmlBody") {
             val cmd = EmailCmd()
             cmd.subject = "Hola"
             cmd.recipient = "delamos@micronaut.example"
@@ -1382,31 +1295,6 @@ class MailControllerValidationSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-
-//        on("/mail/send can be invoked with textBody and not htmlBody") {
-//            val cmd = EmailCmd()
-//            cmd.subject = "Hola"
-//            cmd.recipient = "delamos@micronaut.example"
-//            cmd.textBody = "Hello"
-//
-//            val request = HttpRequest.POST("mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
-//
-//            val rsp = client.toBlocking().exchange(request, HttpResponse::class.java)
-//
-//            assertEquals(rsp.status(), HttpStatus.OK)
-//       }
-//
-//        on("/mail/send can be invoked with htmlBody and not textBody") {
-//            val cmd = EmailCmd()
-//            cmd.subject = "Hola"
-//            cmd.recipient = "delamos@micronaut.example"
-//            cmd.htmlBody = "&lt;h1&gt;Hello&lt;/h1&gt;"
-//            val request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
-//
-//            val rsp = client.toBlocking().exchange(request, HttpResponse::class.java)
-//
-//            assertEquals(rsp.status(), HttpStatus.OK)
-//        }
 
         afterGroup {
             client.close()
