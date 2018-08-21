@@ -454,12 +454,7 @@ public class BooksController {
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     @Get("/stock/{isbn}") <i class="conum" data-value="4"></i><b>(4)</b>
     public Boolean stock(@NotBlank String isbn) {
-        Optional&lt;BookInventory&gt; bookInventoryOptional = bookInventoryByIsbn(isbn);
-        if (!bookInventoryOptional.isPresent()) {
-           return null; <i class="conum" data-value="5"></i><b>(5)</b>
-        }
-        BookInventory bookInventory = bookInventoryOptional.get();
-        return bookInventory.getStock() &gt; 0 ? Boolean.TRUE : Boolean.FALSE;
+        return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null);
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
