@@ -320,7 +320,7 @@ public class BooksController {
 </table>
 </div>
 <div class="paragraph">
-<p>The previous controller responds a <code>Flowable&lt;Book&gt;</code>. Create the <code>Book</code> POJO:</p>
+<p>The previous controller responds a <code>List&lt;Book&gt;</code>. Create the <code>Book</code> POJO:</p>
 </div>
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/Book.java</div>
@@ -1233,14 +1233,14 @@ public class BookControllerTest {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>bookrecommendation $ ./gradlew run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
 Starting a Gradle Daemon, 2 busy and 2 stopped Daemons could not be reused, use --status for details
 
 &gt; Task :bookrecommendation:compileJava
 Note: Creating bean classes for 3 type elements
 
 &gt; Task :bookrecommendation:run
-14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</pre>
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1568,14 +1568,14 @@ public interface BookInventoryClient extends BookInventoryOperations {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>bookrecommendation $ ./gradlew run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
 Starting a Gradle Daemon, 2 busy and 2 stopped Daemons could not be reused, use --status for details
 
 &gt; Task :bookrecommendation:compileJava
 Note: Creating bean classes for 3 type elements
 
 &gt; Task :bookrecommendation:run
-14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</pre>
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
