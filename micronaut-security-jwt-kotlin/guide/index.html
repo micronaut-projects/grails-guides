@@ -463,56 +463,38 @@ class HomeController {
 
 
 <div class="paragraph">
-<p><a href="http://spekframework.org/">Speck</a> is a Kotlin Specification Framework for the JVM.</p>
-</div>
-<div class="paragraph">
-<p>To use Spek modify <code>build.gradle</code> file as described in the <a href="http://spekframework.org/docs/latest/#_gradle">Spek documentation</a>:</p>
+<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
 </div>
 <div class="listingblock">
-<div class="title">build.gradle</div>
+<div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
-      ...
-      ..
-    }
-    dependencies {
-      ...
-      ..
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
-    }
-}
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.M4
+kotlinVersion=1.2.61
+spekVersion=2.0.0-alpha.1
+junitVersion=5.1.0</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
 ...
 ..
-.
-apply plugin: 'org.junit.platform.gradle.plugin'
-
-junitPlatform {
-    filters {
-        engines {
-            include 'spek'
-        }
-    }
+    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
 }
-
-repositories {
-  ...
-  ..
-    maven { url "https://jcenter.bintray.com" }
-}
-
 dependencies {
-...
-..
-    testCompile "org.jetbrains.spek:spek-api:1.1.5"
-    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
-    testCompile 'org.jetbrains.kotlin:kotlin-test:1.1.0'
+    ...
+    ..
+    .
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
 }
-...
-..
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeEngines 'spek2'
+    }
 }</code></pre>
 </div>
 </div>
@@ -536,9 +518,8 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -548,7 +529,7 @@ class BasicAuthSpec: Spek({
 
         var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
         var client : RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
-        on("Accessing a secured URL without authenticating") {
+        it("Accessing a secured URL without authenticating") {
             var exceptionThrown = false
             try {
                 val request = HttpRequest.GET&lt;Any&gt;("/")
@@ -558,7 +539,7 @@ class BasicAuthSpec: Spek({
             }
             assertTrue(exceptionThrown)
         }
-        on("the endpoint can be access with JWT obtained when Login endpoint is called with valid credentials") {
+        it("the endpoint can be access with JWT obtained when Login endpoint is called with valid credentials") {
             val creds = UsernamePasswordCredentials("sherlock", "password")
             val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
 
@@ -648,12 +629,10 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
 import io.micronaut.security.token.jwt.render.AccessRefreshToken
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.lang.Thread.sleep
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -663,7 +642,7 @@ class OauthAccessTokenSpec: Spek({
         var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
         var client: RxHttpClient = RxHttpClient.create(embeddedServer.url)
 
-        on("you can refresh JWT access token with /oauth/access_token endpoint") {
+        it("you can refresh JWT access token with /oauth/access_token endpoint") {
             val creds = UsernamePasswordCredentials("sherlock", "password")
             val request = HttpRequest.POST("/login", creds)
 
@@ -756,9 +735,9 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
+
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -771,7 +750,7 @@ class DeclarativeHttpClientWithJwtSpec: Spek({
         var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
 
         var appClient : AppClient? = null
-        on("AppClient Bean can be retrieved from Application context") {
+        it("AppClient Bean can be retrieved from Application context") {
             var exceptionThrown = false
             try {
                 appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
@@ -781,7 +760,7 @@ class DeclarativeHttpClientWithJwtSpec: Spek({
             }
             assertFalse(exceptionThrown)
         }
-        on("Accessing a secured URL without authenticating returns unauthorized") {
+        it("Accessing a secured URL without authenticating returns unauthorized") {
             var exceptionThrown = false
             try {
                 val request = HttpRequest.GET&lt;Any&gt;("/")
@@ -792,7 +771,7 @@ class DeclarativeHttpClientWithJwtSpec: Spek({
             assertTrue(exceptionThrown)
         }
         var accessToken: String? = null
-        on("User can login") {
+        it("User can login") {
             val creds = UsernamePasswordCredentials("sherlock", "password")
             val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
 
@@ -804,7 +783,7 @@ class DeclarativeHttpClientWithJwtSpec: Spek({
 
             accessToken = rsp.body()!!.accessToken <i class="conum" data-value="6"></i><b>(6)</b>
         }
-        on("Access / endpoint with appClient") {
+        it("Access / endpoint with appClient") {
             var msg: String = appClient!!.home("Bearer ${accessToken!!}") <i class="conum" data-value="7"></i><b>(7)</b>
             assertTrue(msg == "sherlock")
         }
