@@ -130,6 +130,7 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.Client
 import io.reactivex.Flowable
 
+@Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
 interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
@@ -156,6 +157,7 @@ import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
+@Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
 interface BookInventoryClient extends BookInventoryOperations {
 
     @Get("/books/stock/{isbn}")
