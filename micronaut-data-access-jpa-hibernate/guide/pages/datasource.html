@@ -94,9 +94,9 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
-    compile "io.micronaut.configuration:jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-    runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut.configuration:hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
+compile "io.micronaut.configuration:jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
+runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -121,7 +121,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">datasources:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
     default:
         url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
         username: sa

@@ -133,9 +133,9 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
-    compile "io.micronaut.configuration:jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-    runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut.configuration:hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
+compile "io.micronaut.configuration:jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
+runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -160,7 +160,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">datasources:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
     default:
         url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
         username: sa
@@ -185,7 +185,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">jpa:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">jpa:
     default:
         packages-to-scan:
             - 'example.micronaut.domain' <i class="conum" data-value="1"></i><b>(1)</b>
@@ -425,8 +425,8 @@ public class GenreRepositoryImpl implements GenreRepository {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:validation"
-    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut:validation"
+compile "io.micronaut.configuration:hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -616,11 +616,11 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Constructor injection</td>
+<td>Constructor injection.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -765,7 +765,7 @@ public class GenreControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/latest/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -777,7 +777,7 @@ public class GenreControllerTest {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>if you care just about the object in the response use <code>retrieve</code>.</td>
+<td>If you care just about the object in the response use <code>retrieve</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
