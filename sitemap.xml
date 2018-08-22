@@ -40,9 +40,6 @@
     <loc>http://guides.micronaut.io/micronaut-microservices-services-discover-eureka/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-microservices-service-discovery-consul-kotlin/guide/index.html</loc>
-  </url>
-  <url>
     <loc>http://guides.micronaut.io/micronaut-microservices-distributed-tracing-jaeger/guide/index.html</loc>
   </url>
   <url>
