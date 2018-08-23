@@ -89,32 +89,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Add the next snippet to <code>src/main/resources/application.yml</code></p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/application.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">jpa:
-    default:
-        packages-to-scan:
-            - 'example.micronaut.domain' <i class="conum" data-value="1"></i><b>(1)</b>
-        properties:
-            hibernate:
-                hbm2ddl:
-                    auto: update
-                show_sql: true</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Entities are scanned in the package <code>example.micronaut.domain</code>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Create entities:</p>
+<p>Create the domain entities:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/domain/Genre.java</div>

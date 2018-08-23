@@ -64,7 +64,7 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#datasource"><strong>2.1</strong><span>Configure Data Source</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#datasource"><strong>2.1</strong><span>Configure Data Source and JPA</span></a></div>
             
             <div class="toc-item" style="margin-left:10px"><a href="#domain"><strong>2.2</strong><span>Domain</span></a></div>
             
@@ -100,7 +100,8 @@
 
 
 <div class="paragraph">
-<p>In this guide, we are going to &#8230;&#8203;.</p>
+<p>In this guide, we are going to write a Micronaut application that exposes some REST endpoints and store data in a
+database using JPA and Hibernate.</p>
 </div>
 
 
@@ -184,7 +185,7 @@
 </div>
 
 
-<h2 id="datasource">2.1 Configure Data Source</h2>
+<h2 id="datasource">2.1 Configure Data Source and JPA</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/datasource.adoc"'>
@@ -193,8 +194,10 @@
 </div>
 
 
+<div class="sect2">
+<h3 id="_data_source_configuration">Data Source configuration</h3>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p>Add the next snippet to <code>build.gradle</code> to include the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -208,11 +211,11 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configures Hibernate/JPA EntityManagerFactory beans</td>
+<td>Configures Hibernate/JPA EntityManagerFactory beans.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Configures SQL DataSource instances using Hikari Connection Pool</td>
+<td>Configures SQL DataSource instances using Hikari Connection Pool.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -221,7 +224,7 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 </table>
 </div>
 <div class="paragraph">
-<p>Define the data source in <code>src/main/resources/application.yml</code></p>
+<p>Define the data source in <code>src/main/resources/application.yml</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -234,19 +237,11 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
         driverClassName: org.h2.Driver</code></pre>
 </div>
 </div>
-
-
-<h2 id="domain">2.2 Domain</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/domain.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
 </div>
-
-
+<div class="sect2">
+<h3 id="_jpa_configuration">JPA configuration</h3>
 <div class="paragraph">
-<p>Add the next snippet to <code>src/main/resources/application.yml</code></p>
+<p>Add the next snippet to <code>src/main/resources/application.yml</code> to configure JPA:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -270,8 +265,20 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 </tr>
 </table>
 </div>
+</div>
+
+
+<h2 id="domain">2.2 Domain</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/domain.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="paragraph">
-<p>Create entities:</p>
+<p>Create the domain entities:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/domain/Genre.java</div>
@@ -358,6 +365,9 @@ public class Genre {
 </div>
 
 
+<div class="paragraph">
+<p>Create an interface to define the operations to access the database:</p>
+</div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
 <div class="content">
@@ -381,6 +391,9 @@ public interface GenreRepository {
     int update(Long id, String name);
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>And the implementation:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
@@ -409,10 +422,9 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public Optional&lt;Genre&gt; findById(Long id) {
         try {
-
             return Optional.of(entityManager
                     .createQuery("SELECT g FROM Genre g WHERE g.id = :id", Genre.class)
                     .setParameter("id", id)
@@ -424,7 +436,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre save(String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
@@ -452,7 +464,6 @@ public class GenreRepositoryImpl implements GenreRepository {
                 .setParameter("id", id)
                 .executeUpdate();
     }
-
 }</code></pre>
 </div>
 </div>
@@ -465,6 +476,15 @@ public class GenreRepositoryImpl implements GenreRepository {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Inject easily an <code>EntityManager</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>All database access needs to be wrapped inside a transaccion, we use Micronaut&#8217;s <code>@Transactional</code>. As the method
+only reads data from the database, configure it as <code>readOnly = true</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>As this methods modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
 </div>
@@ -480,7 +500,7 @@ public class GenreRepositoryImpl implements GenreRepository {
 
 
 <div class="paragraph">
-<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
 <p>Hibernate Validator is a reference implementation of the validation API.</p>
@@ -698,7 +718,7 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate command.</td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
@@ -839,7 +859,7 @@ public class GenreControllerTest {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut’s fluid API.</td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>

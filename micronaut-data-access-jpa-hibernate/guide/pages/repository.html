@@ -88,6 +88,9 @@ function addJsClass() {
 </div>
 
 
+<div class="paragraph">
+<p>Create an interface to define the operations to access the database:</p>
+</div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
 <div class="content">
@@ -111,6 +114,9 @@ public interface GenreRepository {
     int update(Long id, String name);
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>And the implementation:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
@@ -139,10 +145,9 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public Optional&lt;Genre&gt; findById(Long id) {
         try {
-
             return Optional.of(entityManager
                     .createQuery("SELECT g FROM Genre g WHERE g.id = :id", Genre.class)
                     .setParameter("id", id)
@@ -154,7 +159,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre save(String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
@@ -182,7 +187,6 @@ public class GenreRepositoryImpl implements GenreRepository {
                 .setParameter("id", id)
                 .executeUpdate();
     }
-
 }</code></pre>
 </div>
 </div>
@@ -195,6 +199,15 @@ public class GenreRepositoryImpl implements GenreRepository {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Inject easily an <code>EntityManager</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>All database access needs to be wrapped inside a transaccion, we use Micronaut&#8217;s <code>@Transactional</code>. As the method
+only reads data from the database, configure it as <code>readOnly = true</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>As this methods modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
 </div>
