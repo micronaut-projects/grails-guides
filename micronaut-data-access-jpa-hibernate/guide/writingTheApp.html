@@ -339,7 +339,6 @@ import io.micronaut.spring.tx.annotation.Transactional;
 
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
@@ -357,15 +356,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public Optional&lt;Genre&gt; findById(Long id) {
-        try {
-            return Optional.of(entityManager
-                    .createQuery("SELECT g FROM Genre g WHERE g.id = :id", Genre.class)
-                    .setParameter("id", id)
-                    .getSingleResult());
-
-        } catch(NoResultException e) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
@@ -559,10 +550,6 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
 import example.micronaut.domain.Genre;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -575,6 +562,8 @@ import io.micronaut.http.annotation.Put;
 import io.micronaut.validation.Validated;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
 
 @Validated <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/genres") <i class="conum" data-value="2"></i><b>(2)</b>
@@ -587,16 +576,18 @@ public class GenreController {
     }
 
     @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
-    public Optional&lt;Genre&gt; show(Long id) {
-        return genreRepository.findById(id);
+    public Genre show(Long id) {
+        return genreRepository
+                .findById(id)
+                .orElse(null);
     }
 
     @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
     public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
-
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
-        return HttpResponse.noContent()
+        return HttpResponse
+                .noContent()
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
     }
 
@@ -609,7 +600,9 @@ public class GenreController {
     public HttpResponse save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
-        return HttpResponse.created(location(genre));
+        return HttpResponse
+                .created(genre)
+                .headers(headers -&gt; headers.location(location(genre.getId())));
     }
 
     @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
@@ -619,8 +612,9 @@ public class GenreController {
     }
 
     protected URI location(Long id) {
-        return URI.create("/genres/"+id);
+        return URI.create("/genres/" + id);
     }
+
     protected URI location(Genre genre) {
         return location(genre.getId());
     }
