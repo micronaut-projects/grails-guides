@@ -244,24 +244,24 @@ public class GenreController {
     public Genre show(Long id) {
         return genreRepository
                 .findById(id)
-                .orElse(null);
+                .orElse(null); <i class="conum" data-value="5"></i><b>(5)</b>
     }
 
-    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
-    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
+    @Put("/") <i class="conum" data-value="6"></i><b>(6)</b>
+    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="7"></i><b>(7)</b>
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
         return HttpResponse
                 .noContent()
-                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
+                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
     }
 
-    @Get("/") <i class="conum" data-value="8"></i><b>(8)</b>
+    @Get("/") <i class="conum" data-value="9"></i><b>(9)</b>
     public List&lt;Genre&gt; list() {
         return genreRepository.findAll();
     }
 
-    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
     public HttpResponse save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
@@ -270,7 +270,7 @@ public class GenreController {
                 .headers(headers -&gt; headers.location(location(genre.getId())));
     }
 
-    @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
+    @Delete("/{id}") <i class="conum" data-value="11"></i><b>(11)</b>
     public HttpResponse delete(Long id) {
         genreRepository.deleteById(id);
         return HttpResponse.noContent();
@@ -302,30 +302,34 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable. If the entity is not found 404 is returned.</td>
+<td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
+<td>Returning <code>null</code> when the genre doesn&#8217;t exist makes Micronaut to response with 404 (not found).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
+<td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>It is easy to add custom headers to the response.</td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres</td>
+<td>It is easy to add custom headers to the response.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>Maps a <code>DELETE</code> request to <code>/genres/{id}</code> which attempts to remove a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 </table>
