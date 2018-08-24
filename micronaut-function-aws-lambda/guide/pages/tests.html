@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4.4 Tests null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Functions deployed in AWS Lambda
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheLambda.html"><strong>2</strong><span>Writing the Function</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awslambda.html"><strong>3</strong><span>Deploy to AWS Lambda</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>4</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>3</strong><span>Deploy to AWS Lambda</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4.4 Tests</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="tests">4.4 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We don&#8217;t want the real AWS Lambda function executed in our tests.</p>
+</div>
+<div class="paragraph">
+<p>Thus, create a bean to replace the function in the test phase:</p>
+</div>
+<div class="listingblock">
+<div class="title">invoice/src/test/java/example/micronaut/VatValidatorMock.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Replaces;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.reactivex.Single;
+
+import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.List;
+
+@Primary // remove when solved https://github.com/micronaut-projects/micronaut-core/issues/524
+@Replaces(VatClient.class)
+@Requires(env = Environment.TEST)
+@Singleton
+public class VatValidatorMock implements VatValidator {
+
+    @Override
+    public Single&lt;VatValidation&gt; validateVat(String memberStateCode, String vatNumber) {
+        List&lt;String&gt; validVatNumbers = Collections.singletonList("B84965375");
+        return Single.just(new VatValidation(memberStateCode,
+                vatNumber,
+                validVatNumbers.contains(vatNumber)));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a JUnit test which verifies the logic:</p>
+</div>
+<div class="listingblock">
+<div class="title">invoice/src/test/java/example/micronaut/InvoiceControllerTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.runtime.server.EmbeddedServer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class InvoiceControllerTest {
+
+    private static EmbeddedServer server;
+    private static RxHttpClient rxHttpClient;
+
+    @BeforeClass
+    public static void setupServer() {
+        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
+        rxHttpClient = server
+                .getApplicationContext()
+                .createBean(RxHttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        if (server != null) {
+            server.stop();
+        }
+        if (rxHttpClient != null) {
+            rxHttpClient.stop();
+        }
+    }
+
+    @Test
+    public void testBooksController() {
+
+        VatValidator bean = server.getApplicationContext().getBean(VatValidator.class);
+        assertTrue(bean instanceof VatValidatorMock); <i class="conum" data-value="3"></i><b>(3)</b>
+
+        List&lt;InvoiceLine&gt; lines = new ArrayList&lt;InvoiceLine&gt;();
+        lines.add(new InvoiceLine("1491950358", 2, new BigDecimal(19.99)));
+        lines.add(new InvoiceLine("1680502395", 1, new BigDecimal(15)));
+        Invoice invoice = new Invoice("B84965375", "es", lines);
+        HttpRequest request = HttpRequest.POST("/invoice/vat", invoice);
+        Taxes rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
+        BigDecimal expected = new BigDecimal("11.55");
+        assertEquals(expected, rsp.getVat());
+
+
+        invoice.setVatNumber("B99999999");
+        rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
+        expected = new BigDecimal("0.00");
+        assertEquals(expected, rsp.getVat());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>RxHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Verify the bean for interface <code>VatValidator</code> is <code>VatValidatorMock</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you are curious about how the 11.55 is calculated.
+Given a 21% VAT.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Price</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Count</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Line VAT</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19,99</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8,3958</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3,15</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Total VAT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11,55</p></td>
+</tr>
+</tbody>
+</table>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>3</strong><span>Deploy to AWS Lambda</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

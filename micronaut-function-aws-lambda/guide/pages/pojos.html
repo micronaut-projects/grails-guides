@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4.1 POJOs null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Functions deployed in AWS Lambda
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheLambda.html"><strong>2</strong><span>Writing the Function</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awslambda.html"><strong>3</strong><span>Deploy to AWS Lambda</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>4</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>3</strong><span>Deploy to AWS Lambda</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4.1 POJOs</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="pojos">4.1 POJOs</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul/edit/master/src/main/docs/guide/writingTheApp/pojos.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We expect to get an incoming JSON payload such as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+"vatNumber": "B86412491",
+"countryCode": "es",
+"lines": [
+    {
+        "count": 2,
+        "productId": "1491950358",
+        "price": 19.99
+    },
+    {
+        "count": 1,
+        "productId": "1680502395",
+        "price": 15
+    },
+]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We create two POJOs to map it.</p>
+</div>
+<div class="listingblock">
+<div class="title">invoice/src/main/java/example/micronaut/Invoice.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+
+public class Invoice {
+
+    @NotNull
+    @NotBlank
+    private String vatNumber;
+
+    @NotNull
+    @NotBlank
+    private String countryCode;
+
+    @NotEmpty
+    private List&lt;InvoiceLine&gt; lines;
+
+    public Invoice() {
+
+    }
+
+    public Invoice(@NotNull @NotBlank String vatNumber,
+                   @NotNull @NotBlank String countryCode,
+                   @NotEmpty List&lt;InvoiceLine&gt; lines) {
+        this.vatNumber = vatNumber;
+        this.countryCode = countryCode;
+        this.lines = lines;
+    }
+
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public List&lt;InvoiceLine&gt; getLines() {
+        return lines;
+    }
+
+    public void setLines(List&lt;InvoiceLine&gt; lines) {
+        this.lines = lines;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Invoice invoice = (Invoice) o;
+        return Objects.equals(vatNumber, invoice.vatNumber) &amp;&amp;
+                Objects.equals(countryCode, invoice.countryCode) &amp;&amp;
+                Objects.equals(lines, invoice.lines);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vatNumber, countryCode, lines);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">invoice/src/main/java/example/micronaut/InvoiceLine.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.util.Objects;
+
+public class InvoiceLine {
+    @NotNull
+    @NotBlank
+    private String productId;
+
+    @Positive
+    private Integer count;
+
+    @NotNull
+    @Positive
+    private BigDecimal price;
+
+    public InvoiceLine() {}
+
+    public InvoiceLine(String productId, Integer count, BigDecimal price) {
+        this.productId = productId;
+        this.count = count;
+        this.price = price;
+    }
+
+    public BigDecimal vatPrice(BigDecimal vatPercentage) {
+        return getPrice().multiply(BigDecimal.valueOf(getCount()).multiply(vatPercentage));
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InvoiceLine that = (InvoiceLine) o;
+        return Objects.equals(productId, that.productId) &amp;&amp;
+                Objects.equals(count, that.count) &amp;&amp;
+                Objects.equals(price, that.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, count, price);
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>3</strong><span>Deploy to AWS Lambda</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
