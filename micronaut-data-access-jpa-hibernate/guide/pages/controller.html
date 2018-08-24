@@ -262,7 +262,7 @@ public class GenreController {
     }
 
     @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
-    public HttpResponse save(@Body @Valid GenreSaveCommand cmd) {
+    public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
         return HttpResponse

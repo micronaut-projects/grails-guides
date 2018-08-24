@@ -96,12 +96,13 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import static org.junit.Assert.assertEquals;
+
 import example.micronaut.domain.Genre;
 import example.micronaut.genre.GenreSaveCommand;
 import example.micronaut.genre.GenreUpdateCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -112,8 +113,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class GenreControllerTest {
 
@@ -139,26 +138,24 @@ public class GenreControllerTest {
     @Test
     public void testGenreCrudOperations() {
         HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
-        HttpResponse response = client.toBlocking().exchange(request);
+        HttpResponse&lt;Genre&gt; response = client.toBlocking().exchange(request, Argument.of(Genre.class));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        Long id = entityId(response);
-        request = HttpRequest.GET("/genres/"+id);
+        Long id = response.getBody().get().getId();
+        request = HttpRequest.GET("/genres/" + id);
         Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
 
-        assertEquals("Microservices",  genre.getName());
+        assertEquals("Microservices", genre.getName());
 
         request = HttpRequest.PUT("/genres/", new GenreUpdateCommand(id, "Micro-services"));
         response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
 
-        id = entityId(response);
-
-        request = HttpRequest.GET("/genres/"+id);
+        request = HttpRequest.GET("/genres/" + id);
         genre = client.toBlocking().retrieve(request, Genre.class);
-        assertEquals("Micro-services",  genre.getName());
+        assertEquals("Micro-services", genre.getName());
 
         request = HttpRequest.GET("/genres");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
@@ -166,22 +163,9 @@ public class GenreControllerTest {
         assertEquals(1, genres.size());
 
         // cleanup:
-        request = HttpRequest.DELETE("/genres/"+id);
+        request = HttpRequest.DELETE("/genres/" + id);
         response = client.toBlocking().exchange(request);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
-    }
-
-    Long entityId(HttpResponse response) {
-        String path = "/genres/";
-        String value = response.header(HttpHeaders.LOCATION);
-        if ( value == null) {
-            return null;
-        }
-        int index = value.indexOf(path);
-        if ( index != -1) {
-            return Long.valueOf(value.substring(index + path.length()));
-        }
-        return null;
     }
 }</code></pre>
 </div>
