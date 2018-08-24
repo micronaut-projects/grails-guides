@@ -5,7 +5,7 @@ Hibernate Validator is a reference implementation of the validation API.
 Add the next snippet to `build.gradle`
 
 [source,java]
-.invoice/build.gradle
+.build.gradle
 ----
-include::{sourceDir}/invoice/build.gradle[tag=validator]
+include::{sourceDir}/build.gradle[tag=validator]
 ----
