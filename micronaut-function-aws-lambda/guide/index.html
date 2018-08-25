@@ -72,21 +72,23 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#functiontests"><strong>2.4</strong><span>Function Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#awslambda"><strong>3</strong><span>Deploy to AWS Lambda</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#sam"><strong>3</strong><span>Test with SAM CLI</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>4</strong><span>Writing the App</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#awslambda"><strong>4</strong><span>Deploy to AWS Lambda</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#pojos"><strong>4.1</strong><span>POJOs</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>5</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#functionclient"><strong>4.2</strong><span>Call the Function</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#pojos"><strong>5.1</strong><span>POJOs</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>4.3</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#functionclient"><strong>5.2</strong><span>Call the Function</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>4.4</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>5.3</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the app</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>5.4</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>6</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>6</strong><span>Running the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>7</strong><span>Next Steps</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -632,7 +634,92 @@ public class ViesVatValidatorFunctionTest {
 </div>
 
 
-<h1 id="awslambda">3 Deploy to AWS Lambda</h1>
+<h1 id="sam">3 Test with SAM CLI</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/sam.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://github.com/awslabs/aws-sam-cli">AWS SAM CLI</a> is a CLI tool for local development and testing of Serverless applications.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can skip this section. If you want to complete this section you will need SAM and Docker installed.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To test your Micronuat function with SAM you will first need to <a href="https://github.com/awslabs/aws-sam-cli/blob/develop/docs/installation.rst">install SAM</a>.</p>
+</div>
+<div class="paragraph">
+<p>Then create a file <code>event.json</code>. We will use it as the stimulus for the SAM cli invocation.</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/event.json</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+  "memberStateCode": "es",
+  "vatNumber": "B86412491"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next create a <a href="https://github.com/awslabs/serverless-application-model">AWS SAM template</a> file:</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/template.yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 25
+
+Resources:
+
+    ViesVatValidatorFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: build/libs/complete/vies-vat-validator-0.1-all.jar
+            Handler: io.micronaut.function.aws.MicronautRequestStreamHandler
+            Runtime: java8</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With that in place, you can invoke your function locally:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sam local invoke "ViesVatValidatorFunction" -e event.json
+2018-08-25 08:29:05 Invoking io.micronaut.function.aws.MicronautRequestStreamHandler (java8)
+2018-08-25 08:29:05 Found credentials in shared credentials file: ~/.aws/credentials
+2018-08-25 08:29:05 Decompressing /Users/sdelamo/Developer/micronaut-guides/micronaut-function-aws-lambda/complete/vies-vat-validator/build/libs/complete/vies-vat-validator-0.1-all.jar
+
+Fetching lambci/lambda:java8 Docker container image......
+2018-08-25 08:29:09 Mounting /private/var/folders/pb/dx1ms2_92_g54v9jvzv7k4hc0000gn/T/tmpvxc4Vb as /var/task:ro inside runtime container
+START RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e Version: $LATEST
+06:29:14.143 [main] DEBUG e.micronaut.ViesVatValidatorFunction - validate country: es vat number: B86412491
+END RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e
+REPORT RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e	Duration: 5627.70 ms	Billed Duration: 5700 ms	Memory Size: 128 MB	Max Memory Used: 9 MB
+
+{"memberStateCode":"es","vatNumber":"B86412491","valid":true}</code></pre>
+</div>
+</div>
+
+
+<h1 id="awslambda">4 Deploy to AWS Lambda</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awslambda.adoc"'>
@@ -710,7 +797,7 @@ public class ViesVatValidatorFunctionTest {
 </div>
 
 
-<h1 id="writingTheApp">4 Writing the App</h1>
+<h1 id="writingTheApp">5 Writing the App</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -732,7 +819,7 @@ public class ViesVatValidatorFunctionTest {
 </div>
 
 
-<h2 id="pojos">4.1 POJOs</h2>
+<h2 id="pojos">5.1 POJOs</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/pojos.adoc"'>
@@ -922,7 +1009,7 @@ public class InvoiceLine {
 </div>
 
 
-<h2 id="functionclient">4.2 Call the Function</h2>
+<h2 id="functionclient">5.2 Call the Function</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/functionclient.adoc"'>
@@ -1105,7 +1192,7 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 </div>
 
 
-<h2 id="controller">4.3 Controller</h2>
+<h2 id="controller">5.3 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -1211,7 +1298,7 @@ public class InvoiceController {
 </div>
 
 
-<h2 id="tests">4.4 Tests</h2>
+<h2 id="tests">5.4 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -1378,7 +1465,7 @@ Given a 21% VAT.</p>
 </table>
 
 
-<h1 id="runningTheApp">5 Running the app</h1>
+<h1 id="runningTheApp">6 Running the app</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
@@ -1435,7 +1522,7 @@ aws_secret_access_key=XXXXX</code></pre>
 </div>
 
 
-<h1 id="nextSteps">6 Next Steps</h1>
+<h1 id="nextSteps">7 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/nextSteps.adoc"'>
