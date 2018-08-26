@@ -373,6 +373,8 @@ public class Genre {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 
 import java.util.List;
@@ -386,7 +388,7 @@ public interface GenreRepository {
 
     void deleteById(Long id);
 
-    List&lt;Genre&gt; findAll();
+    List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs);
 
     int update(Long id, String name);
 }</code></pre>
@@ -400,6 +402,8 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
 import io.micronaut.spring.tx.annotation.Transactional;
@@ -407,6 +411,8 @@ import io.micronaut.spring.tx.annotation.Transactional;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -440,11 +446,26 @@ public class GenreRepositoryImpl implements GenreRepository {
         findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
     }
 
+    private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
+
     @Transactional(readOnly = true)
-    public List&lt;Genre&gt; findAll() {
-        return entityManager
-                .createQuery("SELECT g FROM Genre g", Genre.class)
-                .getResultList();
+    public List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs) {
+        String qlString = "SELECT g FROM Genre as g";
+        if (sortingArgs != null) {
+            if (sortingArgs.getOrder() != null &amp;&amp; VALID_PROPERTY_NAMES.contains(sortingArgs.getSort())) {
+                qlString += " ORDER BY g." + sortingArgs.getSort() + " " + sortingArgs.getOrder().toString().toLowerCase();
+            }
+        }
+        TypedQuery query = entityManager.createQuery(qlString, Genre.class);
+        if (paginationArgs != null) {
+            if (paginationArgs.getMax() != null) {
+                query.setMaxResults(paginationArgs.getMax());
+            }
+            if (paginationArgs.getOffset() != null) {
+                query.setFirstResult(paginationArgs.getOffset());
+            }
+        }
+        return query.getResultList();
     }
 
     @Override
@@ -502,7 +523,7 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -609,6 +630,117 @@ public class GenreUpdateCommand {
 </div>
 </div>
 <div class="paragraph">
+<p>Create several POJOs to encapsulate Sorting and Pagination:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/SortingOrder.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public enum SortingOrder {
+    ASC, DESC;
+
+    public final static SortingOrder DEFAULT_SORTING_ORDER = SortingOrder.ASC;
+
+    public static SortingOrder of(String str) {
+        if (str != null) {
+            if (ASC.toString().equalsIgnoreCase(str)) {
+                return ASC;
+            }
+            if (DESC.toString().equalsIgnoreCase(str)) {
+                return DESC;
+            }
+        }
+        return DEFAULT_SORTING_ORDER;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/SortingArguments.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class SortingArguments {
+    private String sort;
+    private SortingOrder order;
+
+    public SortingArguments(String sort, SortingOrder order) {
+        this.sort = sort;
+        this.order = order;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public SortingOrder getOrder() {
+        return order;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/PaginationArguments.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class PaginationArguments {
+    Integer offset;
+    Integer max;
+
+    public PaginationArguments(Integer offset, Integer max) {
+        this.offset = offset == null || offset &lt; 0 ? 0 : offset;
+        this.max = max;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>ConfigurationProperties</code> object to encapsulate the configuration of the default <code>max</code> value.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public interface ApplicationConfiguration {
+
+    Integer getMax();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+
+@ConfigurationProperties("application")
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
+
+    protected final Integer DEFAULT_MAX = 10;
+
+    private Integer max = DEFAULT_MAX;
+
+    @Override
+    public Integer getMax() {
+        return max;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Create <code>GenreController</code>, a controller which exposes a resource with the common CRUD operations:</p>
 </div>
 <div class="listingblock">
@@ -616,6 +748,10 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.ApplicationConfiguration;
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
+import example.micronaut.SortingOrder;
 import example.micronaut.domain.Genre;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -627,6 +763,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.validation.Validated;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -637,8 +774,12 @@ public class GenreController {
 
     protected final GenreRepository genreRepository;
 
-    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
+    protected final ApplicationConfiguration applicationConfiguration;
+
+    public GenreController(GenreRepository genreRepository,
+                           ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.genreRepository = genreRepository;
+        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
@@ -657,9 +798,16 @@ public class GenreController {
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
     }
 
-    @Get("/") <i class="conum" data-value="9"></i><b>(9)</b>
-    public List&lt;Genre&gt; list() {
-        return genreRepository.findAll();
+    @Get(value = "/") <i class="conum" data-value="9"></i><b>(9)</b>
+    public List&lt;Genre&gt; list(@Nullable Integer offset,
+                            @Nullable Integer max,
+                            @Nullable String sort,
+                            @Nullable String order) {
+        PaginationArguments paginationArguments = new PaginationArguments(offset != null ? offset : 0,
+                max != null ? max : applicationConfiguration.getMax());
+        SortingArguments sortingArguments = sort != null ? new SortingArguments(sort, SortingOrder.of(order)) : null;
+
+        return genreRepository.findAll(paginationArguments, sortingArguments);
     }
 
     @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
@@ -723,7 +871,7 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres</td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates optional URL parameters.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
@@ -761,6 +909,7 @@ import example.micronaut.genre.GenreSaveCommand;
 import example.micronaut.genre.GenreUpdateCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -770,6 +919,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenreControllerTest {
@@ -795,18 +945,29 @@ public class GenreControllerTest {
 
     @Test
     public void testGenreCrudOperations() {
-        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
-        HttpResponse&lt;Genre&gt; response = client.toBlocking().exchange(request, Argument.of(Genre.class));
+
+        List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
+
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpResponse response = client.toBlocking().exchange(request);
+        genreIds.add(entityId(response));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        Long id = response.getBody().get().getId();
-        request = HttpRequest.GET("/genres/" + id);
+        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+
+        Long id = entityId(response);
+        genreIds.add(id);
+        request = HttpRequest.GET("/genres/"+id);
+
         Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
 
         assertEquals("Microservices", genre.getName());
 
-        request = HttpRequest.PUT("/genres/", new GenreUpdateCommand(id, "Micro-services"));
+        request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
         response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
@@ -818,12 +979,44 @@ public class GenreControllerTest {
         request = HttpRequest.GET("/genres");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
+        assertEquals(2, genres.size());
+
+        request = HttpRequest.GET("/genres?max=1");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
         assertEquals(1, genres.size());
+        assertEquals("DevOps", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres?max=1&amp;order=desc&amp;sort=name");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(1, genres.size());
+        assertEquals("Micro-services", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres?max=1&amp;offset=10");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(0, genres.size());
 
         // cleanup:
-        request = HttpRequest.DELETE("/genres/" + id);
-        response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        for (Long genreId : genreIds) {
+            request = HttpRequest.DELETE("/genres/"+genreId);
+            response = client.toBlocking().exchange(request);
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        }
+    }
+
+    protected Long entityId(HttpResponse response) {
+        String path = "/genres/";
+        String value = response.header(HttpHeaders.LOCATION);
+        if ( value == null) {
+            return null;
+        }
+        int index = value.indexOf(path);
+        if ( index != -1) {
+            return Long.valueOf(value.substring(index + path.length()));
+        }
+        return null;
     }
 }</code></pre>
 </div>

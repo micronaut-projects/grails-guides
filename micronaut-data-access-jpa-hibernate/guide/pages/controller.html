@@ -100,7 +100,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -207,6 +207,117 @@ public class GenreUpdateCommand {
 </div>
 </div>
 <div class="paragraph">
+<p>Create several POJOs to encapsulate Sorting and Pagination:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/SortingOrder.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public enum SortingOrder {
+    ASC, DESC;
+
+    public final static SortingOrder DEFAULT_SORTING_ORDER = SortingOrder.ASC;
+
+    public static SortingOrder of(String str) {
+        if (str != null) {
+            if (ASC.toString().equalsIgnoreCase(str)) {
+                return ASC;
+            }
+            if (DESC.toString().equalsIgnoreCase(str)) {
+                return DESC;
+            }
+        }
+        return DEFAULT_SORTING_ORDER;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/SortingArguments.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class SortingArguments {
+    private String sort;
+    private SortingOrder order;
+
+    public SortingArguments(String sort, SortingOrder order) {
+        this.sort = sort;
+        this.order = order;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public SortingOrder getOrder() {
+        return order;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/PaginationArguments.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class PaginationArguments {
+    Integer offset;
+    Integer max;
+
+    public PaginationArguments(Integer offset, Integer max) {
+        this.offset = offset == null || offset &lt; 0 ? 0 : offset;
+        this.max = max;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>ConfigurationProperties</code> object to encapsulate the configuration of the default <code>max</code> value.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public interface ApplicationConfiguration {
+
+    Integer getMax();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+
+@ConfigurationProperties("application")
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
+
+    protected final Integer DEFAULT_MAX = 10;
+
+    private Integer max = DEFAULT_MAX;
+
+    @Override
+    public Integer getMax() {
+        return max;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Create <code>GenreController</code>, a controller which exposes a resource with the common CRUD operations:</p>
 </div>
 <div class="listingblock">
@@ -214,6 +325,10 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.ApplicationConfiguration;
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
+import example.micronaut.SortingOrder;
 import example.micronaut.domain.Genre;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -225,6 +340,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.validation.Validated;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -235,8 +351,12 @@ public class GenreController {
 
     protected final GenreRepository genreRepository;
 
-    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
+    protected final ApplicationConfiguration applicationConfiguration;
+
+    public GenreController(GenreRepository genreRepository,
+                           ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.genreRepository = genreRepository;
+        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
@@ -255,9 +375,16 @@ public class GenreController {
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
     }
 
-    @Get("/") <i class="conum" data-value="9"></i><b>(9)</b>
-    public List&lt;Genre&gt; list() {
-        return genreRepository.findAll();
+    @Get(value = "/") <i class="conum" data-value="9"></i><b>(9)</b>
+    public List&lt;Genre&gt; list(@Nullable Integer offset,
+                            @Nullable Integer max,
+                            @Nullable String sort,
+                            @Nullable String order) {
+        PaginationArguments paginationArguments = new PaginationArguments(offset != null ? offset : 0,
+                max != null ? max : applicationConfiguration.getMax());
+        SortingArguments sortingArguments = sort != null ? new SortingArguments(sort, SortingOrder.of(order)) : null;
+
+        return genreRepository.findAll(paginationArguments, sortingArguments);
     }
 
     @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
@@ -321,7 +448,7 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres</td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates optional URL parameters.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>

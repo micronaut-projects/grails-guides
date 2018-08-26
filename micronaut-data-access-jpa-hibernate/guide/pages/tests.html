@@ -103,6 +103,7 @@ import example.micronaut.genre.GenreSaveCommand;
 import example.micronaut.genre.GenreUpdateCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -112,6 +113,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenreControllerTest {
@@ -137,18 +139,29 @@ public class GenreControllerTest {
 
     @Test
     public void testGenreCrudOperations() {
-        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
-        HttpResponse&lt;Genre&gt; response = client.toBlocking().exchange(request, Argument.of(Genre.class));
+
+        List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
+
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpResponse response = client.toBlocking().exchange(request);
+        genreIds.add(entityId(response));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        Long id = response.getBody().get().getId();
-        request = HttpRequest.GET("/genres/" + id);
+        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+
+        Long id = entityId(response);
+        genreIds.add(id);
+        request = HttpRequest.GET("/genres/"+id);
+
         Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
 
         assertEquals("Microservices", genre.getName());
 
-        request = HttpRequest.PUT("/genres/", new GenreUpdateCommand(id, "Micro-services"));
+        request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
         response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
@@ -160,12 +173,44 @@ public class GenreControllerTest {
         request = HttpRequest.GET("/genres");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
+        assertEquals(2, genres.size());
+
+        request = HttpRequest.GET("/genres?max=1");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
         assertEquals(1, genres.size());
+        assertEquals("DevOps", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres?max=1&amp;order=desc&amp;sort=name");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(1, genres.size());
+        assertEquals("Micro-services", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres?max=1&amp;offset=10");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(0, genres.size());
 
         // cleanup:
-        request = HttpRequest.DELETE("/genres/" + id);
-        response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        for (Long genreId : genreIds) {
+            request = HttpRequest.DELETE("/genres/"+genreId);
+            response = client.toBlocking().exchange(request);
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        }
+    }
+
+    protected Long entityId(HttpResponse response) {
+        String path = "/genres/";
+        String value = response.header(HttpHeaders.LOCATION);
+        if ( value == null) {
+            return null;
+        }
+        int index = value.indexOf(path);
+        if ( index != -1) {
+            return Long.valueOf(value.substring(index + path.length()));
+        }
+        return null;
     }
 }</code></pre>
 </div>

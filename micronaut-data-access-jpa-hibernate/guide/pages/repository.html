@@ -96,6 +96,8 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 
 import java.util.List;
@@ -109,7 +111,7 @@ public interface GenreRepository {
 
     void deleteById(Long id);
 
-    List&lt;Genre&gt; findAll();
+    List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs);
 
     int update(Long id, String name);
 }</code></pre>
@@ -123,6 +125,8 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import example.micronaut.PaginationArguments;
+import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
 import io.micronaut.spring.tx.annotation.Transactional;
@@ -130,6 +134,8 @@ import io.micronaut.spring.tx.annotation.Transactional;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -163,11 +169,26 @@ public class GenreRepositoryImpl implements GenreRepository {
         findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
     }
 
+    private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
+
     @Transactional(readOnly = true)
-    public List&lt;Genre&gt; findAll() {
-        return entityManager
-                .createQuery("SELECT g FROM Genre g", Genre.class)
-                .getResultList();
+    public List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs) {
+        String qlString = "SELECT g FROM Genre as g";
+        if (sortingArgs != null) {
+            if (sortingArgs.getOrder() != null &amp;&amp; VALID_PROPERTY_NAMES.contains(sortingArgs.getSort())) {
+                qlString += " ORDER BY g." + sortingArgs.getSort() + " " + sortingArgs.getOrder().toString().toLowerCase();
+            }
+        }
+        TypedQuery query = entityManager.createQuery(qlString, Genre.class);
+        if (paginationArgs != null) {
+            if (paginationArgs.getMax() != null) {
+                query.setMaxResults(paginationArgs.getMax());
+            }
+            if (paginationArgs.getOffset() != null) {
+                query.setFirstResult(paginationArgs.getOffset());
+            }
+        }
+        return query.getResultList();
     }
 
     @Override
