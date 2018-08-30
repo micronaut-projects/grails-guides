@@ -109,7 +109,7 @@ import io.reactivex.Single;
 
 public interface VatValidator {
 
-    Single&lt;VatValidation&gt; validateVat(String memberStateCode, String vatNumber);
+    Single&lt;VatValidation&gt; validateVat(VatValidationRequest req);
 }</code></pre>
 </div>
 </div>
@@ -237,6 +237,7 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.function.client.FunctionClient;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.retry.annotation.Retryable;
 import io.reactivex.Single;
 
@@ -248,7 +249,7 @@ public interface VatClient extends VatValidator {
     @Override
     @Named("vies-vat-validator") <i class="conum" data-value="2"></i><b>(2)</b>
     @Retryable(attempts = "${vat.retry.attempts:3}", delay = "${vat.retry.delay:1s}") <i class="conum" data-value="3"></i><b>(3)</b>
-    Single&lt;VatValidation&gt; validateVat(String memberStateCode, String vatNumber);
+    Single&lt;VatValidation&gt; validateVat(@Body VatValidationRequest req);
 }</code></pre>
 </div>
 </div>

@@ -148,7 +148,7 @@ public class InvoiceController {
 
     @Post("/vat") <i class="conum" data-value="5"></i><b>(5)</b>
     Single&lt;Taxes&gt; calculateVat(@Valid @Body Invoice invoice) {  <i class="conum" data-value="6"></i><b>(6)</b>
-        return vatValidator.validateVat(invoice.getCountryCode(), invoice.getVatNumber()) <i class="conum" data-value="7"></i><b>(7)</b>
+        return vatValidator.validateVat(new VatValidationRequest(invoice.getCountryCode(), invoice.getVatNumber())) <i class="conum" data-value="7"></i><b>(7)</b>
                 .map(vatValidation -&gt; {
                         BigDecimal percentage = vatValidation.isValid() ? vatPercentage : new BigDecimal("0");
                     return new Taxes(invoice.getLines().stream()
