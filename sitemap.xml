@@ -46,6 +46,12 @@
     <loc>http://guides.micronaut.io/micronaut-microservices-distributed-tracing-zipkin/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-data-access-jpa-hibernate/guide/index.html</loc>
+  </url>
+  <url>
+    <loc>http://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
