@@ -106,6 +106,8 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.function.FunctionBean;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +116,7 @@ import java.util.function.Function;
 
 @FunctionBean("vies-vat-validator") <i class="conum" data-value="1"></i><b>(1)</b>
 public class ViesVatValidatorFunction
-        implements Function&lt;VatValidationRequest, VatValidation&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+        implements Function&lt;VatValidationRequest, Single&lt;VatValidation&gt;&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
     private static final Logger LOG = LoggerFactory.getLogger(ViesVatValidatorFunction.class); <i class="conum" data-value="3"></i><b>(3)</b>
 
     private final VatService vatService;
@@ -124,20 +126,14 @@ public class ViesVatValidatorFunction
     }
 
     @Override
-    public VatValidation apply(VatValidationRequest request) {
+    public Single&lt;VatValidation&gt; apply(VatValidationRequest request) {
         final String memberStateCode = request.getMemberStateCode();
         final String vatNumber = request.getVatNumber();
         if (LOG.isDebugEnabled()) {
             LOG.debug("validate country: {} vat number: {}", memberStateCode, vatNumber);
         }
-        Boolean valid = false;
-        try {
-            valid = vatService.validateVat(memberStateCode, vatNumber).get();
-
-        } catch (InterruptedException | ExecutionException e) {
-
-        }
-        return new VatValidation(memberStateCode, vatNumber, valid);
+        return vatService.validateVat(memberStateCode, vatNumber)
+                    .map(valid -&gt; new VatValidation(memberStateCode, vatNumber, valid));
     }
 }</code></pre>
 </div>

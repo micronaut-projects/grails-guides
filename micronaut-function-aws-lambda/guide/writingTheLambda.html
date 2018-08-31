@@ -277,6 +277,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.Client;
 import io.micronaut.http.client.RxHttpClient;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 import javax.inject.Singleton;
 import java.util.concurrent.Future;
@@ -294,13 +295,13 @@ public class VatService {
         this.client = client;
     }
 
-    public Future&lt;Boolean&gt; validateVat(String memberStateCode, String vatNumber) {
+    public Single&lt;Boolean&gt; validateVat(String memberStateCode, String vatNumber) {
         String soapEnvelope = soapEnvelope(memberStateCode, vatNumber);
         HttpRequest request = HttpRequest.POST(SERVER+PATH, soapEnvelope)  <i class="conum" data-value="3"></i><b>(3)</b>
                 .contentType("application/soap+xml");
 
-        Flowable&lt;String&gt; response = client.retrieve(request);
-        return response.map(this::parseResponseToBoolean).toFuture();
+        Flowable&lt;String&gt; response = client.retrieve(request, String.class);
+        return response.firstOrError().map(this::parseResponseToBoolean);
     }
 
     private Boolean parseResponseToBoolean(String response) {
@@ -369,6 +370,8 @@ public class VatService {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.function.FunctionBean;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -377,7 +380,7 @@ import java.util.function.Function;
 
 @FunctionBean("vies-vat-validator") <i class="conum" data-value="1"></i><b>(1)</b>
 public class ViesVatValidatorFunction
-        implements Function&lt;VatValidationRequest, VatValidation&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+        implements Function&lt;VatValidationRequest, Single&lt;VatValidation&gt;&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
     private static final Logger LOG = LoggerFactory.getLogger(ViesVatValidatorFunction.class); <i class="conum" data-value="3"></i><b>(3)</b>
 
     private final VatService vatService;
@@ -387,20 +390,14 @@ public class ViesVatValidatorFunction
     }
 
     @Override
-    public VatValidation apply(VatValidationRequest request) {
+    public Single&lt;VatValidation&gt; apply(VatValidationRequest request) {
         final String memberStateCode = request.getMemberStateCode();
         final String vatNumber = request.getVatNumber();
         if (LOG.isDebugEnabled()) {
             LOG.debug("validate country: {} vat number: {}", memberStateCode, vatNumber);
         }
-        Boolean valid = false;
-        try {
-            valid = vatService.validateVat(memberStateCode, vatNumber).get();
-
-        } catch (InterruptedException | ExecutionException e) {
-
-        }
-        return new VatValidation(memberStateCode, vatNumber, valid);
+        return vatService.validateVat(memberStateCode, vatNumber)
+                    .map(valid -&gt; new VatValidation(memberStateCode, vatNumber, valid));
     }
 }</code></pre>
 </div>
@@ -483,6 +480,7 @@ and JSON Payload response.</td>
 
 import io.micronaut.function.client.FunctionClient;
 import io.micronaut.http.annotation.Body;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 import javax.inject.Named;
@@ -491,7 +489,7 @@ import javax.inject.Named;
 public interface ViesVatValidatorClient {
 
     @Named("vies-vat-validator")
-    VatValidation apply(@Body VatValidationRequest request);
+    Single&lt;VatValidation&gt; apply(@Body VatValidationRequest request);
 
 }</code></pre>
 </div>
@@ -523,9 +521,12 @@ public class ViesVatValidatorFunctionTest {
 
         ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class);
 
-        assertTrue(client.apply(new VatValidationRequest("es", "B99286353")).isValid());
-        assertTrue(client.apply(new VatValidationRequest("es", "B19280031")).isValid());
-        assertFalse(client.apply(new VatValidationRequest("es", "XXXXXXXXX")).isValid());
+        VatValidationRequest req = new VatValidationRequest("es", "B99286353");
+        assertTrue(client.apply(req).blockingGet().isValid());
+        req = new VatValidationRequest("es", "B19280031");
+        assertTrue(client.apply(req).blockingGet().isValid());
+        req = new VatValidationRequest("es", "XXXXXXXXX");
+        assertFalse(client.apply(req).blockingGet().isValid());
 
         server.stop();
     }

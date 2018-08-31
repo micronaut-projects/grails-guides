@@ -120,6 +120,7 @@ function addJsClass() {
 
 import io.micronaut.function.client.FunctionClient;
 import io.micronaut.http.annotation.Body;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 import javax.inject.Named;
@@ -128,7 +129,7 @@ import javax.inject.Named;
 public interface ViesVatValidatorClient {
 
     @Named("vies-vat-validator")
-    VatValidation apply(@Body VatValidationRequest request);
+    Single&lt;VatValidation&gt; apply(@Body VatValidationRequest request);
 
 }</code></pre>
 </div>
@@ -160,9 +161,12 @@ public class ViesVatValidatorFunctionTest {
 
         ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class);
 
-        assertTrue(client.apply(new VatValidationRequest("es", "B99286353")).isValid());
-        assertTrue(client.apply(new VatValidationRequest("es", "B19280031")).isValid());
-        assertFalse(client.apply(new VatValidationRequest("es", "XXXXXXXXX")).isValid());
+        VatValidationRequest req = new VatValidationRequest("es", "B99286353");
+        assertTrue(client.apply(req).blockingGet().isValid());
+        req = new VatValidationRequest("es", "B19280031");
+        assertTrue(client.apply(req).blockingGet().isValid());
+        req = new VatValidationRequest("es", "XXXXXXXXX");
+        assertFalse(client.apply(req).blockingGet().isValid());
 
         server.stop();
     }
