@@ -47,7 +47,10 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>7</strong><span>Next Steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/awsApiGateway.html"><strong>7</strong><span>AWS API Gateway</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>8</strong><span>Next Steps</span></a>
                         </div>
                         
                     </div>
@@ -334,11 +337,12 @@ public class InvoiceLine {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.annotation.Body;
 import io.reactivex.Single;
 
 public interface VatValidator {
 
-    Single&lt;VatValidation&gt; validateVat(VatValidationRequest req);
+    Single&lt;VatValidation&gt; validateVat(@Body VatValidationRequest req);
 }</code></pre>
 </div>
 </div>
