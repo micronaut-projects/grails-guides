@@ -134,7 +134,7 @@ public class ViesVatValidatorFunction
         }
         return vatService.validateVat(memberStateCode, vatNumber)
                     .map(valid -&gt; new VatValidation(memberStateCode, vatNumber, valid))
-                    .blockingGet();
+                    .blockingGet(); <i class="conum" data-value="5"></i><b>(5)</b>
     }
 }</code></pre>
 </div>
@@ -157,6 +157,10 @@ and JSON Payload response.</td>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Inject via constructor <code>VatService</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>We cannot return a non-blocking type due to AWS Lambda <a href="https://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-req-resp.html">Handler Input/Output supported Types</a>.</td>
 </tr>
 </table>
 </div>
