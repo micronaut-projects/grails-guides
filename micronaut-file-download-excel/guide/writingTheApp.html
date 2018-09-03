@@ -1,0 +1,793 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the App null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Download an Excel file in Micronaut App
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the App</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#books"><strong>2.1</strong><span>Books</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#spreadsheetBuilder"><strong>2.2</strong><span>Spreadsheet Builder</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#excel"><strong>2.3</strong><span>Excel Creation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>2.5</strong><span>Tests</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="books">2.1 Books</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/books.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create <code>Book</code> POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/Book.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import java.util.Objects;
+
+public class Book {
+    private String isbn;
+    private String name;
+
+    public Book() {}
+
+    public Book(String isbn, String name) {
+        this.isbn = isbn;
+        this.name =  name;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(isbn, book.isbn) &amp;&amp;
+                Objects.equals(name, book.name);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(isbn, name);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create an interface to encapsulate Book retrieval.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import java.util.List;
+
+public interface BookRepository {
+
+    List&lt;Book&gt; findAll();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a bean which implements the previous interface</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.inject.Singleton;
+import java.util.List;
+
+import java.util.Arrays;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class BookRepositoryImpl implements BookRepository {
+    @Override
+    public List&lt;Book&gt; findAll() {
+        Book buildingMicroservices = new Book("1491950358", "Building Microservices");
+        Book releaseIt = new Book("1680502395", "Release It!");
+        Book cidelivery = new Book("0321601912", "Continuous Delivery:");
+        return Arrays.asList(buildingMicroservices, releaseIt, cidelivery);
+
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="spreadsheetBuilder">2.2 Spreadsheet Builder</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/spreadsheetBuilder.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add a dependency to <a href="http://spreadsheet.dsl.builders">Spreadsheet builder</a></p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Spreadsheet builder provides convenient way how to read and create MS Excel OfficeOpenXML Documents (XSLX) focus not only on content side but also on easy styling.</p>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    compile 'builders.dsl:spreadsheet-builder-poi:1.0.5'
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="excel">2.3 Excel Creation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/excel.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a interface to encapsulate Excel generation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookExcelService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import java.util.List;
+import io.micronaut.http.server.types.files.AttachedFile;
+
+public interface BookExcelService {
+    static final String SHEET_NAME = "Books";
+    static final String HEADER_ISBN = "Isbn";
+    static final String HEADER_NAME = "Name";
+    static final String HEADER_EXCEL_FILENAME = "books.xlsx";
+
+    AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>AttachedFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Externalize your styles configuration into a class implementing <code>builders.dsl.spreadsheet.builder.api.Stylesheet</code> interface to maximize code reuse.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookExcelStylesheet.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import builders.dsl.spreadsheet.api.FontStyle;
+import builders.dsl.spreadsheet.builder.api.CanDefineStyle;
+import builders.dsl.spreadsheet.builder.api.Stylesheet;
+
+public class BookExcelStylesheet implements Stylesheet {
+    public static final String STYLE_HEADER = "header";
+
+    @Override
+    public void declareStyles(CanDefineStyle stylable) {
+        stylable.style(STYLE_HEADER, st -&gt; {
+            st.font(f -&gt; f.style(FontStyle.BOLD));
+        });
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a bean which generates the excel file.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookExcelServiceImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder;
+import io.micronaut.http.server.types.files.AttachedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.stream.Stream;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class BookExcelServiceImpl implements BookExcelService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BookExcelServiceImpl.class);
+
+    @Override
+    public AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList) {
+        File file = new File(HEADER_EXCEL_FILENAME);
+        try {
+            PoiSpreadsheetBuilder.create(file).build(w -&gt; {
+                w.apply(BookExcelStylesheet.class);
+                w.sheet(SHEET_NAME, s -&gt; {
+                    s.row(r -&gt; Stream.of(HEADER_ISBN, HEADER_NAME)
+                            .forEach(header -&gt; r.cell(cd -&gt; {
+                                    cd.value(header);
+                                    cd.style(BookExcelStylesheet.STYLE_HEADER);
+                                })
+                            ));
+                    bookList.stream()
+                            .forEach( book -&gt; s.row(r -&gt; {
+                                r.cell(book.getIsbn());
+                                r.cell(book.getName());
+                            }));
+                });
+            });
+        } catch (FileNotFoundException e) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("File not found exception raised when generating excel file");
+            }
+        }
+
+        return new AttachedFile(file, HEADER_EXCEL_FILENAME);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add <a href="https://docs.micronaut.io/snapshot/guide/index.html#views">Server Side View Rendering</a> and <a href="https://www.thymeleaf.org/">Thymeleaf</a> dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    compile "io.micronaut:views"
+    runtime "org.thymeleaf:thymeleaf:3.0.9.RELEASE"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.server.types.files.AttachedFile;
+import io.micronaut.views.View;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller("/") <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomeController {
+
+    protected final BookRepository bookRepository;
+    protected final BookExcelService bookExcelService;
+
+    public HomeController(BookRepository bookRepository,  <i class="conum" data-value="2"></i><b>(2)</b>
+                          BookExcelService bookExcelService) {
+        this.bookRepository = bookRepository;
+        this.bookExcelService = bookExcelService;
+    }
+
+    @View("index") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get
+    Map&lt;String, String&gt; index() {
+        return new HashMap&lt;&gt;();
+    }
+
+    @Get("/excel") <i class="conum" data-value="4"></i><b>(4)</b>
+    AttachedFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
+        return bookExcelService.excelFileFromBooks(bookRepository.findAll());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@View</code> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb for which a controller&#8217;s action responds to. To respond to a GET request, use <code>io.micronaut.http.annotation.Get</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>AttachedFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller index method renders a simple view with a link to download the excel file:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/index.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Micronaut&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;&lt;a href="/excel"&gt;Excel&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+
+
+<h2 id="tests">2.5 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Often, file transfers remain untested in many applications. In this section, you will see how
+easy is to test that the file downloads but also that the downloaded file contents match our expectations.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
+</div>
+<div class="paragraph">
+<p>We need to modify <code>build.gradle</code>.</p>
+</div>
+<div class="paragraph">
+<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
+the necessary dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+    testCompile "org.codehaus.groovy:groovy-all:2.5.2"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">micronaut-cli.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example.micronaut
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We use also, Geb; a browser automation solution.</p>
+</div>
+<div class="paragraph">
+<p>To use Geb, add dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "org.gebish:geb-spock:2.2"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.12.0"
+    testCompile "org.seleniumhq.selenium:selenium-support:3.12.0"
+    testCompile "org.seleniumhq.selenium:selenium-remote-driver:3.12.0"
+    testCompile "org.seleniumhq.selenium:selenium-api:3.12.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Geb Configuration file. We configure some chrome options to control the download path.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+
+ChromeOptions options = new ChromeOptions()
+if ( System.getProperty('download.folder') ) {
+    options.setExperimentalOption("prefs", [
+            "profile.default_content_settings.popups":  0, <i class="conum" data-value="1"></i><b>(1)</b>
+            "download.default_directory": System.getProperty('download.folder') <i class="conum" data-value="2"></i><b>(2)</b>
+    ])
+}
+
+environments {
+    chrome {
+        driver = { new ChromeDriver(options) }
+    }
+    chromeHeadless {
+        driver = {
+            options.addArguments('headless')
+            new ChromeDriver(options)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Disable confirmation popups</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the download folder</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way. Create a Geb Page to encapsulate the Excel link:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class HomePage extends Page {
+
+    static at = { title == 'Micronaut' }
+
+    static url = '/'
+
+    static content = {
+        excelLink { $('a', text: 'Excel', 0) }
+    }
+
+    void downloadExcel() {
+        excelLink.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
+a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+    repositories {
+...
+..
+    }
+    dependencies {
+        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
+    }
+}
+
+apply plugin:"com.energizedwork.webdriver-binaries"
+
+
+dependencies {
+...
+..
+.
+}
+
+webdriverBinaries {
+    chromedriver '2.41'
+    geckodriver '0.21.0'
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env') <i class="conum" data-value="1"></i><b>(1)</b>
+    systemProperty "download.folder", System.getProperty('download.folder') <i class="conum" data-value="2"></i><b>(2)</b>
+    beforeTest { descriptor -&gt; logger.quiet " -- $descriptor" }
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat 'full'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Pass system property <code>geb.env</code> to the tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Pass system property <code>download.folder</code> to the tests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a test which verifies the Excel file is downloaded and the content matches our expectations.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/DownloadExcelSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import builders.dsl.spreadsheet.query.api.SpreadsheetCriteria
+import builders.dsl.spreadsheet.query.api.SpreadsheetCriteriaResult
+import builders.dsl.spreadsheet.query.poi.PoiSpreadsheetCriteria
+import geb.spock.GebSpec
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.env.Environment
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.IgnoreIf
+import spock.lang.Shared
+import spock.util.concurrent.PollingConditions
+
+class DownloadExcelSpec extends GebSpec {
+
+    @Shared
+    @AutoCleanup
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:], Environment.TEST)
+
+    @IgnoreIf({ !sys['download.folder'] || sys['geb.env'] != 'chrome' })
+    def "books can be downloaded as an excel file"() {
+        given:
+        PollingConditions conditions = new PollingConditions(timeout: 5)
+        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+
+        when:
+        browser.to HomePage
+
+        then:
+        browser.at HomePage
+
+        when: 'clicking excel button'
+        String expectedPath = System.getProperty('download.folder') + "/" + BookExcelService.HEADER_EXCEL_FILENAME
+        File outputFile = new File(expectedPath)
+        browser.page(HomePage).downloadExcel()
+
+        then: 'an excel file is downloaded'
+        conditions.eventually { outputFile.exists() }
+
+        when: 'if we search for a row with a particular value (Building Microservices)'
+        SpreadsheetCriteria query = PoiSpreadsheetCriteria.FACTORY.forFile(outputFile)
+        SpreadsheetCriteriaResult result = query.query {
+            sheet(BookExcelService.SHEET_NAME) {
+                row {
+                    cell {
+                        value 'Building Microservices'
+                    }
+                }
+            }
+        }
+
+        then: 'a row is found'
+        result.cells.size() == 1
+
+        cleanup:
+        new File(expectedPath).delete()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew -Dgeb.env=chrome -Ddownload.folder=/Users/sdelamo/Downloads test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
