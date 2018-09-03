@@ -138,9 +138,6 @@ an app which downloads an excel file with a list of books.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>You will need also an <a href="https://aws.amazon.com/account/">AWS Account</a>.</p>
-</div>
 
 
 <h2 id="solution">1.2 Solution</h2>
@@ -821,7 +818,7 @@ class DownloadExcelSpec extends GebSpec {
         result.cells.size() == 1
 
         cleanup:
-        new File(expectedPath).delete()
+        outputFile?.delete()
     }
 }</code></pre>
 </div>
