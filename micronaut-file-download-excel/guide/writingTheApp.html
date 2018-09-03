@@ -282,7 +282,9 @@ public interface BookExcelService {
     static final String SHEET_NAME = "Books";
     static final String HEADER_ISBN = "Isbn";
     static final String HEADER_NAME = "Name";
-    static final String HEADER_EXCEL_FILENAME = "books.xlsx";
+    static final String HEADER_EXCEL_FILE_SUFIX = ".xlsx";
+    static final String HEADER_EXCEL_FILE_PREFIX = "books";
+    static final String HEADER_EXCEL_FILENAME = HEADER_EXCEL_FILE_PREFIX + HEADER_EXCEL_FILE_SUFIX;
 
     AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
@@ -336,6 +338,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -346,8 +349,8 @@ public class BookExcelServiceImpl implements BookExcelService {
 
     @Override
     public AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList) {
-        File file = new File(HEADER_EXCEL_FILENAME);
         try {
+            File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX);
             PoiSpreadsheetBuilder.create(file).build(w -&gt; {
                 w.apply(BookExcelStylesheet.class);
                 w.sheet(SHEET_NAME, s -&gt; {
@@ -364,13 +367,13 @@ public class BookExcelServiceImpl implements BookExcelService {
                             }));
                 });
             });
-        } catch (FileNotFoundException e) {
+            return new AttachedFile(file, HEADER_EXCEL_FILENAME);
+        } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("File not found exception raised when generating excel file");
             }
         }
-
-        return new AttachedFile(file, HEADER_EXCEL_FILENAME);
+        return null;
     }
 }</code></pre>
 </div>
@@ -704,14 +707,14 @@ import spock.util.concurrent.PollingConditions
 class DownloadExcelSpec extends GebSpec {
 
     @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:], Environment.TEST)
+    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:], Environment.TEST) <i class="conum" data-value="2"></i><b>(2)</b>
 
     @IgnoreIf({ !sys['download.folder'] || sys['geb.env'] != 'chrome' })
     def "books can be downloaded as an excel file"() {
         given:
         PollingConditions conditions = new PollingConditions(timeout: 5)
-        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+        browser.baseUrl = "http://localhost:${embeddedServer.port}" <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         browser.to HomePage
@@ -747,6 +750,22 @@ class DownloadExcelSpec extends GebSpec {
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The AutoCleanup extension makes sure the close() method of an object (e.g. EmbeddedServer) is called each time a feature method is finished</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To run the application from a unit test you can use the EmbeddedServer interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port. We use this port to set <a href="http://www.gebish.org/manual/current/#base-url">Geb base url</a>.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>To run the tests:</p>
