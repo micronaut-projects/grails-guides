@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.4 Tests null</title>
+    <title>6.4 Tests null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -32,25 +32,28 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheLambda.html"><strong>2</strong><span>Writing the Function</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheLambda.html"><strong>3</strong><span>Writing the Function</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awslambda.html"><strong>4</strong><span>Deploy to AWS Lambda</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/sam.html"><strong>4</strong><span>Test with SAM CLI</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>5</strong><span>Writing the App</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awslambda.html"><strong>5</strong><span>Deploy to AWS Lambda</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>6</strong><span>Writing the App</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awsApiGateway.html"><strong>7</strong><span>AWS API Gateway</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>7</strong><span>Running the app</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>8</strong><span>Next Steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/awsApiGateway.html"><strong>8</strong><span>AWS API Gateway</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>9</strong><span>Next Steps</span></a>
                         </div>
                         
                     </div>
@@ -71,18 +74,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>4</strong><span>Deploy to AWS Lambda</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>5</strong><span>Deploy to AWS Lambda</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>7</strong><span>Running the app</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>5.4 Tests</h1>
+                    <h1>6.4 Tests</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -91,7 +94,7 @@ function addJsClass() {
 
                 
 
-<h2 id="tests">5.4 Tests</h2>
+<h2 id="tests">6.4 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -104,14 +107,13 @@ function addJsClass() {
 <p>We don&#8217;t want the real AWS Lambda function executed in our tests.</p>
 </div>
 <div class="paragraph">
-<p>Thus, create a bean to replace the function in the test phase:</p>
+<p>Thus, create a bean to provide an implementation of <code>VatValidator</code> in the test phase:</p>
 </div>
 <div class="listingblock">
 <div class="title">invoice/src/test/java/example/micronaut/VatValidatorMock.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.reactivex.Single;
@@ -120,7 +122,6 @@ import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
 
-@Replaces(VatClient.class)
 @Requires(env = Environment.TEST)
 @Singleton
 public class VatValidatorMock implements VatValidator {
@@ -260,9 +261,9 @@ Given a 21% VAT.</p>
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>4</strong><span>Deploy to AWS Lambda</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/awslambda.html">&lt;&lt; <strong>5</strong><span>Deploy to AWS Lambda</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>7</strong><span>Running the app</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

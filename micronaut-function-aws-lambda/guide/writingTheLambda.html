@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2 Writing the Function null</title>
+    <title>3 Writing the Function null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -32,25 +32,28 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheLambda.html"><strong>2</strong><span>Writing the Function</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheLambda.html"><strong>3</strong><span>Writing the Function</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/awslambda.html"><strong>4</strong><span>Deploy to AWS Lambda</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/sam.html"><strong>4</strong><span>Test with SAM CLI</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>5</strong><span>Writing the App</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/awslambda.html"><strong>5</strong><span>Deploy to AWS Lambda</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>6</strong><span>Writing the App</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/awsApiGateway.html"><strong>7</strong><span>AWS API Gateway</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>7</strong><span>Running the app</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>8</strong><span>Next Steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/awsApiGateway.html"><strong>8</strong><span>AWS API Gateway</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>9</strong><span>Next Steps</span></a>
                         </div>
                         
                     </div>
@@ -71,18 +74,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>4</strong><span>Test with SAM CLI</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>2 Writing the Function</h1>
+                    <h1>3 Writing the Function</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -91,16 +94,16 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#functionpojos"><strong>2.1</strong><span>POJOs</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#functionpojos"><strong>3.1</strong><span>POJOs</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#soap"><strong>2.2</strong><span>SOAP VAT Validation</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#soap"><strong>3.2</strong><span>SOAP VAT Validation</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#function"><strong>2.3</strong><span>Function</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#function"><strong>3.3</strong><span>Function</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#functiontests"><strong>2.4</strong><span>Function Tests</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#functiontests"><strong>3.4</strong><span>Function Tests</span></a>
                     </div>
                     
                 </div>
@@ -108,7 +111,7 @@ function addJsClass() {
 
                 
 
-<h1 id="writingTheLambda">2 Writing the Function</h1>
+<h1 id="writingTheLambda">3 Writing the Function</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda.adoc"'>
@@ -125,7 +128,7 @@ function addJsClass() {
 </div>
 
 
-<h2 id="functionpojos">2.1 POJOs</h2>
+<h2 id="functionpojos">3.1 POJOs</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functionpojos.adoc"'>
@@ -230,7 +233,7 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 </div>
 
 
-<h2 id="soap">2.2 SOAP VAT Validation</h2>
+<h2 id="soap">3.2 SOAP VAT Validation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/soap.adoc"'>
@@ -355,7 +358,7 @@ public class VatService {
 </div>
 
 
-<h2 id="function">2.3 Function</h2>
+<h2 id="function">3.3 Function</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/function.adoc"'>
@@ -456,7 +459,7 @@ and JSON Payload response.</td>
 </div>
 
 
-<h2 id="functiontests">2.4 Function Tests</h2>
+<h2 id="functiontests">3.4 Function Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functiontests.adoc"'>
@@ -545,9 +548,9 @@ public class ViesVatValidatorFunctionTest {
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>4</strong><span>Test with SAM CLI</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

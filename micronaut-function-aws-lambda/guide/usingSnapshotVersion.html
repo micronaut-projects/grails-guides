@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1 Getting Started null</title>
+    <title>2 Using Snapshot Version null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -74,142 +74,48 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/writingTheLambda.html"><strong>3</strong><span>Writing the Function</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1 Getting Started</h1>
+                    <h1>2 Using Snapshot Version</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
 
                 
-                <div id="table-of-content">
-                    <h2>Table of Contents</h2>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a>
-                    </div>
-                    
-                </div>
-                
 
                 
 
-<h1 id="gettingStarted">1 Getting Started</h1>
+<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Lets describe the microservices you are going to build through the tutorial.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>vies-vat-validator</code> - A Function which you will build with Micronaut and deploy to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
-</li>
-<li>
-<p><code>invoice</code> - A microservice which  exposes an endpoint to check the Value Added Tax (VAT) which should apply to an invoice. It consumes the <code>vies-vat-validator</code> function to ensure the VAT number is valid.</p>
-</li>
-</ul>
+<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
 </div>
 <div class="paragraph">
-<p>The next diagram illustrates the flow:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../img/microservices-and-lambda.svg" alt="microservices and lambda">
-</div>
-</div>
-<div class="paragraph">
-<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
-</div>
-</div>
-
-
-<h2 id="requirements">1.1 What you will need</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/requirements.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>To complete this guide, you will need the following:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Some time on your hands</p>
-</li>
-<li>
-<p>A decent text editor or IDE</p>
-</li>
-<li>
-<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>You will need also an <a href="https://aws.amazon.com/account/">AWS Account</a>.</p>
-</div>
-
-
-<h2 id="solution">1.2 Solution</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/solution.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/archive/master.zip">Download</a> and unzip the source</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda.git" class="bare">https://github.com/micronaut-guides/micronaut-function-aws-lambda.git</a></code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/writingTheLambda.html"><strong>3</strong><span>Writing the Function</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

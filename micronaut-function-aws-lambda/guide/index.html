@@ -62,37 +62,39 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheLambda"><strong>2</strong><span>Writing the Function</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#usingSnapshotVersion"><strong>2</strong><span>Using Snapshot Version</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#functionpojos"><strong>2.1</strong><span>POJOs</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheLambda"><strong>3</strong><span>Writing the Function</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#soap"><strong>2.2</strong><span>SOAP VAT Validation</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#functionpojos"><strong>3.1</strong><span>POJOs</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#function"><strong>2.3</strong><span>Function</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#soap"><strong>3.2</strong><span>SOAP VAT Validation</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#functiontests"><strong>2.4</strong><span>Function Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#function"><strong>3.3</strong><span>Function</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#sam"><strong>3</strong><span>Test with SAM CLI</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#functiontests"><strong>3.4</strong><span>Function Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#awslambda"><strong>4</strong><span>Deploy to AWS Lambda</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#sam"><strong>4</strong><span>Test with SAM CLI</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>5</strong><span>Writing the App</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#awslambda"><strong>5</strong><span>Deploy to AWS Lambda</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#pojos"><strong>5.1</strong><span>POJOs</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>6</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#functionclient"><strong>5.2</strong><span>Call the Function</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#pojos"><strong>6.1</strong><span>POJOs</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>5.3</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#functionclient"><strong>6.2</strong><span>Call the Function</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>5.4</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>6.3</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>6</strong><span>Running the app</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>6.4</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#awsApiGateway"><strong>7</strong><span>AWS API Gateway</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>7</strong><span>Running the app</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#awsApiGatewayUrlInMicronaut"><strong>7.1</strong><span>Consume API Gateway URL</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#awsApiGateway"><strong>8</strong><span>AWS API Gateway</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>8</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#awsApiGatewayUrlInMicronaut"><strong>8.1</strong><span>Consume API Gateway URL</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>9</strong><span>Next Steps</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -210,7 +212,24 @@
 </div>
 
 
-<h1 id="writingTheLambda">2 Writing the Function</h1>
+<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
+</div>
+<div class="paragraph">
+<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
+</div>
+
+
+<h1 id="writingTheLambda">3 Writing the Function</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda.adoc"'>
@@ -227,7 +246,7 @@
 </div>
 
 
-<h2 id="functionpojos">2.1 POJOs</h2>
+<h2 id="functionpojos">3.1 POJOs</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functionpojos.adoc"'>
@@ -332,7 +351,7 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 </div>
 
 
-<h2 id="soap">2.2 SOAP VAT Validation</h2>
+<h2 id="soap">3.2 SOAP VAT Validation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/soap.adoc"'>
@@ -457,7 +476,7 @@ public class VatService {
 </div>
 
 
-<h2 id="function">2.3 Function</h2>
+<h2 id="function">3.3 Function</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/function.adoc"'>
@@ -558,7 +577,7 @@ and JSON Payload response.</td>
 </div>
 
 
-<h2 id="functiontests">2.4 Function Tests</h2>
+<h2 id="functiontests">3.4 Function Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functiontests.adoc"'>
@@ -645,7 +664,7 @@ public class ViesVatValidatorFunctionTest {
 </div>
 
 
-<h1 id="sam">3 Test with SAM CLI</h1>
+<h1 id="sam">4 Test with SAM CLI</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/sam.adoc"'>
@@ -730,7 +749,7 @@ REPORT RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e	Duration: 5627.70 ms	Bill
 </div>
 
 
-<h1 id="awslambda">4 Deploy to AWS Lambda</h1>
+<h1 id="awslambda">5 Deploy to AWS Lambda</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awslambda.adoc"'>
@@ -808,7 +827,7 @@ REPORT RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e	Duration: 5627.70 ms	Bill
 </div>
 
 
-<h1 id="writingTheApp">5 Writing the App</h1>
+<h1 id="writingTheApp">6 Writing the App</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -830,7 +849,7 @@ REPORT RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e	Duration: 5627.70 ms	Bill
 </div>
 
 
-<h2 id="pojos">5.1 POJOs</h2>
+<h2 id="pojos">6.1 POJOs</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/pojos.adoc"'>
@@ -1020,7 +1039,7 @@ public class InvoiceLine {
 </div>
 
 
-<h2 id="functionclient">5.2 Call the Function</h2>
+<h2 id="functionclient">6.2 Call the Function</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/functionclient.adoc"'>
@@ -1169,6 +1188,8 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 import io.micronaut.function.client.FunctionClient;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.retry.annotation.Retryable;
@@ -1177,11 +1198,12 @@ import io.reactivex.Single;
 import javax.inject.Named;
 
 @FunctionClient <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(notEnv = Environment.TEST) <i class="conum" data-value="2"></i><b>(2)</b>
 public interface VatClient extends VatValidator {
 
     @Override
-    @Named("vies-vat-validator") <i class="conum" data-value="2"></i><b>(2)</b>
-    @Retryable(attempts = "${vat.retry.attempts:3}", delay = "${vat.retry.delay:1s}") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Named("vies-vat-validator") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Retryable(attempts = "${vat.retry.attempts:3}", delay = "${vat.retry.delay:1s}") <i class="conum" data-value="4"></i><b>(4)</b>
     Single&lt;VatValidation&gt; validateVat(@Body VatValidationRequest req);
 }</code></pre>
 </div>
@@ -1194,10 +1216,14 @@ public interface VatClient extends VatValidator {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the function name <code>vies-vat-validator</code></td>
+<td>You can remove a bean from the test classpath easily.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use the function name <code>vies-vat-validator</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>AWS Lambda functions may take time to warm up. Thus, failure is something you have to plan for and it is pretty common to want to attempt to retry an operation if it fails.
 With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Micronaut Retry</a> you can try again easily.</td>
 </tr>
@@ -1205,7 +1231,7 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 </div>
 
 
-<h2 id="controller">5.3 Controller</h2>
+<h2 id="controller">6.3 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -1226,8 +1252,7 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 <div class="listingblock">
 <div class="title">invoice/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:validation"
-    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1311,7 +1336,7 @@ public class InvoiceController {
 </div>
 
 
-<h2 id="tests">5.4 Tests</h2>
+<h2 id="tests">6.4 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -1324,14 +1349,13 @@ public class InvoiceController {
 <p>We don&#8217;t want the real AWS Lambda function executed in our tests.</p>
 </div>
 <div class="paragraph">
-<p>Thus, create a bean to replace the function in the test phase:</p>
+<p>Thus, create a bean to provide an implementation of <code>VatValidator</code> in the test phase:</p>
 </div>
 <div class="listingblock">
 <div class="title">invoice/src/test/java/example/micronaut/VatValidatorMock.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.reactivex.Single;
@@ -1340,7 +1364,6 @@ import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
 
-@Replaces(VatClient.class)
 @Requires(env = Environment.TEST)
 @Singleton
 public class VatValidatorMock implements VatValidator {
@@ -1478,7 +1501,7 @@ Given a 21% VAT.</p>
 </table>
 
 
-<h1 id="runningTheApp">6 Running the app</h1>
+<h1 id="runningTheApp">7 Running the app</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
@@ -1535,7 +1558,7 @@ aws_secret_access_key=XXXXX</code></pre>
 </div>
 
 
-<h1 id="awsApiGateway">7 AWS API Gateway</h1>
+<h1 id="awsApiGateway">8 AWS API Gateway</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awsApiGateway.adoc"'>
@@ -1621,7 +1644,7 @@ maintain, monitor, and secure APIs at any scale.</p>
 </div>
 
 
-<h2 id="awsApiGatewayUrlInMicronaut">7.1 Consume API Gateway URL</h2>
+<h2 id="awsApiGatewayUrlInMicronaut">8.1 Consume API Gateway URL</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awsApiGateway/awsApiGatewayUrlInMicronaut.adoc"'>
@@ -1709,7 +1732,7 @@ that is implemented by multiple classes (<code>AwsApiGatewayVatClient</code>, <c
 </div>
 
 
-<h1 id="nextSteps">8 Next Steps</h1>
+<h1 id="nextSteps">9 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/nextSteps.adoc"'>
