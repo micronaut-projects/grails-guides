@@ -900,13 +900,11 @@ public class GenreController {
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/GenreControllerTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
 import static org.junit.Assert.assertEquals;
 
 import example.micronaut.domain.Genre;
-import example.micronaut.genre.GenreSaveCommand;
-import example.micronaut.genre.GenreUpdateCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpHeaders;
@@ -929,7 +927,10 @@ public class GenreControllerTest {
 
     @BeforeClass
     public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
+        server = ApplicationContext
+                .build()
+                .packages("example.micronaut.domain") <i class="conum" data-value="3"></i><b>(3)</b>
+                .run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
         client = server.getApplicationContext().createBean(HttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
@@ -948,13 +949,13 @@ public class GenreControllerTest {
 
         List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
 
-        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="4"></i><b>(4)</b>
         HttpResponse response = client.toBlocking().exchange(request);
         genreIds.add(entityId(response));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="4"></i><b>(4)</b>
         response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -963,12 +964,12 @@ public class GenreControllerTest {
         genreIds.add(id);
         request = HttpRequest.GET("/genres/"+id);
 
-        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
+        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="5"></i><b>(5)</b>
 
         assertEquals("Microservices", genre.getName());
 
         request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
-        response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
+        response = client.toBlocking().exchange(request);  <i class="conum" data-value="6"></i><b>(6)</b>
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
 
@@ -1033,14 +1034,18 @@ public class GenreControllerTest {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+<td>As the test&#8217;s package is not the same as the entities (<code>example.micronaut.genre</code> vs <code>example.micronaut.domain</code>) it is necessary to specify the packages to scan for entities.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>If you care just about the object in the response use <code>retrieve</code>.</td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If you care just about the object in the response use <code>retrieve</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Sometimes, receiving just the object is not enough and you need information about the response. In this case, instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
 </tr>
 </table>
