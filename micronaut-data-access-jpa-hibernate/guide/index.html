@@ -62,23 +62,25 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#usingSnapshotVersion"><strong>2</strong><span>Using Snapshot Version</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#datasource"><strong>2.1</strong><span>Configure Data Source and JPA</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>3</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#domain"><strong>2.2</strong><span>Domain</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#datasource"><strong>3.1</strong><span>Configure Data Source and JPA</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>2.3</strong><span>Repository Access</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#domain"><strong>3.2</strong><span>Domain</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>3.3</strong><span>Repository Access</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>2.5</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>3.4</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>3.5</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#usingPostgresql"><strong>4</strong><span>Using Postgresql</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the app</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#usingPostgresql"><strong>5</strong><span>Using Postgresql</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>6</strong><span>Next Steps</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -168,7 +170,24 @@ database using JPA and Hibernate.</p>
 </div>
 
 
-<h1 id="writingTheApp">2 Writing the App</h1>
+<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
+</div>
+<div class="paragraph">
+<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
+</div>
+
+
+<h1 id="writingTheApp">3 Writing the App</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -187,7 +206,7 @@ database using JPA and Hibernate.</p>
 </div>
 
 
-<h2 id="datasource">2.1 Configure Data Source and JPA</h2>
+<h2 id="datasource">3.1 Configure Data Source and JPA</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/datasource.adoc"'>
@@ -285,7 +304,7 @@ Also keep in mind that it is necessary to escape the <code>:</code> in the conne
 </div>
 
 
-<h2 id="domain">2.2 Domain</h2>
+<h2 id="domain">3.2 Domain</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/domain.adoc"'>
@@ -373,7 +392,7 @@ public class Genre {
 </div>
 
 
-<h2 id="repository">2.3 Repository Access</h2>
+<h2 id="repository">3.3 Repository Access</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/repository.adoc"'>
@@ -519,7 +538,7 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 </div>
 
 
-<h2 id="controller">2.4 Controller</h2>
+<h2 id="controller">3.4 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -902,7 +921,7 @@ public class GenreController {
 </div>
 
 
-<h2 id="tests">2.5 Tests</h2>
+<h2 id="tests">3.5 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -1078,7 +1097,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="runningTheApp">3 Running the app</h1>
+<h1 id="runningTheApp">4 Running the app</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
@@ -1092,7 +1111,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="usingPostgresql">4 Using Postgresql</h1>
+<h1 id="usingPostgresql">5 Using Postgresql</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/usingPostgresql.adoc"'>
@@ -1222,7 +1241,7 @@ $ java -jar myapp.jar</code></pre>
 </div>
 
 
-<h1 id="nextSteps">5 Next Steps</h1>
+<h1 id="nextSteps">6 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/nextSteps.adoc"'>
