@@ -76,7 +76,9 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>4</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#usingPostgresql"><strong>4</strong><span>Using Postgresql</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -86,7 +88,7 @@
         <h1>Access a database with JPA and Hibernate</h1>
         <p>Learn how to access a database with JPA and Hibernate using Micronaut.</p>
         <p><strong>Authors:</strong> Iv&Atilde;&iexcl;n L&Atilde;&sup3;pez,Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -231,11 +233,26 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
     default:
-        url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-        username: sa
-        password: ""
-        driverClassName: org.h2.Driver</code></pre>
+        url: ${JDBC_URL:`jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
+        username: ${JDBC_USER:sa}
+        password: ${JDBC_PASSWORD:""}
+        driverClassName: ${JDBC_DRIVER:org.h2.Driver}</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This way of defining the datasource properties means that we can externalize the configuration, for example for
+production environment, and also provide a default value for development. If the environment variables are not defined
+Micronaut will use the default values.<br>
+Also keep in mind that it is necessary to escape the <code>:</code> in the connection url using back ticks.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1075,7 +1092,137 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="nextSteps">4 Next Steps</h1>
+<h1 id="usingPostgresql">4 Using Postgresql</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/usingPostgresql.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>When running on production you want to use a real database instead of using H2. Let&#8217;s explain how to use Postgres.</p>
+</div>
+<div class="paragraph">
+<p>After installing Docker, execute the following command to run a postgresql container:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">docker run -it \
+    -p 5432:5432 \
+    -e POSTGRES_USER=dbuser \
+    -e POSTGRES_PASSWORD=theSecretPassword \
+    -e POSTGRES_DB=micronaut \
+    postgres:10.5-alpine</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add Postgresql driver dependency to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">runtime 'org.postgresql:postgresql:42.2.4'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add application specific configuration for production. Create the file <code>application-postgresql.yml</code>
+as follows:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application-postgresql.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
+    default:
+        url: jdbc:postgresql://localhost:5432/micronaut
+        username: dbuser
+        password: theSecretPassword
+        driverClassName: org.postgresql.Driver</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are different options to use this new configuration file and activate the <code>postgresql</code> environment:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ MICRONAUT_ENVIRONMENTS=postgresql ./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or while running the application jar file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -Dmicronaut.environments=postgresql -jar myapp.jar</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In both cases the output will be as follows and we can see that <code>postgresql</code> environment is active:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">12:52:57.812 [main] INFO  i.m.context.env.DefaultEnvironment - Established active environments: [postgresql]
+12:52:58.594 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+...</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The problem with this approach is that the <strong>production credentials</strong> are included in both the application jar
+ file and in the repository.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To fix this problem, delete the file <code>application-postgresql.yml</code> and use the externalized configuration defined previously.</p>
+</div>
+<div class="paragraph">
+<p>There are different ways to set those properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Environment variables:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ export JDBC_URL=jdbc:postgresql://localhost:5432/micronaut
+$ export JDBC_USER=dbuser
+$ export JDBC_PASSWORD=theSecretPassword
+$ export JDBC_DRIVER=org.postgresql.Driver
+
+$ java -jar myapp.jar</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configuration file. Create a configuration file for production in the same directory as the jar run the application with:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -Dmicronaut.config.files=production-config-file.yml \
+       -jar myapp.jar</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information please take a look at Micronaut&#8217;s documentation about
+<a href="https://docs.micronaut.io/snapshot/guide/index.html#config">Application Configuration</a>.</p>
+</div>
+
+
+<h1 id="nextSteps">5 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/nextSteps.adoc"'>

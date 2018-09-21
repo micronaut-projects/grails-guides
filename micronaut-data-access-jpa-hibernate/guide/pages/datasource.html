@@ -38,7 +38,10 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingPostgresql.html"><strong>4</strong><span>Using Postgresql</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
                         </div>
                         
                     </div>
@@ -125,11 +128,26 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
     default:
-        url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-        username: sa
-        password: ""
-        driverClassName: org.h2.Driver</code></pre>
+        url: ${JDBC_URL:`jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
+        username: ${JDBC_USER:sa}
+        password: ${JDBC_PASSWORD:""}
+        driverClassName: ${JDBC_DRIVER:org.h2.Driver}</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This way of defining the datasource properties means that we can externalize the configuration, for example for
+production environment, and also provide a default value for development. If the environment variables are not defined
+Micronaut will use the default values.<br>
+Also keep in mind that it is necessary to escape the <code>:</code> in the connection url using back ticks.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
