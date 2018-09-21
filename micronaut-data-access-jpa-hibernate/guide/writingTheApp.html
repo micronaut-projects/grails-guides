@@ -186,7 +186,7 @@ runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</
 This way of defining the datasource properties means that we can externalize the configuration, for example for
 production environment, and also provide a default value for development. If the environment variables are not defined
 Micronaut will use the default values.<br>
-Also keep in mind that it is necessary to escape the <code>:</code> in the connection url using back ticks.
+Also keep in mind that it is necessary to escape the <code>:</code> in the connection url using back ticks <code>`</code>.
 </td>
 </tr>
 </table>
@@ -303,6 +303,94 @@ public class Genre {
         return "Genre{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            '}';
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous domain has a <code>OneToMany</code> relationship with the domain <code>Book</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/domain/Book.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.domain;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "book")
+public class Book {
+
+    public Book() {}
+
+    public Book(@NotNull String isbn, @NotNull String name, Genre genre) {
+        this.isbn = isbn;
+        this.name = name;
+        this.genre = genre;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @NotNull
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @NotNull
+    @Column(name = "isbn", nullable = false)
+    private String isbn;
+
+    @ManyToOne
+    private Genre genre;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", isbn='" + isbn + '\'' +
+            ", genre=" + genre +
             '}';
     }
 }</code></pre>
@@ -450,7 +538,7 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>As this methods modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
+<td>This method modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
 </div>
@@ -494,7 +582,6 @@ import java.util.Objects;
 
 public class GenreSaveCommand {
 
-    @NotNull
     @NotBlank
     private String name;
 
