@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.3 Repository Access null</title>
+    <title>3.4 Repository Access null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3.3 Repository Access</h1>
+                    <h1>3.4 Repository Access</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,7 +85,7 @@ function addJsClass() {
 
                 
 
-<h2 id="repository">3.3 Repository Access</h2>
+<h2 id="repository">3.4 Repository Access</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/repository.adoc"'>
@@ -98,28 +98,28 @@ function addJsClass() {
 <p>Create an interface to define the operations to access the database:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
+<div class="title">src/main/java/example/micronaut/GenreRepository.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import example.micronaut.PaginationArguments;
-import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
 public interface GenreRepository {
 
-    Optional&lt;Genre&gt; findById(Long id);
+    Optional&lt;Genre&gt; findById(@NotNull Long id);
 
-    Genre save(String name);
+    Genre save(@NotBlank String name);
 
-    void deleteById(Long id);
+    void deleteById(@NotNull Long id);
 
-    List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs);
+    List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args);
 
-    int update(Long id, String name);
+    int update(@NotNull Long id, @NotBlank String name);
 }</code></pre>
 </div>
 </div>
@@ -127,12 +127,10 @@ public interface GenreRepository {
 <p>And the implementation:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import example.micronaut.PaginationArguments;
-import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
 import io.micronaut.spring.tx.annotation.Transactional;
@@ -141,6 +139,8 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -150,20 +150,23 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @PersistenceContext
     private EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
+    private final ApplicationConfiguration applicationConfiguration;
 
-    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager) { <i class="conum" data-value="2"></i><b>(2)</b>
+    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager,
+                               ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.entityManager = entityManager;
+        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Override
     @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
-    public Optional&lt;Genre&gt; findById(Long id) {
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
     @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
-    public Genre save(String name) {
+    public Genre save(@NotBlank String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
         return genre;
@@ -171,35 +174,28 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(@NotNull Long id) {
         findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
     }
 
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
     @Transactional(readOnly = true)
-    public List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs) {
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
-        if (sortingArgs != null) {
-            if (sortingArgs.getOrder() != null &amp;&amp; VALID_PROPERTY_NAMES.contains(sortingArgs.getSort())) {
-                qlString += " ORDER BY g." + sortingArgs.getSort() + " " + sortingArgs.getOrder().toString().toLowerCase();
-            }
+        if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
+                qlString += " ORDER BY g." + args.getSort().get() + " " + args.getOrder().get().toLowerCase();
         }
-        TypedQuery query = entityManager.createQuery(qlString, Genre.class);
-        if (paginationArgs != null) {
-            if (paginationArgs.getMax() != null) {
-                query.setMaxResults(paginationArgs.getMax());
-            }
-            if (paginationArgs.getOffset() != null) {
-                query.setFirstResult(paginationArgs.getOffset());
-            }
-        }
+        TypedQuery&lt;Genre&gt; query = entityManager.createQuery(qlString, Genre.class);
+        query.setMaxResults(args.getMax().orElseGet(applicationConfiguration::getMax));
+        args.getOffset().ifPresent(query::setFirstResult);
+
         return query.getResultList();
     }
 
     @Override
     @Transactional
-    public int update(Long id, String name) {
+    public int update(@NotNull Long id, @NotBlank String name) {
         return entityManager.createQuery("UPDATE Genre g SET name = :name where id = :id")
                 .setParameter("name", name)
                 .setParameter("id", id)
@@ -228,6 +224,9 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 <td>This method modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>You should use Micronaut&#8217;s version of <code>@Transactional</code>. See  <a href="https://docs.micronaut.io/snapshot/guide/index.html#springAop">Bridging Spring AOP</a> section of the docs.</p>
 </div>
 
 

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.2 Domain null</title>
+    <title>3.3 Application Configuration null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3.2 Domain</h1>
+                    <h1>3.3 Application Configuration</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,184 +85,80 @@ function addJsClass() {
 
                 
 
-<h2 id="domain">3.2 Domain</h2>
+<h2 id="appConfiguration">3.3 Application Configuration</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/domain.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/appConfiguration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Create the domain entities:</p>
+<p>Create an interface to encapsulate the application configuration settings:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/domain/Genre.java</div>
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.domain;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-@Table(name = "genre")
-public class Genre {
+public interface ApplicationConfiguration {
 
-    public Genre() {}
-
-    public Genre(@NotNull String name) {
-        this.name = name;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @NotNull
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "genre")
-    private Set&lt;Book&gt; books = new HashSet&lt;&gt;();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set&lt;Book&gt; getBooks() {
-        return books;
-    }
-
-    public void setBooks(Set&lt;Book&gt; books) {
-        this.books = books;
-    }
-
-    @Override
-    public String toString() {
-        return "Genre{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            '}';
-    }
+    @NotNull Integer getMax();
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous domain has a <code>OneToMany</code> relationship with the domain <code>Book</code>.</p>
+<p>In Micronaut, like Spring Boot and Grails, you can create type safe configuration by creating classes that are annotated with <a href="https://docs.micronaut.io/snapshot/guide/index.html#configurationProperties">@ConfigurationProperties</a>.</p>
+</div>
+<div class="paragraph">
+<p>Create a <code>ApplicationConfigurationProperties</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/domain/Book.java</div>
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.domain;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import io.micronaut.context.annotation.ConfigurationProperties;
 
-@Entity
-@Table(name = "book")
-public class Book {
+@ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
-    public Book() {}
+    protected final Integer DEFAULT_MAX = 10;
 
-    public Book(@NotNull String isbn, @NotNull String name, Genre genre) {
-        this.isbn = isbn;
-        this.name = name;
-        this.genre = genre;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @NotNull
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @NotNull
-    @Column(name = "isbn", nullable = false)
-    private String isbn;
-
-    @ManyToOne
-    private Genre genre;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
+    private Integer max = DEFAULT_MAX;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Book{");
-        sb.append("id=");
-        sb.append(id);
-        sb.append(", name='");
-        sb.append(name);
-        sb.append("', isbn='");
-        sb.append(isbn);
-        sb.append("', genre='");
-        sb.append(genre);
-        sb.append("'}");
-        return sb.toString();
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        if(max != null) {
+            this.max = max;
+        }
     }
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>@ConfigurationProperties` annotation takes a configuration prefix.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can override <code>max</code> if you add to your <code>src/main/resources/application.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">application:
+    max: 50</code></pre>
 </div>
 </div>
 

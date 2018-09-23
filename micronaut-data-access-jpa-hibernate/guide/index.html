@@ -70,11 +70,13 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#domain"><strong>3.2</strong><span>Domain</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>3.3</strong><span>Repository Access</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#appConfiguration"><strong>3.3</strong><span>Application Configuration</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>3.4</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>3.4</strong><span>Repository Access</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>3.5</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>3.5</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>3.6</strong><span>Tests</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the app</span></a></div>
             
@@ -196,6 +198,15 @@ database using JPA and Hibernate.</p>
 </div>
 
 
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>complete</code> and a Micronaut app inside it with default package: <code>example.micronaut</code></p>
+</div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
 </div>
@@ -468,19 +479,103 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", isbn='" + isbn + '\'' +
-            ", genre=" + genre +
-            '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Book{");
+        sb.append("id=");
+        sb.append(id);
+        sb.append(", name='");
+        sb.append(name);
+        sb.append("', isbn='");
+        sb.append(isbn);
+        sb.append("', genre='");
+        sb.append(genre);
+        sb.append("'}");
+        return sb.toString();
     }
 }</code></pre>
 </div>
 </div>
 
 
-<h2 id="repository">3.3 Repository Access</h2>
+<h2 id="appConfiguration">3.3 Application Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/appConfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an interface to encapsulate the application configuration settings:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.validation.constraints.NotNull;
+
+public interface ApplicationConfiguration {
+
+    @NotNull Integer getMax();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In Micronaut, like Spring Boot and Grails, you can create type safe configuration by creating classes that are annotated with <a href="https://docs.micronaut.io/snapshot/guide/index.html#configurationProperties">@ConfigurationProperties</a>.</p>
+</div>
+<div class="paragraph">
+<p>Create a <code>ApplicationConfigurationProperties</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+
+@ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
+
+    protected final Integer DEFAULT_MAX = 10;
+
+    private Integer max = DEFAULT_MAX;
+
+    @Override
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        if(max != null) {
+            this.max = max;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>@ConfigurationProperties` annotation takes a configuration prefix.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can override <code>max</code> if you add to your <code>src/main/resources/application.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">application:
+    max: 50</code></pre>
+</div>
+</div>
+
+
+<h2 id="repository">3.4 Repository Access</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/repository.adoc"'>
@@ -493,28 +588,28 @@ public class Book {
 <p>Create an interface to define the operations to access the database:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
+<div class="title">src/main/java/example/micronaut/GenreRepository.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import example.micronaut.PaginationArguments;
-import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
 public interface GenreRepository {
 
-    Optional&lt;Genre&gt; findById(Long id);
+    Optional&lt;Genre&gt; findById(@NotNull Long id);
 
-    Genre save(String name);
+    Genre save(@NotBlank String name);
 
-    void deleteById(Long id);
+    void deleteById(@NotNull Long id);
 
-    List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs);
+    List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args);
 
-    int update(Long id, String name);
+    int update(@NotNull Long id, @NotBlank String name);
 }</code></pre>
 </div>
 </div>
@@ -522,12 +617,10 @@ public interface GenreRepository {
 <p>And the implementation:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import example.micronaut.PaginationArguments;
-import example.micronaut.SortingArguments;
 import example.micronaut.domain.Genre;
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
 import io.micronaut.spring.tx.annotation.Transactional;
@@ -536,6 +629,8 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -545,20 +640,23 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @PersistenceContext
     private EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
+    private final ApplicationConfiguration applicationConfiguration;
 
-    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager) { <i class="conum" data-value="2"></i><b>(2)</b>
+    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager,
+                               ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.entityManager = entityManager;
+        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Override
     @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
-    public Optional&lt;Genre&gt; findById(Long id) {
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
     @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
-    public Genre save(String name) {
+    public Genre save(@NotBlank String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
         return genre;
@@ -566,35 +664,28 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(@NotNull Long id) {
         findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
     }
 
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
     @Transactional(readOnly = true)
-    public List&lt;Genre&gt; findAll(PaginationArguments paginationArgs, SortingArguments sortingArgs) {
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
-        if (sortingArgs != null) {
-            if (sortingArgs.getOrder() != null &amp;&amp; VALID_PROPERTY_NAMES.contains(sortingArgs.getSort())) {
-                qlString += " ORDER BY g." + sortingArgs.getSort() + " " + sortingArgs.getOrder().toString().toLowerCase();
-            }
+        if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
+                qlString += " ORDER BY g." + args.getSort().get() + " " + args.getOrder().get().toLowerCase();
         }
-        TypedQuery query = entityManager.createQuery(qlString, Genre.class);
-        if (paginationArgs != null) {
-            if (paginationArgs.getMax() != null) {
-                query.setMaxResults(paginationArgs.getMax());
-            }
-            if (paginationArgs.getOffset() != null) {
-                query.setFirstResult(paginationArgs.getOffset());
-            }
-        }
+        TypedQuery&lt;Genre&gt; query = entityManager.createQuery(qlString, Genre.class);
+        query.setMaxResults(args.getMax().orElseGet(applicationConfiguration::getMax));
+        args.getOffset().ifPresent(query::setFirstResult);
+
         return query.getResultList();
     }
 
     @Override
     @Transactional
-    public int update(Long id, String name) {
+    public int update(@NotNull Long id, @NotBlank String name) {
         return entityManager.createQuery("UPDATE Genre g SET name = :name where id = :id")
                 .setParameter("name", name)
                 .setParameter("id", id)
@@ -624,9 +715,12 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>You should use Micronaut&#8217;s version of <code>@Transactional</code>. See  <a href="https://docs.micronaut.io/snapshot/guide/index.html#springAop">Bridging Spring AOP</a> section of the docs.</p>
+</div>
 
 
-<h2 id="controller">3.4 Controller</h2>
+<h2 id="controller">3.5 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -654,12 +748,11 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 <p>Create two classes to encapsulate Save and Update operations:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreSaveCommand.java</div>
+<div class="title">src/main/java/example/micronaut/GenreSaveCommand.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class GenreSaveCommand {
@@ -680,26 +773,13 @@ public class GenreSaveCommand {
     public void setName(String name) {
         this.name = name;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GenreSaveCommand that = (GenreSaveCommand) o;
-        return Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreUpdateCommand.java</div>
+<div class="title">src/main/java/example/micronaut/GenreUpdateCommand.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -709,7 +789,6 @@ public class GenreUpdateCommand {
     @NotNull
     private Long id;
 
-    @NotNull
     @NotBlank
     private String name;
 
@@ -735,146 +814,106 @@ public class GenreUpdateCommand {
     public void setName(String name) {
         this.name = name;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GenreUpdateCommand that = (GenreUpdateCommand) o;
-        return Objects.equals(id, that.id) &amp;&amp;
-                Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Create several POJOs to encapsulate Sorting and Pagination:</p>
+<p>Create a POJO to encapsulate Sorting and Pagination:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/SortingOrder.java</div>
+<div class="title">src/main/java/example/micronaut/SortingAndOrderArguments.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-public enum SortingOrder {
-    ASC, DESC;
+import javax.annotation.Nullable;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.Optional;
 
-    public final static SortingOrder DEFAULT_SORTING_ORDER = SortingOrder.ASC;
+public class SortingAndOrderArguments {
+    @Nullable
+    @PositiveOrZero <i class="conum" data-value="1"></i><b>(1)</b>
+    private Integer offset;
 
-    public static SortingOrder of(String str) {
-        if (str != null) {
-            if (ASC.toString().equalsIgnoreCase(str)) {
-                return ASC;
-            }
-            if (DESC.toString().equalsIgnoreCase(str)) {
-                return DESC;
-            }
-        }
-        return DEFAULT_SORTING_ORDER;
-    }
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/SortingArguments.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+    @Nullable
+    @Positive <i class="conum" data-value="1"></i><b>(1)</b>
+    private Integer max;
 
-public class SortingArguments {
+    @Nullable
+    @Pattern(regexp = "id|name")  <i class="conum" data-value="1"></i><b>(1)</b>
     private String sort;
-    private SortingOrder order;
 
-    public SortingArguments(String sort, SortingOrder order) {
-        this.sort = sort;
-        this.order = order;
+    @Pattern(regexp = "asc|ASC|desc|DESC")  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Nullable
+    private String order;
+
+    public SortingAndOrderArguments() {
+
     }
 
-    public String getSort() {
-        return sort;
+    public Optional&lt;Integer&gt; getOffset() {
+        if(offset == null) {
+            return Optional.empty();
+        }
+        return Optional.of(offset);
     }
 
-    public SortingOrder getOrder() {
-        return order;
+    public void setOffset(@Nullable Integer offset) {
+        this.offset = offset;
     }
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/PaginationArguments.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-public class PaginationArguments {
-    Integer offset;
-    Integer max;
+    public Optional&lt;Integer&gt; getMax() {
+        if(max == null) {
+            return Optional.empty();
+        }
+        return Optional.of(max);
+    }
 
-    public PaginationArguments(Integer offset, Integer max) {
-        this.offset = offset == null || offset &lt; 0 ? 0 : offset;
+    public void setMax(@Nullable Integer max) {
         this.max = max;
     }
 
-    public Integer getOffset() {
-        return offset;
+    public Optional&lt;String&gt; getSort() {
+        if(sort == null) {
+            return Optional.empty();
+        }
+        return Optional.of(sort);
     }
 
-    public Integer getMax() {
-        return max;
+    public void setSort(@Nullable String sort) {
+        this.sort = sort;
     }
 
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a <code>ConfigurationProperties</code> object to encapsulate the configuration of the default <code>max</code> value.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+    public Optional&lt;String&gt; getOrder() {
+        if(order == null) {
+            return Optional.empty();
+        }
+        return Optional.of(order);
+    }
 
-public interface ApplicationConfiguration {
-
-    Integer getMax();
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import io.micronaut.context.annotation.ConfigurationProperties;
-
-@ConfigurationProperties("application")
-public class ApplicationConfigurationProperties implements ApplicationConfiguration {
-
-    protected final Integer DEFAULT_MAX = 10;
-
-    private Integer max = DEFAULT_MAX;
-
-    @Override
-    public Integer getMax() {
-        return max;
+    public void setOrder(@Nullable String order) {
+        this.order = order;
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.validation.constraints</code> Constraints to ensure the incoming data matches your expectations.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Create <code>GenreController</code>, a controller which exposes a resource with the common CRUD operations:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/genre/GenreController.java</div>
+<div class="title">src/main/java/example/micronaut/GenreController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import example.micronaut.ApplicationConfiguration;
-import example.micronaut.PaginationArguments;
-import example.micronaut.SortingArguments;
-import example.micronaut.SortingOrder;
 import example.micronaut.domain.Genre;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -886,7 +925,6 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.validation.Validated;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -897,12 +935,8 @@ public class GenreController {
 
     protected final GenreRepository genreRepository;
 
-    protected final ApplicationConfiguration applicationConfiguration;
-
-    public GenreController(GenreRepository genreRepository,
-                           ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="3"></i><b>(3)</b>
+    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.genreRepository = genreRepository;
-        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
@@ -921,16 +955,9 @@ public class GenreController {
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
     }
 
-    @Get(value = "/") <i class="conum" data-value="9"></i><b>(9)</b>
-    public List&lt;Genre&gt; list(@Nullable Integer offset,
-                            @Nullable Integer max,
-                            @Nullable String sort,
-                            @Nullable String order) {
-        PaginationArguments paginationArguments = new PaginationArguments(offset != null ? offset : 0,
-                max != null ? max : applicationConfiguration.getMax());
-        SortingArguments sortingArguments = sort != null ? new SortingArguments(sort, SortingOrder.of(order)) : null;
-
-        return genreRepository.findAll(paginationArguments, sortingArguments);
+    @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
+    public List&lt;Genre&gt; list(SortingAndOrderArguments args) {
+        return genreRepository.findAll(args);
     }
 
     @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
@@ -994,7 +1021,7 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates optional URL parameters.</td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates URL parameters being mapped to a single POJO.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
@@ -1008,7 +1035,7 @@ public class GenreController {
 </div>
 
 
-<h2 id="tests">3.5 Tests</h2>
+<h2 id="tests">3.6 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -1023,10 +1050,12 @@ public class GenreController {
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/GenreControllerTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import static org.junit.Assert.assertEquals;
 
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import example.micronaut.domain.Genre;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
@@ -1035,10 +1064,13 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.server.EmbeddedServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1052,7 +1084,6 @@ public class GenreControllerTest {
     public static void setupServer() {
         server = ApplicationContext
                 .build()
-                .packages("example.micronaut.domain") <i class="conum" data-value="3"></i><b>(3)</b>
                 .run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
         client = server.getApplicationContext().createBean(HttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
     }
@@ -1067,18 +1098,28 @@ public class GenreControllerTest {
         }
     }
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void testFindNonExistingGenreReturns404() {
+        thrown.expect(HttpClientResponseException.class);
+        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.NOT_FOUND))));
+        HttpResponse response = client.toBlocking().exchange(HttpRequest.GET("/genres/99"));
+    }
+
     @Test
     public void testGenreCrudOperations() {
 
         List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
 
-        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
         HttpResponse response = client.toBlocking().exchange(request);
         genreIds.add(entityId(response));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="4"></i><b>(4)</b>
+        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
         response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -1087,12 +1128,12 @@ public class GenreControllerTest {
         genreIds.add(id);
         request = HttpRequest.GET("/genres/"+id);
 
-        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="5"></i><b>(5)</b>
+        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
 
         assertEquals("Microservices", genre.getName());
 
         request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
-        response = client.toBlocking().exchange(request);  <i class="conum" data-value="6"></i><b>(6)</b>
+        response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
 
@@ -1100,24 +1141,24 @@ public class GenreControllerTest {
         genre = client.toBlocking().retrieve(request, Genre.class);
         assertEquals("Micro-services", genre.getName());
 
-        request = HttpRequest.GET("/genres");
+        request = HttpRequest.GET("/genres/list");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(2, genres.size());
 
-        request = HttpRequest.GET("/genres?max=1");
+        request = HttpRequest.GET("/genres/list?max=1");
         genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(1, genres.size());
         assertEquals("DevOps", genres.get(0).getName());
 
-        request = HttpRequest.GET("/genres?max=1&amp;order=desc&amp;sort=name");
+        request = HttpRequest.GET("/genres/list?max=1&amp;order=desc&amp;sort=name");
         genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(1, genres.size());
         assertEquals("Micro-services", genres.get(0).getName());
 
-        request = HttpRequest.GET("/genres?max=1&amp;offset=10");
+        request = HttpRequest.GET("/genres/list?max=1&amp;offset=10");
         genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(0, genres.size());
@@ -1157,18 +1198,14 @@ public class GenreControllerTest {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>As the test&#8217;s package is not the same as the entities (<code>example.micronaut.genre</code> vs <code>example.micronaut.domain</code>) it is necessary to specify the packages to scan for entities.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>If you care just about the object in the response use <code>retrieve</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Sometimes, receiving just the object is not enough and you need information about the response. In this case, instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
 </tr>
 </table>
@@ -1233,98 +1270,54 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Add application specific configuration for production. Create the file <code>application-postgresql.yml</code>
-as follows:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/application-postgresql.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
-    default:
-        url: jdbc:postgresql://localhost:5432/micronaut
-        username: dbuser
-        password: theSecretPassword
-        driverClassName: org.postgresql.Driver</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>There are different options to use this new configuration file and activate the <code>postgresql</code> environment:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ MICRONAUT_ENVIRONMENTS=postgresql ./gradlew run</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Or while running the application jar file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -Dmicronaut.environments=postgresql -jar myapp.jar</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In both cases the output will be as follows and we can see that <code>postgresql</code> environment is active:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">12:52:57.812 [main] INFO  i.m.context.env.DefaultEnvironment - Established active environments: [postgresql]
-12:52:58.594 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-...</code></pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-The problem with this approach is that the <strong>production credentials</strong> are included in both the application jar
- file and in the repository.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>To fix this problem, delete the file <code>application-postgresql.yml</code> and use the externalized configuration defined previously.</p>
-</div>
-<div class="paragraph">
-<p>There are different ways to set those properties:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Environment variables:</p>
-</li>
-</ul>
+<p>To use postgresql, setup several environment variables which match those defined in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ export JDBC_URL=jdbc:postgresql://localhost:5432/micronaut
 $ export JDBC_USER=dbuser
 $ export JDBC_PASSWORD=theSecretPassword
-$ export JDBC_DRIVER=org.postgresql.Driver
-
-$ java -jar myapp.jar</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Configuration file. Create a configuration file for production in the same directory as the jar run the application with:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -Dmicronaut.config.files=production-config-file.yml \
-       -jar myapp.jar</code></pre>
+$ export JDBC_DRIVER=org.postgresql.Driver</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For more information please take a look at Micronaut&#8217;s documentation about
-<a href="https://docs.micronaut.io/snapshot/guide/index.html#config">Application Configuration</a>.</p>
+<p>Run the app:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you take a close look to the output, you can see that the app uses postgresql:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">..
+...
+08:40:02.746 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+....</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Connect to your postgresql database and you will see both <code>genre</code> and <code>book</code> tables.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/datagrip.png" alt="datagrip">
+</div>
+</div>
+<div class="paragraph">
+<p>Save one genre and your <code>genre</code> table will contain now an entry.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl -X "POST" "http://localhost:8080/genres" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  "name": "music"
+}'</code></pre>
+</div>
 </div>
 
 
