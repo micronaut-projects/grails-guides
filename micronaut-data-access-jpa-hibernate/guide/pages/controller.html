@@ -321,7 +321,7 @@ public class GenreController {
     }
 
     @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
-    public List&lt;Genre&gt; list(SortingAndOrderArguments args) {
+    public List&lt;Genre&gt; list(@Valid SortingAndOrderArguments args) {
         return genreRepository.findAll(args);
     }
 

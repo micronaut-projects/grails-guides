@@ -875,7 +875,7 @@ public class GenreController {
     }
 
     @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
-    public List&lt;Genre&gt; list(SortingAndOrderArguments args) {
+    public List&lt;Genre&gt; list(@Valid SortingAndOrderArguments args) {
         return genreRepository.findAll(args);
     }
 
@@ -1019,6 +1019,13 @@ public class GenreControllerTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void supplyAnInvalidOrderTriggersValidationFailure() {
+        thrown.expect(HttpClientResponseException.class);
+        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.BAD_REQUEST))));
+        client.toBlocking().exchange(HttpRequest.GET("/genres/list?order=foo"));
+    }
 
     @Test
     public void testFindNonExistingGenreReturns404() {
