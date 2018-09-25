@@ -1,0 +1,530 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the Function null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Functions deployed in AWS Lambda
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheLambda.html"><strong>2</strong><span>Writing the Function</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/awslambda.html"><strong>4</strong><span>Deploy to AWS Lambda</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>5</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/awsApiGateway.html"><strong>7</strong><span>AWS API Gateway</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>8</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the Function</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#functionpojos"><strong>2.1</strong><span>POJOs</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#soap"><strong>2.2</strong><span>SOAP VAT Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#function"><strong>2.3</strong><span>Function</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#functiontests"><strong>2.4</strong><span>Function Tests</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheLambda">2 Writing the Function</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-function example.micronaut.vies-vat-validator --lang groovy</code></pre>
+</div>
+</div>
+
+
+<h2 id="functionpojos">2.1 POJOs</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functionpojos.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a POJO to encapsulate the validation request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+  "memberStateCode": "es",
+  "vatNumber": "B86412491"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/main/groovy/example/micronaut/VatValidationRequest.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class VatValidationRequest implements Serializable {
+    String memberStateCode
+    String vatNumber
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And another POJO to encapsulate the expected response. Note: we add a <code>Boolean valid</code> property.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+  "memberStateCode": "es",
+  "vatNumber": "B86412491"
+  "valid": true
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/main/groovy/example/micronaut/VatValidation.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class VatValidation extends VatValidationRequest implements Serializable {
+    Boolean valid
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="soap">2.2 SOAP VAT Validation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/soap.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>VIES (<a href="http://ec.europa.eu/taxation_customs/vies/faq.html">VAT Information Exchange System</a>) is an electronic mean of validating VAT-identification numbers of economic operators registered in the European Union for cross border transactions on goods or services.</p>
+</div>
+<div class="paragraph">
+<p>For example, if you create an e-commerce Web application in the European union you would need to check the validity of the purchaser&#8217;s
+VAT Number in order to create a proper invoice.</p>
+</div>
+<div class="paragraph">
+<p>To automate the validation checks, the EU does not offer a REST endpoint but a SOAP service. Its WSDL file can be obtained <a href="http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl">here</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>SOAP</strong> (originally Simple Object Access Protocol) is a protocol specification for exchanging structured information in the implementation of web services in computer networks. Its purpose is to induce extensibility, neutrality and independence</p>
+</div>
+<div class="paragraph">
+<p>Create <code>VatService</code> to do a SOAP request to validate the VAT Number.</p>
+</div>
+<div class="paragraph">
+<p>To consume the SOAP service we could have use a SOAP library. However, the use case is so simple we are going to use the Micronaut HTTP Client and build
+the SOAP envelope manually.</p>
+</div>
+<div class="paragraph">
+<p>Add <code>http-client</code> dependency to <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut:http-client"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>VatService</code> which consumes the SOAP Service:</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/main/groovy/example/micronaut/VatService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.Client
+import io.micronaut.http.client.RxHttpClient
+import io.reactivex.Flowable
+import io.reactivex.Single
+
+import javax.inject.Singleton
+
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class VatService {
+    private static final String SERVER = "http://ec.europa.eu"
+    private static final String PATH = "/taxation_customs/vies/services/checkVatService"
+    private static final String VALID_XML_OPEN_TAG = "&lt;valid&gt;"
+    private static final String VALID_XML_CLOSE_TAG = "&lt;/valid&gt;"
+
+    protected final RxHttpClient client
+
+    VatService(@Client("http://ec.europa.eu") RxHttpClient client) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.client = client
+    }
+
+    Single&lt;Boolean&gt; validateVat(String memberStateCode, String vatNumber) {
+        String soapEnvelope = soapEnvelope(memberStateCode, vatNumber)
+        HttpRequest request = HttpRequest.POST("${SERVER}${PATH}".toString(), soapEnvelope)  <i class="conum" data-value="3"></i><b>(3)</b>
+                .contentType("application/soap+xml")
+
+        Flowable&lt;String&gt; response = client.retrieve(request, String.class)
+        response.firstOrError().map(this.&amp;parseResponseToBoolean) as Single&lt;Boolean&gt;
+    }
+
+    private Boolean parseResponseToBoolean(String response) {
+        if (!response.contains(VALID_XML_OPEN_TAG) || !response.contains(VALID_XML_CLOSE_TAG)) {
+            return false
+        }
+        int beginIndex = response.indexOf(VALID_XML_OPEN_TAG) + VALID_XML_OPEN_TAG.length()
+        String validResponse = response.substring(beginIndex, response.indexOf(VALID_XML_CLOSE_TAG))
+        Boolean.valueOf(validResponse)
+    }
+
+    private String soapEnvelope(String memberStateCode, String vatNumber) {
+        """\
+&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"&gt;
+&lt;soapenv:Header/&gt;
+&lt;soapenv:Body xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"&gt;
+&lt;urn:checkVat xmlns:urn=\"urn:ec.europa.eu:taxud:vies:services:checkVat:types\"&gt;
+&lt;urn:countryCode&gt;${memberStateCode}&lt;/urn:countryCode&gt;
+&lt;urn:vatNumber&gt;${vatNumber}&lt;/urn:vatNumber&gt;
+&lt;/urn:checkVat&gt;
+&lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;"""
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor Injection of Micronaut RxClient</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a POST Request.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="function">2.3 Function</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/function.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Edit <code>ViesVatValidatorFunction</code></p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/main/groovy/example/micronaut/ViesVatValidatorFunction.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.Field
+import javax.inject.Inject
+
+@Field @Inject VatService vatService <i class="conum" data-value="1"></i><b>(1)</b>
+
+VatValidation viesVatValidator(VatValidationRequest request) {  <i class="conum" data-value="2"></i><b>(2)</b>
+    final String memberStateCode = request.getMemberStateCode()
+    final String vatNumber = request.getVatNumber()
+    vatService.validateVat(memberStateCode, vatNumber)
+            .map { Boolean valid -&gt; new VatValidation(memberStateCode: memberStateCode, vatNumber: vatNumber, valid: valid) }
+            .blockingGet() <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In order to make use of dependency injection in your Groovy function, use the <code>groovy.transform.Field</code> annotation transform in addition to the <code>@Inject</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We define a method with a POJO as input or output. That it is the easiest way to have a parameter with an incoming JSON Payload
+and JSON Payload response.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We cannot return a non-blocking type due to AWS Lambda <a href="https://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-req-resp.html">Handler Input/Output supported Types</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Modify <code>logback.xml</code> to set <code>DEBUG</code> level for package <code>example.micronaut</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/main/resources/logback.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
+
+    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+
+    &lt;root level="info"&gt;
+        &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;/root&gt;
+    &lt;logger name="example.micronaut" level="DEBUG"/&gt;
+&lt;/configuration&gt;</code></pre>
+</div>
+</div>
+
+
+<h2 id="functiontests">2.4 Function Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functiontests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><code>build.gradle</code> already contains these dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testRuntime "io.micronaut:http-server-netty"
+testRuntime "io.micronaut:function-web"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because of that, testing your functions is really easy.</p>
+</div>
+<div class="paragraph">
+<p>First modify <code>ViesVatValidatorClient</code> interface to match to the method signature forced by <code>Function&lt;VatValidationRequest, VatValidation&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/test/groovy/example/micronaut/ViesVatValidatorClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.function.client.FunctionClient
+import io.micronaut.http.annotation.Body
+import io.reactivex.Single
+
+import javax.inject.Named
+
+@FunctionClient <i class="conum" data-value="1"></i><b>(1)</b>
+interface ViesVatValidatorClient {
+
+    @Named("vies-vat-validator") <i class="conum" data-value="2"></i><b>(2)</b>
+    Single&lt;VatValidation&gt; apply(@Body VatValidationRequest request) <i class="conum" data-value="3"></i><b>(3)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>FunctionClient</code> annotation allows applying introduction advise to an interface such that methods defined by the interface become invokers of remote functions configured by the application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>For a method name <code>viesVatValidator</code> method the function URI is <code>vies-vat-validator</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Functions that only return a value are mapped to HTTP GET requests, whilst functions that accept an input require an HTTP POST. Thus, use <code>@Body</code> to supply the POJO.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now you can start up the Micronaut application and access your function via the client interface in your test.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>ViesVatValidatorFunctionSpec.groovy</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">vies-vat-validator/src/test/groovy/example/micronaut/ViesVatValidatorFunctionSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Specification
+import spock.lang.Unroll
+
+class ViesVatValidatorFunctionSpec extends Specification {
+
+    @Unroll("#code #vatNumber is #description")
+    void testViesVatValidatorFunction(String code, String vatNumber, boolean expected, String description) throws Exception {
+        given:
+        EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class)
+
+        when:
+        ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class)
+
+        then:
+        noExceptionThrown()
+
+        when:
+        VatValidationRequest req = new VatValidationRequest(memberStateCode: code, vatNumber: vatNumber)
+
+        then:
+        expected == client.apply(req).blockingGet().valid
+
+        cleanup:
+        server.stop()
+        server.close()
+
+        where:
+        code | vatNumber   | expected
+        "es" | "B99286353" | true
+        "es" | "B19280031" | true
+        "es" | "XXXXXXXXX" | false
+
+        description = expected ? 'is valid' : 'is invalid'
+
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/sam.html"><strong>3</strong><span>Test with SAM CLI</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
