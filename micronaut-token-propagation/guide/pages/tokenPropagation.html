@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.3 Token Propagation null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Token Propagation
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>3</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.3 Token Propagation</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="tokenPropagation">3.3 Token Propagation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/tokenPropagation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>As you can see propagating of the JWT token to other microservices in our app complicates the code.
+We need to capture the <code>Authorization</code> header in the controller method arguments and then pass it to the <code>@Client</code> bean.
+In an app with several controllers and declarative clients, it can lead to a lot of repetition. Fortunately, Micronaut
+includes a feature called token propagation. We can tell our app to propagate the incoming token to a set of outgoing requests.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s configure token propagation. We need to modify <code>application.yml</code> in the <code>gateway</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    security:
+        token:
+    ...
+    ..
+    ..
+            writer:
+                header:
+                    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+            propagation:
+                enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+                serviceIdRegex: "userecho"
+....
+..</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Micronaut ships with several <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable token propagation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We only want to propagate the token to certain services. We can create a regular expression to match those services ids.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We can simplify the code:</p>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserController.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.security.annotation.Secured;
+import io.reactivex.Single;
+
+@Controller("/user")
+public class UserController {
+
+    private final UsernameFetcher usernameFetcher;
+
+    public UserController(UsernameFetcher usernameFetcher) {
+        this.usernameFetcher = usernameFetcher;
+    }
+
+    @Secured("isAuthenticated()")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get
+    Single&lt;String&gt; index() {
+        return usernameFetcher.findUsername();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UsernameFetcher.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UsernameFetcher.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.reactivex.Single;
+
+public interface UsernameFetcher {
+    Single&lt;String&gt; findUsername();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserEchoClient.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserEchoClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.annotation.Client;
+import io.reactivex.Single;
+
+@Client(id = "userecho")
+@Requires(notEnv = Environment.TEST)
+public interface UserEchoClient extends UsernameFetcher {
+
+    @Get("/user")
+    Single&lt;String&gt; findUsername();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserEchoClientReplacement.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/java/example/micronaut/UserEchoClientReplacement.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Header;
+import io.reactivex.Single;
+
+import javax.inject.Singleton;
+
+@Requires(env = Environment.TEST)
+@Singleton
+public class UserEchoClientReplacement implements UsernameFetcher {
+
+    @Override
+    public Single&lt;String&gt; findUsername() {
+        return Single.just("sherlock");
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Micronaut Token Propagation | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Micronaut Token Propagation. Learn how to leverage token propagation in Micronaut to simplify your code while keeping your microservices secure.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-token-propagation/guide/index.html">Micronaut Token Propagation</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-token-propagation"><img src="https://travis-ci.org/micronaut-guides/micronaut-token-propagation.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-token-propagation&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-token-propagation.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-token-propagation.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-token-propagation.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-token-propagation/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#usingSnapshotVersion"><strong>2</strong><span>Using Snapshot Version</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>3</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#intermediateGateway"><strong>3.1</strong><span>Gateway</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#intermediateUserecho"><strong>3.2</strong><span>User Echo</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#tokenPropagation"><strong>3.3</strong><span>Token Propagation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Micronaut Token Propagation</h1>
+        <p>Learn how to leverage token propagation in Micronaut to simplify your code while keeping your microservices secure.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.BUILD-SNAPSHOT</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Lets describe the microservices you are going to build through the tutorial.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>gateway</code> - A secured via JWT microservice which exposes an endpoint <code>/user</code>. The output of that endpoint is the result of consuming the <code>userecho</code> endpoint.</p>
+</li>
+<li>
+<p><code>userecho</code> - A secured via JWT microservice which exposes an endpoint <code>/user</code> which responds the username of the authenticated user.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The next diagram illustrates the flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/tokenpropagation.svg" alt="tokenpropagation">
+</div>
+</div>
+<div class="paragraph">
+<p>We generate valid JWT in the gateway microservice. Then every microservice in our app is able to validate those JWT. We want every internal request to contain a valida JWT token. If we want to talk to another microservice we need to propagate the valid JWT get received.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-token-propagation/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-token-propagation.git" class="bare">https://github.com/micronaut-guides/micronaut-token-propagation.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
+</div>
+<div class="paragraph">
+<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
+</div>
+
+
+<h1 id="writingTheApp">3 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to write the app first without token propagation. Then we are going to configure token propagation and you will see how much code we can get rid of.</p>
+</div>
+
+
+<h2 id="intermediateGateway">3.1 Gateway</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/intermediateGateway.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.gateway</code></p>
+</div>
+<div class="paragraph">
+<p>To keep this guide simple, create a naive AuthenticationProvider to simulate user’s authentication.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/AuthenticationProviderUserPassword.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.authentication.AuthenticationResponse;
+import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
+
+import javax.inject.Singleton;
+import java.util.Collections;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Override
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+        if ( (authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
+                authenticationRequest.getSecret().equals("password") ) {
+            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
+        }
+        return Flowable.just(new AuthenticationFailed());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context, annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A Micronaut’s Authentication Provider implements the interface <code>io.micronaut.security.authentication.AuthenticationProvider</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a class <code>UserController</code> which exposes <code>/user</code> endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.security.annotation.Secured;
+import io.reactivex.Single;
+
+@Controller("/user") <i class="conum" data-value="1"></i><b>(1)</b>
+public class UserController {
+
+    private final UsernameFetcher usernameFetcher;
+
+    public UserController(UsernameFetcher usernameFetcher) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.usernameFetcher = usernameFetcher;
+    }
+
+    @Secured("isAuthenticated()")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get <i class="conum" data-value="5"></i><b>(5)</b>
+    Single&lt;String&gt; index(@Header("Authorization") String authorization) {  <i class="conum" data-value="6"></i><b>(6)</b>
+        return usernameFetcher.findUsername(authorization);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut’s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor dependency injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>isAuthenticated()</code> expression will allow access only to authenticated users.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Since we return a string which is not valid JSON, set the media type to <code>text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>You can specify the HTTP verb that a controller&#8217;s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>You can bind an Http Header to a controller method argument.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create an interface to encapsulate the collaboration with the <code>userecho</code> microservice.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UsernameFetcher.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Header;
+import io.reactivex.Single;
+
+public interface UsernameFetcher {
+    Single&lt;String&gt; findUsername(@Header("Authorization") String authorization);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Micronaut HTTP Declarative client:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserEchoClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.annotation.Client;
+import io.reactivex.Single;
+
+@Client(id = "userecho") <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(notEnv = Environment.TEST) <i class="conum" data-value="2"></i><b>(2)</b>
+public interface UserEchoClient extends UsernameFetcher {
+
+    @Override
+    @Get("/user") <i class="conum" data-value="3"></i><b>(3)</b>
+    Single&lt;String&gt; findUsername(@Header("Authorization") String authorization); <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@Client</code> annotation is used with a service id. We will reference the exact service id in the configuration shortly.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Don&#8217;t load this bean in the Test environment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@Get</code> annotation to define the client mapping</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Supply the JWT to the HTTP Authorization header value to the <code>@Client</code> method.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Modify <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    application:
+        name: gateway
+    server:
+        port: 8080 <i class="conum" data-value="1"></i><b>(1)</b>
+    security:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+        endpoints:
+            login:
+                enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+            oauth:
+                enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+        token:
+            jwt:
+                enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
+                signatures:
+                    secret:
+                        generator: <i class="conum" data-value="6"></i><b>(6)</b>
+                            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="7"></i><b>(7)</b>
+    http:
+        services:
+            userecho: <i class="conum" data-value="8"></i><b>(8)</b>
+                urls:
+                - "http://localhost:8081" <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure a fix port where the app listens.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable Micronaut’s security capabilities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Expose /login endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Expose /oauth/access_token endpoint as defined by section 6 of the OAuth 2.0 spec - Refreshing an Access Token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Enable JWT based authentication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>You can create a SecretSignatureConfiguration named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>This is the same service ID we used in the <code>@Client</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Configure a URL where the <code>userecho</code> microservice resides.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_tests">Tests</h3>
+<div class="paragraph">
+<p>Provide a <code>UsernameFetcher</code> bean replacement for the Test environment.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/java/example/micronaut/UserEchoClientReplacement.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Header;
+import io.reactivex.Single;
+
+import javax.inject.Singleton;
+
+@Requires(env = Environment.TEST)
+@Singleton
+public class UserEchoClientReplacement implements UsernameFetcher {
+
+    @Override
+    public Single&lt;String&gt; findUsername(@Header("Authorization") String authorization) {
+        return Single.just("sherlock");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a tests which verifies the app is secured and we can access it after login in:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/java/example/micronaut/UserControllerTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+
+public class UserControllerTest {
+    private static EmbeddedServer server;
+    private static HttpClient client;
+
+    @BeforeClass
+    public static void setupServer() {
+        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
+        client = server
+                .getApplicationContext()
+                .createBean(HttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        if (server != null) {
+            server.stop();
+        }
+        if (client != null) {
+            client.stop();
+        }
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void testUserEndpointIsSecured() { <i class="conum" data-value="3"></i><b>(3)</b>
+        thrown.expect(HttpClientResponseException.class);
+        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.UNAUTHORIZED))));
+        client.toBlocking().exchange(HttpRequest.GET("/user"));
+    }
+
+    @Test
+    public void testAuthenticatedCanFetchUsername() {
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("sherlock", "password");
+        HttpRequest request = HttpRequest.POST("/login", credentials);
+
+        BearerAccessRefreshToken bearerAccessRefreshToken = client.toBlocking().retrieve(request, BearerAccessRefreshToken.class);
+
+        String username = client.toBlocking().retrieve(HttpRequest.GET("/user")
+                .header("Authorization", "Bearer " + bearerAccessRefreshToken.getAccessToken()), String.class);
+
+        assertEquals("sherlock", username);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Test endpoint is secured</td>
+</tr>
+</table>
+</div>
+</div>
+
+
+<h2 id="intermediateUserecho">3.2 User Echo</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/intermediateUserecho.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.userecho</code></p>
+</div>
+<div class="paragraph">
+<p>Create a class <code>UserController</code> which exposes <code>/user</code> endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">userecho/src/main/java/example/micronaut/UserController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.security.annotation.Secured;
+
+import java.security.Principal;
+
+@Controller("/user") <i class="conum" data-value="1"></i><b>(1)</b>
+public class UserController {
+
+    @Secured("isAuthenticated()") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    String index(Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
+        return principal.getName();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut’s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>isAuthenticated()</code> expression will allow access only to authenticated users.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Since we return a string which is not valid JSON, set the media type to <code>text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb that a controller&#8217;s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If a user is authenticated, Micronaut will bind the user object to an argument of type <code>java.security.Principal</code> (if present).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Modify <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">userecho/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    application:
+        name: userecho
+    server:
+        port: 8081
+    security:
+        enabled: true
+        token:
+            jwt:
+                enabled: true
+                signatures:
+                    secret:
+                        validation:
+                            secret: pleaseChangeThisSecretForANewOne</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure a fix port where the app listens.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable Micronaut’s security capabilities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Expose /login endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Expose /oauth/access_token endpoint as defined by section 6 of the OAuth 2.0 spec - Refreshing an Access Token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Enable JWT based authentication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>You can create a <code>SecretSignatureConfiguration</code> named <code>validation</code> which is able to validate JWT generated by the <code>gateway</code> microservice.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="tokenPropagation">3.3 Token Propagation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/tokenPropagation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>As you can see propagating of the JWT token to other microservices in our app complicates the code.
+We need to capture the <code>Authorization</code> header in the controller method arguments and then pass it to the <code>@Client</code> bean.
+In an app with several controllers and declarative clients, it can lead to a lot of repetition. Fortunately, Micronaut
+includes a feature called token propagation. We can tell our app to propagate the incoming token to a set of outgoing requests.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s configure token propagation. We need to modify <code>application.yml</code> in the <code>gateway</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+    security:
+        token:
+    ...
+    ..
+    ..
+            writer:
+                header:
+                    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+            propagation:
+                enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+                serviceIdRegex: "userecho"
+....
+..</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Micronaut ships with several <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable token propagation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We only want to propagate the token to certain services. We can create a regular expression to match those services ids.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We can simplify the code:</p>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserController.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.security.annotation.Secured;
+import io.reactivex.Single;
+
+@Controller("/user")
+public class UserController {
+
+    private final UsernameFetcher usernameFetcher;
+
+    public UserController(UsernameFetcher usernameFetcher) {
+        this.usernameFetcher = usernameFetcher;
+    }
+
+    @Secured("isAuthenticated()")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get
+    Single&lt;String&gt; index() {
+        return usernameFetcher.findUsername();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UsernameFetcher.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UsernameFetcher.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.reactivex.Single;
+
+public interface UsernameFetcher {
+    Single&lt;String&gt; findUsername();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserEchoClient.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/UserEchoClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.annotation.Client;
+import io.reactivex.Single;
+
+@Client(id = "userecho")
+@Requires(notEnv = Environment.TEST)
+public interface UserEchoClient extends UsernameFetcher {
+
+    @Get("/user")
+    Single&lt;String&gt; findUsername();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>UserEchoClientReplacement.java</code> and remove the <code>@Header</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/java/example/micronaut/UserEchoClientReplacement.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Header;
+import io.reactivex.Single;
+
+import javax.inject.Singleton;
+
+@Requires(env = Environment.TEST)
+@Singleton
+public class UserEchoClientReplacement implements UsernameFetcher {
+
+    @Override
+    public Single&lt;String&gt; findUsername() {
+        return Single.just("sherlock");
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h1 id="runningTheApp">4 Running the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run both microservices:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">userecho $ ./gradlew run
+&gt; Task :complete/userecho:run
+18:29:26.500 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 671ms. Server Running: http://localhost:8081
+&lt;=========----&gt; 75% EXECUTING [10s]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ ./gradlew run
+
+&gt; Task :complete/gateway:run
+18:28:35.723 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 707ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Do cURL command to authenticate:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl -X "POST" "http://localhost:8080/login" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  "username": "sherlock",
+  "password": "password"
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>response:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">{"username":"sherlock","access_token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTUzNzk3OTQxNSwicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTM3OTgzMDE1LCJpYXQiOjE1Mzc5Nzk0MTV9.HkMhguhW-cbT7u_3vL-eWxn9MbPgR1vTRjDYqvfl8Vc","refresh_token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTUzNzk3OTQxNSwicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiaWF0IjoxNTM3OTc5NDE1fQ.LNpA-v45_6xPCB0MOMXd9QArWhCJS8C0AYpRj6Kj4-E","expires_in":3600,"token_type":"Bearer"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you can call the <code>/user</code> endpoint supplying the access token in the Authorization header.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">`curl "http://localhost:8080/user" -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTUzNzk3OTQxNSwicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTM3OTgzMDE1LCJpYXQiOjE1Mzc5Nzk0MTV9.HkMhguhW-cbT7u_3vL-eWxn9MbPgR1vTRjDYqvfl8Vc'`
+sherlock</code></pre>
+</div>
+</div>
+
+
+<h1 id="nextSteps">5 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://docs.micronaut.io/snapshot/guide/index.html#tokenPropagation">Token Propagation</a> and <a href="https://docs.micronaut.io/snapshot/guide/index.html#security">Security</a> inside Micronaut.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
