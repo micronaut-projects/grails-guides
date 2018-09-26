@@ -24,7 +24,7 @@
             <li>
                 <a href="http://guides.micronaut.io">Micronaut Guides</a>
                 <span> &rarr; </span>
-                <a href="http://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html">Micronaut Functions deployed in AWS Lambda</a>
+                <a href="http://guides.micronaut.io/micronaut-function-aws-lambda-groovy/guide/index.html">Micronaut Functions deployed in AWS Lambda</a>
             </li>
         </ul>
 
@@ -33,25 +33,25 @@
 
 <div class='fullwidth'><article class="guide">
     <aside>
-        <a href="https://travis-ci.org/micronaut-guides/micronaut-function-aws-lambda"><img src="https://travis-ci.org/micronaut-guides/micronaut-function-aws-lambda.svg?branch=master"></a>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-function-aws-lambda-groovy"><img src="https://travis-ci.org/micronaut-guides/micronaut-function-aws-lambda-groovy.svg?branch=master"></a>
 
-        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-function-aws-lambda&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
 
 
         <ul class="githublinks">
-            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-function-aws-lambda.git'" class="codeButton">SSH</button></li>
-            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-function-aws-lambda.git'" class="codeButton">HTTPS</button></li>
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-function-aws-lambda-groovy.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy.git'" class="codeButton">HTTPS</button></li>
         </ul>
         <div class="input-group">
             <!-- Target -->
-            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-function-aws-lambda.git" type="text" />
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-function-aws-lambda-groovy.git" type="text" />
             <!-- Trigger -->
             <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
                 <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
             </button>
         </div>
         <script>var clipboard = new Clipboard('.clippy');</script>
-        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-function-aws-lambda/archive/master.zip&quot;">Download ZIP</button>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/archive/master.zip&quot;">Download ZIP</button>
         
         <div id="table-of-content">
             <h3>Table of Contents</h3>
@@ -109,7 +109,7 @@
 <h1 id="gettingStarted">1 Getting Started</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -141,7 +141,7 @@
 <h2 id="requirements">1.1 What you will need</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/requirements.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/requirements.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -171,7 +171,7 @@
 <h2 id="solution">1.2 Solution</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/solution.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/solution.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -183,7 +183,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/archive/master.zip">Download</a> and unzip the source</p>
+<p><a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/archive/master.zip">Download</a> and unzip the source</p>
 </li>
 </ul>
 </div>
@@ -193,7 +193,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda.git" class="bare">https://github.com/micronaut-guides/micronaut-function-aws-lambda.git</a></code></p>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy.git" class="bare">https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy.git</a></code></p>
 </li>
 </ul>
 </div>
@@ -205,7 +205,7 @@
 <h1 id="writingTheLambda">2 Writing the Function</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheLambda.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -224,7 +224,7 @@
 <h2 id="functionpojos">2.1 POJOs</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functionpojos.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheLambda/functionpojos.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -285,7 +285,7 @@ class VatValidation extends VatValidationRequest implements Serializable {
 <h2 id="soap">2.2 SOAP VAT Validation</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/soap.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheLambda/soap.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -406,7 +406,7 @@ class VatService {
 <h2 id="function">2.3 Function</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/function.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheLambda/function.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -479,7 +479,7 @@ and JSON Payload response.</td>
 <h2 id="functiontests">2.4 Function Tests</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheLambda/functiontests.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheLambda/functiontests.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -593,7 +593,7 @@ class ViesVatValidatorFunctionSpec extends Specification {
 <h1 id="sam">3 Test with SAM CLI</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/sam.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/sam.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -677,7 +677,7 @@ REPORT RequestId: 02f9123b-d64e-4257-ab90-334cec2f9cb7	Duration: 1305.64 ms	Bill
 <h1 id="awslambda">4 Deploy to AWS Lambda</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awslambda.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/awslambda.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -755,7 +755,7 @@ REPORT RequestId: 02f9123b-d64e-4257-ab90-334cec2f9cb7	Duration: 1305.64 ms	Bill
 <h1 id="writingTheApp">5 Writing the App</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -780,7 +780,7 @@ REPORT RequestId: 02f9123b-d64e-4257-ab90-334cec2f9cb7	Duration: 1305.64 ms	Bill
 <h2 id="pojos">5.1 POJOs</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/pojos.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheApp/pojos.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -876,7 +876,7 @@ class InvoiceLine {
 <h2 id="functionclient">5.2 Call the Function</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/functionclient.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheApp/functionclient.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1034,7 +1034,7 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 <h2 id="controller">5.3 Controller</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1141,7 +1141,7 @@ class InvoiceController {
 <h2 id="tests">5.4 Tests</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1291,7 +1291,7 @@ Given a 21% VAT.</p>
 <h1 id="runningTheApp">6 Running the app</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1348,7 +1348,7 @@ aws_secret_access_key=XXXXX</code></pre>
 <h1 id="awsApiGateway">7 AWS API Gateway</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awsApiGateway.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/awsApiGateway.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1434,7 +1434,7 @@ maintain, monitor, and secure APIs at any scale.</p>
 <h2 id="awsApiGatewayUrlInMicronaut">7.1 Consume API Gateway URL</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/awsApiGateway/awsApiGatewayUrlInMicronaut.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/awsApiGateway/awsApiGatewayUrlInMicronaut.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1522,7 +1522,7 @@ that is implemented by multiple classes (<code>AwsApiGatewayVatClient</code>, <c
 <h1 id="nextSteps">8 Next Steps</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-aws-lambda-groovy/edit/master/src/main/docs/guide/nextSteps.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
