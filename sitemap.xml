@@ -55,6 +55,9 @@
     <loc>http://guides.micronaut.io/micronaut-file-download-excel/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-token-propagation/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
