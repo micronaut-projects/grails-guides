@@ -430,7 +430,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/views/home.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;
         &lt;title&gt;Home&lt;/title&gt;
@@ -455,7 +455,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/views/auth.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;
         #if( $errors )
@@ -488,27 +488,6 @@ going to produce HTML in our controllers.</p>
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>To render those templates, create <code>VelocityService.kotlin</code></p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-session-kotlin/complete/src/main/kotlin/example/micronaut/services/VelocityService.kt[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To create a Sigleton bean use the <code>javax.inject.Singleton</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the <code>javax.annotation.PostConstruct</code> annotation to trigger the method execution after dependency injection is done. Typically to perform any initialization.</td>
-</tr>
-</table>
 </div>
 
 
@@ -576,8 +555,9 @@ class HomeController {
 </tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_login_form">Login Form</h3>
+<div class="sect1">
+<h2 id="_login_form">Login Form</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
@@ -633,6 +613,7 @@ class LoginAuthController {
 <td>Responds to GET requests at <code>/login/authFailed</code></td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 
