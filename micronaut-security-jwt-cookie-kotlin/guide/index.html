@@ -510,27 +510,6 @@ going to produce HTML in our controllers.</p>
 &lt;/html&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>To render those templates, create <code>VelocityService.kt</code></p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/services/VelocityService.kt</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-security-jwt-cookie-kotlin/complete/src/main/kotlin/example/micronaut/services/VelocityService.kt[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To create a Sigleton bean use the <code>javax.inject.Singleton</code> annotation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the <code>javax.annotation.PostConstruct</code> annotation to trigger the method execution after dependency injection is done. Typically to perform any initialization.</td>
-</tr>
-</table>
-</div>
 
 
 <h2 id="controller">2.5 Controllers</h2>
@@ -951,7 +930,7 @@ dependencies {
 }
 
 webdriverBinaries {
-    chromedriver '2.40'
+    chromedriver '2.41'
     geckodriver '0.21.0'
 }
 
