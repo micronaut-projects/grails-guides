@@ -58,6 +58,9 @@
     <loc>http://guides.micronaut.io/micronaut-token-propagation/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-elasticbeanstalk/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
