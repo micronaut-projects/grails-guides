@@ -430,7 +430,7 @@ class HomeController {
 
     @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
-    Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="6"></i><b>(6)</b>
+    Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = [:]
         data["loggedIn"] = principal != null
         if (principal) {
