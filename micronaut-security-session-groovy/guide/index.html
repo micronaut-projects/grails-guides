@@ -386,7 +386,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/views/home.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;
         &lt;title&gt;Home&lt;/title&gt;
@@ -411,7 +411,7 @@ going to produce HTML in our controllers.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/views/auth.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;
         #if( $errors )
@@ -512,8 +512,9 @@ class HomeController {
 </tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_login_form">Login Form</h3>
+<div class="sect1">
+<h2 id="_login_form">Login Form</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
@@ -571,6 +572,7 @@ class LoginAuthController {
 <td>Responds to GET requests at <code>/login/authFailed</code></td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 
