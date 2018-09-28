@@ -780,8 +780,8 @@ import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
 
 @Filter("/api/\${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(condition = BintrayFilterCondition::class)
-class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClientFilter {
+@Requires(condition = BintrayFilterCondition::class) <i class="conum" data-value="2"></i><b>(2)</b>
+class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClientFilter { <i class="conum" data-value="3"></i><b>(3)</b>
 
     override fun doFilter(request: MutableHttpRequest&lt;*&gt;, chain: ClientFilterChain): Publisher&lt;out HttpResponse&lt;*&gt;&gt; {
         if ( bintrayConfiguration.username != null &amp;&amp; bintrayConfiguration.token != null) {
