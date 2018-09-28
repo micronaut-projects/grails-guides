@@ -348,8 +348,8 @@ import kotlin.test.assertEquals
 
 object BooksControllerSpec: Spek({
     describe("BookController Suite") {
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client : HttpClient = HttpClient.create(embeddedServer.url)
+        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client : HttpClient = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
 
         it("test /hello responds Hello World") {
             var rsp : String = client.toBlocking().retrieve("/hello")
@@ -372,7 +372,7 @@ object BooksControllerSpec: Spek({
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Register an <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
 </tr>
 </table>
 </div>
