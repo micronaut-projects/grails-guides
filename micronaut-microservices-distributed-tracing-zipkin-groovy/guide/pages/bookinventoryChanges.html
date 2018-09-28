@@ -159,12 +159,45 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>Annotate <code>BookController</code> method with <code>@ContinueSpan</code> and the method parameter with <code>@SpanTag</code>:</p>
+<p>Annotate <code>BooksController</code> method with <code>@ContinueSpan</code> and the method parameter with <code>@SpanTag</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BooksController.java</div>
+<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BooksController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/complete/bookinventory/src/main/java/example/micronaut/bookinventory/BooksController.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.SpanTag
+import io.micronaut.validation.Validated
+import javax.validation.constraints.NotBlank
+
+@CompileStatic
+@Validated
+@Controller("/books")
+class BooksController {
+
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/stock/{isbn}")
+    @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
+    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) { <i class="conum" data-value="2"></i><b>(2)</b>
+        bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
+    }
+
+    private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
+        if(isbn == "1491950358") {
+            return Optional.of(new BookInventory(isbn, 4))
+
+        } else if(isbn == "1680502395") {
+            return Optional.of(new BookInventory(isbn, 0))
+        }
+        Optional.empty()
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -175,7 +208,7 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`</code></td>
+<td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code></td>
 </tr>
 </table>
 </div>
