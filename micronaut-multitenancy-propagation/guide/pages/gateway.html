@@ -1,0 +1,725 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.1 Gateway null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Multitenancy Propagation
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>3</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.1 Gateway</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#multitenancyconfiguration"><strong>3.1</strong><span>Multitenancy Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#filter"><strong>3.2</strong><span>Http Server Filter</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#client"><strong>3.3</strong><span>Http Client</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#homecontroller"><strong>3.4</strong><span>Home Controller</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#cookieRedirect"><strong>3.5</strong><span>Cookie Redirect</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3.6</strong><span>Tests</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h2 id="gateway">3.1 Gateway</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.gateway</code></pre>
+</div>
+</div>
+
+
+<h2 id="multitenancyconfiguration">3.1.1 Multitenancy Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/multitenancyconfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Multi-Tenancy, as it relates to software development, is when a single instance of an application is used to service multiple clients (tenants) in a way that each tenants' data is isolated from the other.</p>
+</div>
+<div class="paragraph">
+<p>To use the Micronaut’s multitenancy capabilities you must have the multitenancy dependency on your classpath. For example in <code>build.gradle:</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:multitenancy"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+...
+
+    multitenancy:
+        propagation:
+            enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+            service-id-regex: 'books' <i class="conum" data-value="2"></i><b>(2)</b>
+        tenantresolver:
+            cookie:
+                enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        tenantwriter:
+            httpheader:
+                enabled: true <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable tenant propagation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Propagate the resolved tenant ID only in requests going to a particular set of services. In our example, we define a regex to match the service id <code>books</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>In the gateway we use the <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/multitenancy/tenantresolver/CookieTenantResolver.html">CookieTenantResolver</a> which resolves the current tenant from an HTTP cookie.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>We propagate the tenant with a <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/multitenancy/writer/HttpHeaderTenantWriter.html">HttpHeaderTenantWriter</a> which writes the current tenant to a HTTP Header.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="filter">3.1.2 Http Server Filter</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/filter.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The Micronaut HTTP server supports the ability to apply filters to request/response processing in a similar, but reactive, way to Servlet filters in traditional Java applications.</p>
+</div>
+<div class="paragraph">
+<p>Create a filter to redirect to <code>/tenant</code> if you attempt to access <code>/</code> without a cookie. That it is to say, in a situation where the application is not able to resolve the tenant ID.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/HomePageFilter.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.OncePerRequestHttpServerFilter;
+import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.multitenancy.exceptions.TenantNotFoundException;
+import io.micronaut.multitenancy.tenantresolver.CookieTenantResolverConfiguration;
+import io.micronaut.multitenancy.tenantresolver.TenantResolver;
+import org.reactivestreams.Publisher;
+
+import java.net.URI;
+
+@Filter("/") <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomePageFilter extends OncePerRequestHttpServerFilter {
+
+    private final TenantResolver tenantResolver;
+
+    public HomePageFilter(TenantResolver tenantResolver) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.tenantResolver = tenantResolver;
+    }
+
+    @Override
+    protected Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilterOnce(HttpRequest&lt;?&gt; request, ServerFilterChain chain) {
+        try {
+            tenantResolver.resolveTenantIdentifier();
+        } catch (TenantNotFoundException e) {
+            return Publishers.just(HttpResponse.seeOther(URI.create("/tenant")));
+        }
+        return chain.proceed(request);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>You can match only a subset of paths with a server filter.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="client">3.1.3 Http Client</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/client.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an interface to encapsulate the communication with the <code>books</code> microservice which we will create shortly.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/BookFetcher.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.reactivex.Single;
+
+import java.util.List;
+
+public interface BookFetcher {
+
+    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP client</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/BookClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.annotation.Client;
+import io.reactivex.Single;
+
+import java.util.List;
+
+@Client("books") <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(notEnv = Environment.TEST) <i class="conum" data-value="2"></i><b>(2)</b>
+public interface BookClient extends BookFetcher {
+
+    @Override
+    @Get("/books") <i class="conum" data-value="3"></i><b>(3)</b>
+    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@Client</code> annotation uses a service id which matches the regular expression we defined in the propagation configuration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We don&#8217;t want to load this bean in the <code>test</code> environment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We configure the path <code>/books</code> and HTTP method of the endpoint exposed by <code>books</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Configure the urls for the service id <code>books</code>. Modify <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+...
+
+    http:
+        services:
+            books: <i class="conum" data-value="1"></i><b>(1)</b>
+                urls:
+                - "http://localhost:8081" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Same id we used with <code>@Client</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>url where the <code>books</code> service will reside.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="homecontroller">3.1.4 Home Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/homecontroller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The <code>views</code> module provides support for view rendering on the server side and does so by rendering views on the I/O thread pool in order to avoid blocking the Netty event loop. Add the <code>views</code> dependency to  <code>build.gradle:</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:views"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Micronaut includes <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/handlebars/HandlebarsViewsRenderer.html">HandlebarsViewsRenderer</a> which uses the <a href="http://jknack.github.io/handlebars.java/">Handlebars.java</a> project.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the <code>views</code> dependency, add the following dependency to <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    runtime "com.github.jknack:handlebars:4.1.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a view which we will use in the <code>HomeController</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/views/home.hbs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;{{ pagetitle }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;ul&gt;
+{{#each books}}
+    &lt;li&gt;&lt;span&gt;{{ this }}&lt;/span&gt;&lt;/li&gt;
+{{/each}}
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="/tenant"&gt;change tenant&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>HomeController</code> which invokes <code>BookClient::fetchBooks()</code> and renders the books using the previous handlebar view.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.views.View;
+import io.reactivex.Single;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller("/") <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomeController {
+
+    private final BookFetcher bookFetcher;
+
+    public HomeController(BookFetcher bookFetcher) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.bookFetcher = bookFetcher;
+    }
+
+    @View("home") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    Single&lt;HttpResponse&lt;Map&lt;String, Object&gt;&gt;&gt; index() { <i class="conum" data-value="5"></i><b>(5)</b>
+        return bookFetcher.fetchBooks().map(books -&gt; {
+            Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+            model.put("pagetitle", "Home");
+            model.put("books", books);
+            return HttpResponse.ok(model);
+        });
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut’s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor dependency injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@View</code> annotation to indicate the view name which should be used to render a view for the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb that a controller’s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>A RxJava <a href="http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html">Single</a> is returned with the value read from the server.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="cookieRedirect">3.1.5 Cookie Redirect</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/cookieRedirect.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><code>HomePageFilter</code> redirects to <code>/tenant</code> when the tenant ID is not resolved. Create <code>TenantController</code> to handle that endpoint:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/TenantController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.multitenancy.tenantresolver.CookieTenantResolverConfiguration;
+import io.micronaut.views.View;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller("/tenant") <i class="conum" data-value="1"></i><b>(1)</b>
+public class TenantController {
+    private final CookieTenantResolverConfiguration cookieTenantResolverConfiguration;
+
+    public TenantController(CookieTenantResolverConfiguration cookieTenantResolverConfiguration) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.cookieTenantResolverConfiguration = cookieTenantResolverConfiguration;
+    }
+
+    @View("tenant") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    public Map&lt;String, Object&gt; index() {
+        Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+        model.put("pagetitle", "Tenants");
+        model.put("tenants", Arrays.asList("sherlock", "watson"));
+        return model;
+    }
+
+    @Get("/{tenant}") <i class="conum" data-value="5"></i><b>(5)</b>
+    public HttpResponse tenant(String tenant) {
+        final String path = "/";
+        final String cookieName = cookieTenantResolverConfiguration.getCookiename();
+        return HttpResponse.status(HttpStatus.FOUND).headers((headers) -&gt;
+                headers.location(URI.create(path))
+        ).cookie(Cookie.of(cookieName, tenant).path(path)); <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/tenant</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection of <code>CookieTenantResolverConfiguration</code>. A configuration object which is used by the <code>CookieTenantResolver`</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@View</code> annotation to indicate the view name which should be used to render a view for the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb that a controller’s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Define a path variable <code>tenant</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Do a 302 redirect to <code>/</code> setting a cookie with the selected tenant ID.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller renders the <code>tenant</code> view.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/views/tenant.hbs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;{{ pagetitle }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;ul&gt;
+{{#each tenants}}
+    &lt;li&gt;&lt;a href="/tenant/{{ this }}"&gt;{{ this }}&lt;/a&gt;&lt;/li&gt;
+{{/each}}
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href="/"&gt;Go to Home&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+
+
+<h2 id="tests">3.1.6 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Add <code>inject-groovy</code> as a <code>testCompile</code> dependency to define beans in Groovy in the test classpath.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "io.micronaut:inject-groovy"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide a <code>BookFetcher</code> bean replacement for the Test environment.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/groovy/example/micronaut/MockBookFetcher.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+
+import io.micronaut.context.annotation.Requires
+import io.micronaut.context.env.Environment
+import io.reactivex.Single
+
+import javax.inject.Singleton
+
+@Singleton
+@Requires(env = Environment.TEST)
+class MockBookFetcher implements BookFetcher {
+
+    @Override
+    Single&lt;List&lt;String&gt;&gt; fetchBooks() {
+        Single.just(Arrays.asList("The Empty Hearse",
+                "The Hounds of Baskerville",
+                "The Woman",
+                "The Six Thatchers",
+                "The Aluminium Crutch",
+                "The Speckled Blonde",
+                "The Geek Interpreter",
+                "The Great Game",
+                "The Blind Banker",
+                "A Study in Pink"))
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a tests which verifies the flow using Geb.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/groovy/example/micronaut/HomePageSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+
+import geb.spock.GebSpec
+import io.micronaut.context.ApplicationContext
+import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.AutoCleanup
+import spock.lang.IgnoreIf
+import spock.lang.Shared
+
+class HomePageSpec extends GebSpec {
+    @Shared
+    @AutoCleanup
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+
+    @IgnoreIf({ !(sys['gen.env'] in ['chrome', 'firefox']) })
+    def "verify tenant can be selected works"() {
+        given:
+        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+
+        when:
+        go "/"
+
+        then:
+        at TenantPage
+
+        when:
+        TenantPage page = browser.page(TenantPage)
+        page.select("sherlock")
+
+        then:
+        at HomePage
+
+        when:
+        HomePage homePage = browser.page(HomePage)
+
+        then:
+        homePage.numberOfBooks()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

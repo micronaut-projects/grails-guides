@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.1.4 Home Controller null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Multitenancy Propagation
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>3</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.1.4 Home Controller</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="homecontroller">3.1.4 Home Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/homecontroller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The <code>views</code> module provides support for view rendering on the server side and does so by rendering views on the I/O thread pool in order to avoid blocking the Netty event loop. Add the <code>views</code> dependency to  <code>build.gradle:</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:views"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Micronaut includes <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/handlebars/HandlebarsViewsRenderer.html">HandlebarsViewsRenderer</a> which uses the <a href="http://jknack.github.io/handlebars.java/">Handlebars.java</a> project.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the <code>views</code> dependency, add the following dependency to <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    runtime "com.github.jknack:handlebars:4.1.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a view which we will use in the <code>HomeController</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/views/home.hbs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;{{ pagetitle }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;ul&gt;
+{{#each books}}
+    &lt;li&gt;&lt;span&gt;{{ this }}&lt;/span&gt;&lt;/li&gt;
+{{/each}}
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="/tenant"&gt;change tenant&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>HomeController</code> which invokes <code>BookClient::fetchBooks()</code> and renders the books using the previous handlebar view.</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.views.View;
+import io.reactivex.Single;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller("/") <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomeController {
+
+    private final BookFetcher bookFetcher;
+
+    public HomeController(BookFetcher bookFetcher) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.bookFetcher = bookFetcher;
+    }
+
+    @View("home") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    Single&lt;HttpResponse&lt;Map&lt;String, Object&gt;&gt;&gt; index() { <i class="conum" data-value="5"></i><b>(5)</b>
+        return bookFetcher.fetchBooks().map(books -&gt; {
+            Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+            model.put("pagetitle", "Home");
+            model.put("books", books);
+            return HttpResponse.ok(model);
+        });
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut’s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor dependency injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@View</code> annotation to indicate the view name which should be used to render a view for the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb that a controller’s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>A RxJava <a href="http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html">Single</a> is returned with the value read from the server.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

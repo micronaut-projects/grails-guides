@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.2.2 Domain null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Multitenancy Propagation
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>3</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.2.2 Domain</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="domain">3.2.2 Domain</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/books/domain.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>GORM supports several <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#_multi_tenancy_modes">tenancy modes</a>. In this tutorial we use <code>DATABASE</code> where a separate database with a separate connection pool is used to store each tenants data.</p>
+</div>
+<div class="paragraph">
+<p>Add the following configuration to <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">grails:
+    gorm:
+        multiTenancy:
+            mode: DATABASE <i class="conum" data-value="1"></i><b>(1)</b>
+            tenantResolverClass: 'io.micronaut.multitenancy.gorm.HttpHeaderTenantResolver' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>DATABASE</code> mode.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use <code>HttpHeaderTenantResolver</code> which resolves the tenant ID from an HTTP header. Remember we configured the <code>gateway</code> microservice to propagate the tenant ID in an HTTP Header.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a GORM Entity to persist books:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/Book.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import grails.gorm.MultiTenant
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
+
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Book implements GormEntity&lt;Book&gt;, <i class="conum" data-value="2"></i><b>(2)</b>
+                MultiTenant { <i class="conum" data-value="3"></i><b>(3)</b>
+    String title
+
+    static constraints = {
+        title nullable: false, blank: false
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GORM entities are annotated with <code>grails.persistence.Entity</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use of <code>GormEntity</code> is merely to aid IDE support outside of Grails. When used inside a Grails context, some IDEs will use the grails-app/domain location as a hint to enable code completion.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Implement the <code>MultiTenant</code> trait in the GORM entities you want to be regarded as multi tenant.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the App</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
