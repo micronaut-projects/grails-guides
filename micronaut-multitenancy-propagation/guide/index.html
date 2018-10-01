@@ -62,41 +62,39 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#usingSnapshotVersion"><strong>2</strong><span>Using Snapshot Version</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>3</strong><span>Writing the App</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#gateway"><strong>2.1</strong><span>Gateway</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#gateway"><strong>3.1</strong><span>Gateway</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#multitenancyconfiguration"><strong>2.1.1</strong><span>Multitenancy Configuration</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#multitenancyconfiguration"><strong>3.1.1</strong><span>Multitenancy Configuration</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#filter"><strong>2.1.2</strong><span>Http Server Filter</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#filter"><strong>3.1.2</strong><span>Http Server Filter</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#client"><strong>2.1.3</strong><span>Http Client</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#client"><strong>3.1.3</strong><span>Http Client</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#homecontroller"><strong>2.1.4</strong><span>Home Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#homecontroller"><strong>3.1.4</strong><span>Home Controller</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#cookieRedirect"><strong>2.1.5</strong><span>Cookie Redirect</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#cookieRedirect"><strong>3.1.5</strong><span>Cookie Redirect</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#tests"><strong>2.1.6</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#tests"><strong>3.1.6</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#books"><strong>2.2</strong><span>Books Microservice</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#books"><strong>3.2</strong><span>Books Microservice</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#gorm"><strong>2.2.1</strong><span>GORM</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#gorm"><strong>3.2.1</strong><span>GORM</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#domain"><strong>2.2.2</strong><span>Domain</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#domain"><strong>3.2.2</strong><span>Domain</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#dataservice"><strong>2.2.3</strong><span>Data Service</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#dataservice"><strong>3.2.3</strong><span>Data Service</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#controller"><strong>2.2.4</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#controller"><strong>3.2.4</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#bootstrap"><strong>2.2.5</strong><span>Application Startup event</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#bootstrap"><strong>3.2.5</strong><span>Application Startup event</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#booktests"><strong>2.2.6</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#booktests"><strong>3.2.6</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the App</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the App</span></a></div>
-            
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>4</strong><span>Next Steps</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -106,7 +104,7 @@
         <h1>Micronaut Multitenancy Propagation</h1>
         <p>Learn how to Micronaut helps you implement Multitenancy in a set of Microservices.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.BUILD-SNAPSHOT</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -203,24 +201,7 @@
 </div>
 
 
-<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
-</div>
-<div class="paragraph">
-<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
-</div>
-
-
-<h1 id="writingTheApp">3 Writing the App</h1>
+<h1 id="writingTheApp">2 Writing the App</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -234,7 +215,7 @@
 </div>
 
 
-<h2 id="gateway">3.1 Gateway</h2>
+<h2 id="gateway">2.1 Gateway</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway.adoc"'>
@@ -253,7 +234,7 @@
 </div>
 
 
-<h2 id="multitenancyconfiguration">3.1.1 Multitenancy Configuration</h2>
+<h2 id="multitenancyconfiguration">2.1.1 Multitenancy Configuration</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/multitenancyconfiguration.adoc"'>
@@ -271,13 +252,13 @@
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:multitenancy"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:multitenancy"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
 ...
 
     multitenancy:
@@ -314,7 +295,7 @@
 </div>
 
 
-<h2 id="filter">3.1.2 Http Server Filter</h2>
+<h2 id="filter">2.1.2 Http Server Filter</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/filter.adoc"'>
@@ -383,7 +364,7 @@ public class HomePageFilter extends OncePerRequestHttpServerFilter {
 </div>
 
 
-<h2 id="client">3.1.3 Http Client</h2>
+<h2 id="client">2.1.3 Http Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/client.adoc"'>
@@ -458,7 +439,7 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
 ...
 
     http:
@@ -482,7 +463,7 @@ public interface BookClient extends BookFetcher {
 </div>
 
 
-<h2 id="homecontroller">3.1.4 Home Controller</h2>
+<h2 id="homecontroller">2.1.4 Home Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/homecontroller.adoc"'>
@@ -497,7 +478,7 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:views"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:views"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -509,7 +490,7 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    runtime "com.github.jknack:handlebars:4.1.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    runtime "com.github.jknack:handlebars:4.1.0"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -518,7 +499,7 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/views/home.hbs</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;{{ pagetitle }}&lt;/title&gt;
@@ -600,7 +581,7 @@ public class HomeController {
 </div>
 
 
-<h2 id="cookieRedirect">3.1.5 Cookie Redirect</h2>
+<h2 id="cookieRedirect">2.1.5 Cookie Redirect</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/cookieRedirect.adoc"'>
@@ -692,7 +673,7 @@ public class TenantController {
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/views/tenant.hbs</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;{{ pagetitle }}&lt;/title&gt;
@@ -711,7 +692,7 @@ public class TenantController {
 </div>
 
 
-<h2 id="tests">3.1.6 Tests</h2>
+<h2 id="tests">2.1.6 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/tests.adoc"'>
@@ -781,7 +762,7 @@ import spock.lang.Shared
 class HomePageSpec extends GebSpec {
     @Shared
     @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="1"></i><b>(1)</b>
 
     @IgnoreIf({ !(sys['geb.env'] in ['chrome', 'firefox']) })
     def "verify tenant can be selected works"() {
@@ -820,7 +801,7 @@ class HomePageSpec extends GebSpec {
 </div>
 
 
-<h2 id="books">3.2 Books Microservice</h2>
+<h2 id="books">2.2 Books Microservice</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books.adoc"'>
@@ -839,7 +820,7 @@ class HomePageSpec extends GebSpec {
 </div>
 
 
-<h2 id="gorm">3.2.1 GORM</h2>
+<h2 id="gorm">2.2.1 GORM</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/gorm.adoc"'>
@@ -888,7 +869,7 @@ dataSources:
 </div>
 
 
-<h2 id="domain">3.2.2 Domain</h2>
+<h2 id="domain">2.2.2 Domain</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/domain.adoc"'>
@@ -966,7 +947,7 @@ class Book implements GormEntity&lt;Book&gt;, <i class="conum" data-value="2"></
 </div>
 
 
-<h2 id="dataservice">3.2.3 Data Service</h2>
+<h2 id="dataservice">2.2.3 Data Service</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/dataservice.adoc"'>
@@ -1008,7 +989,7 @@ interface BookService {
 </div>
 
 
-<h2 id="controller">3.2.4 Controller</h2>
+<h2 id="controller">2.2.4 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/controller.adoc"'>
@@ -1058,7 +1039,7 @@ class BookController {
 </div>
 
 
-<h2 id="bootstrap">3.2.5 Application Startup event</h2>
+<h2 id="bootstrap">2.2.5 Application Startup event</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/bootstrap.adoc"'>
@@ -1126,7 +1107,7 @@ class Bootstrap implements ApplicationEventListener&lt;StartupEvent&gt; { <i cla
 </div>
 
 
-<h2 id="booktests">3.2.6 Tests</h2>
+<h2 id="booktests">2.2.6 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/booktests.adoc"'>
@@ -1141,7 +1122,7 @@ class Bootstrap implements ApplicationEventListener&lt;StartupEvent&gt; { <i cla
 <div class="listingblock">
 <div class="title">books/src/test/groovy/example/micronaut/BookControllerSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
@@ -1186,7 +1167,7 @@ class BookControllerSpec extends Specification {
 </div>
 
 
-<h1 id="runningTheApp">4 Running the App</h1>
+<h1 id="runningTheApp">3 Running the App</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
@@ -1224,7 +1205,7 @@ class BookControllerSpec extends Specification {
 </div>
 
 
-<h1 id="nextSteps">5 Next Steps</h1>
+<h1 id="nextSteps">4 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/nextSteps.adoc"'>
