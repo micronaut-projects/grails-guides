@@ -315,7 +315,7 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Flowable;
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -340,7 +340,7 @@ public interface BookCatalogueClient extends BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
 
 import javax.validation.constraints.NotBlank;
