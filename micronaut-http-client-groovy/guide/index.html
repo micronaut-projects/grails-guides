@@ -88,7 +88,7 @@
         <h1>Micronaut HTTP Client</h1>
         <p>Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -321,8 +321,8 @@ class BintrayPackage {
 import groovy.transform.CompileStatic
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.client.Client
 import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriTemplate
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -418,7 +418,7 @@ For example, <code>jsonStream().firstElement()</code> will only parse the first 
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Flowable
 
 @CompileStatic
