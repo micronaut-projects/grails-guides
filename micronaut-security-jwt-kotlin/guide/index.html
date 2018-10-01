@@ -90,7 +90,7 @@
         <h1>Micronaut JWT Authentication</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -412,7 +412,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
-import io.micronaut.security.Secured
+import io.micronaut.security.annotation.Secured
 import java.security.Principal
 
 @Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -468,7 +468,7 @@ class HomeController {
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.M4
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.RC1
 kotlinVersion=1.2.61
 spekVersion=2.0.0-alpha.1
 junitVersion=5.1.0</code></pre>
@@ -708,7 +708,7 @@ class OauthAccessTokenSpec: Spek({
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 
 @Client("/")
 interface AppClient {
