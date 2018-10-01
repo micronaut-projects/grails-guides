@@ -102,7 +102,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -330,8 +330,8 @@ the SOAP envelope manually.</p>
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.client.Client
 import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -1480,7 +1480,7 @@ import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Post
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.retry.annotation.Retryable
 import io.reactivex.Single
 
