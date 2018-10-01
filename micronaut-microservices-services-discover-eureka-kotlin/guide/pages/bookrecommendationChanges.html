@@ -127,7 +127,7 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Flowable
 
 
@@ -153,7 +153,7 @@ interface BookCatalogueClient : BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
