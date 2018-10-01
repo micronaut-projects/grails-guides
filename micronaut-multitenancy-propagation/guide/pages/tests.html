@@ -85,7 +85,7 @@ function addJsClass() {
 <h2 id="tests">3.1.6 Tests</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/tests.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/gateway/tests.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -154,7 +154,7 @@ class HomePageSpec extends GebSpec {
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
-    @IgnoreIf({ !(sys['gen.env'] in ['chrome', 'firefox']) })
+    @IgnoreIf({ !(sys['geb.env'] in ['chrome', 'firefox']) })
     def "verify tenant can be selected works"() {
         given:
         browser.baseUrl = "http://localhost:${embeddedServer.port}"
