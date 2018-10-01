@@ -105,7 +105,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.M4
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.RC1
 kotlinVersion=1.2.61
 spekVersion=2.0.0-alpha.1</code></pre>
 </div>
@@ -240,7 +240,7 @@ class BasicAuthSpec: Spek({
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 
