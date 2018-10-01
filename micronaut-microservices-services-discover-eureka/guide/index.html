@@ -96,7 +96,7 @@
         <h1>Eureka and Micronaut - Microservices service discovery</h1>
         <p>Use Netflix Eureka service discovery to expose your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -772,7 +772,7 @@ public interface BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Flowable;
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -868,7 +868,7 @@ public interface BookInventoryOperations {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
 
 import javax.validation.constraints.NotBlank;
@@ -1428,7 +1428,7 @@ main method, or use <code>mvn spring-boot:run</code> or <code>gradle bootRun</co
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Flowable;
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -1453,7 +1453,7 @@ public interface BookCatalogueClient extends BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
 
 import javax.validation.constraints.NotBlank;
