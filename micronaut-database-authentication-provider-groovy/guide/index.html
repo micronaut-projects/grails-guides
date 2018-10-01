@@ -62,43 +62,41 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#usingSnapshotVersion"><strong>2</strong><span>Using Snapshot Version</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>3</strong><span>Writing the Application</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#securityLdap"><strong>2.1</strong><span>Security LDAP</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#securityLdap"><strong>3.1</strong><span>Security LDAP</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#gorm"><strong>2.2</strong><span>GORM</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#gorm"><strong>3.2</strong><span>GORM</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#domainClasses"><strong>2.2.1</strong><span>Domain Classes</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#domainClasses"><strong>3.2.1</strong><span>Domain Classes</span></a></div>
+            <div class="toc-item" style="margin-left:30px"><a href="#user"><strong>2.2.1.1</strong><span>User</span></a></div>
             
-            <div class="toc-item" style="margin-left:30px"><a href="#user"><strong>3.2.1.1</strong><span>User</span></a></div>
+            <div class="toc-item" style="margin-left:30px"><a href="#role"><strong>2.2.1.2</strong><span>Role</span></a></div>
             
-            <div class="toc-item" style="margin-left:30px"><a href="#role"><strong>3.2.1.2</strong><span>Role</span></a></div>
+            <div class="toc-item" style="margin-left:30px"><a href="#userrole"><strong>2.2.1.3</strong><span>UserRole</span></a></div>
             
-            <div class="toc-item" style="margin-left:30px"><a href="#userrole"><strong>3.2.1.3</strong><span>UserRole</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#dataServices"><strong>2.2.2</strong><span>Data Services</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#dataServices"><strong>3.2.2</strong><span>Data Services</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#securityApplication"><strong>2.3</strong><span>Register Service</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#securityApplication"><strong>3.3</strong><span>Register Service</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#delegatingAuthenticationProvider"><strong>2.4</strong><span>Delegating Authentication Provider</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#delegatingAuthenticationProvider"><strong>3.4</strong><span>Delegating Authentication Provider</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#userFetcher"><strong>2.4.1</strong><span>User Fetcher</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#userFetcher"><strong>3.4.1</strong><span>User Fetcher</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#authoritiesFetcher"><strong>2.4.2</strong><span>Authorities Fetcher</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#authoritiesFetcher"><strong>3.4.2</strong><span>Authorities Fetcher</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#passwordEncoder"><strong>2.4.3</strong><span>Password Encoder</span></a></div>
             
-            <div class="toc-item" style="margin-left:20px"><a href="#passwordEncoder"><strong>3.4.3</strong><span>Password Encoder</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#ldapTest"><strong>2.5</strong><span>LDAP Authentication Provider test</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#ldapTest"><strong>3.5</strong><span>LDAP Authentication Provider test</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#loginTest"><strong>2.6</strong><span>Login Testing</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#loginTest"><strong>3.6</strong><span>Login Testing</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#oauthTest"><strong>2.7</strong><span>Oauth Testing</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#oauthTest"><strong>3.7</strong><span>Oauth Testing</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>3</strong><span>Testing the Application</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>4</strong><span>Testing the Application</span></a></div>
-            
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the Application</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the Application</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -108,7 +106,7 @@
         <h1>LDAP and Database authentication providers</h1>
         <p>Learn how to create a LDAP and a database authentication provider in a Micronaut App.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.BUILD-SNAPSHOT</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -192,24 +190,7 @@
 </div>
 
 
-<h1 id="usingSnapshotVersion">2 Using Snapshot Version</h1>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/usingSnapshotVersion.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
-</div>
-<div class="paragraph">
-<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
-</div>
-
-
-<h1 id="writingTheApp">3 Writing the Application</h1>
+<h1 id="writingTheApp">2 Writing the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -299,7 +280,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h2 id="securityLdap">3.1 Security LDAP</h2>
+<h2 id="securityLdap">2.1 Security LDAP</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityLdap.adoc"'>
@@ -385,7 +366,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h2 id="gorm">3.2 GORM</h2>
+<h2 id="gorm">2.2 GORM</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm.adoc"'>
@@ -426,7 +407,7 @@ dependencies {
 </div>
 
 
-<h2 id="domainClasses">3.2.1 Domain Classes</h2>
+<h2 id="domainClasses">2.2.1 Domain Classes</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses.adoc"'>
@@ -445,7 +426,7 @@ mapped onto an underlying database table.</p>
 </div>
 
 
-<h2 id="user">3.2.1.1 User</h2>
+<h2 id="user">2.2.1.1 User</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/user.adoc"'>
@@ -499,7 +480,7 @@ class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-
 </div>
 
 
-<h2 id="role">3.2.1.2 Role</h2>
+<h2 id="role">2.2.1.2 Role</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/role.adoc"'>
@@ -542,7 +523,7 @@ class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2">
 </div>
 
 
-<h2 id="userrole">3.2.1.3 UserRole</h2>
+<h2 id="userrole">2.2.1.3 UserRole</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/userrole.adoc"'>
@@ -587,7 +568,7 @@ class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-val
 </div>
 
 
-<h2 id="dataServices">3.2.2 Data Services</h2>
+<h2 id="dataServices">2.2.2 Data Services</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/dataServices.adoc"'>
@@ -699,7 +680,7 @@ interface UserRoleGormService {
 </div>
 
 
-<h2 id="securityApplication">3.3 Register Service</h2>
+<h2 id="securityApplication">2.3 Register Service</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityApplication.adoc"'>
@@ -821,7 +802,7 @@ class RegisterService {
 </div>
 
 
-<h2 id="delegatingAuthenticationProvider">3.4 Delegating Authentication Provider</h2>
+<h2 id="delegatingAuthenticationProvider">2.4 Delegating Authentication Provider</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider.adoc"'>
@@ -846,7 +827,7 @@ class RegisterService {
 </div>
 
 
-<h2 id="userFetcher">3.4.1 User Fetcher</h2>
+<h2 id="userFetcher">2.4.1 User Fetcher</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/userFetcher.adoc"'>
@@ -903,7 +884,7 @@ class UserFetcherService implements UserFetcher {
 </div>
 
 
-<h2 id="authoritiesFetcher">3.4.2 Authorities Fetcher</h2>
+<h2 id="authoritiesFetcher">2.4.2 Authorities Fetcher</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authoritiesFetcher.adoc"'>
@@ -956,7 +937,7 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
 </div>
 
 
-<h2 id="passwordEncoder">3.4.3 Password Encoder</h2>
+<h2 id="passwordEncoder">2.4.3 Password Encoder</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/passwordEncoder.adoc"'>
@@ -1023,7 +1004,7 @@ class BCryptPasswordEncoderService implements PasswordEncoder {
 </div>
 
 
-<h2 id="ldapTest">3.5 LDAP Authentication Provider test</h2>
+<h2 id="ldapTest">2.5 LDAP Authentication Provider test</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/ldapTest.adoc"'>
@@ -1185,7 +1166,7 @@ class LoginLdapSpec extends Specification {
 </div>
 
 
-<h2 id="loginTest">3.6 Login Testing</h2>
+<h2 id="loginTest">2.6 Login Testing</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/loginTest.adoc"'>
@@ -1285,7 +1266,7 @@ class LoginControllerSpec extends Specification {
 </div>
 
 
-<h2 id="oauthTest">3.7 Oauth Testing</h2>
+<h2 id="oauthTest">2.7 Oauth Testing</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/oauthTest.adoc"'>
@@ -1417,7 +1398,7 @@ class OauthControllerSpec extends Specification {
 </div>
 
 
-<h1 id="testingTheApp">4 Testing the Application</h1>
+<h1 id="testingTheApp">3 Testing the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
@@ -1437,7 +1418,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="runningTheApp">5 Running the Application</h1>
+<h1 id="runningTheApp">4 Running the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/runningTheApp.adoc"'>

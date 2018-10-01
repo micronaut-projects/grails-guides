@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Writing the Application null</title>
+    <title>2 Writing the Application null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -32,16 +32,13 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/usingSnapshotVersion.html"><strong>2</strong><span>Using Snapshot Version</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>3</strong><span>Writing the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
-                        </div>
-                        
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span></a>
                         </div>
                         
                     </div>
@@ -62,18 +59,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>3 Writing the Application</h1>
+                    <h1>2 Writing the Application</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -82,49 +79,49 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#securityLdap"><strong>3.1</strong><span>Security LDAP</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#securityLdap"><strong>2.1</strong><span>Security LDAP</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#gorm"><strong>3.2</strong><span>GORM</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#gorm"><strong>2.2</strong><span>GORM</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#domainClasses"><strong>3.2.1</strong><span>Domain Classes</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#domainClasses"><strong>2.2.1</strong><span>Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:20px"><a href="#user"><strong>3.2.1.1</strong><span>User</span></a>
+                    <div class="toc-item" style="margin-left:20px"><a href="#user"><strong>2.2.1.1</strong><span>User</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:20px"><a href="#role"><strong>3.2.1.2</strong><span>Role</span></a>
+                    <div class="toc-item" style="margin-left:20px"><a href="#role"><strong>2.2.1.2</strong><span>Role</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:20px"><a href="#userrole"><strong>3.2.1.3</strong><span>UserRole</span></a>
+                    <div class="toc-item" style="margin-left:20px"><a href="#userrole"><strong>2.2.1.3</strong><span>UserRole</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#dataServices"><strong>3.2.2</strong><span>Data Services</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#dataServices"><strong>2.2.2</strong><span>Data Services</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#securityApplication"><strong>3.3</strong><span>Register Service</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#securityApplication"><strong>2.3</strong><span>Register Service</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#delegatingAuthenticationProvider"><strong>3.4</strong><span>Delegating Authentication Provider</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#delegatingAuthenticationProvider"><strong>2.4</strong><span>Delegating Authentication Provider</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#userFetcher"><strong>3.4.1</strong><span>User Fetcher</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#userFetcher"><strong>2.4.1</strong><span>User Fetcher</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#authoritiesFetcher"><strong>3.4.2</strong><span>Authorities Fetcher</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#authoritiesFetcher"><strong>2.4.2</strong><span>Authorities Fetcher</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#passwordEncoder"><strong>3.4.3</strong><span>Password Encoder</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#passwordEncoder"><strong>2.4.3</strong><span>Password Encoder</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#ldapTest"><strong>3.5</strong><span>LDAP Authentication Provider test</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#ldapTest"><strong>2.5</strong><span>LDAP Authentication Provider test</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#loginTest"><strong>3.6</strong><span>Login Testing</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#loginTest"><strong>2.6</strong><span>Login Testing</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#oauthTest"><strong>3.7</strong><span>Oauth Testing</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#oauthTest"><strong>2.7</strong><span>Oauth Testing</span></a>
                     </div>
                     
                 </div>
@@ -132,7 +129,7 @@ function addJsClass() {
 
                 
 
-<h1 id="writingTheApp">3 Writing the Application</h1>
+<h1 id="writingTheApp">2 Writing the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
@@ -222,7 +219,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h2 id="securityLdap">3.1 Security LDAP</h2>
+<h2 id="securityLdap">2.1 Security LDAP</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityLdap.adoc"'>
@@ -308,7 +305,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h2 id="gorm">3.2 GORM</h2>
+<h2 id="gorm">2.2 GORM</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm.adoc"'>
@@ -349,7 +346,7 @@ dependencies {
 </div>
 
 
-<h2 id="domainClasses">3.2.1 Domain Classes</h2>
+<h2 id="domainClasses">2.2.1 Domain Classes</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses.adoc"'>
@@ -368,7 +365,7 @@ mapped onto an underlying database table.</p>
 </div>
 
 
-<h2 id="user">3.2.1.1 User</h2>
+<h2 id="user">2.2.1.1 User</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/user.adoc"'>
@@ -422,7 +419,7 @@ class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-
 </div>
 
 
-<h2 id="role">3.2.1.2 Role</h2>
+<h2 id="role">2.2.1.2 Role</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/role.adoc"'>
@@ -465,7 +462,7 @@ class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2">
 </div>
 
 
-<h2 id="userrole">3.2.1.3 UserRole</h2>
+<h2 id="userrole">2.2.1.3 UserRole</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/userrole.adoc"'>
@@ -510,7 +507,7 @@ class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-val
 </div>
 
 
-<h2 id="dataServices">3.2.2 Data Services</h2>
+<h2 id="dataServices">2.2.2 Data Services</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/dataServices.adoc"'>
@@ -622,7 +619,7 @@ interface UserRoleGormService {
 </div>
 
 
-<h2 id="securityApplication">3.3 Register Service</h2>
+<h2 id="securityApplication">2.3 Register Service</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityApplication.adoc"'>
@@ -744,7 +741,7 @@ class RegisterService {
 </div>
 
 
-<h2 id="delegatingAuthenticationProvider">3.4 Delegating Authentication Provider</h2>
+<h2 id="delegatingAuthenticationProvider">2.4 Delegating Authentication Provider</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider.adoc"'>
@@ -769,7 +766,7 @@ class RegisterService {
 </div>
 
 
-<h2 id="userFetcher">3.4.1 User Fetcher</h2>
+<h2 id="userFetcher">2.4.1 User Fetcher</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/userFetcher.adoc"'>
@@ -826,7 +823,7 @@ class UserFetcherService implements UserFetcher {
 </div>
 
 
-<h2 id="authoritiesFetcher">3.4.2 Authorities Fetcher</h2>
+<h2 id="authoritiesFetcher">2.4.2 Authorities Fetcher</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authoritiesFetcher.adoc"'>
@@ -879,7 +876,7 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
 </div>
 
 
-<h2 id="passwordEncoder">3.4.3 Password Encoder</h2>
+<h2 id="passwordEncoder">2.4.3 Password Encoder</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/passwordEncoder.adoc"'>
@@ -946,7 +943,7 @@ class BCryptPasswordEncoderService implements PasswordEncoder {
 </div>
 
 
-<h2 id="ldapTest">3.5 LDAP Authentication Provider test</h2>
+<h2 id="ldapTest">2.5 LDAP Authentication Provider test</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/ldapTest.adoc"'>
@@ -1108,7 +1105,7 @@ class LoginLdapSpec extends Specification {
 </div>
 
 
-<h2 id="loginTest">3.6 Login Testing</h2>
+<h2 id="loginTest">2.6 Login Testing</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/loginTest.adoc"'>
@@ -1208,7 +1205,7 @@ class LoginControllerSpec extends Specification {
 </div>
 
 
-<h2 id="oauthTest">3.7 Oauth Testing</h2>
+<h2 id="oauthTest">2.7 Oauth Testing</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/oauthTest.adoc"'>
@@ -1342,9 +1339,9 @@ class OauthControllerSpec extends Specification {
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../guide/usingSnapshotVersion.html">&lt;&lt; <strong>2</strong><span>Using Snapshot Version</span></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
