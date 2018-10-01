@@ -88,7 +88,7 @@
         <h1>Micronaut Basic Auth</h1>
         <p>Learn how to secure a Micronaut app using 'Basic' HTTP Authentication Scheme.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -339,7 +339,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.security.Secured;
+import io.micronaut.security.annotation.Secured;
 import java.security.Principal;
 
 @Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -531,7 +531,7 @@ class BasicAuthSpec extends Specification {
 
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
-import io.micronaut.http.client.Client;
+import io.micronaut.http.client.annotation.Client;
 
 @Client("/")
 public interface AppClient {
