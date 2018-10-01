@@ -90,7 +90,7 @@
         <h1>Micronaut JWT Authentication</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -370,7 +370,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
-import io.micronaut.security.Secured
+import io.micronaut.security.annotation.Secured
 
 import java.security.Principal
 
@@ -627,7 +627,7 @@ class OauthAccessTokenSpec extends Specification {
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 
 @CompileStatic
 @Client("/")
