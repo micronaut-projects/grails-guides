@@ -90,7 +90,7 @@
         <h1>Session based authentication</h1>
         <p>Learn how to secure a Micronaut app using Session based authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
     </header>
     
 
@@ -466,7 +466,7 @@ going to produce HTML in our controllers.</p>
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.security.Secured
+import io.micronaut.security.annotation.Secured
 import io.micronaut.views.View
 
 import javax.annotation.Nullable
@@ -527,7 +527,7 @@ class HomeController {
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.security.Secured
+import io.micronaut.security.annotation.Secured
 import io.micronaut.views.View
 
 @CompileStatic
