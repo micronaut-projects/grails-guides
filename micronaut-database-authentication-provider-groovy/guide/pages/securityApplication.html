@@ -114,7 +114,7 @@ class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; 
 
     @Override
     void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
-        registerService.register('user','user',['ROLE_GRAILS']) <i class="conum" data-value="3"></i><b>(3)</b>
+        registerService.register("sherlock@micronaut.example", "sherlock", 'elementary', ['ROLE_DETECTIVE']) <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
     static void main(String[] args) {
@@ -153,6 +153,8 @@ import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
 import io.micronaut.security.authentication.providers.PasswordEncoder
 import javax.inject.Singleton
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
 
 @CompileStatic
 @Singleton
@@ -174,12 +176,12 @@ class RegisterService {
     }
 
     @Transactional
-    void register(String username, String rawPassword, List&lt;String&gt; authorities) {
+    void register(@Email String email, @NotBlank String username, @NotBlank String rawPassword, List&lt;String&gt; authorities) {
 
         User user = userGormService.findByUsername(username)
         if ( !user ) {
             final String encodedPassword = passwordEncoder.encode(rawPassword)
-            user = userGormService.save(username, encodedPassword)
+            user = userGormService.save(email, username, encodedPassword)
         }
 
         if ( user &amp;&amp; authorities ) {
