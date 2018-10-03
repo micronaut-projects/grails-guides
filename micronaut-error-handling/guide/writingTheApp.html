@@ -1,0 +1,683 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the App null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Error Handling
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>3</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>3</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the App</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#globalerror"><strong>2.1</strong><span>Global @Error</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#localerror"><strong>2.2</strong><span>Local @Error</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#exceptionhandler"><strong>2.3</strong><span>ExceptionHandler</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.complete</code></pre>
+</div>
+</div>
+
+
+<h2 id="globalerror">2.1 Global @Error</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/writingTheApp/globalerror.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We want to display a custom <code>Not Found</code> page when the user attempts to access a uri for which we have not any route defined for.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/notfound.png" alt="notfound">
+</div>
+</div>
+<div class="paragraph">
+<p>The views module provides support for view rendering on the server side and does so by rendering views on the I/O thread pool in order to avoid blocking the Netty event loop.</p>
+</div>
+<div class="paragraph">
+<p>To use the view rendering features described in this section, add the following dependency on your classpath. For example, in build.gradle</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:views"
+    runtime "org.apache.velocity:velocity-engine-core:2.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Micronaut ships out-of-the-box with support for <a href="http://velocity.apache.org/">Apache Velocity</a>, <a href="https://www.thymeleaf.org/">Thymeleaf</a> or <a href="http://jknack.github.io/handlebars.java/">Handlebars</a>. In this guide, we use Apache Velocity.</p>
+</div>
+<div class="paragraph">
+<p>Create a <code>notfound.vm</code> view:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/notfound.vm</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Not Found&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;NOT FOUND&lt;/h1&gt;
+
+&lt;p&gt;&lt;b&gt;The page you were looking for appears to have been moved, deleted or does not exist.&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;This is most likely due to:&lt;/p&gt;
+
+&lt;ul&gt;
+    &lt;li&gt;An outdated link on another site&lt;/li&gt;
+    &lt;li&gt;A typo in the address / URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>NotFoundController</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/NotFoundController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.hateos.JsonError;
+import io.micronaut.http.hateos.Link;
+import io.micronaut.views.ViewsRenderer;
+
+import java.util.Collections;
+
+@Controller("/notfound") <i class="conum" data-value="1"></i><b>(1)</b>
+public class NotFoundController {
+
+    private final ViewsRenderer viewsRenderer;
+
+    public NotFoundController(ViewsRenderer viewsRenderer) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.viewsRenderer = viewsRenderer;
+    }
+
+    @Error(status = HttpStatus.NOT_FOUND, global = true)  <i class="conum" data-value="3"></i><b>(3)</b>
+    public HttpResponse notFound(HttpRequest request) {
+        if (request.getHeaders()
+                .accept()
+                .stream()
+                .anyMatch(mediaType -&gt; mediaType.getName().contains(MediaType.TEXT_HTML))) { <i class="conum" data-value="4"></i><b>(4)</b>
+            return HttpResponse.ok(viewsRenderer.render("notFound", Collections.emptyMap()))
+                    .contentType(MediaType.TEXT_HTML);
+        }
+
+        JsonError error = new JsonError("Page Not Found")
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.&lt;JsonError&gt;notFound()
+                .body(error); <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject an available <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/ViewRenderer.html">ViewRenderer</a> bean to render an HTML view.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The Error declares which <code>HttpStatus</code> error code to handle (in this case 404). We declare the method as a global error handler due to <code>global = true</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If the request <code>Accept</code> HTTP Header contains <code>text/html</code>, we respond an HTML View.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>By default, we respond JSON.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="localerror">2.2 Local @Error</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/writingTheApp/localerror.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this section, we are going to create a local error handling to display validation errors when a form submission fails.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+</div>
+<div class="paragraph">
+<p>Hibernate Validator is a reference implementation of the validation API.</p>
+</div>
+<div class="paragraph">
+<p>Add a dependency to it:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then create a view to display a form:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/createbook.png" alt="createbook">
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/bookscreate.vm</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Create Book&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+        form fieldset li {
+            list-style-type: none;
+        }
+        #errors span { color: red; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Create Book&lt;/h1&gt;
+&lt;form action="/books/save" method="post"&gt;
+    &lt;fieldset&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;label for="title"&gt;Title&lt;/label&gt;
+                &lt;input type="text" id="title" name="title" value="$title"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;label for="pages"&gt;Pages&lt;/label&gt;
+                &lt;input type="text" id="pages" name="pages" value="$pages"/&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;input type="submit" value="Save"/&gt;
+            &lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/fieldset&gt;
+&lt;/form&gt;
+#if( $errors )
+    &lt;ul id="errors"&gt;
+        #foreach( $error in $errors )
+            &lt;li&gt;&lt;span&gt;$error&lt;/span&gt;&lt;/li&gt;
+        #end
+    &lt;/ul&gt;
+#end
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a controller to map the form submission:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import java.util.List;
+import io.micronaut.core.io.Writable;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.validation.Validated;
+import io.micronaut.views.View;
+import io.micronaut.views.ViewsRenderer;
+import io.micronaut.http.annotation.Error;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Validated <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/books") <i class="conum" data-value="2"></i><b>(2)</b>
+public class BookController {
+
+    @View("bookscreate") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/create") <i class="conum" data-value="4"></i><b>(4)</b>
+    public Map&lt;String, Object&gt; create() {
+        return createModelWithBlankValues();
+    }
+
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED) <i class="conum" data-value="5"></i><b>(5)</b>
+    @Post("/save") <i class="conum" data-value="6"></i><b>(6)</b>
+    public HttpResponse save(@Valid @Body CommandBookSave cmd) { <i class="conum" data-value="7"></i><b>(7)</b>
+        return HttpResponse.ok();
+    }
+
+    private Map&lt;String, Object&gt; createModelWithBlankValues() {
+        final Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+        model.put("title", "");
+        model.put("pages", "");
+        return model;
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@View</code> annotation to indicate the view name which should be used to render a view for the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the HTTP verb that a controller’s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>@Consumes</code> annotation takes a <code>String[]</code> of supported media types for an incoming request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>@Post</code> annotation is used to map the index method to all requests that use an HTTP POST</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. We use a POGO to encapsulate the form submission.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create the POJO encapsulating the submission:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
+public class CommandBookSave {
+    @NotBlank <i class="conum" data-value="1"></i><b>(1)</b>
+    private String title;
+
+    @NotNull <i class="conum" data-value="2"></i><b>(2)</b>
+    @Positive <i class="conum" data-value="3"></i><b>(3)</b>
+    private Integer pages;
+
+    public CommandBookSave() {
+
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getPages() {
+        return pages;
+    }
+
+    public void setPages(Integer pages) {
+        this.pages = pages;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>title</code> is required and must be not blank.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>pages</code> is required.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>pages</code> must be greater than 0.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When the form submission fails, we want to display the errors in the UI as the next image illustrates:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/createbookserrors.png" alt="createbookserrors">
+</div>
+</div>
+<div class="paragraph">
+<p>An easy way to achieve it is to capture the <code>javax.validation.ConstraintViolationException</code> exception in a local <code>@Error</code> handler. Modify <code>BookController.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">...
+class BookController {
+...
+..
+    private final ViewsRenderer viewsRenderer;
+
+    public BookController(ViewsRenderer viewsRenderer) { <i class="conum" data-value="1"></i><b>(1)</b>
+        this.viewsRenderer = viewsRenderer;
+    }
+...
+.
+    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Error(exception = ConstraintViolationException.class) <i class="conum" data-value="3"></i><b>(3)</b>
+    public Writable onSavedFailed(HttpRequest request, ConstraintViolationException ex) { <i class="conum" data-value="4"></i><b>(4)</b>
+        final Map&lt;String, Object&gt; model = createModelWithBlankValues();
+        model.put("errors", violationsMessages(ex.getConstraintViolations()));
+        Optional&lt;CommandBookSave&gt; cmd = request.getBody(CommandBookSave.class);
+        cmd.ifPresent(bookSave -&gt; {
+            model.put("title", bookSave.getTitle());
+            model.put("pages", bookSave.getPages());
+        });
+        return viewsRenderer.render("bookscreate", model);
+    }
+
+    private List&lt;String&gt; violationsMessages(Set&lt;ConstraintViolation&lt;?&gt;&gt; violations) {
+        return violations.stream()
+                .map(BookController::violationMessage)
+                .collect(Collectors.toList());
+    }
+
+    private static String violationMessage(ConstraintViolation violation) {
+        StringBuilder sb = new StringBuilder();
+        Path.Node lastNode = lastNode(violation.getPropertyPath());
+        if (lastNode != null) {
+            sb.append(lastNode.getName());
+            sb.append(" ");
+        }
+        sb.append(violation.getMessage());
+        return sb.toString();
+    }
+
+    private static Path.Node lastNode(Path path) {
+        Path.Node lastNode = null;
+        for (final Path.Node node : path) {
+            lastNode = node;
+        }
+        return lastNode;
+    }
+..
+...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate a controller’s action with <code>@Produces</code> to change the response content type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>By default <code>@Error</code> annotations are local. We specify the exception which we want to handle.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can access the original <code>HttpRequest</code> which triggered the exception.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="exceptionhandler">2.3 ExceptionHandler</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/writingTheApp/exceptionhandler.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Another mechanism to handle global exception is to use a <code>ExceptionHandler</code>.</p>
+</div>
+<div class="paragraph">
+<p>Modify the controller and add a method to throw an exception:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/BookController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Validated <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/books") <i class="conum" data-value="2"></i><b>(2)</b>
+public class BookController {
+...
+..
+.
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/stock/{isbn}")
+    public Integer stock(String isbn) {
+        throw new OutOfStockException();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/OutOfStockException.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class OutOfStockException extends RuntimeException {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Implement a ExceptionHandler; a generic hook for handling exceptions that occurs during the execution of an HTTP request.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/OutOfStockExceptionHandler.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.server.exceptions.ExceptionHandler;
+import javax.inject.Singleton;
+
+@Produces
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(classes = {OutOfStockException.class, ExceptionHandler.class})  <i class="conum" data-value="2"></i><b>(2)</b>
+public class OutOfStockExceptionHandler implements ExceptionHandler&lt;OutOfStockException, HttpResponse&gt; { <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Override
+    public HttpResponse handle(HttpRequest request, OutOfStockException exception) {
+        return HttpResponse.ok(0); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context, annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This bean loads if <code>OutOfStockException</code>, <code>ExceptionHandler</code> are available.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specify the <code>Throwable</code> to handle.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Return 200 OK with a body of 0; no stock.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>3</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
