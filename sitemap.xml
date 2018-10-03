@@ -64,6 +64,9 @@
     <loc>http://guides.micronaut.io/micronaut-multitenancy-propagation/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-error-handling/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
