@@ -98,7 +98,7 @@
         <h1>Consul and Micronaut - Microservices service discovery</h1>
         <p>Use Consul service discovery to expose your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.M4</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
     </header>
     
 
@@ -276,7 +276,7 @@ select an available instance, and make a request.</p>
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.M4
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.0.0.RC2
 kotlinVersion=1.2.61
 spekVersion=2.0.0-alpha.1</code></pre>
 </div>
@@ -355,10 +355,6 @@ class BooksController {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>You can return reactive types from your controller methods.</td>
 </tr>
 </table>
 </div>
@@ -709,7 +705,7 @@ interface BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Flowable
 
 
@@ -763,7 +759,7 @@ interface BookInventoryOperations {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
@@ -1261,7 +1257,7 @@ Note: Creating bean classes for 3 type elements
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Flowable
 
 
@@ -1287,7 +1283,7 @@ interface BookCatalogueClient : BookCatalogueOperations {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.client.Client
+import io.micronaut.http.client.annotation.Client
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
