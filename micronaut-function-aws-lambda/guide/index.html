@@ -104,7 +104,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.RC1</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
     </header>
     
 
@@ -1759,8 +1759,8 @@ jar {
 <h3 id="_1_install_graal">1. Install Graal</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc6-graal
-sdk use java 1.0.0-rc6-graal</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc7-graal
+sdk use java 1.0.0-rc7-graal</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1783,7 +1783,7 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.substratevm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc6 -Dpackaging=jar</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.substratevm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc7 -Dpackaging=jar</code></pre>
 </div>
 </div>
 </div>
@@ -1795,7 +1795,7 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly 'com.oracle.substratevm:svm:GraalVM-1.0.0-rc6'
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly 'com.oracle.substratevm:svm:GraalVM-1.0.0-rc7'
     runtimeOnly "io.micronaut:graal"</code></pre>
 </div>
 </div>
@@ -1875,7 +1875,7 @@ public class FunctionSubstitutions {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">echo '{"memberStateCode":"es", "vatNumber":"B99286353"}' | java -Dgraalvm.class.analysis=true -jar build/libs/vies-vat-validator-0.1-all.jar</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">java -cp build/libs/vies-vat-validator-0.1-all.jar io.micronaut.graal.reflect.GraalClassLoadingAnalyzer</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1890,7 +1890,17 @@ public class FunctionSubstitutions {
 <div class="listingblock">
 <div class="title">vies-vat-validator-graal/build-native-image.sh</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image --class-path build/libs/vies-vat-validator-0.1-all.jar -H:ReflectionConfigurationFiles=build/reflect.json -H:EnableURLProtocols=http -H:IncludeResources="application.yml|META-INF/services/*.*" -H:Name=vies-vat-validator --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder -H:Class=io.micronaut.function.executor.FunctionApplication -H:+ReportUnsupportedElementsAtRuntime -H:+AllowVMInspection</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image \
+	--class-path build/libs/vies-vat-validator-0.1-all.jar \
+	-H:ReflectionConfigurationFiles=build/reflect.json \
+	-H:EnableURLProtocols=http \
+	-H:IncludeResources="application.yml|META-INF/services/*.*" \
+	-H:Name=vies-vat-validator \
+	--delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder \
+	--rerun-class-initialization-at-runtime='sun.security.jca.JCAUtil$CachedSecureRandomHolder,javax.net.ssl.SSLContext' \
+	-H:Class=io.micronaut.function.executor.FunctionApplication \
+	-H:+ReportUnsupportedElementsAtRuntime \
+	-H:+AllowVMInspection</code></pre>
 </div>
 </div>
 <div class="paragraph">
