@@ -488,50 +488,31 @@ public class CommandBookSave {
 class BookController {
 ...
 ..
-    private final ViewsRenderer viewsRenderer;
+    private  final MessageSource messageSource;
 
-    public BookController(ViewsRenderer viewsRenderer) { <i class="conum" data-value="1"></i><b>(1)</b>
-        this.viewsRenderer = viewsRenderer;
+    public BookController(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 ...
 .
-    @Produces(MediaType.TEXT_HTML) <i class="conum" data-value="2"></i><b>(2)</b>
+    @View("bookscreate")
     @Error(exception = ConstraintViolationException.class) <i class="conum" data-value="3"></i><b>(3)</b>
-    public Writable onSavedFailed(HttpRequest request, ConstraintViolationException ex) { <i class="conum" data-value="4"></i><b>(4)</b>
+    public Map&lt;String, Object&gt; onSavedFailed(HttpRequest request, ConstraintViolationException ex) { <i class="conum" data-value="4"></i><b>(4)</b>
         final Map&lt;String, Object&gt; model = createModelWithBlankValues();
-        model.put("errors", violationsMessages(ex.getConstraintViolations()));
+        model.put("errors", messageSource.violationsMessages(ex.getConstraintViolations()));
         Optional&lt;CommandBookSave&gt; cmd = request.getBody(CommandBookSave.class);
-        cmd.ifPresent(bookSave -&gt; {
-            model.put("title", bookSave.getTitle());
-            model.put("pages", bookSave.getPages());
-        });
-        return viewsRenderer.render("bookscreate", model);
+        cmd.ifPresent(bookSave -&gt; populateModel(model, bookSave));
+        return model;
     }
 
-    private List&lt;String&gt; violationsMessages(Set&lt;ConstraintViolation&lt;?&gt;&gt; violations) {
-        return violations.stream()
-                .map(BookController::violationMessage)
-                .collect(Collectors.toList());
+    private void populateModel(Map&lt;String, Object&gt; model, CommandBookSave bookSave) {
+        model.put("title", bookSave.getTitle());
+        model.put("pages", bookSave.getPages());
     }
 
-    private static String violationMessage(ConstraintViolation violation) {
-        StringBuilder sb = new StringBuilder();
-        Path.Node lastNode = lastNode(violation.getPropertyPath());
-        if (lastNode != null) {
-            sb.append(lastNode.getName());
-            sb.append(" ");
-        }
-        sb.append(violation.getMessage());
-        return sb.toString();
-    }
 
-    private static Path.Node lastNode(Path path) {
-        Path.Node lastNode = null;
-        for (final Path.Node node : path) {
-            lastNode = node;
-        }
-        return lastNode;
-    }
+
+
 ..
 ...
 }</code></pre>
@@ -556,6 +537,51 @@ class BookController {
 <td>You can access the original <code>HttpRequest</code> which triggered the exception.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Create a <code>javax.inject.Singleton</code> to encapsulate the generation of a list of messages from a <code>Set</code> of <code>ConstraintViolation</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/MessageSource.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Singleton
+public class MessageSource {
+
+    public List&lt;String&gt; violationsMessages(Set&lt;ConstraintViolation&lt;?&gt;&gt; violations) {
+        return violations.stream()
+                .map(MessageSource::violationMessage)
+                .collect(Collectors.toList());
+    }
+
+    private static String violationMessage(ConstraintViolation violation) {
+        StringBuilder sb = new StringBuilder();
+        Path.Node lastNode = lastNode(violation.getPropertyPath());
+        if (lastNode != null) {
+            sb.append(lastNode.getName());
+            sb.append(" ");
+        }
+        sb.append(violation.getMessage());
+        return sb.toString();
+    }
+
+    private static Path.Node lastNode(Path path) {
+        Path.Node lastNode = null;
+        for (final Path.Node node : path) {
+            lastNode = node;
+        }
+        return lastNode;
+    }
+}</code></pre>
+</div>
 </div>
 
 
