@@ -271,6 +271,7 @@ public class FunctionSubstitutions {
 <div class="title">vies-vat-validator-graal/build-native-image.sh</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image \
+    --no-server \
 	--class-path build/libs/vies-vat-validator-0.1-all.jar \
 	-H:ReflectionConfigurationFiles=build/reflect.json \
 	-H:EnableURLProtocols=http \
