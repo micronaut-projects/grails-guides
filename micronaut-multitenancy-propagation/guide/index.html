@@ -104,7 +104,7 @@
         <h1>Micronaut Multitenancy Propagation</h1>
         <p>Learn how to Micronaut helps you implement Multitenancy in a set of Microservices.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC3</p>
     </header>
     
 
@@ -252,7 +252,7 @@
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:multitenancy"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-multitenancy"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -478,7 +478,7 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:views"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-views"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -707,7 +707,7 @@ public class TenantController {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "io.micronaut:inject-groovy"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "io.micronaut:micronaut-inject-groovy"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -835,7 +835,7 @@ class HomePageSpec extends GebSpec {
 <div class="listingblock">
 <div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile("io.micronaut.configuration:hibernate-gorm") {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile("io.micronaut.configuration:micronaut-hibernate-gorm") {
         exclude group: 'org.grails', module: 'grails-datastore-gorm-hibernate5'
     }
     compile "org.grails:grails-datastore-gorm-hibernate5:6.1.9.RELEASE"
