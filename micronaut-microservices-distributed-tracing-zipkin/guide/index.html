@@ -88,7 +88,7 @@
         <h1>Microservices distributed tracing with Zipkin and Micronaut</h1>
         <p>Use Zipkin distributed tracing to investigate the behaviour of your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC3</p>
     </header>
     
 
@@ -284,7 +284,7 @@
     ...
     ..
     .
-    compile "io.micronaut:tracing"
+    compile "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -298,9 +298,9 @@
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http:4.19.0'
-    runtime 'io.zipkin.reporter2:zipkin-reporter:2.5.0'
-    compile 'io.opentracing.brave:brave-opentracing:0.30.0'
+    runtime 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+    runtime 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+    compile 'io.opentracing.brave:brave-opentracing:0.33.3'
 }</code></pre>
 </div>
 </div>
@@ -362,7 +362,7 @@
     ...
     ..
     .
-    compile "io.micronaut:tracing"
+    compile "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -376,9 +376,9 @@
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http:4.19.0'
-    runtime 'io.zipkin.reporter2:zipkin-reporter:2.5.0'
-    compile 'io.opentracing.brave:brave-opentracing:0.30.0'
+    runtime 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+    runtime 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+    compile 'io.opentracing.brave:brave-opentracing:0.33.3'
 }</code></pre>
 </div>
 </div>
@@ -493,7 +493,7 @@ public class BooksController {
     ...
     ..
     .
-    compile "io.micronaut:tracing"
+    compile "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -507,9 +507,9 @@ public class BooksController {
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http:4.19.0'
-    runtime 'io.zipkin.reporter2:zipkin-reporter:2.5.0'
-    compile 'io.opentracing.brave:brave-opentracing:0.30.0'
+    runtime 'io.zipkin.brave:brave-instrumentation-http:5.4.2'
+    runtime 'io.zipkin.reporter2:zipkin-reporter:2.7.9'
+    compile 'io.opentracing.brave:brave-opentracing:0.33.3'
 }</code></pre>
 </div>
 </div>
