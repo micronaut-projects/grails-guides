@@ -106,7 +106,7 @@
         <h1>LDAP and Database authentication providers</h1>
         <p>Learn how to create a LDAP and a database authentication provider in a Micronaut App.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC3</p>
     </header>
     
 
@@ -218,7 +218,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:security-jwt"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-security-jwt"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -299,7 +299,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut.configuration:security-ldap"
+    compile "io.micronaut.configuration:micronaut-security-ldap"
 }</code></pre>
 </div>
 </div>
@@ -397,8 +397,8 @@ dependencies {
 ...
 ..
 .
-    compile "io.micronaut.configuration:hibernate-validator"
-    compile "io.micronaut.configuration:hibernate-gorm"
+    compile "io.micronaut.configuration:micronaut-hibernate-validator"
+    compile "io.micronaut.configuration:micronaut-hibernate-gorm"
     compile "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
     runtime "com.h2database:h2:$h2Version"
     runtime "org.apache.tomcat:tomcat-jdbc:$tomcatJdbcVersion"
