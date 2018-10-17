@@ -104,7 +104,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0.RC2</p>
+        <p><strong>Micronaut Version:</strong> 1.0.0.RC3</p>
     </header>
     
 
@@ -369,7 +369,7 @@ the SOAP envelope manually.</p>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:http-client"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-http-client"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -574,8 +574,8 @@ and JSON Payload response.</td>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testRuntime "io.micronaut:http-server-netty"
-    testRuntime "io.micronaut:function-web"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testRuntime "io.micronaut:micronaut-http-server-netty"
+    testRuntime "io.micronaut:micronaut-function-web"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1129,7 +1129,7 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="listingblock">
 <div class="title">invoice/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:function-client"
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-function-client"
     runtime 'com.amazonaws:aws-java-sdk-lambda:1.11.285'</code></pre>
 </div>
 </div>
@@ -1234,7 +1234,7 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 <div class="listingblock">
 <div class="title">invoice/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1796,7 +1796,7 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly 'com.oracle.substratevm:svm:GraalVM-1.0.0-rc7'
-    runtimeOnly "io.micronaut:graal"</code></pre>
+    runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
 </div>
 </div>
 </div>
