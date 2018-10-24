@@ -85,10 +85,7 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#installGraal"><strong>5.1</strong><span>Installing Graal</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#creatingGraalImage"><strong>5.2</strong><span>Creating Graal native image</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#creatingGraalImage"><strong>5.1</strong><span>Creating Graal native image</span></a>
                     </div>
                     
                 </div>
@@ -129,71 +126,7 @@ reflection which is only partially supported by GraalVM.
 </div>
 
 
-<h2 id="installGraal">5.1 Installing Graal</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal/installGraal.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>To start using GraalVM you should first install the GraalVM SDK via the
- <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
-</div>
-<div class="listingblock">
-<div class="title">Installing GraalVM 1.0.0-rc7 with SDKman</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 1.0.0-rc7-graal
-$ sdk use java 1.0.0-rc7-graal</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note the above commands install the <code>1.0.0-rc7</code> version, and may need to be altered depending on the current release
- available.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-As of this writing, GraalVM is currently only available for Linux and Mac OS X systems.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Once you have installed the SDK you should make the <code>svm</code> dependency available via your local Maven cache. The easiest
- way to do this is via Maven&#8217;s <code>install</code> command:</p>
-</div>
-<div class="listingblock">
-<div class="title">Installing the SVM Dependency Locally</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar \
-                           -DgroupId=com.oracle.substratevm \
-                           -DartifactId=svm \
-                           -Dversion=GraalVM-1.0.0-rc7 \
-                           -Dpackaging=jar</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you don&#8217;t have Maven available you can install it using SDKMan: <code>sdk install maven</code>
-</td>
-</tr>
-</table>
-</div>
-
-
-<h2 id="creatingGraalImage">5.2 Creating Graal native image</h2>
+<h2 id="creatingGraalImage">5.1 Creating Graal native image</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal/creatingGraalImage.adoc"'>
@@ -214,46 +147,51 @@ file needed to recompute Netty and Caffeine&#8217;s use of <code>Unsafe</code>.<
 <li>
 <p><code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
 </li>
+<li>
+<p>A <code>Dockerfile</code> which can be used to construct the native image.</p>
+</li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly "com.oracle.substratevm:svm:GraalVM-1.0.0-rc7"
-    runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "com.oracle.substratevm:svm"
+runtime "io.micronaut:micronaut-graal"</code></pre>
 </div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A <code>build-native-image.sh</code> bash script which can be used as a template to construct the native image.</p>
-</li>
-</ul>
 </div>
 <div class="sect3">
 <h4 id="_creating_native_image">Creating native image</h4>
-<div class="paragraph">
-<p>To create the native image the only thing we need to do is execute the <code>build-native-image.sh</code> script. The script will
-build the application fat-jar, generate the <code>reflect.json</code> file and build the native image.</p>
-</div>
 <div class="listingblock">
-<div class="title">Building native image</div>
+<div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./build-native-image.sh</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+$ docker build . -t complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A native image named <code>complete</code> will be generated. Once the native image is created we can start it:</p>
+<p>The previous command will create the image <code>complete:latest</code>. To execute it:</p>
 </div>
 <div class="listingblock">
 <div class="title">Executing the native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./complete
-11:20:28.881 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 14ms. Server Running: http://localhost:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run --network host complete
+10:29:46.845 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 12ms. Server Running: http://nobita:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We can see that the application starts in only 14ms.</p>
+<p>We can see that the application starts in only 12ms.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We use the option <code>--network host</code> to use the same network as the host and expose automatically all the ports
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.2 Creating Graal native image null</title>
+    <title>5.1 Creating Graal native image null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>5.2 Creating Graal native image</h1>
+                    <h1>5.1 Creating Graal native image</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,7 +85,7 @@ function addJsClass() {
 
                 
 
-<h2 id="creatingGraalImage">5.2 Creating Graal native image</h2>
+<h2 id="creatingGraalImage">5.1 Creating Graal native image</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal/creatingGraalImage.adoc"'>
@@ -106,46 +106,51 @@ file needed to recompute Netty and Caffeine&#8217;s use of <code>Unsafe</code>.<
 <li>
 <p><code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
 </li>
+<li>
+<p>A <code>Dockerfile</code> which can be used to construct the native image.</p>
+</li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly "com.oracle.substratevm:svm:GraalVM-1.0.0-rc7"
-    runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "com.oracle.substratevm:svm"
+runtime "io.micronaut:micronaut-graal"</code></pre>
 </div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A <code>build-native-image.sh</code> bash script which can be used as a template to construct the native image.</p>
-</li>
-</ul>
 </div>
 <div class="sect3">
 <h4 id="_creating_native_image">Creating native image</h4>
-<div class="paragraph">
-<p>To create the native image the only thing we need to do is execute the <code>build-native-image.sh</code> script. The script will
-build the application fat-jar, generate the <code>reflect.json</code> file and build the native image.</p>
-</div>
 <div class="listingblock">
-<div class="title">Building native image</div>
+<div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./build-native-image.sh</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+$ docker build . -t complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A native image named <code>complete</code> will be generated. Once the native image is created we can start it:</p>
+<p>The previous command will create the image <code>complete:latest</code>. To execute it:</p>
 </div>
 <div class="listingblock">
 <div class="title">Executing the native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./complete
-11:20:28.881 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 14ms. Server Running: http://localhost:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run --network host complete
+10:29:46.845 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 12ms. Server Running: http://nobita:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We can see that the application starts in only 14ms.</p>
+<p>We can see that the application starts in only 12ms.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We use the option <code>--network host</code> to use the same network as the host and expose automatically all the ports
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
