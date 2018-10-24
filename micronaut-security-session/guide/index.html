@@ -259,8 +259,8 @@ other build tool such as <code>Maven</code> or other programming languages such 
         enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
     session:
       enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-      loginSuccessTargetUrl: / <i class="conum" data-value="5"></i><b>(5)</b>
-      loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+      login-success-target-url: / <i class="conum" data-value="5"></i><b>(5)</b>
+      login-failure-target-url: /login/authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -374,7 +374,7 @@ going to produce HTML in our controllers.</p>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Add a dependency to <a href="https://docs.micronaut.io/latest/guide/index.html#views">Server Side View Rendering Module</a> and to Velocity:</p>
+<p>Add a dependency to Micronaut&#8217;s <a href="https://docs.micronaut.io/latest/guide/index.html#views">Server Side View Rendering Module</a> and to Velocity:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -472,7 +472,6 @@ going to produce HTML in our controllers.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
 
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
@@ -816,6 +815,12 @@ class LoginPage extends Page {
 
         and: 'and error is displayed'
         loginPage.hasErrors()
+
+        when: 'fill the form with wrong credentials'
+        loginPage.login('sherlock', 'foo')
+
+        then: 'we get redirected to the home page'
+        at LoginFailedPage
 
         when: 'fill the form with valid credentials'
         loginPage.login('sherlock', 'password')
