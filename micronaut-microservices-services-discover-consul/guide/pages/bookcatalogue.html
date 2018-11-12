@@ -137,7 +137,7 @@ public class BooksController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books</code>.</td>
 </tr>
 </table>
 </div>
@@ -310,6 +310,25 @@ public class BooksControllerTest {
 <td>Start the micronaut microservice at a random port when running the tests.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew test
+
+&gt; Task :compileJava
+Note: Creating bean classes for 1 type elements
+
+&gt; Task :compileTestJava
+
+&gt; Task :test
+
+
+BUILD SUCCESSFUL in 9s
+4 actionable tasks: 4 executed</code></pre>
+</div>
 </div>
 
 

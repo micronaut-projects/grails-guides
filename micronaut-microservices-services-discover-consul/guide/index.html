@@ -224,13 +224,24 @@
 <div class="paragraph">
 <p>In the second part of this tutorial we are going to use a discovery service.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>o learn about registration patterns:</p>
+<p>About <em>registration patterns</em></p>
 </div>
 <div class="paragraph">
 <p>We will use a <strong>self‑registration pattern</strong>. Thus, each service instance is responsible for registering and
 deregistering itself with the service registry.
 Also, if required, a service instance sends heartbeat requests to prevent its registration from expiring.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Services register when they start up:</p>
@@ -314,7 +325,7 @@ public class BooksController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books</code>.</td>
 </tr>
 </table>
 </div>
@@ -488,6 +499,25 @@ public class BooksControllerTest {
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew test
+
+&gt; Task :compileJava
+Note: Creating bean classes for 1 type elements
+
+&gt; Task :compileTestJava
+
+&gt; Task :test
+
+
+BUILD SUCCESSFUL in 9s
+4 actionable tasks: 4 executed</code></pre>
+</div>
+</div>
 
 
 <h2 id="bookinventory">2.2 Inventory Microservice</h2>
@@ -561,7 +591,7 @@ public class BooksController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Define <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/validation/Validated.html">Validated</a> annotation at the class level to signal any class that requires validation.</td>
+<td>Use <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/validation/Validated.html">Validated</a> annotation at the class level to signal that this class requires validation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -569,16 +599,16 @@ public class BooksController {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default a Micronaut&#8217;s response uses <code>application/json</code> as <code>Content-Type</code>. We are returning a String not a JSON object. Because of that, we set it to <code>text/plain</code>.</td>
+<td>By default, <code>Content-Type</code> of Micronaut&#8217;s response is <code>application/json</code> : override this with <code>text/plain</code> since we are returning a String, not a JSON object.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books/stock/{isbn}</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books/stock/{isbn}</code>.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The previous controller uses a POJO:</p>
+<p>Create the POJO used by the controller:</p>
 </div>
 <div class="listingblock">
 <div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BookInventory.java</div>
@@ -751,6 +781,21 @@ public class BooksControllerTest {
 <td>Start the micronaut microservice at a random port when running the tests.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew test
+
+&gt; Task :compileJava
+Note: Creating bean classes for 1 type elements
+
+
+BUILD SUCCESSFUL in 7s
+4 actionable tasks: 4 executed</code></pre>
+</div>
 </div>
 
 
@@ -955,11 +1000,11 @@ public class BookController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Constructor injection</td>
+<td>Clients are injected via constructor injection</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books</code>.</td>
 </tr>
 </table>
 </div>
@@ -1027,23 +1072,43 @@ import io.reactivex.Maybe;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
 
-@Requires(env = Environment.TEST)
+@Requires(env = Environment.TEST) <i class="conum" data-value="1"></i><b>(1)</b>
 @Fallback
 @Singleton
 public class BookInventoryClientStub implements BookInventoryOperations {
 
     @Override
     public Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
-        if(isbn.equals("1491950358")) {
+        if(isbn.equals("1491950358")) { <i class="conum" data-value="2"></i><b>(2)</b>
             return Maybe.just(Boolean.TRUE);
 
-        } else if(isbn.equals("1680502395")) {
+        } else if(isbn.equals("1680502395")) { <i class="conum" data-value="3"></i><b>(3)</b>
             return Maybe.just(Boolean.FALSE);
         }
-        return Maybe.empty();
+        return Maybe.empty(); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make this fallback class to be effective only when the micronaut environment <em>TEST</em> is active</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we arbitrarily decided that if everything else fails, that book&#8217;s <code>stock</code> would be true</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Similarly, we decided that other book&#8217;s <code>stock</code> method would be false</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Finally, any other book will have their <code>stock</code> method return an empty value</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">bookrecommendation/src/test/java/example/micronaut/bookrecommendation/BookCatalogueClientStub.java</div>
@@ -1066,7 +1131,8 @@ public class BookCatalogueClientStub implements BookCatalogueOperations {
     public Flowable&lt;Book&gt; findAll() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
         Book releaseIt = new Book("1680502395", "Release It!");
-        return Flowable.just(buildingMicroservices, releaseIt);    }
+        return Flowable.just(buildingMicroservices, releaseIt);
+    }
 }</code></pre>
 </div>
 </div>
@@ -1171,6 +1237,14 @@ public class BookControllerTest {
 <td>Start the micronaut microservice at a random port when running the tests.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew test</code></pre>
+</div>
 </div>
 
 
@@ -1338,7 +1412,7 @@ Note: Creating bean classes for 3 type elements
 </div>
 </div>
 <div class="paragraph">
-<p>Previous configuration registers a Micronaut app with Consul with minimal configuration. Discover a more complete list of Configuration options at <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/discovery/consul/ConsulConfiguration.html">ConsulConfiguration</a>.</p>
+<p>This configuration registers a Micronaut app with Consul with minimal configuration. Discover a more complete list of Configuration options at <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/discovery/consul/ConsulConfiguration.html">ConsulConfiguration</a>.</p>
 </div>
 <div class="paragraph">
 <p>Disable consul registration in tests:</p>
@@ -1530,7 +1604,8 @@ public interface BookInventoryClient extends BookInventoryOperations {
  Note: Creating bean classes for 1 type elements
 
  &gt; Task :bookcatalogue:run
- 14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+ 14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081
+ 14:28:34.084 [nioEventLoopGroup-1-3] INFO  i.m.d.registration.AutoRegistration - Registered service [bookcatalogue] with Consul</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1545,7 +1620,8 @@ public interface BookInventoryClient extends BookInventoryOperations {
  Note: Creating bean classes for 1 type elements
 
  &gt; Task :bookcatalogue:run
- 14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8082</code></pre>
+ 14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8082
+ 14:31:13.154 [nioEventLoopGroup-1-3] INFO  i.m.d.registration.AutoRegistration - Registered service [bookinventory] with Consul</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1560,7 +1636,8 @@ Starting a Gradle Daemon, 2 busy and 2 stopped Daemons could not be reused, use 
 Note: Creating bean classes for 3 type elements
 
 &gt; Task :bookrecommendation:run
-14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080
+14:31:57.439 [nioEventLoopGroup-1-3] INFO  i.m.d.registration.AutoRegistration - Registered service [bookrecommendation] with Consul</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1580,7 +1657,7 @@ Note: Creating bean classes for 3 type elements
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
-[{"name":"Building Microservices"}</code></pre>
+[{"name":"Building Microservices"}]</code></pre>
 </div>
 </div>
 

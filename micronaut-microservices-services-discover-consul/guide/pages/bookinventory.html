@@ -153,7 +153,7 @@ public class BooksController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Define <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/validation/Validated.html">Validated</a> annotation at the class level to signal any class that requires validation.</td>
+<td>Use <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/validation/Validated.html">Validated</a> annotation at the class level to signal that this class requires validation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -161,16 +161,16 @@ public class BooksController {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default a Micronaut&#8217;s response uses <code>application/json</code> as <code>Content-Type</code>. We are returning a String not a JSON object. Because of that, we set it to <code>text/plain</code>.</td>
+<td>By default, <code>Content-Type</code> of Micronaut&#8217;s response is <code>application/json</code> : override this with <code>text/plain</code> since we are returning a String, not a JSON object.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books/stock/{isbn}</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books/stock/{isbn}</code>.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The previous controller uses a POJO:</p>
+<p>Create the POJO used by the controller:</p>
 </div>
 <div class="listingblock">
 <div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BookInventory.java</div>
@@ -343,6 +343,21 @@ public class BooksControllerTest {
 <td>Start the micronaut microservice at a random port when running the tests.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew test
+
+&gt; Task :compileJava
+Note: Creating bean classes for 1 type elements
+
+
+BUILD SUCCESSFUL in 7s
+4 actionable tasks: 4 executed</code></pre>
+</div>
 </div>
 
 

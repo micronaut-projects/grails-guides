@@ -283,11 +283,11 @@ public class BookController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Constructor injection</td>
+<td>Clients are injected via constructor injection</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books</code>.</td>
 </tr>
 </table>
 </div>
@@ -355,23 +355,43 @@ import io.reactivex.Maybe;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
 
-@Requires(env = Environment.TEST)
+@Requires(env = Environment.TEST) <i class="conum" data-value="1"></i><b>(1)</b>
 @Fallback
 @Singleton
 public class BookInventoryClientStub implements BookInventoryOperations {
 
     @Override
     public Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
-        if(isbn.equals("1491950358")) {
+        if(isbn.equals("1491950358")) { <i class="conum" data-value="2"></i><b>(2)</b>
             return Maybe.just(Boolean.TRUE);
 
-        } else if(isbn.equals("1680502395")) {
+        } else if(isbn.equals("1680502395")) { <i class="conum" data-value="3"></i><b>(3)</b>
             return Maybe.just(Boolean.FALSE);
         }
-        return Maybe.empty();
+        return Maybe.empty(); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make this fallback class to be effective only when the micronaut environment <em>TEST</em> is active</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we arbitrarily decided that if everything else fails, that book&#8217;s <code>stock</code> would be true</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Similarly, we decided that other book&#8217;s <code>stock</code> method would be false</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Finally, any other book will have their <code>stock</code> method return an empty value</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">bookrecommendation/src/test/java/example/micronaut/bookrecommendation/BookCatalogueClientStub.java</div>
@@ -394,7 +414,8 @@ public class BookCatalogueClientStub implements BookCatalogueOperations {
     public Flowable&lt;Book&gt; findAll() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
         Book releaseIt = new Book("1680502395", "Release It!");
-        return Flowable.just(buildingMicroservices, releaseIt);    }
+        return Flowable.just(buildingMicroservices, releaseIt);
+    }
 }</code></pre>
 </div>
 </div>
@@ -499,6 +520,14 @@ public class BookControllerTest {
 <td>Start the micronaut microservice at a random port when running the tests.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Run the unit test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew test</code></pre>
+</div>
 </div>
 
 
