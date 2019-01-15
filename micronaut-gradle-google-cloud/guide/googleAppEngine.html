@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>7 Google App Engine null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Deploy a Micronaut app to Google Cloud
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/training.html"><strong>1</strong><span>Micronaut Training</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/costs.html"><strong>3</strong><span>Costs</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/whatYouWillNeed.html"><strong>4</strong><span>What you will need</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/howToComplete.html"><strong>5</strong><span>How to Complete</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/googleAppEngine.html"><strong>7</strong><span>Google App Engine</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>8</strong><span>Sample Controller</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/deployingTheApp.html"><strong>9</strong><span>Deploying the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/logging.html"><strong>10</strong><span>Logging</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/cleaningUp.html"><strong>11</strong><span>Cleaning Up</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/learnMore.html"><strong>12</strong><span>Learn More</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/cloudSDK.html">&lt;&lt; <strong>6</strong><span>Cloud SDK</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/controller.html"><strong>8</strong><span>Sample Controller</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>7 Google App Engine</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#googleAppEngineGradlePlugin"><strong>7.1</strong><span>Google App Engine Gradle Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#applicationDeploymentConfiguration"><strong>7.2</strong><span>Application Deployment Configuration</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="googleAppEngine">7 Google App Engine</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-gradle-google-cloud/edit/master/src/main/docs/guide/googleAppEngine.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to deploy the Micronaut application developed in this guide to the
+<a href="https://cloud.google.com/appengine/docs/flexible/">Google App Engine Flexible Environment</a></p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>App Engine allows developers to focus on doing what they do best: writing code. Based on Google Compute Engine, the App Engine flexible environment automatically scales your app up and down while balancing the load. Microservices, authorization, SQL and NoSQL databases, traffic splitting, logging, versioning, security scanning, and content delivery networks are all supported natively.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Run the command:</p>
+</div>
+<div class="paragraph">
+<p><code>gcloud app create</code></p>
+</div>
+<div class="paragraph">
+<p>to initialize an App Engine application within the current Google Cloud project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You will need to choose the region where you want your App Engine Application located.
+</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="googleAppEngineGradlePlugin">7.1 Google App Engine Gradle Plugin</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-gradle-google-cloud/edit/master/src/main/docs/guide/googleAppEngineGradlePlugin.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To deploy to App Engine, we are going to use the
+<a href="https://github.com/GoogleCloudPlatform/app-gradle-plugin">Google App Engine Gradle Plugin</a>.</p>
+</div>
+<div class="paragraph">
+<p>Add the plugin as a <code>buildscript</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.0.0-rc4'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply the plugin and specify a deployment version and the project ID.
+When you created the Project in the Google Cloud Dashboard you got the Project ID. Notice I didn’t use dots on the version number.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">apply plugin: 'com.google.cloud.tools.appengine'
+
+version "0-2"
+group "example.micronaut"
+
+ext {
+    appEngineProjectVersion = project.version
+    appEngineProjectId = 'calm-history-228704'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then configure the deployment properties:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">appengine {
+  stage.artifact = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
+  deploy {
+      projectId = appEngineProjectId
+      version = appEngineProjectVersion
+  }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="applicationDeploymentConfiguration">7.2 Application Deployment Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-gradle-google-cloud/edit/master/src/main/docs/guide/applicationDeploymentConfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To deploy to Google App Engine, we need to add the file src/main/appengine/app.yaml</p>
+</div>
+<div class="paragraph">
+<p>We are going to configure the <a href="https://cloud.google.com/appengine/docs/flexible/java/dev-java-only">Java 8 runtime</a> in the Flexible environment</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The Java 8 runtime does not include any web-serving framework. The only requirement is that your app should listen and respond on port 8080. The sample code here shows how you can add your own framework, such as Spring Boot, to the Java 8 runtime.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>It describes the application’s deployment configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/appengine/app.yaml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">runtime: java
+env: flex</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/cloudSDK.html">&lt;&lt; <strong>6</strong><span>Cloud SDK</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/controller.html"><strong>8</strong><span>Sample Controller</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
