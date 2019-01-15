@@ -70,6 +70,9 @@
     <loc>http://guides.micronaut.io/micronaut-creating-first-graal-app/guide/index.html</loc>
   </url>
   <url>
+    <loc>http://guides.micronaut.io/micronaut-gradle-google-cloud/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
