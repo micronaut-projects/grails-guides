@@ -104,7 +104,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.0</p>
+        <p><strong>Micronaut Version:</strong> 1.0.4</p>
     </header>
     
 
@@ -1795,7 +1795,7 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly 'com.oracle.substratevm:svm:GraalVM-1.0.0-rc7'
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly "com.oracle.substratevm:svm"
     runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
 </div>
 </div>
@@ -1890,18 +1890,19 @@ public class FunctionSubstitutions {
 <div class="listingblock">
 <div class="title">vies-vat-validator-graal/build-native-image.sh</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image \
-    --no-server \
-	--class-path build/libs/vies-vat-validator-0.1-all.jar \
-	-H:ReflectionConfigurationFiles=build/reflect.json \
-	-H:EnableURLProtocols=http \
-	-H:IncludeResources="application.yml|META-INF/services/*.*" \
-	-H:Name=vies-vat-validator \
-	--delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder \
-	--rerun-class-initialization-at-runtime='sun.security.jca.JCAUtil$CachedSecureRandomHolder,javax.net.ssl.SSLContext' \
-	-H:Class=io.micronaut.function.executor.FunctionApplication \
-	-H:+ReportUnsupportedElementsAtRuntime \
-	-H:+AllowVMInspection</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image --no-server \
+             --class-path build/libs/vies-vat-validator-0.1-all.jar \
+             -H:ReflectionConfigurationFiles=build/reflect.json \
+             -H:EnableURLProtocols=http \
+             -H:IncludeResources="logback.xml|application.yml|META-INF/services/*.*" \
+             -H:Name=vies-vat-validator \
+             -H:Class=io.micronaut.function.executor.FunctionApplication \
+             -H:+ReportUnsupportedElementsAtRuntime \
+             -H:+AllowVMInspection \
+             -H:-UseServiceLoaderFeature \
+             --allow-incomplete-classpath \
+             --rerun-class-initialization-at-runtime='sun.security.jca.JCAUtil$CachedSecureRandomHolder,javax.net.ssl.SSLContext' \
+             --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,io.netty.handler.codec.http.websocketx.WebSocket00FrameEncoder,io.netty.handler.ssl.util.ThreadLocalInsecureRandom,com.sun.jndi.dns.DnsClient</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1918,9 +1919,9 @@ public class FunctionSubstitutions {
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete/vies-vat-validator-graal $ time echo '{"memberStateCode":"es", "vatNumber":"B99286353"}' | ./vies-vat-validator
 10:22:30.003 [main] DEBUG e.micronaut.ViesVatValidatorFunction - validate country: es vat number: B99286353
 {"valid":true,"memberStateCode":"es","vatNumber":"B99286353"}
-real	0m1.475s
-user	0m0.017s
-sys	    0m0.034s
+real    0m1.475s
+user    0m0.017s
+sys     0m0.034s
 ```</code></pre>
 </div>
 </div>
@@ -1929,12 +1930,12 @@ sys	    0m0.034s
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete/vies-vat-validator $ time echo '{"memberStateCode":"es", "vatNumber":"B99286353"}' | java -jar build/libs/complete/vies-vat-validator-0.1-all.jar
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete/vies-vat-validator $ time echo '{"memberStateCode":"es", "vatNumber":"B99286353"}' | java -jar build/libs/vies-vat-validator-0.1-all.jar
 10:25:52.136 [main] DEBUG e.micronaut.ViesVatValidatorFunction - validate country: es vat number: B99286353
 {"memberStateCode":"es","vatNumber":"B99286353","valid":true}
-real	0m3.261s
-user	0m8.430s
-sys	    0m0.723s</code></pre>
+real    0m3.261s
+user    0m8.430s
+sys     0m0.723s</code></pre>
 </div>
 </div>
 </div>
