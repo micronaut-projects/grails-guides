@@ -1759,8 +1759,8 @@ jar {
 <h3 id="_1_install_graal">1. Install Graal</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc7-graal
-sdk use java 1.0.0-rc7-graal</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-11-grl
+sdk use java 1.0.0-rc-11-grl</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1777,38 +1777,27 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2_install_the_svm_dependency">2. Install the SVM Dependency</h3>
-<div class="paragraph">
-<p>Once you have installed the SDK you should make the svm dependency available via your local Maven cache. The easiest way to do this is via Maven’s install command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.substratevm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc7 -Dpackaging=jar</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_3_add_graal_dependencies">3. Add Graal dependencies</h3>
+<h3 id="_2_add_graal_dependencies">2. Add Graal dependencies</h3>
 <div class="paragraph">
 <p>Add the following to <code>build.gradle</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compileOnly "com.oracle.substratevm:svm"
-    runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "com.oracle.substratevm:svm"
+runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_4_add_graal_substitutions">4. Add Graal Substitutions</h3>
+<h3 id="_3_add_graal_substitutions">3. Add Graal Substitutions</h3>
 <div class="paragraph">
 <p>Create <code>src/main/java/example/micronaut/MicronautSubstitutions.java</code>; a file needed to recompute Netty and Caffeine’s use of Unsafe.</p>
 </div>
 <div class="listingblock">
-<div class="title">vies-vat-validator-graal/src/main/java/example/micronaut/FunctionSubstitutions.java</div>
+<div class="title">vies-vat-validator-graal/src/main/java/example/micronaut/MicronautSubstitutions.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.RecomputeFieldValue;
@@ -1855,27 +1844,27 @@ final class Target_io_netty_util_internal_shaded_org_jctools_util_UnsafeRefArray
     public static int REF_ELEMENT_SHIFT;
 }
 
-public class FunctionSubstitutions {
+public class MicronautSubstitutions {
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_5_build_the_function">5. Build the Function</h3>
+<h3 id="_4_build_the_function">4. Build the Function</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">vies-vat-validator-graal $ ./gradlew assemble</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">vies-vat-validator-graal $ ./gradlew assemble</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_6_generate_a_code_reflect_json_code_file">6. Generate a <code>reflect.json</code> file</h3>
+<h3 id="_5_generate_a_code_reflect_json_code_file">5. Generate a <code>reflect.json</code> file</h3>
 <div class="paragraph">
 <p>Run the next command to to write out a <code>reflect.json</code>; a file computing the classloading requirements of the application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">java -cp build/libs/vies-vat-validator-0.1-all.jar io.micronaut.graal.reflect.GraalClassLoadingAnalyzer</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -cp build/libs/vies-vat-validator-0.1-all.jar io.micronaut.graal.reflect.GraalClassLoadingAnalyzer</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1883,7 +1872,7 @@ public class FunctionSubstitutions {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_7_build_the_graal_native_image">7. Build the Graal Native Image</h3>
+<h3 id="_6_build_the_graal_native_image">6. Build the Graal Native Image</h3>
 <div class="paragraph">
 <p>Run the <code>native-image</code> command. Create a bash script to encapsulate the execution of this command:</p>
 </div>
@@ -1910,7 +1899,7 @@ public class FunctionSubstitutions {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_8_run_the_native_function">8. Run the Native Function</h3>
+<h3 id="_7_run_the_native_function">7. Run the Native Function</h3>
 <div class="paragraph">
 <p>The native function is now build. You can run it:</p>
 </div>
