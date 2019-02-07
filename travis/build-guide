@@ -1,25 +1,25 @@
 #!/bin/bash
 set -e
 
-export EXIT_STATUS=0
-export GUIDE_NAME=${PWD##*/} 
-
-echo "Publishing guide for branch $TRAVIS_BRANCH"
-
-./gradlew check || EXIT_STATUS=$?
-
-if [[ $EXIT_STATUS -ne 0 ]]; then
-    echo "Check failed" 
-    exit $EXIT_STATUS
-fi
-
-./gradlew publishGuide || EXIT_STATUS=$?
-if [[ $EXIT_STATUS -ne 0 ]]; then
-    echo "PublishGuide failed" 
-    exit $EXIT_STATUS
-fi  
-
 if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    export EXIT_STATUS=0
+    export GUIDE_NAME=${PWD##*/}
+
+    echo "Publishing guide for branch $TRAVIS_BRANCH"
+
+    ./gradlew check || EXIT_STATUS=$?
+
+    if [[ $EXIT_STATUS -ne 0 ]]; then
+        echo "Check failed"
+        exit $EXIT_STATUS
+    fi
+
+    ./gradlew publishGuide || EXIT_STATUS=$?
+    if [[ $EXIT_STATUS -ne 0 ]]; then
+        echo "PublishGuide failed"
+        exit $EXIT_STATUS
+    fi
+
     echo "Publishing Documentation"
     git config --global user.name "$GIT_NAME"
     git config --global user.email "$GIT_EMAIL"
@@ -27,15 +27,15 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     echo "https://$GH_TOKEN:@github.com" > ~/.git-credentials
 
     git clone https://${GH_TOKEN}@github.com/micronaut-projects/micronaut-guides.git -b gh-pages gh-pages --single-branch > /dev/null
-    
+
     echo "Updating Guides JSON"
     ./gradlew updateGuidesJson || EXIT_STATUS=$?
     if [[ $EXIT_STATUS -ne 0 ]]; then
-        echo "updateGuidesJson failed" 
+        echo "updateGuidesJson failed"
         rm -rf gh-pages
-        exit $EXIT_STATUS    
+        exit $EXIT_STATUS
     fi
-    
+
     cd gh-pages
 
     # If this is the master branch then update the snapshot
@@ -45,11 +45,11 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     if git diff --quiet; then
         echo "No changes in Guide"
     else
-        git add .   
+        git add .
         git commit -a -m "Publishing Grails Guide for Travis Build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
         git push origin HEAD
-    fi    
+    fi
     cd ..
     rm -rf gh-pages
-fi    
+fi
 exit 0
