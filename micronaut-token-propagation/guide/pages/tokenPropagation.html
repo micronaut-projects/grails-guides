@@ -89,7 +89,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>As you can see propagating of the JWT token to other microservices in our app complicates the code.
+<p>As you can see propagating the JWT token to other microservices in our app complicates the code.
 We need to capture the <code>Authorization</code> header in the controller method arguments and then pass it to the <code>@Client</code> bean.
 In an app with several controllers and declarative clients, it can lead to a lot of repetition. Fortunately, Micronaut
 includes a feature called token propagation. We can tell our app to propagate the incoming token to a set of outgoing requests.</p>
