@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.4 Auth State Parameter null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Secure a Micronaut app with Okta
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingsnapshot.html"><strong>2</strong><span>Using Snapshots</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>3</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/learnmore.html"><strong>5</strong><span>Learn More</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingsnapshot.html">&lt;&lt; <strong>2</strong><span>Using Snapshots</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.4 Auth State Parameter</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="state">3.4 Auth State Parameter</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/state.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut seamlessly configures the request towards the <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/guide/index.html#authorization">authorization endpoint</a> of the Authorization server.</p>
+</div>
+<div class="paragraph">
+<p>However, we need to provide an authentication state parameter:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>To do that, we need to create a <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/authorization/StateProvider.html">State Provider</a> bean.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DefaultStateProvider.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.security.oauth2.openid.endpoints.authorization.StateProvider;
+import javax.annotation.Nonnull;
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DefaultStateProvider implements StateProvider {
+    @Nonnull
+    @Override
+    public String generateState(@Nonnull HttpRequest&lt;?&gt; request) {
+        Cookie cookie = request.getCookies().get(StateFilter.STATE_COOKIENAME);
+        if (cookie != null) {
+            return cookie.getValue();
+        }
+        throw new RuntimeException("Authorization code state parameter could not be retrieved from cookie");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous implementation retrieves the state from a cookie. To be sure that such cookie exits,
+create a <a href="https://docs.micronaut.io/latest/guide/index.html#filters">Http Filter</a> which creates a cookie with a random state value if such cookie does not exist.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.micronaut.io/latest/guide/index.html#filters">Http Filter</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The Micronaut HTTP server supports the ability to apply filters to request/response processing in a similar, but reactive, way to Servlet filters in traditional Java applications.</p>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/StateFilter.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.http.filter.OncePerRequestHttpServerFilter;
+import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.security.filters.SecurityFilterOrderProvider;
+import io.micronaut.security.utils.SecurityService;
+import org.reactivestreams.Publisher;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
+
+@Requires(beans = {
+        SecurityService.class
+})
+@Filter("/**") <i class="conum" data-value="1"></i><b>(1)</b>
+public class StateFilter extends OncePerRequestHttpServerFilter { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    protected final Integer order;
+
+    private final static int ORDER_OFFSET = 100;
+
+    public final static String STATE_COOKIENAME = "AUTHORIZATION_STATE";
+
+    @Nonnull
+    private final SecurityService securityService;
+
+    public StateFilter(@Nonnull SecurityService securityService,
+                       @Nullable SecurityFilterOrderProvider securityFilterOrderProvider) {
+        this.securityService = securityService;
+        this.order = securityFilterOrderProvider != null ?
+                securityFilterOrderProvider.getOrder() + ORDER_OFFSET :
+                ORDER_OFFSET; <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    protected Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilterOnce(HttpRequest&lt;?&gt; request, ServerFilterChain chain) {
+        if(securityService.isAuthenticated()) {
+            return Publishers.map(chain.proceed(request), response -&gt; {
+                if (request.getCookies().contains(STATE_COOKIENAME)) { <i class="conum" data-value="4"></i><b>(4)</b>
+                    response.cookie(request.getCookies().get(STATE_COOKIENAME).maxAge(0));
+                }
+                return response;
+            });
+
+        } else {
+            return Publishers.map(chain.proceed(request), response -&gt; {
+            if (!request.getCookies().contains(STATE_COOKIENAME)) { <i class="conum" data-value="5"></i><b>(5)</b>
+                String state = generateState();
+                Cookie cookie = Cookie.of(STATE_COOKIENAME, state);
+                cookie.maxAge(Integer.MAX_VALUE);
+                response.cookie(cookie);
+            }
+                return response;
+            });
+        }
+    }
+
+    private String generateState() {
+        return UUID.randomUUID().toString();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Filter.html">Filter</a> annotation is used to define the URI patterns the filter matches</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A filter that is only executed once per request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Ensure filter is triggered after <code>SecurityFilter</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If the user is authenticated and the cookie exists, remove the Auth state parameter cookie.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>if the user is not authenticated, create a cookie for the Auth state parameter.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To validate the state received in the response, provide an implementation of <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/authorization/StateValidator.html">StateValidator bean</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DefaultStateValidator.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.security.oauth2.openid.endpoints.authorization.StateValidator;
+import javax.annotation.Nonnull;
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DefaultStateValidator implements StateValidator {
+
+    @Override
+    public boolean validate(@Nonnull HttpRequest&lt;?&gt; request, @Nonnull String state) {
+        Cookie cookie = findCookie(request);
+        if (cookie == null) {
+            return false;
+        }
+        String serverState = cookie.getValue();
+        return serverState.equals(state);
+    }
+
+    private Cookie findCookie(HttpRequest request) {
+        return request.getCookies().get(StateFilter.STATE_COOKIENAME);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/usingsnapshot.html">&lt;&lt; <strong>2</strong><span>Using Snapshots</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

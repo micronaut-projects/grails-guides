@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Secure a Micronaut app with Okta | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Secure a Micronaut app with Okta. Learn how to create Micronaut app and secure it with an Authorization Server provided by Okta.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-oauth2-okta/guide/index.html">Secure a Micronaut app with Okta</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-oauth2-okta"><img src="https://travis-ci.org/micronaut-guides/micronaut-oauth2-okta.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-oauth2-okta&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-oauth2-okta.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-oauth2-okta.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-oauth2-okta.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-oauth2-okta/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#usingsnapshot"><strong>2</strong><span>Using Snapshots</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>3</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#views"><strong>3.1</strong><span>Views</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#denied"><strong>3.2</strong><span>Denied</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#oauth2"><strong>3.3</strong><span>Oauth 2</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#state"><strong>3.4</strong><span>Auth State Parameter</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#home"><strong>3.5</strong><span>Home</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#learnmore"><strong>5</strong><span>Learn More</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Secure a Micronaut app with Okta</h1>
+        <p>Learn how to create Micronaut app and secure it with an Authorization Server provided by Okta.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0.BUILD-SNAPSHOT</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide we are going to create a Micronaut app written in Java.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-oauth2-okta/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-oauth2-okta.git" class="bare">https://github.com/micronaut-guides/micronaut-oauth2-okta.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="usingsnapshot">2 Using Snapshots</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/usingsnapshot.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we use some features which are currently only available in the <code>BUILD-SNAPSHOT</code> version of Micronaut.</p>
+</div>
+<div class="paragraph">
+<p>Please, read <a href="https://docs.micronaut.io/snapshot/guide/index.html#usingsnapshots">Using snapshots</a> section of the Micronaut documentation.</p>
+</div>
+
+
+<h1 id="writingTheApp">3 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="views">3.1 Views</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/views.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Although Micronaut is primarily designed around message encoding / decoding, there are occasions where it is convenient to render a view on the server side.</p>
+</div>
+<div class="paragraph">
+<p>To use the view rendering features, add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    compile "io.micronaut:micronaut-views"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine, add the thymeleaf dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="denied">3.2 Denied</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/denied.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut allows the customization of the response that is sent when a request is not authorized to access a resource, or if it is not authenticated and the resource requires authentication.</p>
+</div>
+<div class="paragraph">
+<p>If both beans (<a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/UnauthorizedRejectionUriProvider.html">UnauthorizedRejectionUriProvider</a>, <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/ForbiddenRejectionUriProvider.html">ForbiddenRejectionUriProvider</a>) exists, then <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/RedirectRejectionHandler.html">RedirectRejectionHandler</a>, a generic redirect handler, is registered as a <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/RejectionHandler.html">RejectionHandler</a>.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://docs.micronaut.io/snapshot/guide/index.html#rejection">rejection handling</a> documentation.</p>
+</div>
+<div class="paragraph">
+<p>The Oauth2 module registers an <code>UnauthorizedRejectionUriProvider</code>, we need create a bean of type <code>ForbiddenRejectionUriProvider</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DefaultForbiddenRejectionUriProvider.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.security.handlers.ForbiddenRejectionUriProvider;
+
+import javax.inject.Singleton;
+import java.util.Optional;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DefaultForbiddenRejectionUriProvider implements ForbiddenRejectionUriProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+    @Override
+    public Optional&lt;String&gt; getForbiddenRedirectUri(HttpRequest&lt;?&gt; request) {
+        return Optional.of("/denied");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Implement <code>ForbiddenRejectionUriProvider</code> to create a bean of such type.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a controller to handle <code>/denied</code> endpoint and annotate its endpoint with <code>@View</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DeniedController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.views.View;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller <i class="conum" data-value="1"></i><b>(1)</b>
+public class DeniedController {
+
+    @Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="2"></i><b>(2)</b>
+    @View("denied") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/denied") <i class="conum" data-value="4"></i><b>(4)</b>
+    Map&lt;String, Object&gt; index() {
+        return new HashMap&lt;&gt;();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>SecurityRule.IS_ANONYMOUS</code> expression will allow access without authentication.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/denied</code> requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a thymeleaf template:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/denied.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Denied&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Denied&lt;/h1&gt;
+&lt;p&gt;Sorry, you're not authorized to view this page&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+
+
+<h2 id="oauth2">3.3 Oauth 2</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Sign up in <a href="https://developer.okta.com">Okta developer portal</a> and create a Web app with the following characteristics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check <code>Authorization Code</code> grant type.</p>
+</li>
+<li>
+<p>Add <code><a href="http://localhost:8080/authcode/cb" class="bare">http://localhost:8080/authcode/cb</a></code> as a login redirect URIs.</p>
+</li>
+<li>
+<p>Add <code><a href="http://localhost:8080/logout" class="bare">http://localhost:8080/logout</a></code> as a Logout redirect URIs.</p>
+</li>
+<li>
+<p>Annotate the Client ID and Secret.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/okta-app.png" alt="okta app">
+</div>
+</div>
+<div class="paragraph">
+<p>To use Oauth 2 integration, add the next dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    compile "io.micronaut.configuration:micronaut-oauth2:1.0.0.BUILD-SNAPSHOT"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add also JWT <a href="https://docs.micronaut.io/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    annotationProcessor "io.micronaut:micronaut-security"
+    compile "io.micronaut:micronaut-security-jwt"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the following Oauth2 Configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    security:
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+        oauth2:
+            client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="2"></i><b>(2)</b>
+            client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="3"></i><b>(3)</b>
+            openid-configuration: '${OKTA_DOMAIN}/oauth2/${OKTA_AUTHSERVERID}/.well-known/openid-configuration' <i class="conum" data-value="4"></i><b>(4)</b>
+            authorization:
+                scopes: <i class="conum" data-value="5"></i><b>(5)</b>
+                    - 'openid'
+                    - 'email'
+        token:
+            jwt:
+                enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+                cookie:
+                   enabled: true <i class="conum" data-value="7"></i><b>(7)</b>
+        endpoints:
+            logout:
+                enabled: true <i class="conum" data-value="8"></i><b>(8)</b>
+                get-allowed: true <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable security</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Client Secret. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Client ID. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>well-know/openid-configuration</code> endpoint url. Allows micronaut to discover the configuration of the Open ID Configuration server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>By default <code>openid</code> scope isued. You can supply multiple scopes by providing a list.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>ID Token is a JWT token. We need to enable <a href="https://docs.micronaut.io/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://docs.micronaut.io/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Enable <a href="https://docs.micronaut.io/snapshot/guide/index.html#logout">Logout Controller</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Accept GET request to the <code>/logout</code> endpoint.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code>, <code>OKTA_DOMAIN</code> and <code>OKTA_AUTHSERVERID</code> environment variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>export OAUTH_CLIENT_ID=XXXXXXXXXX
+export OAUTH_CLIENT_SECRET=YYYYYYYYYY
+export OKTA_DOMAIN=https://dev-XXXXX.oktapreview.com
+export OKTA_AUTHSERVERID=default</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check OKTA <a href="https://developer.okta.com/docs/api/resources/oidc#well-knownopenid-configuration">.well-known/openid-configuration documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>We want to use an <strong>Authorization Code</strong> grant type flow which it is described in the following diagram:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/diagramm.png" alt="diagramm">
+</div>
+</div>
+
+
+<h2 id="state">3.4 Auth State Parameter</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/state.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut seamlessly configures the request towards the <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/guide/index.html#authorization">authorization endpoint</a> of the Authorization server.</p>
+</div>
+<div class="paragraph">
+<p>However, we need to provide an authentication state parameter:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>To do that, we need to create a <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/authorization/StateProvider.html">State Provider</a> bean.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DefaultStateProvider.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.security.oauth2.openid.endpoints.authorization.StateProvider;
+import javax.annotation.Nonnull;
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DefaultStateProvider implements StateProvider {
+    @Nonnull
+    @Override
+    public String generateState(@Nonnull HttpRequest&lt;?&gt; request) {
+        Cookie cookie = request.getCookies().get(StateFilter.STATE_COOKIENAME);
+        if (cookie != null) {
+            return cookie.getValue();
+        }
+        throw new RuntimeException("Authorization code state parameter could not be retrieved from cookie");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous implementation retrieves the state from a cookie. To be sure that such cookie exits,
+create a <a href="https://docs.micronaut.io/latest/guide/index.html#filters">Http Filter</a> which creates a cookie with a random state value if such cookie does not exist.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.micronaut.io/latest/guide/index.html#filters">Http Filter</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The Micronaut HTTP server supports the ability to apply filters to request/response processing in a similar, but reactive, way to Servlet filters in traditional Java applications.</p>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/StateFilter.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.http.filter.OncePerRequestHttpServerFilter;
+import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.security.filters.SecurityFilterOrderProvider;
+import io.micronaut.security.utils.SecurityService;
+import org.reactivestreams.Publisher;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
+
+@Requires(beans = {
+        SecurityService.class
+})
+@Filter("/**") <i class="conum" data-value="1"></i><b>(1)</b>
+public class StateFilter extends OncePerRequestHttpServerFilter { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    protected final Integer order;
+
+    private final static int ORDER_OFFSET = 100;
+
+    public final static String STATE_COOKIENAME = "AUTHORIZATION_STATE";
+
+    @Nonnull
+    private final SecurityService securityService;
+
+    public StateFilter(@Nonnull SecurityService securityService,
+                       @Nullable SecurityFilterOrderProvider securityFilterOrderProvider) {
+        this.securityService = securityService;
+        this.order = securityFilterOrderProvider != null ?
+                securityFilterOrderProvider.getOrder() + ORDER_OFFSET :
+                ORDER_OFFSET; <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    protected Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilterOnce(HttpRequest&lt;?&gt; request, ServerFilterChain chain) {
+        if(securityService.isAuthenticated()) {
+            return Publishers.map(chain.proceed(request), response -&gt; {
+                if (request.getCookies().contains(STATE_COOKIENAME)) { <i class="conum" data-value="4"></i><b>(4)</b>
+                    response.cookie(request.getCookies().get(STATE_COOKIENAME).maxAge(0));
+                }
+                return response;
+            });
+
+        } else {
+            return Publishers.map(chain.proceed(request), response -&gt; {
+            if (!request.getCookies().contains(STATE_COOKIENAME)) { <i class="conum" data-value="5"></i><b>(5)</b>
+                String state = generateState();
+                Cookie cookie = Cookie.of(STATE_COOKIENAME, state);
+                cookie.maxAge(Integer.MAX_VALUE);
+                response.cookie(cookie);
+            }
+                return response;
+            });
+        }
+    }
+
+    private String generateState() {
+        return UUID.randomUUID().toString();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Filter.html">Filter</a> annotation is used to define the URI patterns the filter matches</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A filter that is only executed once per request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Ensure filter is triggered after <code>SecurityFilter</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If the user is authenticated and the cookie exists, remove the Auth state parameter cookie.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>if the user is not authenticated, create a cookie for the Auth state parameter.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To validate the state received in the response, provide an implementation of <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/authorization/StateValidator.html">StateValidator bean</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DefaultStateValidator.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.security.oauth2.openid.endpoints.authorization.StateValidator;
+import javax.annotation.Nonnull;
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DefaultStateValidator implements StateValidator {
+
+    @Override
+    public boolean validate(@Nonnull HttpRequest&lt;?&gt; request, @Nonnull String state) {
+        Cookie cookie = findCookie(request);
+        if (cookie == null) {
+            return false;
+        }
+        String serverState = cookie.getValue();
+        return serverState.equals(state);
+    }
+
+    private Cookie findCookie(HttpRequest request) {
+        return request.getCookies().get(StateFilter.STATE_COOKIENAME);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="home">3.5 Home</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller to handle the requests to <code>/</code>. You are going to display the email of the authenticated person if any. Annotate the controller endpoint with <code>@View</code> since we are going to use a Thymeleaf template.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.views.View;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomeController {
+
+    @Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="2"></i><b>(2)</b>
+    @View("home") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    public Map&lt;String, Object&gt; index() {
+        return new HashMap&lt;&gt;();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>SecurityRule.IS_ANONYMOUS</code> expression will allow access without authentication.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/</code> requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a thymeleaf template:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/home.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;Home&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Micronaut - Okta example&lt;/h1&gt;
+
+&lt;h2 th:if="${security}"&gt;username: &lt;span th:text="${security.attributes.get('email')}"&gt;&lt;/span&gt;&lt;/h2&gt;
+&lt;h2 th:unless="${security}"&gt;username: Anonymous&lt;/h2&gt;
+
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li th:unless="${security}"&gt;&lt;a href="/enter"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:if="${security &amp;&amp; endsessionurl}"&gt;&lt;a th:href="${endsessionurl}"&gt;Logout&lt;/a&gt;&lt;/li&gt;
+
+    &lt;/ul&gt;
+&lt;/nav&gt;
+
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Please, note that we don&#8217;t even have an <code>/enter</code> endpoint, thus if you click it, you are accessing an unauthorized url and a redirection to the authentication endpoint of the Okta Authorization server is triggered.</p>
+</div>
+<div class="paragraph">
+<p>Also, note that we return an empty model in the controller. However, we are accessing <code>security</code> and <code>endsessionurl</code> in the thymeleaf template.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/endsession/EndsessionViewModelProcessor.html">EndsessionViewModelProcessor</a> injects into the model the <code>endsessionurl</code> of the authorization server correctly configured. See <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/guide/index.html#logouturl">Logout URL documentation</a>.</p>
+</li>
+<li>
+<p>The <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a> injects into the model a <code>security</code> map with the authenticated user.  See <a href="https://docs.micronaut.io/snapshot/guide/index.html#accessSecurityInViews">User in a view</a> documentation.</p>
+</li>
+</ul>
+</div>
+
+
+<h1 id="runningTheApp">4 Running the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/video.gif" alt="video">
+</div>
+</div>
+
+
+<h1 id="learnmore">5 Learn More</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/learnmore.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/guide/index.html">Micronaut OAuth 2 documentation</a> and <a href="https://docs.micronaut.io/snapshot/guide/index.html#security">Micronaut Security</a> documentation to learn more.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
