@@ -111,21 +111,12 @@ as part of your build; for example, you may choose to use the <a href="https://p
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
-        ...
-        ..
-    }
-    dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
     ..
     .
-        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.21"
+    id "com.gorylenko.gradle-git-properties" version "2.0.0"
     }
-}
-...
-..
-.
-apply plugin: "com.gorylenko.gradle-git-properties"</code></pre>
+}</code></pre>
 </div>
 </div>
 

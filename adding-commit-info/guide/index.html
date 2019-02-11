@@ -195,7 +195,7 @@
 <p><code>mn create-app example.micronaut.complete</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
 <p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
@@ -289,21 +289,12 @@ as part of your build; for example, you may choose to use the <a href="https://p
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
-        ...
-        ..
-    }
-    dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
     ..
     .
-        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.21"
+    id "com.gorylenko.gradle-git-properties" version "2.0.0"
     }
-}
-...
-..
-.
-apply plugin: "com.gorylenko.gradle-git-properties"</code></pre>
+}</code></pre>
 </div>
 </div>
 
@@ -462,7 +453,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 
 
 <div class="paragraph">
-<p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
 </div>
 
 </article>
