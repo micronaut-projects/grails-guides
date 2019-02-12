@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
   <url>
-    <loc>http://guides.micronaut.io/creating-your-first-micronaut-app/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/creating-your-first-micronaut-app/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-scheduled/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-scheduled/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-security-basicauth/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-security-basicauth/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-security-session/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-security-session/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-security-jwt/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-security-jwt/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-security-jwt-cookie/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-security-jwt-cookie/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-cli/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-cli/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-database-authentication-provider-groovy/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-database-authentication-provider-groovy/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-email/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-email/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-http-client/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-http-client/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-microservices-services-discover-consul/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-microservices-services-discover-consul/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-microservices-services-discover-eureka/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-microservices-services-discover-eureka/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-microservices-distributed-tracing-jaeger/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-microservices-distributed-tracing-jaeger/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-microservices-distributed-tracing-zipkin/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-microservices-distributed-tracing-zipkin/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-data-access-jpa-hibernate/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-data-access-jpa-hibernate/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-file-download-excel/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-file-download-excel/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-token-propagation/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-token-propagation/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-elasticbeanstalk/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-elasticbeanstalk/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-multitenancy-propagation/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-multitenancy-propagation/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-error-handling/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-error-handling/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-creating-first-graal-app/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-creating-first-graal-app/guide/index.html</loc>
   </url>
   <url>
-    <loc>http://guides.micronaut.io/micronaut-gradle-google-cloud/guide/index.html</loc>
+    <loc>https://guides.micronaut.io/micronaut-gradle-google-cloud/guide/index.html</loc>
   </url>
   <url>
     <loc>index.html</loc>
