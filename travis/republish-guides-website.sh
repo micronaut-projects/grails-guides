@@ -37,8 +37,6 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     else
         git add *
         git commit -a -m "Updating guides site for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
-        git fetch
-        git rebase origin/gh-pages
         git push origin HEAD
     fi
 
