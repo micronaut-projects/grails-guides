@@ -104,7 +104,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.0.4</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0.M1</p>
     </header>
     
 
@@ -1503,7 +1503,7 @@ aws_secret_access_key=XXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To run the application use the <code>./gradlew run</code> command which will start the application on a random port.</p>
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
 </div>
 <div class="paragraph">
 <p>execute:</p>
@@ -1759,8 +1759,8 @@ jar {
 <h3 id="_1_install_graal">1. Install Graal</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-11-grl
-sdk use java 1.0.0-rc-11-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-12-grl
+sdk use java 1.0.0-rc-12-grl</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1883,12 +1883,11 @@ public class MicronautSubstitutions {
              --class-path build/libs/vies-vat-validator-0.1-all.jar \
              -H:ReflectionConfigurationFiles=build/reflect.json \
              -H:EnableURLProtocols=http \
-             -H:IncludeResources="logback.xml|application.yml|META-INF/services/*.*" \
+             -H:IncludeResources="logback.xml|application.yml" \
              -H:Name=vies-vat-validator \
              -H:Class=io.micronaut.function.executor.FunctionApplication \
              -H:+ReportUnsupportedElementsAtRuntime \
              -H:+AllowVMInspection \
-             -H:-UseServiceLoaderFeature \
              --allow-incomplete-classpath \
              --rerun-class-initialization-at-runtime='sun.security.jca.JCAUtil$CachedSecureRandomHolder,javax.net.ssl.SSLContext' \
              --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,io.netty.handler.codec.http.websocketx.WebSocket00FrameEncoder,io.netty.handler.ssl.util.ThreadLocalInsecureRandom,com.sun.jndi.dns.DnsClient</code></pre>
