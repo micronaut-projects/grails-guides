@@ -115,25 +115,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/views/notfound.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;title&gt;Not Found&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;NOT FOUND&lt;/h1&gt;
-
-&lt;p&gt;&lt;b&gt;The page you were looking for appears to have been moved, deleted or does not exist.&lt;/b&gt;&lt;/p&gt;
-
-&lt;p&gt;This is most likely due to:&lt;/p&gt;
-
-&lt;ul&gt;
-    &lt;li&gt;An outdated link on another site&lt;/li&gt;
-    &lt;li&gt;A typo in the address / URL&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-error-handling/complete/src/main/resources/views/notfound.vm[]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -150,8 +132,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
-import io.micronaut.http.hateos.JsonError;
-import io.micronaut.http.hateos.Link;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.views.ViewsRenderer;
 
 import java.util.Collections;
