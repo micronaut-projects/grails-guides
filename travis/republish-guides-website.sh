@@ -24,6 +24,8 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 
     cd ..
 
+    rm -rf gh-pages
+
     git clone https://${GH_TOKEN}@github.com/micronaut-projects/micronaut-guides.git -b gh-pages gh-pages --single-branch > /dev/null
 
     cd gh-pages
