@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4.2 Books Microservice null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        RabbitMQ and Micronaut - Event driven applications
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/rabbitmq.html"><strong>4</strong><span>RabbitMQ and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4.2 Books Microservice</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="booksRabbitMQ">4.2 Books Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-rabbitmq/edit/master/src/main/docs/guide/rabbitmq/booksRabbitMQ.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>rabbitmq</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">books/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    compile 'io.micronaut.configuration:micronaut-rabbitmq:1.1.0.M1'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default Micronaut will connect to a RabbitMQ instance running on <code>localhost</code> so it is not necessary to add anything
+to <code>application.yml</code>. In case you want to change the configuration, add the following:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">rabbitmq:
+    uri: amqp://localhost:5672</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
+<div class="paragraph">
+<p>Before being able to send and receive messages using RabbitMQ it is necessary to define the exchange, queue and binding.
+One option is create them directly in the RabbitMQ Admin UI available on <code><a href="http://localhost:15672" class="bare">http://localhost:15672</a></code>. Use <code>guest</code> for both
+username and password.</p>
+</div>
+<div class="paragraph">
+<p>Another option is create them programatically with Micronaut. Create the class <code>ChannelPoolListener.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/java/example/micronaut/books/ChannelPoolListener.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
+
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import io.micronaut.configuration.rabbitmq.connect.ChannelPool;
+import io.micronaut.context.event.BeanCreatedEvent;
+import io.micronaut.context.event.BeanCreatedEventListener;
+
+import javax.inject.Singleton;
+import java.io.IOException;
+
+@Singleton
+public class ChannelPoolListener implements BeanCreatedEventListener&lt;ChannelPool&gt; {
+
+    @Override
+    public ChannelPool onCreated(BeanCreatedEvent&lt;ChannelPool&gt; event) {
+        ChannelPool pool = event.getBean();
+
+        Channel channel = null;
+        try {
+            channel = pool.getChannel();
+        } catch (IOException e) {
+            // The channel couldn't be retrieved
+        }
+
+        if (channel != null) {
+            try {
+                channel.exchangeDeclare("micronaut", BuiltinExchangeType.DIRECT, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+                channel.queueDeclare("analytics", true, false, false, null); <i class="conum" data-value="2"></i><b>(2)</b>
+                channel.queueBind("analytics", "micronaut", "analytics"); <i class="conum" data-value="3"></i><b>(3)</b>
+            } catch (IOException e) {
+                // no-op
+            } finally {
+                pool.returnChannel(channel);
+            }
+        }
+
+        return pool;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define an exchange named <code>micronaut</code>. From the producer point of view everything is sent to the exchange with the
+appropriate routing key</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define a queue named <code>analytics</code>. The consumer will listen for messages in that queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a binding between the exchange and the queue using the routing key <code>analytics</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_rabbitmq_client_producer">Create RabbitMQ client (producer)</h3>
+<div class="paragraph">
+<p>Let&#8217;s create an interface to send messages to RabbitMQ. Micronaut will implement the interface at compilation time:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/java/example/micronaut/books/AnalyticsClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
+
+import io.micronaut.configuration.rabbitmq.annotation.Binding;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
+
+@RabbitClient("micronaut") <i class="conum" data-value="1"></i><b>(1)</b>
+public interface AnalyticsClient {
+
+    @Binding("analytics") <i class="conum" data-value="2"></i><b>(2)</b>
+    void updateAnalytics(Book book); <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the exchange used to send the messages.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the routing key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Send the <code>Book</code> POJO. Micronaut will automatically convert it to JSON before sending it.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_send_analytics_information_automatically">Send Analytics information automatically</h3>
+<div class="paragraph">
+<p>Sending a message to RabbitMQ is as simple as injecting <code>AnalyticsClient</code> and calling <code>updateAnalytics</code> method. The goal
+is to do it automatically every time a book is returned, i.e., every time there is a call to <code><a href="http://localhost:8080/books/{isbn}" class="bare">http://localhost:8080/books/{isbn}</a></code>.
+To achieve this we are going to create an <a href="https://docs.micronaut.io/latest/guide/index.html#filters">Http Server Filter</a>.
+Create the file <code>AnalyticsFilter.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/java/example/micronaut/books/AnalyticsFilter.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.HttpServerFilter;
+import io.micronaut.http.filter.ServerFilterChain;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
+
+import java.util.Optional;
+
+@Filter("/books/?*") <i class="conum" data-value="1"></i><b>(1)</b>
+public class AnalyticsFilter implements HttpServerFilter { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    private final AnalyticsClient analyticsClient; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    public AnalyticsFilter(AnalyticsClient analyticsClient) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.analyticsClient = analyticsClient;
+    }
+
+    @Override
+    public Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilter(HttpRequest&lt;?&gt; request, ServerFilterChain chain) { <i class="conum" data-value="4"></i><b>(4)</b>
+        return Flowable
+                .fromPublisher(chain.proceed(request)) <i class="conum" data-value="5"></i><b>(5)</b>
+                .doOnNext(response -&gt; {
+                    Optional&lt;Book&gt; book = response.getBody(Book.class); <i class="conum" data-value="6"></i><b>(6)</b>
+                    book.ifPresent(analyticsClient::updateAnalytics); <i class="conum" data-value="7"></i><b>(7)</b>
+                });
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@Filter</code> and define the ANT Matcher pattern to intercept all the calls to the desire URI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The class needs to implement <code>HttpServerFilter</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection for RabbitMQ <code>AnalyticsClient</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Override <code>doFilter</code> method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Execute the request. This will call the controller action.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Get the response from the controller and return the body as a <code>Book</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>If the book is found, use RabbitMQ client to send a message.</td>
+</tr>
+</table>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
