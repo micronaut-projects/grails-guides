@@ -264,10 +264,14 @@ public class AnalyticsFilter implements HttpServerFilter { <i class="conum" data
     public Publisher&lt;MutableHttpResponse&lt;?&gt;&gt; doFilter(HttpRequest&lt;?&gt; request, ServerFilterChain chain) { <i class="conum" data-value="4"></i><b>(4)</b>
         return Flowable
                 .fromPublisher(chain.proceed(request)) <i class="conum" data-value="5"></i><b>(5)</b>
-                .doOnNext(response -&gt; {
-                    Optional&lt;Book&gt; book = response.getBody(Book.class); <i class="conum" data-value="6"></i><b>(6)</b>
-                    book.ifPresent(analyticsClient::updateAnalytics); <i class="conum" data-value="7"></i><b>(7)</b>
-                });
+                .flatMap(response -&gt;
+                        Flowable.fromCallable(() -&gt; {
+                            Optional&lt;Book&gt; book = response.getBody(Book.class); <i class="conum" data-value="6"></i><b>(6)</b>
+                            book.ifPresent(analyticsClient::updateAnalytics); <i class="conum" data-value="7"></i><b>(7)</b>
+
+                            return response;
+                        })
+                );
     }
 }</code></pre>
 </div>
