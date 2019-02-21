@@ -160,7 +160,9 @@ public interface CatalogueClient {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Set the <code>replyTo</code> property to <code>amq.rabbitmq.reply-to</code>. This is a special queue that always exists and does not need
-to be created.</td>
+to be created. That it is why we did not create the queue in the <code>ChannelInitializer</code>. RabbitMQ uses that queue in a
+special way and setting the value of the property <code>replyTo</code> to that queue will enable this call as a RPC one. RabbitMQ
+will create a temporary queue for the callback.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -205,8 +207,7 @@ public interface InventoryClient {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Set the <code>replyTo</code> property to <code>amq.rabbitmq.reply-to</code>. This is a special queue that always exists and does not need
-to be created.</td>
+<td>Set the <code>replyTo</code> property to <code>amq.rabbitmq.reply-to</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
