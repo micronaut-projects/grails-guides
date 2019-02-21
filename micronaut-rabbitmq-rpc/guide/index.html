@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>RabbitMQ RPC and Micronaut | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='RabbitMQ RPC and Micronaut. Use RabbitMQ RPC to use request-reply pattern in your Micronaut applications.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-rabbitmq-rpc/guide/index.html">RabbitMQ RPC and Micronaut</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-rabbitmq-rpc"><img src="https://travis-ci.org/micronaut-guides/micronaut-rabbitmq-rpc.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-rabbitmq-rpc&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-rabbitmq-rpc.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-rabbitmq-rpc.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-rabbitmq-rpc.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookcatalogue"><strong>2.1</strong><span>Catalogue Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookinventory"><strong>2.2</strong><span>Inventory Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookrecommendation"><strong>2.3</strong><span>Recommendation Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#rabbitmq"><strong>3</strong><span>RabbitMQ and Micronaut</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#rabbitmqInstall"><strong>3.1</strong><span>Install RabbitMQ via Docker</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>RabbitMQ RPC and Micronaut</h1>
+        <p>Use RabbitMQ RPC to use request-reply pattern in your Micronaut applications.</p>
+        <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0.M1</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we are going to create three microservices and communicate each other with <a href="https://www.rabbitmq.com/">RabbitMQ</a>
+using the request-response pattern with <a href="https://micronaut-projects.github.io/micronaut-rabbitmq/latest/guide/#rpc">RPC</a>.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>RabbitMQ is an open-source message-broker software that originally implemented the Advanced Message Queuing Protocol (AMQP)
+and has since been extended with a plug-in architecture to support Streaming Text Oriented Messaging Protocol (STOMP),
+Message Queuing Telemetry Transport (MQTT), and other protocols.</p>
+</div>
+</blockquote>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc.git" class="bare">https://github.com/micronaut-guides/micronaut-rabbitmq-rpc.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Lets describe the microservices you are going to build through the tutorial.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fulfill an order. I uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes an endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="bookcatalogue">2.1 Catalogue Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/writingTheApp/bookcatalogue.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.bookcatalogue.bookcatalogue</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookcatalogue</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookcatalogue</code>.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>rabbitmq</code> dependency. As we only want to use RabbitMQ to receive requests we can remove
+Micronaut HTTP client and Server.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    //compile "io.micronaut:micronaut-http-client"
+    //compile "io.micronaut:micronaut-http-server-netty"
+    compile 'io.micronaut.configuration:micronaut-rabbitmq:1.1.0.M2'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default Micronaut will connect to a RabbitMQ instance running on <code>localhost</code> so it is not necessary to add anything
+to <code>application.yml</code>. In case you want to change the configuration, add the following:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">rabbitmq:
+    uri: amqp://localhost:5672</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
+<div class="paragraph">
+<p>Before being able to send and receive messages using RabbitMQ it is necessary to define the exchange, queue and binding.
+One option is create them directly in the RabbitMQ Admin UI available on <code><a href="http://localhost:15672" class="bare">http://localhost:15672</a></code>. Use <code>guest</code> for both
+username and password.</p>
+</div>
+<div class="paragraph">
+<p>Another option is create them programatically with Micronaut. Create the class <code>ChannelPoolListener.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/ChannelPoolListener.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
+
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+
+import javax.inject.Singleton;
+import java.io.IOException;
+
+@Singleton
+public class ChannelPoolListener extends ChannelInitializer {
+
+    @Override
+    public void initialize(Channel channel) throws IOException {
+        channel.exchangeDeclare("micronaut", BuiltinExchangeType.DIRECT, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        channel.queueDeclare("inventory", true, false, false, null); <i class="conum" data-value="2"></i><b>(2)</b>
+        channel.queueBind("inventory", "micronaut", "books.inventory"); <i class="conum" data-value="3"></i><b>(3)</b>
+
+        channel.queueDeclare("catalogue", true, false, false, null); <i class="conum" data-value="4"></i><b>(4)</b>
+        channel.queueBind("catalogue", "micronaut", "books.catalogue"); <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define an exchange named <code>micronaut</code>. From the producer point of view everything is sent to the exchange with the
+appropriate routing key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define a queue named <code>inventory</code>. The consumer will listen for messages in that queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a binding between the exchange and the queue using the routing key <code>books.inventory</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Define a queue named <code>catalogue</code>. The consumer will listen for messages in that queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Define a binding between the exchange and the queue using the routing key <code>books.catalogue</code>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In this Catalogue Microservice the only necessary element is the <code>catalogue</code> queue but it is a good practice to define
+all the elements in the same file and share the file between all the projects.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_consumer">Create consumer</h3>
+<div class="paragraph">
+<p>Create a <code>BookCatalogueService</code> class to handle incoming RPC requests into the <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/BookCatalogueService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
+
+import io.micronaut.configuration.rabbitmq.annotation.Queue;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
+
+import java.util.Arrays;
+import java.util.List;
+
+@RabbitListener <i class="conum" data-value="1"></i><b>(1)</b>
+public class BookCatalogueService {
+
+    @Queue("catalogue") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;Book&gt; listBooks() {
+        Book buildingMicroservices = new Book("1491950358", "Building Microservices");
+        Book releaseIt = new Book("1680502395", "Release It!");
+        Book cidelivery = new Book("0321601912", "Continuous Delivery:");
+
+        return Arrays.asList(buildingMicroservices, releaseIt, cidelivery);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@RabbitListener</code> to indicate that this bean will consume messages from RabbitMQ.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate the method with <code>@Queue</code>. This listener will listen to messages in <code>catalogue</code> queue.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous service responds a <code>List&lt;Book&gt;</code>. Create the <code>Book</code> POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/java/example/micronaut/bookcatalogue/Book.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
+
+import java.util.Objects;
+
+public class Book {
+    private String isbn;
+    private String name;
+
+    public Book() {
+    }
+
+    public Book(String isbn, String name) {
+        this.isbn = isbn;
+        this.name = name;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "isbn='" + isbn + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(isbn, book.isbn) &amp;&amp;
+                Objects.equals(name, book.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isbn, name);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+
+
+<h2 id="bookinventory">2.2 Inventory Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/writingTheApp/bookinventory.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookinventory</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.bookinventory.bookinventory</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookinventory</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookinventory</code>.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>rabbitmq</code> dependency. As we only want to use RabbitMQ to receive requests we can remove
+Micronaut HTTP client and Server.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    //compile "io.micronaut:micronaut-http-client"
+    //compile "io.micronaut:micronaut-http-server-netty"
+    compile 'io.micronaut.configuration:micronaut-rabbitmq:1.1.0.M2'
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
+<div class="paragraph">
+<p>As we did in <code>Catalogue</code> Microservice, create the class <code>ChannelPoolListener.java</code> in <code>bookinventory/src/main/java/example/micronaut/bookcatalogue/ChannelPoolListener.java</code>
+with the same content as before.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_consumer">Create consumer</h3>
+<div class="paragraph">
+<p>Create a <code>BookInventoryService</code> class to handle incoming RPC requests into the <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BookInventoryService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory;
+
+import io.micronaut.configuration.rabbitmq.annotation.Queue;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
+
+import javax.validation.constraints.NotBlank;
+import java.util.Optional;
+
+@RabbitListener <i class="conum" data-value="1"></i><b>(1)</b>
+public class BookInventoryService {
+
+    @Queue("inventory") <i class="conum" data-value="2"></i><b>(2)</b>
+    public Boolean stock(@NotBlank String isbn) {
+        return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null);
+    }
+
+    private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
+        if (isbn.equals("1491950358")) {
+            return Optional.of(new BookInventory(isbn, 4));
+        } else if (isbn.equals("1680502395")) {
+            return Optional.of(new BookInventory(isbn, 0));
+        }
+        return Optional.empty();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@RabbitListener</code> to indicate that this bean will consume messages from RabbitMQ.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate the method with <code>@Queue</code>. This listener will listen to messages in <code>inventory</code> queue.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous service uses <code>BookInventory</code> POJO. Create it:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BookInventory.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory;
+
+import java.util.Objects;
+
+public class BookInventory {
+    private String isbn;
+    private Integer stock;
+
+    public BookInventory() {
+    }
+
+    public BookInventory(String isbn, Integer stock) {
+        this.isbn = isbn;
+        this.stock = stock;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookInventory that = (BookInventory) o;
+        return Objects.equals(isbn, that.isbn) &amp;&amp;
+                Objects.equals(stock, that.stock);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isbn, stock);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+
+
+<h2 id="bookrecommendation">2.3 Recommendation Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/writingTheApp/bookrecommendation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.bookrecommendation.bookrecommendation</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookrecommendation</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookrecommendation</code>.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>rabbitmq</code> dependency. In this microservice we will use Micronaut HTTP Server to receive
+REST request so it is not necessary to remove any dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    compile 'io.micronaut.configuration:micronaut-rabbitmq:1.1.0.M2'
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
+<div class="paragraph">
+<p>As we did in <code>Catalogue</code> Microservice, create the class <code>ChannelPoolListener.java</code> in <code>bookrecommendation/src/main/java/example/micronaut/bookcatalogue/ChannelPoolListener.java</code>
+with the same content as before.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_clients">Create clients</h3>
+<div class="paragraph">
+<p>Let&#8217;s create two interfaces to send messages to RabbitMQ. Micronaut will implement the interfaces at compilation time.
+Create <code>CatalogueClient.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/java/example/micronaut/bookinventory/CatalogueClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
+
+import io.micronaut.configuration.rabbitmq.annotation.Binding;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitProperty;
+import io.reactivex.Flowable;
+
+import java.util.List;
+
+@RabbitClient("micronaut") <i class="conum" data-value="1"></i><b>(1)</b>
+@RabbitProperty(name = "replyTo", value = "amq.rabbitmq.reply-to") <i class="conum" data-value="2"></i><b>(2)</b>
+public interface CatalogueClient {
+
+    @Binding("books.catalogue") <i class="conum" data-value="3"></i><b>(3)</b>
+    Flowable&lt;List&lt;Book&gt;&gt; findAll(byte[] data); <i class="conum" data-value="4"></i><b>(4)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Send the messages to exchange <code>micronaut</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the <code>replyTo</code> property to <code>amq.rabbitmq.reply-to</code>. This is a special queue that always exists and does not need
+to be created.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Set the routing key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Define the method that will "mirror" the one in the consumer. Keep in mind that in the consumer it is not possible to
+return a reactive type, but on the client side it is. Also, it is necessary to send something, even if it&#8217;s not
+used in the consumer.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create <code>InventoryClient.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/java/example/micronaut/bookinventory/InventoryClient.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
+
+import io.micronaut.configuration.rabbitmq.annotation.Binding;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
+import io.micronaut.configuration.rabbitmq.annotation.RabbitProperty;
+import io.reactivex.Maybe;
+
+@RabbitClient("micronaut") <i class="conum" data-value="1"></i><b>(1)</b>
+@RabbitProperty(name = "replyTo", value = "amq.rabbitmq.reply-to") <i class="conum" data-value="2"></i><b>(2)</b>
+public interface InventoryClient {
+
+    @Binding("books.inventory") <i class="conum" data-value="3"></i><b>(3)</b>
+    Maybe&lt;Boolean&gt; stock(String isbn); <i class="conum" data-value="4"></i><b>(4)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Send the messages to exchange <code>micronaut</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the <code>replyTo</code> property to <code>amq.rabbitmq.reply-to</code>. This is a special queue that always exists and does not need
+to be created.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Set the routing key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Define the method that will "mirror" the one in the consumer. As we did with <code>CatalogueClient</code> we use a reactive
+type to wrap the result.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_the_controller">Create the controller</h3>
+<div class="paragraph">
+<p>Create a Controller which injects both clients.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/java/example/micronaut/bookrecommendation/BookController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.reactivex.Flowable;
+
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+public class BookController {
+
+    private final CatalogueClient catalogueClient; <i class="conum" data-value="2"></i><b>(2)</b>
+    private final InventoryClient inventoryClient; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public BookController(CatalogueClient catalogueClient, InventoryClient inventoryClient) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.catalogueClient = catalogueClient;
+        this.inventoryClient = inventoryClient;
+    }
+
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    public Flowable&lt;BookRecommendation&gt; index() {
+        return catalogueClient.findAll(null)
+                .flatMap(Flowable::fromIterable)
+                .flatMapMaybe(book -&gt; inventoryClient.stock(book.getIsbn())
+                        .filter(Boolean::booleanValue)
+                        .map(response -&gt; book))
+                .map(book -&gt; new BookRecommendation(book.getName()));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Clients are injected via constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>@Get</code> annotation is used to map the index method to an HTTP GET request on <code>/books</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller returns a <code>Flowable&lt;BookRecommendation&gt;</code>. Create the <code>BookRecommendation</code> POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/java/example/micronaut/bookrecommendation/BookRecommendation.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
+
+import java.util.Objects;
+
+public class BookRecommendation {
+    private String name;
+
+    public BookRecommendation() {
+    }
+
+    public BookRecommendation(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookRecommendation that = (BookRecommendation) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+
+
+<h1 id="rabbitmq">3 RabbitMQ and Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/rabbitmq.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="rabbitmqInstall">3.1 Install RabbitMQ via Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/rabbitmq/rabbitmqInstall.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The fastest way to start using <a href="https://hub.docker.com/_/rabbitmq/">RabbitMQ is via Docker</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">docker run --rm -it \
+        --network=host \ <i class="conum" data-value="1"></i><b>(1)</b>
+        rabbitmq:3.7.11-management</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Instead of manually expose all the necessary ports we just use the same network as the host</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Alternatively you can <a href="https://www.rabbitmq.com/download.html">install and run a local RabbitMQ instance</a>.</p>
+</div>
+
+
+<h1 id="runningTheApp">4 Running the app</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookinventory:run
+
+&gt; Task :bookinventory:run
+13:30:22.426 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 942ms. Server Running: 1 active message listeners.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookcatalogue:run
+13:31:19.887 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1149ms. Server Running: 1 active message listeners.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookrecommendation:run
+13:32:06.045 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1259ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a <code>curl</code> command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+
+
+<h1 id="nextSteps">5 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://micronaut-projects.github.io/micronaut-rabbitmq/latest/guide/#rpc">RabbitMQ RPC support</a>
+inside Micronaut.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
