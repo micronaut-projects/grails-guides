@@ -426,8 +426,13 @@ public class AnalyticsService {
     private final Map&lt;Book, Long&gt; bookAnalytics = new ConcurrentHashMap&lt;&gt;(); <i class="conum" data-value="1"></i><b>(1)</b>
 
     public void updateBookAnalytics(Book book) { <i class="conum" data-value="2"></i><b>(2)</b>
-        bookAnalytics.computeIfPresent(book, (k, v) -&gt; v + 1);
-        bookAnalytics.putIfAbsent(book, 1L);
+        bookAnalytics.compute(book, (b, v) -&gt; {
+            if (v == null) {
+                return 1L;
+            } else {
+                return v + 1;
+            }
+        });
     }
 
     public List&lt;BookAnalytics&gt; listAnalytics() { <i class="conum" data-value="3"></i><b>(3)</b>
