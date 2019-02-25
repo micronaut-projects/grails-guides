@@ -73,6 +73,9 @@
     <loc>https://guides.micronaut.io/micronaut-gradle-google-cloud/guide/index.html</loc>
   </url>
   <url>
+    <loc>https://guides.micronaut.io/micronaut-rabbitmq/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
