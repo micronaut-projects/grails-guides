@@ -85,16 +85,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#views"><strong>3.1</strong><span>Views</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#denied"><strong>3.2</strong><span>Denied</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#oauth2"><strong>3.2</strong><span>OAuth 2.0</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#oauth2"><strong>3.3</strong><span>OAuth 2.0</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#state"><strong>3.3</strong><span>Auth State Parameter</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#state"><strong>3.4</strong><span>Auth State Parameter</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#home"><strong>3.5</strong><span>Home</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#home"><strong>3.4</strong><span>Home</span></a>
                     </div>
                     
                 </div>
@@ -174,129 +171,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </div>
 
 
-<h2 id="denied">3.2 Denied</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/denied.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Micronaut allows the customization of the response that is sent when a request is not authorized to access a resource, or if it is not authenticated and the resource requires authentication.</p>
-</div>
-<div class="paragraph">
-<p>If both beans (<a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/UnauthorizedRejectionUriProvider.html">UnauthorizedRejectionUriProvider</a>, <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/ForbiddenRejectionUriProvider.html">ForbiddenRejectionUriProvider</a>) exists, then <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/RedirectRejectionHandler.html">RedirectRejectionHandler</a>, a generic redirect handler, is registered as a <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/handlers/RejectionHandler.html">RejectionHandler</a>.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="https://docs.micronaut.io/snapshot/guide/index.html#rejection">rejection handling</a> documentation.</p>
-</div>
-<div class="paragraph">
-<p>The Oauth2 module registers an <code>UnauthorizedRejectionUriProvider</code>, we need create a bean of type <code>ForbiddenRejectionUriProvider</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/DefaultForbiddenRejectionUriProvider.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import io.micronaut.http.HttpRequest;
-import io.micronaut.security.handlers.ForbiddenRejectionUriProvider;
-
-import javax.inject.Singleton;
-import java.util.Optional;
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class DefaultForbiddenRejectionUriProvider implements ForbiddenRejectionUriProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-    @Override
-    public Optional&lt;String&gt; getForbiddenRedirectUri(HttpRequest&lt;?&gt; request) {
-        return Optional.of("/denied");
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Implement <code>ForbiddenRejectionUriProvider</code> to create a bean of such type.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Create a controller to handle <code>/denied</code> endpoint and annotate its endpoint with <code>@View</code>.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/DeniedController.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.views.View;
-
-import java.util.HashMap;
-import java.util.Map;
-
-@Controller <i class="conum" data-value="1"></i><b>(1)</b>
-public class DeniedController {
-
-    @Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="2"></i><b>(2)</b>
-    @View("denied") <i class="conum" data-value="3"></i><b>(3)</b>
-    @Get("/denied") <i class="conum" data-value="4"></i><b>(4)</b>
-    Map&lt;String, Object&gt; index() {
-        return new HashMap&lt;&gt;();
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>SecurityRule.IS_ANONYMOUS</code> expression will allow access without authentication.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/denied</code> requests.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Create a thymeleaf template:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/views/denied.html</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;Denied&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Denied&lt;/h1&gt;
-&lt;p&gt;Sorry, you're not authorized to view this page&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-</div>
-</div>
-
-
-<h2 id="oauth2">3.3 OAuth 2.0</h2>
+<h2 id="oauth2">3.2 OAuth 2.0</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
@@ -447,7 +322,7 @@ export OKTA_AUTHSERVERID=default</pre>
 </div>
 
 
-<h2 id="state">3.4 Auth State Parameter</h2>
+<h2 id="state">3.3 Auth State Parameter</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/state.adoc"'>
@@ -664,7 +539,7 @@ public class DefaultStateValidator implements StateValidator {
 </div>
 
 
-<h2 id="home">3.5 Home</h2>
+<h2 id="home">3.4 Home</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
