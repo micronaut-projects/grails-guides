@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Access a database with MyBatis | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Access a database with MyBatis. Learn how to access a database with MyBatis using Micronaut.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-data-access-mybatis/guide/index.html">Access a database with MyBatis</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-data-access-mybatis"><img src="https://travis-ci.org/micronaut-guides/micronaut-data-access-mybatis.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-data-access-mybatis&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-data-access-mybatis.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-data-access-mybatis.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-data-access-mybatis.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-data-access-mybatis/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#datasource"><strong>2.1</strong><span>Configure Data Source and JPA</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#domain"><strong>2.2</strong><span>Domain</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>2.3</strong><span>Repository Access</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#dbschema"><strong>2.5</strong><span>DB Schema</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>2.6</strong><span>Tests</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>4</strong><span>Next Steps</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Access a database with MyBatis</h1>
+        <p>Learn how to access a database with MyBatis using Micronaut.</p>
+        <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez, Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0.M1</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we are going to write a Micronaut application that exposes some REST endpoints and store data in a
+database using MyBatis.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-data-access-mybatis.git" class="bare">https://github.com/micronaut-guides/micronaut-data-access-mybatis.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="datasource">2.1 Configure Data Source and JPA</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/datasource.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect2">
+<h3 id="_data_source_configuration">Data Source configuration</h3>
+<div class="paragraph">
+<p>Add the next snippet to <code>build.gradle</code> to include the necessary dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile 'org.mybatis:mybatis:3.4.6' <i class="conum" data-value="1"></i><b>(1)</b>
+compile "io.micronaut.configuration:micronaut-jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
+runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add MyBatis dependency.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configures SQL DataSource instances using Hikari Connection Pool.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add dependency to in-memory H2 Database.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Define the data source in <code>src/main/resources/application.yml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
+    default:
+        url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+        password: ""
+        driverClassName: org.h2.Driver</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mybatis_configuration">MyBatis configuration</h3>
+<div class="paragraph">
+<p>As there is no out-of-the-box support yet in Micronaut for MyBatis it is necessary to wire manually <code>SqlSessionFactory</code>.</p>
+</div>
+<div class="paragraph">
+<p>Create the following <a href="https://docs.micronaut.io/latest/guide/index.html#factories">@Factory</a> file <code>src/main/java/example/micronaut/MybatisFactory.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/MybatisFactory.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Bean;
+import io.micronaut.context.annotation.Factory;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+
+import javax.sql.DataSource;
+
+@Factory <i class="conum" data-value="1"></i><b>(1)</b>
+public class MybatisFactory {
+
+    private final DataSource dataSource; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public MybatisFactory(DataSource dataSource) {
+        this.dataSource = dataSource; <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    @Bean <i class="conum" data-value="3"></i><b>(3)</b>
+    SqlSessionFactory sqlSessionFactory() {
+        TransactionFactory transactionFactory = new JdbcTransactionFactory();
+
+        Environment environment = new Environment("dev", transactionFactory, dataSource); <i class="conum" data-value="4"></i><b>(4)</b>
+        Configuration configuration = new Configuration(environment);
+        configuration.addMappers("example.micronaut"); <i class="conum" data-value="5"></i><b>(5)</b>
+
+        return new SqlSessionFactoryBuilder().build(configuration); <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@Factory</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection for Micronaut&#8217;s <code>dataSource</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a <code>@Bean</code> of type <code>SqlSessionFactory</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Use the <code>dataSource</code> to create a new MyBatis environment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Define the package to scan for mappers.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Create a new <code>SqlSessionFactory</code> bean.</td>
+</tr>
+</table>
+</div>
+</div>
+
+
+<h2 id="domain">2.2 Domain</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/domain.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the domain entities:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/domain/Genre.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Genre {
+
+    public Genre() {
+    }
+
+    public Genre(@NotNull String name) {
+        this.name = name;
+    }
+
+    private Long id;
+
+    @NotNull
+    private String name;
+
+    @JsonIgnore
+    private Set&lt;Book&gt; books = new HashSet&lt;&gt;();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set&lt;Book&gt; getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set&lt;Book&gt; books) {
+        this.books = books;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Genre{");
+        sb.append("id=");
+        sb.append(id);
+        sb.append(", name='");
+        sb.append(name);
+        sb.append("'}");
+        return sb.toString();
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="repository">2.3 Repository Access</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/repository.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an interface to define the operations to access the database and use MyBatis' annotations to map the methods
+to sql queries:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreMapper.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.domain.Genre;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
+
+public interface GenreMapper {
+
+    @Select("select * from genre where id=#{id}")
+    Genre findById(long id);
+
+    @Insert("insert into genre(name) values(#{name})")
+    @Options(useGeneratedKeys = true)
+    void save(Genre genre);
+
+    @Delete("delete from genre where id=#{id}")
+    void deleteById(long id);
+
+    @Update("update genre set name=#{name} where id=#{id}")
+    void update(@Param("id") long id, @Param("name") String name);
+
+    @Select("select * from genre")
+    List&lt;Genre&gt; findAll();
+
+    @Select("select * from genre order by ${sort} ${order}")
+    List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
+                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+
+    @Select("select * from genre order by ${sort} ${order} limit ${offset}, ${max}")
+    List&lt;Genre&gt; findAllByOffsetAndMaxAndSortAndOrder(@NotNull @PositiveOrZero Integer offset,
+                                                            @Positive @NotNull Integer max,
+                                                            @NotNull @Pattern(regexp = "id|name") String sort,
+                                                            @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+
+    @Select("select * from genre limit ${offset}, ${max}")
+    List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset, @Positive @NotNull Integer max);
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreMapperImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.domain.Genre;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreMapperImpl implements GenreMapper {
+
+    private final SqlSessionFactory sqlSessionFactory; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public GenreMapperImpl(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory; <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    @Override
+    public Genre findById(long id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) { <i class="conum" data-value="3"></i><b>(3)</b>
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class); <i class="conum" data-value="4"></i><b>(4)</b>
+            return genreMapper.findById(id); <i class="conum" data-value="5"></i><b>(5)</b>
+        }
+    }
+
+    @Override
+    public void save(Genre genre) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.save(genre);
+            sqlSession.commit(); <i class="conum" data-value="6"></i><b>(6)</b>
+        }
+    }
+
+    @Override
+    public void deleteById(long id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.deleteById(id);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public void update(long id, String name) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.update(id, name);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAll() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAll();
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
+                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllBySortAndOrder(sort, order);
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllByOffsetAndMaxAndSortAndOrder(@NotNull @PositiveOrZero Integer offset,
+                                                            @Positive @NotNull Integer max,
+                                                            @NotNull @Pattern(regexp = "id|name") String sort,
+                                                            @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(offset, max, sort, order);
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset,
+                                             @Positive @NotNull Integer max) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllByOffsetAndMax(offset, max);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject easily the <code>SqlSessionFactory</code> bean created by the <code>@Factory</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <em>try-with-resources</em> to automatically close the sql session.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Get MyBatis mapper implementation for the interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Execute the desired method using the mapper. This will trigger the sql query.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>In a database write access, commit the transaction.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create an interface to define the high level operations exposed to the application:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.ListingArguments;
+import example.micronaut.domain.Genre;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
+
+public interface GenreRepository {
+
+    Optional&lt;Genre&gt; findById(@NotNull Long id);
+
+    Genre save(@NotBlank String name);
+
+    void deleteById(@NotNull Long id);
+
+    List&lt;Genre&gt; findAll(@NotNull ListingArguments args);
+
+    int update(@NotNull Long id, @NotBlank String name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the implementation using <code>GenreMapper</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.ListingArguments;
+import example.micronaut.domain.Genre;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreRepositoryImpl implements GenreRepository {
+
+    private final GenreMapper genreMapper;
+
+    public GenreRepositoryImpl(GenreMapper genreMapper) {
+        this.genreMapper = genreMapper;
+    }
+
+    @Override
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+        return Optional.ofNullable(genreMapper.findById(id));
+    }
+
+    @Override
+    public Genre save(@NotBlank String name) {
+        Genre genre = new Genre(name);
+        genreMapper.save(genre);
+        return genre;
+    }
+
+    @Override
+    public void deleteById(@NotNull Long id) {
+        findById(id).ifPresent(genre -&gt; genreMapper.deleteById(id));
+    }
+
+    private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
+
+    public List&lt;Genre&gt; findAll(@NotNull ListingArguments args) {
+
+        if (args.getMax().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; args.getOffset().isPresent() &amp;&amp; args.getSort().isPresent()) {
+            return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(args.getOffset().get(),
+                    args.getMax().get(),
+                    args.getSort().get(),
+                    args.getOrder().get());
+        }
+        if (args.getMax().isPresent() &amp;&amp; args.getOffset().isPresent() &amp;&amp; (!args.getSort().isPresent() || !args.getOrder().isPresent())) {
+            return genreMapper.findAllByOffsetAndMax(args.getOffset().get(),
+                    args.getMax().get());
+        }
+        if ((!args.getMax().isPresent() || !args.getOffset().isPresent()) &amp;&amp; args.getSort().isPresent() &amp;&amp; args.getOrder().isPresent()) {
+            return genreMapper.findAllBySortAndOrder(args.getSort().get(),
+                    args.getOrder().get());
+        }
+        return genreMapper.findAll();
+    }
+
+    @Override
+    public int update(@NotNull Long id, @NotBlank String name) {
+        genreMapper.update(id, name);
+        return -1;
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+</div>
+<div class="paragraph">
+<p>Hibernate Validator is a reference implementation of the validation API.</p>
+</div>
+<div class="paragraph">
+<p>Add the next snippet to <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create two classes to encapsulate Save and Update operations:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreSaveCommand.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import javax.validation.constraints.NotBlank;
+import java.util.Objects;
+
+public class GenreSaveCommand {
+
+    @NotBlank
+    private String name;
+
+    public GenreSaveCommand() {}
+
+    public GenreSaveCommand(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreUpdateCommand.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+public class GenreUpdateCommand {
+    @NotNull
+    private Long id;
+
+    @NotBlank
+    private String name;
+
+    public GenreUpdateCommand() {}
+
+    public GenreUpdateCommand(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a POJO to encapsulate Sorting and Pagination:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ListingArguments.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.Optional;
+
+public class ListingArguments {
+    @PositiveOrZero
+    private Integer offset = 0;
+
+    @Nullable
+    @Positive
+    private Integer max;
+
+    @Nullable
+    @Pattern(regexp = "id|name")
+    private String sort;
+
+    @Pattern(regexp = "asc|ASC|desc|DESC")
+    @Nullable
+    private String order;
+
+    public ListingArguments() {
+
+    }
+
+    public Optional&lt;Integer&gt; getOffset() {
+        if (offset == null) {
+            return Optional.empty();
+        }
+        return Optional.of(offset);
+    }
+
+    public void setOffset(@Nullable Integer offset) {
+        this.offset = offset;
+    }
+
+    public Optional&lt;Integer&gt; getMax() {
+        if (max == null) {
+            return Optional.empty();
+        }
+        return Optional.of(max);
+    }
+
+    public void setMax(@Nullable Integer max) {
+        this.max = max;
+    }
+
+    public Optional&lt;String&gt; getSort() {
+        if (sort == null) {
+            return Optional.empty();
+        }
+        return Optional.of(sort);
+    }
+
+    public void setSort(@Nullable String sort) {
+        this.sort = sort;
+    }
+
+    public Optional&lt;String&gt; getOrder() {
+        if (order == null) {
+            return Optional.empty();
+        }
+        return Optional.of(order);
+    }
+
+    public void setOrder(@Nullable String order) {
+        this.order = order;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <code>ConfigurationProperties</code> object to encapsulate the configuration of the default <code>max</code> value.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import javax.validation.constraints.NotNull;
+
+public interface ApplicationConfiguration {
+
+    @NotNull Integer getMax();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+
+@ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
+
+    protected final Integer DEFAULT_MAX = 10;
+
+    private Integer max = DEFAULT_MAX;
+
+    @Override
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        if (max != null) {
+            this.max = max;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create <code>GenreController</code>, a controller which exposes a resource with the common CRUD operations:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import example.micronaut.domain.Genre;
+import example.micronaut.genre.GenreRepository;
+import example.micronaut.genre.GenreSaveCommand;
+import example.micronaut.genre.GenreUpdateCommand;
+import io.micronaut.http.HttpHeaders;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.validation.Validated;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+
+@Validated <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/genres") <i class="conum" data-value="2"></i><b>(2)</b>
+public class GenreController {
+
+    protected final GenreRepository genreRepository;
+
+    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
+        this.genreRepository = genreRepository;
+    }
+
+    @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre show(Long id) {
+        return genreRepository
+                .findById(id)
+                .orElse(null); <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+
+    @Put("/") <i class="conum" data-value="6"></i><b>(6)</b>
+    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="7"></i><b>(7)</b>
+        int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
+
+        return HttpResponse
+                .noContent()
+                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+
+    @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
+    public List&lt;Genre&gt; list(@Valid ListingArguments args) {
+        return genreRepository.findAll(args);
+    }
+
+    @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
+    public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
+        Genre genre = genreRepository.save(cmd.getName());
+
+        return HttpResponse
+                .created(genre)
+                .headers(headers -&gt; headers.location(location(genre.getId())));
+    }
+
+    @Delete("/{id}") <i class="conum" data-value="11"></i><b>(11)</b>
+    public HttpResponse delete(Long id) {
+        genreRepository.deleteById(id);
+        return HttpResponse.noContent();
+    }
+
+    protected URI location(Long id) {
+        return URI.create("/genres/" + id);
+    }
+
+    protected URI location(Genre genre) {
+        return location(genre.getId());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Returning <code>null</code> when the genre doesn&#8217;t exist makes Micronaut to response with 404 (not found).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>It is easy to add custom headers to the response.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates optional URL parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Maps a <code>DELETE</code> request to <code>/genres/{id}</code> which attempts to remove a genre. This illustrates the use of a URL path variable.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="dbschema">2.5 DB Schema</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/dbschema.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Now that Mybatis is setup we need a way to create the database schema. For that we will use
+<a href="https://micronaut-projects.github.io/micronaut-flyway/latest/guide/index.html">Micronaut integration with
+Flyway</a>.</p>
+</div>
+<div class="paragraph">
+<p>Add the next snippet to <code>build.gradle</code> to include the necessary dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile 'io.micronaut.configuration:micronaut-flyway'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure the database migrations directory for Flyway in <code>application.yml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">flyway:
+    datasources:
+        default:
+            locations: classpath:databasemigrations</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create the file <code>V1__schema.sql</code> with the database schema creation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/databasemigrations/V1__schema.sql</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>DROP TABLE IF EXISTS GENRE;
+DROP TABLE IF EXISTS BOOK;
+
+CREATE TABLE GENRE (
+  id    BIGINT SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255)              NOT NULL UNIQUE
+);
+
+CREATE TABLE BOOK (
+  id    BIGINT SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255)              NOT NULL,
+  isbn VARCHAR(255)              NOT NULL,
+  genre_id BIGINT,
+    constraint FKM1T3YVW5I7OLWDF32CWUUL7TA
+    foreign key (GENRE_ID) references GENRE
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>During application startup Flyway will execute the sql file and create the schema needed for the application.</p>
+</div>
+
+
+<h2 id="tests">2.6 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Junit test which verifies the CRUD operations:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/example/micronaut/GenreControllerTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import example.micronaut.domain.Genre;
+import example.micronaut.genre.GenreSaveCommand;
+import example.micronaut.genre.GenreUpdateCommand;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpHeaders;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreControllerTest {
+
+    @Inject
+    @Client("/")
+    public RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Test
+    public void supplyAnInvalidOrderTriggersValidationFailure() {
+        assertThrows(HttpClientResponseException.class, () -&gt; {
+            List&lt;Genre&gt; genres = client.toBlocking().retrieve(HttpRequest.GET("/genres/list?order=foo"), Argument.of(List.class, Genre.class));
+
+            assertNotNull(genres);
+            assertEquals(0, genres.size());
+        });
+    }
+
+    @Test
+    public void testFindNonExistingGenreReturns404() {
+        assertThrows(HttpClientResponseException.class, () -&gt; {
+            Genre genre = client.toBlocking().retrieve(HttpRequest.GET("/genres/99"), Argument.of(Genre.class));
+
+            assertNull(genre);
+        });
+    }
+
+    @Test
+    public void testGenreCrudOperations() {
+
+        List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
+
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpResponse response = client.toBlocking().exchange(request);
+        genreIds.add(entityId(response));
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+
+        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+
+        Long id = entityId(response);
+        genreIds.add(id);
+        request = HttpRequest.GET("/genres/" + id);
+
+        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
+
+        assertEquals("Microservices", genre.getName());
+
+        request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
+        response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+        request = HttpRequest.GET("/genres/" + id);
+        genre = client.toBlocking().retrieve(request, Genre.class);
+        assertEquals("Micro-services", genre.getName());
+
+        request = HttpRequest.GET("/genres/list");
+        List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(2, genres.size());
+
+        request = HttpRequest.GET("/genres/list?max=1");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(1, genres.size());
+        assertEquals("DevOps", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres/list?max=1&amp;order=desc&amp;sort=name");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(1, genres.size());
+        assertEquals("Micro-services", genres.get(0).getName());
+
+        request = HttpRequest.GET("/genres/list?max=1&amp;offset=10");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(0, genres.size());
+
+        // cleanup:
+        for (Long genreId : genreIds) {
+            request = HttpRequest.DELETE("/genres/" + genreId);
+            response = client.toBlocking().exchange(request);
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        }
+    }
+
+    protected Long entityId(HttpResponse response) {
+        String path = "/genres/";
+        String value = response.header(HttpHeaders.LOCATION);
+        if (value == null) {
+            return null;
+        }
+        int index = value.indexOf(path);
+        if (index != -1) {
+            return Long.valueOf(value.substring(index + path.length()));
+        }
+        return null;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use Micronaut testing integration with JUnit 5.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject a <code>RxHttpClient</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If you care just about the object in the response use <code>retrieve</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Sometimes, receiving just the object is not enough and you need information about the response. In this case,
+instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew test
+
+&gt; Task :complete:test
+
+
+14:55:10.582 [Test worker] INFO  i.m.context.env.DefaultEnvironment - Established active environments: [test]
+14:55:12.407 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+14:55:12.692 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+14:55:12.875 [Test worker] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 5.2.1 by Boxfuse
+14:55:12.915 [Test worker] INFO  o.f.c.i.database.DatabaseFactory - Database: jdbc:h2:mem:default (H2 1.4)
+14:55:13.052 [Test worker] INFO  o.f.core.internal.command.DbValidate - Successfully validated 1 migration (execution time 00:00.025s)
+14:55:13.071 [Test worker] INFO  o.f.c.i.s.JdbcTableSchemaHistory - Creating Schema History table: "PUBLIC"."flyway_schema_history"
+14:55:13.112 [Test worker] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "PUBLIC": &lt;&lt; Empty Schema &gt;&gt;
+14:55:13.118 [Test worker] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "PUBLIC" to version 1 - schema
+14:55:13.157 [Test worker] INFO  o.f.core.internal.command.DbMigrate - Successfully applied 1 migration to schema "PUBLIC" (execution time 00:00.087s)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can check that Flyway runs the migration and creates the schema.</p>
+</div>
+
+
+<h1 id="runningTheApp">3 Running the app</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
+</div>
+<div class="paragraph">
+<p>We can use <code>curl</code> to check that everything works as expected:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/genres/list
+[]
+
+$ curl -X POST -d '{"name":"Sci-fi"}' -H "Content-Type: application/json" http://localhost:8080/genres
+{"id":1,"name":"Sci-fi"}
+
+$ curl -X POST -d '{"name":"Science"}' -H "Content-Type: application/json" http://localhost:8080/genres
+{"id":2,"name":"Science"}
+
+$ curl http://localhost:8080/genres/list
+[{"id":1,"name":"Sci-fi"},{"id":2,"name":"Science"}]
+
+$ curl -X DELETE http://localhost:8080/genres/1
+
+$ curl http://localhost:8080/genres/list
+[{"id":2,"name":"Science"}]</code></pre>
+</div>
+</div>
+
+
+<h1 id="nextSteps">4 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://docs.micronaut.io/latest/guide/index.html#dataAccess">Configurations for Data Access</a> section and
+<a href="https://micronaut-projects.github.io/micronaut-flyway/latest/guide/index.html">Flyway</a> support in the Micronaut documentation.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>

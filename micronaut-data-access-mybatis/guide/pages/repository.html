@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.3 Repository Access null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Access a database with MyBatis
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.3 Repository Access</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="repository">2.3 Repository Access</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-mybatis/edit/master/src/main/docs/guide/writingTheApp/repository.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an interface to define the operations to access the database and use MyBatis' annotations to map the methods
+to sql queries:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreMapper.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.domain.Genre;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
+
+public interface GenreMapper {
+
+    @Select("select * from genre where id=#{id}")
+    Genre findById(long id);
+
+    @Insert("insert into genre(name) values(#{name})")
+    @Options(useGeneratedKeys = true)
+    void save(Genre genre);
+
+    @Delete("delete from genre where id=#{id}")
+    void deleteById(long id);
+
+    @Update("update genre set name=#{name} where id=#{id}")
+    void update(@Param("id") long id, @Param("name") String name);
+
+    @Select("select * from genre")
+    List&lt;Genre&gt; findAll();
+
+    @Select("select * from genre order by ${sort} ${order}")
+    List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
+                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+
+    @Select("select * from genre order by ${sort} ${order} limit ${offset}, ${max}")
+    List&lt;Genre&gt; findAllByOffsetAndMaxAndSortAndOrder(@NotNull @PositiveOrZero Integer offset,
+                                                            @Positive @NotNull Integer max,
+                                                            @NotNull @Pattern(regexp = "id|name") String sort,
+                                                            @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+
+    @Select("select * from genre limit ${offset}, ${max}")
+    List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset, @Positive @NotNull Integer max);
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreMapperImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.domain.Genre;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreMapperImpl implements GenreMapper {
+
+    private final SqlSessionFactory sqlSessionFactory; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public GenreMapperImpl(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory; <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    @Override
+    public Genre findById(long id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) { <i class="conum" data-value="3"></i><b>(3)</b>
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class); <i class="conum" data-value="4"></i><b>(4)</b>
+            return genreMapper.findById(id); <i class="conum" data-value="5"></i><b>(5)</b>
+        }
+    }
+
+    @Override
+    public void save(Genre genre) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.save(genre);
+            sqlSession.commit(); <i class="conum" data-value="6"></i><b>(6)</b>
+        }
+    }
+
+    @Override
+    public void deleteById(long id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.deleteById(id);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public void update(long id, String name) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            genreMapper.update(id, name);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAll() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAll();
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
+                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllBySortAndOrder(sort, order);
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllByOffsetAndMaxAndSortAndOrder(@NotNull @PositiveOrZero Integer offset,
+                                                            @Positive @NotNull Integer max,
+                                                            @NotNull @Pattern(regexp = "id|name") String sort,
+                                                            @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(offset, max, sort, order);
+        }
+    }
+
+    @Override
+    public List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset,
+                                             @Positive @NotNull Integer max) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
+            return genreMapper.findAllByOffsetAndMax(offset, max);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject easily the <code>SqlSessionFactory</code> bean created by the <code>@Factory</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <em>try-with-resources</em> to automatically close the sql session.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Get MyBatis mapper implementation for the interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Execute the desired method using the mapper. This will trigger the sql query.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>In a database write access, commit the transaction.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create an interface to define the high level operations exposed to the application:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.ListingArguments;
+import example.micronaut.domain.Genre;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
+
+public interface GenreRepository {
+
+    Optional&lt;Genre&gt; findById(@NotNull Long id);
+
+    Genre save(@NotBlank String name);
+
+    void deleteById(@NotNull Long id);
+
+    List&lt;Genre&gt; findAll(@NotNull ListingArguments args);
+
+    int update(@NotNull Long id, @NotBlank String name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the implementation using <code>GenreMapper</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/genre/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
+
+import example.micronaut.ListingArguments;
+import example.micronaut.domain.Genre;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreRepositoryImpl implements GenreRepository {
+
+    private final GenreMapper genreMapper;
+
+    public GenreRepositoryImpl(GenreMapper genreMapper) {
+        this.genreMapper = genreMapper;
+    }
+
+    @Override
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+        return Optional.ofNullable(genreMapper.findById(id));
+    }
+
+    @Override
+    public Genre save(@NotBlank String name) {
+        Genre genre = new Genre(name);
+        genreMapper.save(genre);
+        return genre;
+    }
+
+    @Override
+    public void deleteById(@NotNull Long id) {
+        findById(id).ifPresent(genre -&gt; genreMapper.deleteById(id));
+    }
+
+    private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
+
+    public List&lt;Genre&gt; findAll(@NotNull ListingArguments args) {
+
+        if (args.getMax().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; args.getOffset().isPresent() &amp;&amp; args.getSort().isPresent()) {
+            return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(args.getOffset().get(),
+                    args.getMax().get(),
+                    args.getSort().get(),
+                    args.getOrder().get());
+        }
+        if (args.getMax().isPresent() &amp;&amp; args.getOffset().isPresent() &amp;&amp; (!args.getSort().isPresent() || !args.getOrder().isPresent())) {
+            return genreMapper.findAllByOffsetAndMax(args.getOffset().get(),
+                    args.getMax().get());
+        }
+        if ((!args.getMax().isPresent() || !args.getOffset().isPresent()) &amp;&amp; args.getSort().isPresent() &amp;&amp; args.getOrder().isPresent()) {
+            return genreMapper.findAllBySortAndOrder(args.getSort().get(),
+                    args.getOrder().get());
+        }
+        return genreMapper.findAll();
+    }
+
+    @Override
+    public int update(@NotNull Long id, @NotBlank String name) {
+        genreMapper.update(id, name);
+        return -1;
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
