@@ -79,6 +79,9 @@
     <loc>https://guides.micronaut.io/micronaut-oauth2-okta/guide/index.html</loc>
   </url>
   <url>
+    <loc>https://guides.micronaut.io/micronaut-spa-react/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
