@@ -174,9 +174,25 @@
 <p>In the <code>initial</code> directory you should see a directory named <code>server</code>, containing a simple Micronaut application written in Java and using a Gradle build. The application includes a single controller, shown below:</p>
 </div>
 <div class="listingblock">
-<div class="title">server/src/main/java/example/HelloController.java</div>
+<div class="title">server/src/main/java/example/micronaut/HelloController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-spa-react/complete/server/src/main/java/example/HelloController.java[indent=0]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
+
+@Controller("/")
+public class HelloController {
+
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/{name}")
+    HttpResponse&lt;String&gt; hello(String name) {
+        return HttpResponse.ok("Hello, " + name + "!");
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
