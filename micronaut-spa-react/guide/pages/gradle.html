@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.2 Configuring Gradle null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Building a Single-Page-App (SPA) with Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.2 Configuring Gradle</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="gradle">2.2 Configuring Gradle</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/gradle.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>At this point we will turn our two separate projects <code>server</code> and <code>client</code> into subprojects within a Gradle multi-project build.</p>
+</div>
+<div class="paragraph">
+<p>At the same level as the <code>server</code> and <code>client</code> directories, create a new file named <code>settings.gradle</code> and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">settings.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">include "client"
+include "server"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This file will tell Gradle about the two subprojects.</p>
+</div>
+<div class="paragraph">
+<p>Next, within the <code>client</code> directory, create a <code>build.gradle</code> file and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">client/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id "com.github.node-gradle.node" version "1.3.0"
+}
+
+node {
+    version = '10.15.0' // https://nodejs.org/en/
+    yarnVersion = '1.13.0' // https://yarnpkg.com/en/
+    download = true
+}
+
+task start(type: YarnTask, dependsOn: 'yarn') {
+    group = 'application'
+    description = 'Run the client app'
+    args = ['run', 'start']
+}
+
+task build(type: YarnTask, dependsOn: 'yarn') {
+    group = 'build'
+    description = 'Build the client bundle'
+    args = ['run', 'build']
+}
+
+task test(type: YarnTask, dependsOn: 'yarn') {
+    group = 'verification'
+    description = 'Run the client tests'
+    args = ['run', 'test']
+}
+
+task eject(type: YarnTask, dependsOn: 'yarn') {
+    group = 'other'
+    description = 'Eject from the create-react-app scripts'
+    args = ['run', 'eject']
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This Gradle file will install the Gradle Node plugin and configure Gradle tasks that correspond to the Yarn scripts specified in <code>package.json</code>.</p>
+</div>
+<div class="paragraph">
+<p>We now need to add the Gradle wrapper script to our multi-project build. If you have Gradle 4.10 installed, you can generate the script using the <code>wrapper</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ gradle wrapper</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Make sure to run the <code>wrapper</code> command at the same directory level as the <code>client</code> and <code>server</code> directories
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Another option is to copy the wrapper scripts from the <code>server</code> directory to the directory above.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ cp server/gradlew .
+~ cp server/gradlew.bat .
+~ cp -r server/gradle/ .</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Make sure to run the <code>cp</code> commands at the same directory level as the <code>client</code> and <code>server</code> directories
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Finally, create a new <code>build.gradle</code> file (at the same level as the <code>settings.gradle</code> file created previously), and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">task copyClientResources(dependsOn: ':client:build') { <i class="conum" data-value="1"></i><b>(1)</b>
+    group = 'build'
+    description = 'Copy client resources into server'
+}
+copyClientResources.doFirst { <i class="conum" data-value="2"></i><b>(2)</b>
+    copy {
+        from project(':client').buildDir.absolutePath
+        into "${project(':server').buildDir}/resources/main/public"
+    }
+}
+
+task assembleServerAndClient(dependsOn: ['copyClientResources', ':server:shadowJar']) { <i class="conum" data-value="3"></i><b>(3)</b>
+    group = 'build'
+    description = 'Build combined server &amp; client JAR'
+}
+
+task test {
+
+}
+
+task check {
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>copyClientResources</code> task will copy the static files generated by <code>yarn build</code> into the resources directory of the <code>server</code> project.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>copyClientResources</code> must be executed before <code>:server:shadowJar</code>. This ensures client static files will be available when the Micronaut app is assembled.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>assembleServerAndClient</code> task ties the copy step to the existing Gradle <code>shadowJar</code> task for the <code>server</code> project. This means that we will get our unified archive only when running this custom task (running <code>server:shadowJar</code> alone will generate a JAR file without the client resources).</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

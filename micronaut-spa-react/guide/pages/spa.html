@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.1 Creating a Single Page App null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Building a Single-Page-App (SPA) with Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.1 Creating a Single Page App</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="spa">2.1 Creating a Single Page App</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/spa.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Within the <code>client</code> directory, edit the file <code>src/App.js</code> as shown below:</p>
+</div>
+<div class="listingblock">
+<div class="title">client/src/App.js</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript" data-lang="javascript">import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import {SERVER_URL} from "./config";
+
+class App extends Component {
+
+  <i class="conum" data-value="1"></i><b>(1)</b>
+  state = {
+    name: 'World',
+    message: null
+  };
+
+  <i class="conum" data-value="2"></i><b>(2)</b>
+  setName = e =&gt; this.setState({name: e.target.value});
+
+  <i class="conum" data-value="3"></i><b>(3)</b>
+  getMessage = e =&gt; {
+    e.preventDefault();
+    fetch(`${SERVER_URL}/${this.state.name}`)
+        .then(r =&gt; r.text())
+        .then(message =&gt; this.setState({message}))
+        .catch(e =&gt; console.error(e))
+  };
+
+  render() {
+    return (
+      &lt;div className="App"&gt;
+        &lt;header className="App-header"&gt;
+          &lt;img src={logo} className="App-logo" alt="logo" /&gt;
+          {/* &lt;4&gt; */}
+          &lt;form onSubmit={this.getMessage}&gt;
+            &lt;label&gt;Enter your name: &lt;/label&gt;
+            &lt;input type="text" value={this.state.name} onChange={this.setName} /&gt;
+            &lt;input type="submit" value="Submit" /&gt;
+          &lt;/form&gt;
+
+          {/* &lt;5&gt; */}
+          &lt;p&gt;
+            { this.state.message ?
+                &lt;strong&gt;{this.state.message}&lt;/strong&gt; :
+                &lt;span&gt;Edit &lt;code&gt;src/App.js&lt;/code&gt; and save to reload.&lt;/span&gt;
+            }
+          &lt;/p&gt;
+          &lt;a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          &gt;
+            Learn React
+          &lt;/a&gt;
+        &lt;/header&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+export default App;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define some initial state</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Method to update the <code>name</code> property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Method to make a request to the server to retrieve the "Hello" message</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Form to accept the user&#8217;s name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Conditionally display message from the server</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>SERVER_URL</code> variable used in the above component needs to be defined in a configuration file. Create the file <code>config.js</code> within the <code>client/src</code> directory, and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript" data-lang="javascript">const prod = process.env.NODE_ENV === 'production';  <i class="conum" data-value="1"></i><b>(1)</b>
+
+console.log(`Loading ${process.env.NODE_ENV} config...`);
+
+export const SERVER_URL = prod ? '' : 'http://localhost:8080';</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the current Node environment to determine which URL to use for server requests</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

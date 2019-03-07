@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Building a Single-Page-App (SPA) with Micronaut | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Building a Single-Page-App (SPA) with Micronaut. Learn how to build and package a SPA together with a Micronaut backend' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-spa-react/guide/index.html">Building a Single-Page-App (SPA) with Micronaut</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-spa-react"><img src="https://travis-ci.org/micronaut-guides/micronaut-spa-react.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-spa-react&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-spa-react.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-spa-react.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-spa-react.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-spa-react/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#spa"><strong>2.1</strong><span>Creating a Single Page App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#gradle"><strong>2.2</strong><span>Configuring Gradle</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#config"><strong>2.3</strong><span>Updating Configuration</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#staticResources"><strong>2.4</strong><span>Static Resources</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the Application</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Building a Single-Page-App (SPA) with Micronaut</h1>
+        <p>Learn how to build and package a SPA together with a Micronaut backend</p>
+        <p><strong>Authors:</strong> Zachary Klein</p>
+        <p><strong>Micronaut Version:</strong> 1.0.4</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, you will learn how to create a Single Page App (using React) together with a Micronaut backend, and (optionally) how to package both projects together as an executable JAR. We will be using the Gradle build tool due to its powerful multi-project support and (via plugins) Node.js integration.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-spa-react/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-spa-react.git" class="bare">https://github.com/micronaut-guides/micronaut-spa-react.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In the <code>initial</code> directory you should see a directory named <code>server</code>, containing a simple Micronaut application written in Java and using a Gradle build. The application includes a single controller, shown below:</p>
+</div>
+<div class="listingblock">
+<div class="title">server/src/main/java/example/HelloController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-spa-react/complete/server/src/main/java/example/HelloController.java[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can run the Micronaut application with the Gradle wrapper:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ cd server
+~ ./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Exercise the controller with a simple GET request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ curl http://localhost:8080/Bob
+  Hello, Bob!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additionally, there is a directory named <code>client</code> which contains a React single-page-app. The project was generated using <code>create-react-app</code>, and has no modifications. If you have <code>yarn</code> installed and a Node.js installation of <code>10.x</code> or above, you can run the app as shown below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ cd client
+~ yarn start</code></pre>
+</div>
+</div>
+
+
+<h2 id="spa">2.1 Creating a Single Page App</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/spa.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Within the <code>client</code> directory, edit the file <code>src/App.js</code> as shown below:</p>
+</div>
+<div class="listingblock">
+<div class="title">client/src/App.js</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript" data-lang="javascript">import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import {SERVER_URL} from "./config";
+
+class App extends Component {
+
+  <i class="conum" data-value="1"></i><b>(1)</b>
+  state = {
+    name: 'World',
+    message: null
+  };
+
+  <i class="conum" data-value="2"></i><b>(2)</b>
+  setName = e =&gt; this.setState({name: e.target.value});
+
+  <i class="conum" data-value="3"></i><b>(3)</b>
+  getMessage = e =&gt; {
+    e.preventDefault();
+    fetch(`${SERVER_URL}/${this.state.name}`)
+        .then(r =&gt; r.text())
+        .then(message =&gt; this.setState({message}))
+        .catch(e =&gt; console.error(e))
+  };
+
+  render() {
+    return (
+      &lt;div className="App"&gt;
+        &lt;header className="App-header"&gt;
+          &lt;img src={logo} className="App-logo" alt="logo" /&gt;
+          {/* &lt;4&gt; */}
+          &lt;form onSubmit={this.getMessage}&gt;
+            &lt;label&gt;Enter your name: &lt;/label&gt;
+            &lt;input type="text" value={this.state.name} onChange={this.setName} /&gt;
+            &lt;input type="submit" value="Submit" /&gt;
+          &lt;/form&gt;
+
+          {/* &lt;5&gt; */}
+          &lt;p&gt;
+            { this.state.message ?
+                &lt;strong&gt;{this.state.message}&lt;/strong&gt; :
+                &lt;span&gt;Edit &lt;code&gt;src/App.js&lt;/code&gt; and save to reload.&lt;/span&gt;
+            }
+          &lt;/p&gt;
+          &lt;a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          &gt;
+            Learn React
+          &lt;/a&gt;
+        &lt;/header&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+export default App;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define some initial state</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Method to update the <code>name</code> property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Method to make a request to the server to retrieve the "Hello" message</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Form to accept the user&#8217;s name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Conditionally display message from the server</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>SERVER_URL</code> variable used in the above component needs to be defined in a configuration file. Create the file <code>config.js</code> within the <code>client/src</code> directory, and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript" data-lang="javascript">const prod = process.env.NODE_ENV === 'production';  <i class="conum" data-value="1"></i><b>(1)</b>
+
+console.log(`Loading ${process.env.NODE_ENV} config...`);
+
+export const SERVER_URL = prod ? '' : 'http://localhost:8080';</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the current Node environment to determine which URL to use for server requests</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="gradle">2.2 Configuring Gradle</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/gradle.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>At this point we will turn our two separate projects <code>server</code> and <code>client</code> into subprojects within a Gradle multi-project build.</p>
+</div>
+<div class="paragraph">
+<p>At the same level as the <code>server</code> and <code>client</code> directories, create a new file named <code>settings.gradle</code> and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">settings.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">include "client"
+include "server"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This file will tell Gradle about the two subprojects.</p>
+</div>
+<div class="paragraph">
+<p>Next, within the <code>client</code> directory, create a <code>build.gradle</code> file and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">client/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id "com.github.node-gradle.node" version "1.3.0"
+}
+
+node {
+    version = '10.15.0' // https://nodejs.org/en/
+    yarnVersion = '1.13.0' // https://yarnpkg.com/en/
+    download = true
+}
+
+task start(type: YarnTask, dependsOn: 'yarn') {
+    group = 'application'
+    description = 'Run the client app'
+    args = ['run', 'start']
+}
+
+task build(type: YarnTask, dependsOn: 'yarn') {
+    group = 'build'
+    description = 'Build the client bundle'
+    args = ['run', 'build']
+}
+
+task test(type: YarnTask, dependsOn: 'yarn') {
+    group = 'verification'
+    description = 'Run the client tests'
+    args = ['run', 'test']
+}
+
+task eject(type: YarnTask, dependsOn: 'yarn') {
+    group = 'other'
+    description = 'Eject from the create-react-app scripts'
+    args = ['run', 'eject']
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This Gradle file will install the Gradle Node plugin and configure Gradle tasks that correspond to the Yarn scripts specified in <code>package.json</code>.</p>
+</div>
+<div class="paragraph">
+<p>We now need to add the Gradle wrapper script to our multi-project build. If you have Gradle 4.10 installed, you can generate the script using the <code>wrapper</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ gradle wrapper</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Make sure to run the <code>wrapper</code> command at the same directory level as the <code>client</code> and <code>server</code> directories
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Another option is to copy the wrapper scripts from the <code>server</code> directory to the directory above.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ cp server/gradlew .
+~ cp server/gradlew.bat .
+~ cp -r server/gradle/ .</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Make sure to run the <code>cp</code> commands at the same directory level as the <code>client</code> and <code>server</code> directories
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Finally, create a new <code>build.gradle</code> file (at the same level as the <code>settings.gradle</code> file created previously), and add the following content:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">task copyClientResources(dependsOn: ':client:build') { <i class="conum" data-value="1"></i><b>(1)</b>
+    group = 'build'
+    description = 'Copy client resources into server'
+}
+copyClientResources.doFirst { <i class="conum" data-value="2"></i><b>(2)</b>
+    copy {
+        from project(':client').buildDir.absolutePath
+        into "${project(':server').buildDir}/resources/main/public"
+    }
+}
+
+task assembleServerAndClient(dependsOn: ['copyClientResources', ':server:shadowJar']) { <i class="conum" data-value="3"></i><b>(3)</b>
+    group = 'build'
+    description = 'Build combined server &amp; client JAR'
+}
+
+task test {
+
+}
+
+task check {
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>copyClientResources</code> task will copy the static files generated by <code>yarn build</code> into the resources directory of the <code>server</code> project.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>copyClientResources</code> must be executed before <code>:server:shadowJar</code>. This ensures client static files will be available when the Micronaut app is assembled.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>assembleServerAndClient</code> task ties the copy step to the existing Gradle <code>shadowJar</code> task for the <code>server</code> project. This means that we will get our unified archive only when running this custom task (running <code>server:shadowJar</code> alone will generate a JAR file without the client resources).</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="config">2.3 Updating Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/config.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In order for the React app to make requests to the Micronaut server, we need to enable CORS support in the Micronaut configuration. Add the following snippet to `application.yml:</p>
+</div>
+<div class="listingblock">
+<div class="title">server/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+micronaut:
+    server:
+        cors:
+            enabled: true</code></pre>
+</div>
+</div>
+
+
+<h2 id="staticResources">2.4 Static Resources</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/staticResources.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In order to serve the React single-page-app from the running Micronaut server, we need to configure the server to handle static resources. When the React app is built using <code>yarn build</code>, a set of HTML and JavaScript files are created that contain all of the resources needed to run the single-page-app.</p>
+</div>
+<div class="listingblock">
+<div class="title">server/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+micronaut:
+    router:
+        static-resources:
+            default:
+                enabled: true   <i class="conum" data-value="1"></i><b>(1)</b>
+                mapping: "/**"  <i class="conum" data-value="2"></i><b>(2)</b>
+                paths: "classpath:public" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable serving of static resources</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specify the URI pattern that resources should served from</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specify the location from which static resources should be served</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="runningTheApp">3 Running the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-spa-react/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The <code>server</code> application can be started from the top-level directory with the <code>server:run</code> task.</p>
+</div>
+<div class="listingblock">
+<div class="title">Running the Micronaut app</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ ./gradlew server:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>client</code> React app can be started either with <code>yarn start</code> or with the <code>client:start</code> task.</p>
+</div>
+<div class="listingblock">
+<div class="title">Running the React app</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ ./gradlew client:start</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Browse to <code><a href="http://localhost:3000" class="bare">http://localhost:3000</a></code>, and you should see the React app. Enter a name into the form and click "Submit" - you should see the message returned from the server.</p>
+</div>
+<div class="sect1">
+<h2 id="_building_an_executable_jar">Building an Executable JAR</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To generate the unified executable JAR, file, run the <code>assembleServerAndClient</code> task.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ ./gradlew assembleServerAndClient</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run the application, use the <code>java -jar</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">~ java -jar server/build/libs/server-0.1-all.jar
+
+...
+INFO  io.micronaut.runtime.Micronaut - Startup completed in 1365ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Browse to <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code>, and you should see the React app. Enter a name into the form and click "Submit" - you should see the message returned from the server.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/reactmicronaut.gif" alt="reactmicronaut">
+</div>
+</div>
+</div>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
