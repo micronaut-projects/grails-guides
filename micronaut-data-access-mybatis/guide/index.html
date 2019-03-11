@@ -88,7 +88,7 @@
         <h1>Access a database with MyBatis</h1>
         <p>Learn how to access a database with MyBatis using Micronaut.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez, Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0.M1</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0.M2</p>
     </header>
     
 
@@ -495,16 +495,19 @@ public class GenreMapperImpl implements GenreMapper {
     @Override
     public Genre findById(long id) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) { <i class="conum" data-value="3"></i><b>(3)</b>
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class); <i class="conum" data-value="4"></i><b>(4)</b>
-            return genreMapper.findById(id); <i class="conum" data-value="5"></i><b>(5)</b>
+            return getGenreMapper(sqlSession).findById(id); <i class="conum" data-value="5"></i><b>(5)</b>
         }
     }
+
+    private GenreMapper getGenreMapper(SqlSession sqlSession) {
+        return sqlSession.getMapper(GenreMapper.class); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+
 
     @Override
     public void save(Genre genre) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            genreMapper.save(genre);
+            getGenreMapper(sqlSession).save(genre);
             sqlSession.commit(); <i class="conum" data-value="6"></i><b>(6)</b>
         }
     }
@@ -512,8 +515,7 @@ public class GenreMapperImpl implements GenreMapper {
     @Override
     public void deleteById(long id) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            genreMapper.deleteById(id);
+            getGenreMapper(sqlSession).deleteById(id);
             sqlSession.commit();
         }
     }
@@ -521,8 +523,7 @@ public class GenreMapperImpl implements GenreMapper {
     @Override
     public void update(long id, String name) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            genreMapper.update(id, name);
+            getGenreMapper(sqlSession).update(id, name);
             sqlSession.commit();
         }
     }
@@ -530,8 +531,7 @@ public class GenreMapperImpl implements GenreMapper {
     @Override
     public List&lt;Genre&gt; findAll() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            return genreMapper.findAll();
+            return getGenreMapper(sqlSession).findAll();
         }
     }
 
@@ -539,8 +539,7 @@ public class GenreMapperImpl implements GenreMapper {
     public List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
                                              @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            return genreMapper.findAllBySortAndOrder(sort, order);
+            return getGenreMapper(sqlSession).findAllBySortAndOrder(sort, order);
         }
     }
 
@@ -550,8 +549,7 @@ public class GenreMapperImpl implements GenreMapper {
                                                             @NotNull @Pattern(regexp = "id|name") String sort,
                                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(offset, max, sort, order);
+            return getGenreMapper(sqlSession).findAllByOffsetAndMaxAndSortAndOrder(offset, max, sort, order);
         }
     }
 
@@ -559,8 +557,7 @@ public class GenreMapperImpl implements GenreMapper {
     public List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset,
                                              @Positive @NotNull Integer max) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            GenreMapper genreMapper = sqlSession.getMapper(GenreMapper.class);
-            return genreMapper.findAllByOffsetAndMax(offset, max);
+            return getGenreMapper(sqlSession).findAllByOffsetAndMax(offset, max);
         }
     }
 }</code></pre>
@@ -634,6 +631,7 @@ public interface GenreRepository {
 
 import example.micronaut.ListingArguments;
 import example.micronaut.domain.Genre;
+import io.micronaut.validation.Validated;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
@@ -643,6 +641,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Validated
 public class GenreRepositoryImpl implements GenreRepository {
 
     private final GenreMapper genreMapper;
@@ -803,10 +802,15 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.uri.UriBuilder;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class ListingArguments {
@@ -872,6 +876,59 @@ public class ListingArguments {
     public void setOrder(@Nullable String order) {
         this.order = order;
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public URI of(UriBuilder uriBuilder) {
+        if (max != null) {
+            uriBuilder.queryParam("max", max);
+        }
+        if (order != null) {
+            uriBuilder.queryParam("order", order);
+        }
+        if (offset != null) {
+            uriBuilder.queryParam("offset", offset);
+        }
+        if (sort != null) {
+            uriBuilder.queryParam("sort", sort);
+        }
+        return uriBuilder.build();
+    }
+
+    public static final class Builder {
+        private ListingArguments args = new ListingArguments();
+
+        private Builder() {
+
+        }
+
+        public Builder max(int max) {
+            args.setMax(max);
+            return this;
+        }
+
+        public Builder sort(String sort) {
+            args.setSort(sort);
+            return this;
+        }
+
+        public Builder order(String order) {
+            args.setOrder(order);
+            return this;
+        }
+
+        public Builder offset(int offset) {
+            args.setOffset(offset);
+            return this;
+        }
+
+        public ListingArguments build() {
+            return this.args;
+        }
+    }
+
 }</code></pre>
 </div>
 </div>
@@ -1131,11 +1188,6 @@ CREATE TABLE BOOK (
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import example.micronaut.domain.Genre;
 import example.micronaut.genre.GenreSaveCommand;
 import example.micronaut.genre.GenreUpdateCommand;
@@ -1144,27 +1196,41 @@ import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.BlockingHttpClient;
 import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.http.uri.UriTemplate;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreControllerTest {
 
     @Inject
     @Client("/")
-    public RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
+    public RxHttpClient rxHttpClient; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    BlockingHttpClient getClient() {
+        return rxHttpClient.toBlocking();
+    }
 
     @Test
     public void supplyAnInvalidOrderTriggersValidationFailure() {
         assertThrows(HttpClientResponseException.class, () -&gt; {
-            List&lt;Genre&gt; genres = client.toBlocking().retrieve(HttpRequest.GET("/genres/list?order=foo"), Argument.of(List.class, Genre.class));
+            List&lt;Genre&gt; genres = getClient().retrieve(HttpRequest.GET("/genres/list?order=foo"), Argument.of(List.class, Genre.class));
 
             assertNotNull(genres);
             assertEquals(0, genres.size());
@@ -1174,73 +1240,79 @@ public class GenreControllerTest {
     @Test
     public void testFindNonExistingGenreReturns404() {
         assertThrows(HttpClientResponseException.class, () -&gt; {
-            Genre genre = client.toBlocking().retrieve(HttpRequest.GET("/genres/99"), Argument.of(Genre.class));
+            Genre genre = getClient().retrieve(HttpRequest.GET("/genres/99"), Argument.of(Genre.class));
 
             assertNull(genre);
         });
     }
 
+    private HttpResponse saveGenre(String genre) {
+        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand(genre)); <i class="conum" data-value="3"></i><b>(3)</b>
+        return getClient().exchange(request);
+    }
+
     @Test
     public void testGenreCrudOperations() {
-
         List&lt;Long&gt; genreIds = new ArrayList&lt;&gt;();
-
-        HttpRequest request = HttpRequest.POST("/genres", new GenreSaveCommand("DevOps")); <i class="conum" data-value="3"></i><b>(3)</b>
-        HttpResponse response = client.toBlocking().exchange(request);
+        HttpResponse response = saveGenre("DevOps");
         genreIds.add(entityId(response));
-
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        request = HttpRequest.POST("/genres", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
-        response = client.toBlocking().exchange(request);
-
+        response = saveGenre("Microservices"); <i class="conum" data-value="3"></i><b>(3)</b>
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
         Long id = entityId(response);
         genreIds.add(id);
-        request = HttpRequest.GET("/genres/" + id);
-
-        Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
-
+        Genre genre = show(id);
         assertEquals("Microservices", genre.getName());
 
-        request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, "Micro-services"));
-        response = client.toBlocking().exchange(request);  <i class="conum" data-value="5"></i><b>(5)</b>
-
+        response = update(id, "Micro-services");
         assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
 
-        request = HttpRequest.GET("/genres/" + id);
-        genre = client.toBlocking().retrieve(request, Genre.class);
+        genre = show(id);
         assertEquals("Micro-services", genre.getName());
 
-        request = HttpRequest.GET("/genres/list");
-        List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
-
+        List&lt;Genre&gt; genres = listGenres(ListingArguments.builder().build());
         assertEquals(2, genres.size());
 
-        request = HttpRequest.GET("/genres/list?max=1");
-        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
-
+        genres = listGenres(ListingArguments.builder().max(1).build());
         assertEquals(1, genres.size());
         assertEquals("DevOps", genres.get(0).getName());
 
-        request = HttpRequest.GET("/genres/list?max=1&amp;order=desc&amp;sort=name");
-        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
-
+        genres = listGenres(ListingArguments.builder().max(1).order("desc").sort("name").build());
         assertEquals(1, genres.size());
         assertEquals("Micro-services", genres.get(0).getName());
 
-        request = HttpRequest.GET("/genres/list?max=1&amp;offset=10");
-        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
-
+        genres = listGenres(ListingArguments.builder().max(1).offset(10).build());
         assertEquals(0, genres.size());
 
         // cleanup:
         for (Long genreId : genreIds) {
-            request = HttpRequest.DELETE("/genres/" + genreId);
-            response = client.toBlocking().exchange(request);
+            response = delete(genreId);
             assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
         }
+    }
+
+    private List&lt;Genre&gt; listGenres(ListingArguments args) {
+        URI uri = args.of(UriBuilder.of("/genres/list"));
+        HttpRequest request = HttpRequest.GET(uri);
+        return getClient().retrieve(request, Argument.of(List.class, Genre.class));
+    }
+
+    private Genre show(Long id) {
+        String uri = UriTemplate.of("/genres/{id}").expand(Collections.singletonMap("id", id));
+        HttpRequest request = HttpRequest.GET(uri);
+        return getClient().retrieve(request, Genre.class);
+    }
+
+    private HttpResponse update(Long id, String name) {
+        HttpRequest request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, name));
+        return getClient().exchange(request);
+    }
+
+    private HttpResponse delete(Long id) {
+        HttpRequest request = HttpRequest.DELETE("/genres/" + id);
+        return getClient().exchange(request);
     }
 
     protected Long entityId(HttpResponse response) {
