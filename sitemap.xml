@@ -85,6 +85,9 @@
     <loc>https://guides.micronaut.io/micronaut-data-access-mybatis/guide/index.html</loc>
   </url>
   <url>
+    <loc>https://guides.micronaut.io/micronaut-rabbitmq-rpc/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
