@@ -109,7 +109,7 @@ function addJsClass() {
 <div class="paragraph">
 <p>Any Micronaut application can be run using the GraalVM JVM, however special support has been added to Micronaut to
  support running Micronaut applications using
- <a href="https://www.graalvm.org/docs/reference-manual/aot-compilation/">GraalVM&#8217;s <code>nativeimage</code> tool</a>.</p>
+ <a href="https://www.graalvm.org/docs/reference-manual/aot-compilation/">GraalVM&#8217;s <code>native-image</code> tool</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -118,7 +118,7 @@ function addJsClass() {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Use of GraalVM&#8217;s <code>nativeimage</code> tool is only supported in Java or Kotlin projects. Groovy relies heavily on
+Use of GraalVM&#8217;s <code>native-image</code> tool is only supported in Java or Kotlin projects. Groovy relies heavily on
 reflection which is only partially supported by GraalVM.
 </td>
 </tr>
@@ -136,56 +136,45 @@ reflection which is only partially supported by GraalVM.
 
 
 <div class="paragraph">
-<p>When we created the application we used the <code>graal-native-image</code> feature. This feature adds four important items:</p>
+<p>When we created the application we used the <code>graal-native-image</code> feature. This feature adds three important items:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>A <a href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/blob/master/complete/src/main/java/example/micronaut/MicronautSubstitutions.java">MicronautSubstitutions.java</a>
-file needed to recompute Netty and Caffeine&#8217;s use of <code>Unsafe</code>.</p>
-</li>
-<li>
-<p><code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
-</li>
-</ul>
+<div class="paragraph">
+<p>1.- <code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "com.oracle.substratevm:svm"
-runtime "io.micronaut:micronaut-graal"</code></pre>
+annotationProcessor "io.micronaut:micronaut-graal" <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>A <code>Dockerfile</code> which can be used to construct the native image executing <code>docker-build.sh</code></p>
-</li>
-<li>
-<p>A <code>build-native-image.sh</code> script to build the native image outside Docker.</p>
-</li>
-</ul>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotation processor to generate the <code>reflect</code> information at compile time.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>2.- A <code>Dockerfile</code> which can be used to construct the native image executing <code>docker-build.sh</code></p>
+</div>
+<div class="paragraph">
+<p>3.- A <code>native-image.properties</code> file in <code>resources/META-INF/native-image/example.micronaut/complete-application</code> directory with
+Graal&#8217;s <code>native-image</code> configuration. This file can be used to fine tune the native-image generation.</p>
+</div>
+<div class="listingblock">
+<div class="title">native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=complete \
+       -H:Class=example.micronaut.Application</code></pre>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_creating_native_image_inside_docker">Creating native image inside Docker</h3>
 <div class="paragraph">
-<p>With this approach you only need to have Docker installed because it will download the required images, if necessary.</p>
-</div>
-<div class="paragraph">
-<p>The provided <code>Dockerfile</code> is a multi-stage dockerfile which builds the project in three steps:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>A Gradle or Maven image will build the project</p>
-</li>
-<li>
-<p>A GraalVM official image will build the native image</p>
-</li>
-<li>
-<p>A typical dockerfile structure will build the final image which is smaller due to layering</p>
-</li>
-</ol>
+<p>With this approach you only need to build the fatjar and then use Docker to build the native image.</p>
 </div>
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
@@ -236,8 +225,9 @@ For this approach you need to use Linux or Mac. As this moment GraalVM is not su
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-13-grl
-$ ./build-native-image.sh</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-14-grl
+$ ./gradlew assemble
+$ native-image --no-server -cp build/libs/complete-*.jar</code></pre>
 </div>
 </div>
 <div class="paragraph">
