@@ -139,8 +139,8 @@ jar {
 <h3 id="_1_install_graal">1. Install Graal</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-13-grl
-sdk use java 1.0.0-rc-13-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-14-grl
+sdk use java 1.0.0-rc-14-grl</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -162,75 +162,35 @@ You may need to be in the latest version of <a href="http://sdkman.io">sdkman.io
 <p>Add the following to <code>build.gradle</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">vies-vat-validator/build.gradle</div>
+<div class="title">vies-vat-validator-graal/build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "com.oracle.substratevm:svm"
-runtimeOnly "io.micronaut:micronaut-graal"</code></pre>
+annotationProcessor "io.micronaut:micronaut-graal"</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_3_add_graal_substitutions">3. Add Graal Substitutions</h3>
+<h3 id="_3_create_code_native_image_properties_code_file">3. Create <code>native-image.properties</code> file</h3>
 <div class="paragraph">
-<p>Create <code>src/main/java/example/micronaut/MicronautSubstitutions.java</code>; a file needed to recompute Netty and Caffeine’s use of Unsafe.</p>
+<p>Create the following file:</p>
 </div>
 <div class="listingblock">
-<div class="title">vies-vat-validator-graal/src/main/java/example/micronaut/MicronautSubstitutions.java</div>
+<div class="title">vies-vat-validator-graal/src/main/resources/META-INF/native-image/example.micronaut/vies-vat-validator-application/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import com.oracle.svm.core.annotate.Alias;
-import com.oracle.svm.core.annotate.RecomputeFieldValue;
-import com.oracle.svm.core.annotate.RecomputeFieldValue.Kind;
-import com.oracle.svm.core.annotate.Substitute;
-import com.oracle.svm.core.annotate.TargetClass;
-
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.JdkLoggerFactory;
-
-@TargetClass(io.netty.util.internal.logging.InternalLoggerFactory.class)
-final class Target_io_netty_util_internal_logging_InternalLoggerFactory {
-    @Substitute
-    private static InternalLoggerFactory newDefaultFactory(String name) {
-        return JdkLoggerFactory.INSTANCE;
-    }
-}
-
-@TargetClass(className = "io.micronaut.caffeine.cache.UnsafeRefArrayAccess")
-final class Target_io_micronaut_caffeine_cache_UnsafeRefArrayAccess {
-    @Alias @RecomputeFieldValue(kind = RecomputeFieldValue.Kind.ArrayIndexShift, declClass = Object[].class)
-    public static int REF_ELEMENT_SHIFT;
-}
-
-@TargetClass(className = "io.netty.util.internal.PlatformDependent0")
-final class Target_io_netty_util_internal_PlatformDependent0 {
-    @Alias @RecomputeFieldValue(kind = Kind.FieldOffset, //
-                    declClassName = "java.nio.Buffer", //
-                    name = "address") //
-    private static long ADDRESS_FIELD_OFFSET;
-}
-
-@TargetClass(className = "io.netty.util.internal.CleanerJava6")
-final class Target_io_netty_util_internal_CleanerJava6 {
-    @Alias @RecomputeFieldValue(kind = Kind.FieldOffset, //
-                    declClassName = "java.nio.DirectByteBuffer", //
-                    name = "cleaner") //
-    private static long CLEANER_FIELD_OFFSET;
-}
-
-@TargetClass(className = "io.netty.util.internal.shaded.org.jctools.util.UnsafeRefArrayAccess")
-final class Target_io_netty_util_internal_shaded_org_jctools_util_UnsafeRefArrayAccess {
-    @Alias @RecomputeFieldValue(kind = Kind.ArrayIndexShift, declClass = Object[].class) //
-    public static int REF_ELEMENT_SHIFT;
-}
-
-public class MicronautSubstitutions {
-}</code></pre>
+<pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=vies-vat-validator \
+       -H:Class=io.micronaut.function.executor.FunctionApplication</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_4_build_the_function">4. Build the Function</h3>
+<h3 id="_4_annotate_pojo">4. Annotate POJO</h3>
+<div class="paragraph">
+<p>Annotate <code>VatValidationRequest.java</code> with <code>@Introspected</code> to generate compile time Bean introspection metadata.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_build_the_function">5. Build the Function</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">vies-vat-validator-graal $ ./gradlew assemble</code></pre>
@@ -238,43 +198,14 @@ public class MicronautSubstitutions {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_5_generate_a_code_reflect_json_code_file">5. Generate a <code>reflect.json</code> file</h3>
-<div class="paragraph">
-<p>Run the next command to to write out a <code>reflect.json</code>; a file computing the classloading requirements of the application.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -cp build/libs/vies-vat-validator-0.1-all.jar io.micronaut.graal.reflect.GraalClassLoadingAnalyzer</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>reflect.json</code> file is written to destination: <code>build/reflect.json</code></p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="_6_build_the_graal_native_image">6. Build the Graal Native Image</h3>
 <div class="paragraph">
-<p>Run the <code>native-image</code> command. Create a bash script to encapsulate the execution of this command:</p>
+<p>Run the <code>native-image</code> command:</p>
 </div>
 <div class="listingblock">
-<div class="title">vies-vat-validator-graal/build-native-image.sh</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image --no-server \
-             --class-path build/libs/vies-vat-validator-0.1-all.jar \
-             -H:ReflectionConfigurationFiles=build/reflect.json \
-             -H:EnableURLProtocols=http \
-             -H:IncludeResources="logback.xml|application.yml" \
-             -H:Name=vies-vat-validator \
-             -H:Class=io.micronaut.function.executor.FunctionApplication \
-             -H:+ReportUnsupportedElementsAtRuntime \
-             -H:+AllowVMInspection \
-             --allow-incomplete-classpath \
-             --rerun-class-initialization-at-runtime='sun.security.jca.JCAUtil$CachedSecureRandomHolder,javax.net.ssl.SSLContext' \
-             --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,io.netty.handler.codec.http.websocketx.WebSocket00FrameEncoder,io.netty.handler.ssl.util.ThreadLocalInsecureRandom,com.sun.jndi.dns.DnsClient</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">native-image --no-server --class-path build/libs/vies-vat-validator-0.1-all.jar</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><code>vies-vat-validator-graal $ ./build-native-image.sh</code></p>
 </div>
 </div>
 <div class="sect2">
