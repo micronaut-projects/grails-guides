@@ -167,7 +167,7 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 <div class="title">native-image.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=complete \
+       -H:Name=micronaut-graal-app \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -183,12 +183,12 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command will create the image <code>complete:latest</code>. To execute it:</p>
+<p>The previous command will create the image <code>micronaut-graal-app:latest</code>. To execute it:</p>
 </div>
 <div class="listingblock">
 <div class="title">Executing the native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run --network host complete
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run --network host micronaut-graal-app
 10:29:46.845 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 12ms. Server Running: http://nobita:8080</code></pre>
 </div>
 </div>
@@ -225,13 +225,21 @@ For this approach you need to use Linux or Mac. As this moment GraalVM is not su
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-14-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-15-grl
 $ ./gradlew assemble
-$ native-image --no-server -cp build/libs/complete-*.jar</code></pre>
+$ native-image --no-server -cp build/libs/complete-*.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Starting in Micronaut 1.1.0 it is really simple to create the native image</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The previous commmand will create a native executable called <code>complete</code>.</p>
+<p>The previous commmand will create a native executable called <code>micronaut-graal-app</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -242,7 +250,7 @@ $ native-image --no-server -cp build/libs/complete-*.jar</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ time curl localhost:8080/conferences/random
-{"name":"Oracle Code One"}
+{"name":"Greach"}
 real    0m0.016s
 user    0m0.005s
 sys     0m0.004s
