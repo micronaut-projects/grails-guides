@@ -1,24 +1,6 @@
 #!/bin/bash
 set -e
 
-function updateGuidesSite() {
-    rm -rf gh-pages
-
-    git clone https://${GH_TOKEN}@github.com/micronaut-projects/micronaut-guides.git -b gh-pages gh-pages --single-branch > /dev/null
-
-    cd gh-pages
-
-    cp -r ../static-website/guides/build/site/* .
-
-    if git diff --quiet; then
-        echo "No changes in GUIDES Website"
-    else
-        git add *
-        git commit -a -m "Updating guides site for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
-        git push origin HEAD
-    fi
-}
-
 if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     export EXIT_STATUS=0
 
@@ -42,11 +24,20 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 
     cd ..
 
-    updateGuidesSite || EXIT_STATUS=$?
+    rm -rf gh-pages
 
-    if [[ $EXIT_STATUS -ne 0 ]]; then
-        echo "Error updating Guides site. Trying again..."
-        updateGuidesSite
+    git clone https://${GH_TOKEN}@github.com/micronaut-projects/micronaut-guides.git -b gh-pages gh-pages --single-branch > /dev/null
+
+    cd gh-pages
+
+    cp -r ../static-website/guides/build/site/* .
+
+    if git diff --quiet; then
+        echo "No changes in GUIDES Website"
+    else
+        git add *
+        git commit -a -m "Updating guides site for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+        git push origin HEAD
     fi
 
     cd ..
