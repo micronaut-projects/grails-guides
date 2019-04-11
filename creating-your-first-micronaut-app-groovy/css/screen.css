@@ -412,6 +412,10 @@ body.guide .colist td {
 	border: none;
 }
 
+body.guide .colist {
+	margin-bottom: 20px;
+}
+
 body.guide .mainheader,
 body.grails3plugins .mainheader,
 body.gorm .mainheader {
