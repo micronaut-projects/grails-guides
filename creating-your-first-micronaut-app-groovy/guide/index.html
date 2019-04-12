@@ -72,6 +72,8 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>6</strong><span>Running the Application</span></a></div>
             
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>7</strong><span>Next steps</span></a></div>
+            
             <div style="clear:both" ></div>
         </div>
         
@@ -259,34 +261,29 @@ class HelloController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class HelloControllerSpec extends Specification {
 
-
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Shared
-    @AutoCleanup
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    @Client("/")
+    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     void "test hello world response"() {
         when:
-        HttpRequest request = HttpRequest.GET('/hello') <i class="conum" data-value="4"></i><b>(4)</b>
-        String rsp  = client.toBlocking().retrieve(request)
+        HttpRequest request = HttpRequest.GET('/hello') <i class="conum" data-value="3"></i><b>(3)</b>
+        String rsp = client.toBlocking().retrieve(request)
 
         then:
         rsp == "Hello World"
     }
-
 }</code></pre>
 </div>
 </div>
@@ -294,18 +291,14 @@ class HelloControllerSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronautTest</code> so Micronaut will initialize the application context and the embedded server.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>RxHttpClient</code> bean. It is used the execute an HTTP call to the controller.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 </table>
@@ -343,6 +336,20 @@ $ open build/reports/tests/test/index.html</code></pre>
 
 <div class="paragraph">
 <p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
+</div>
+
+
+<h1 id="nextSteps">7 Next steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app-groovy/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">Micronaut testing</a>.</p>
 </div>
 
 </article>
