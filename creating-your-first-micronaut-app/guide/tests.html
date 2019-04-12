@@ -109,7 +109,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
@@ -121,7 +121,7 @@ public class HelloControllerTest {
 
     @Inject
     @Client("/")
-    HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
+    RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void testHello() throws Exception {
@@ -142,7 +142,7 @@ public class HelloControllerTest {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>HttpClient</code> bean. It is used the execute an HTTP call to the controller.</td>
+<td>Inject the <code>RxHttpClient</code> bean. It is used the execute an HTTP call to the controller.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
