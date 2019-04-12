@@ -7,7 +7,7 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 
     echo "Publishing guide for branch $TRAVIS_BRANCH"
 
-    ./gradlew check || EXIT_STATUS=$?
+    ./gradlew clean check --no-daemon || EXIT_STATUS=$?
 
     if [[ $EXIT_STATUS -ne 0 ]]; then
         echo "Check failed"
