@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Deploy a Micronaut app to Microsoft Azure | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Deploy a Micronaut app to Microsoft Azure. Learn how to deploy a Micronaut application to Microsoft Azure.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-azure-cloud/guide/index.html">Deploy a Micronaut app to Microsoft Azure</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-azure-cloud"><img src="https://travis-ci.org/micronaut-guides/micronaut-azure-cloud.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-azure-cloud&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-azure-cloud.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-azure-cloud.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-azure-cloud.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-azure-cloud/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#training"><strong>1</strong><span>Micronaut Training</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>2</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#costs"><strong>3</strong><span>Costs</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#whatYouWillNeed"><strong>4</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#howToComplete"><strong>5</strong><span>How to Complete</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#cloudSDK"><strong>6</strong><span>Cloud SDK</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>7</strong><span>Sample Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#deployingTheApp"><strong>8</strong><span>Deploying the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#logging"><strong>9</strong><span>Logging</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#cleaningUp"><strong>10</strong><span>Cleaning Up</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#learnMore"><strong>11</strong><span>Learn More</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Deploy a Micronaut app to Microsoft Azure</h1>
+        <p>Learn how to deploy a Micronaut application to Microsoft Azure.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+    </header>
+    
+
+<h1 id="training">1 Micronaut Training</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/training.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><strong>Micronaut Training</strong> - Developed and delivered by the folks who created and actively maintain the Micronaut framework!.</p>
+</div>
+<div id="ocitraining"></div>
+<script type="text/javascript">
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status == 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status);
+      }
+    };
+    xhr.send();
+};
+getJSON('https://oci-training.cfapps.io/training', function(err, data) {
+  var msg = '';
+  if (err != null) {
+      msg = 'Something went wrong while retrieving OCI training offerings';
+
+  } else {
+      if ( data.length == 0 ) {
+         msg = '<p><b>Nothing scheduled at the moment - please check back again soon!</b></p>.';
+
+      } else {
+        msg += '<table>';
+        msg += '<thead>';
+        msg += '<tr><th>Course</th><th>Date(s)</th><th>Instructor(s)</th><th>Hour(s)</th></tr>';
+        msg += '</thead>';
+        msg += '<tbody>';
+        for ( var i = 0; i < data.length; i++ ) {
+            msg += '<tr><td><a href="'+ data[i].enrollmentLink + '">'+ data[i].course + '</a></td><td>'+ data[i].dates + '</td><td>'+ data[i].instructors + '</td><td>'+ data[i].hours + '</td></tr>';
+        }
+        msg += '</tbody>';
+        msg += '</table>';
+      }
+  }
+  var ociTraining = document.getElementById("ocitraining");
+  ociTraining.innerHTML = msg;
+});
+</script>
+
+
+<h1 id="gettingStarted">2 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, you are going to deploy a Micronaut application
+to Azure</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="costs">3 Costs</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/costs.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>This guide uses paid services; you may need to enable Billing in Microsoft Azure
+to complete some steps in this guide.</p>
+</div>
+
+
+<h1 id="whatYouWillNeed">4 What you will need</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/whatYouWillNeed.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with JAVA_HOME configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h1 id="howToComplete">5 How to Complete</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/howToComplete.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To get started do the following:</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="cloudSDK">6 Cloud SDK</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/cloudSDK.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="controller">7 Sample Controller</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller which we can invoke once the app is deployed.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HelloController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
+
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
+
+@Controller("/")
+public class HelloController {
+
+    @Get(value = "/", produces = MediaType.TEXT_PLAIN)
+    public String index() {
+        return "Micronaut on Azure";
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h1 id="deployingTheApp">8 Deploying the app</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/deployingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To deploy the app to Azure run:</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="logging">9 Logging</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/logging.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="cleaningUp">10 Cleaning Up</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/cleaningUp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>After you&#8217;ve finished this guide, you can clean up the resources you created on
+Azure so you won&#8217;t be billed for them in the future. The following
+sections describe how to delete or turn off these resources.</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+
+<h1 id="learnMore">11 Learn More</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/learnMore.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you want to learn more about Microsoft Azure and Micronaut integration, checkout &#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
