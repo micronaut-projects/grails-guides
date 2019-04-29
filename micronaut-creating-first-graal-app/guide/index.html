@@ -431,7 +431,8 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./docker-build.sh</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+$ ./docker-build.sh</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -440,24 +441,12 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 <div class="listingblock">
 <div class="title">Executing the native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run --network host micronaut-graal-app
-10:29:46.845 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 12ms. Server Running: http://nobita:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run -p 8080:8080 micronaut-graal-app
+10:29:46.845 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 12ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>We can see that the application starts in only 12ms.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-We use the option <code>--network host</code> to use the same network as the host and expose automatically all the ports
-</td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect2">
@@ -477,7 +466,7 @@ For this approach you need to use Linux or Mac. As this moment GraalVM is not su
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-15-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 1.0.0-rc-16-grl
 $ ./gradlew assemble
 $ native-image --no-server -cp build/libs/complete-*.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
