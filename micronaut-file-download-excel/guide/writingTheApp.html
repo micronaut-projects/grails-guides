@@ -276,7 +276,7 @@ public class BookRepositoryImpl implements BookRepository {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import java.util.List;
-import io.micronaut.http.server.types.files.AttachedFile;
+import io.micronaut.http.server.types.files.SystemFile;
 
 public interface BookExcelService {
     static final String SHEET_NAME = "Books";
@@ -286,7 +286,7 @@ public interface BookExcelService {
     static final String HEADER_EXCEL_FILE_PREFIX = "books";
     static final String HEADER_EXCEL_FILENAME = HEADER_EXCEL_FILE_PREFIX + HEADER_EXCEL_FILE_SUFIX;
 
-    AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
+    SystemFile excelFileFromBooks(List&lt;Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
 </div>
 </div>
@@ -294,7 +294,7 @@ public interface BookExcelService {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>AttachedFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
+<td><code>SystemFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
 </tr>
 </table>
 </div>
@@ -331,13 +331,12 @@ public class BookExcelStylesheet implements Stylesheet {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder;
-import io.micronaut.http.server.types.files.AttachedFile;
+import io.micronaut.http.server.types.files.SystemFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
@@ -348,7 +347,7 @@ public class BookExcelServiceImpl implements BookExcelService {
     private static final Logger LOG = LoggerFactory.getLogger(BookExcelServiceImpl.class);
 
     @Override
-    public AttachedFile excelFileFromBooks(List&lt;Book&gt; bookList) {
+    public SystemFile excelFileFromBooks(List&lt;Book&gt; bookList) {
         try {
             File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX);
             PoiSpreadsheetBuilder.create(file).build(w -&gt; {
@@ -367,7 +366,7 @@ public class BookExcelServiceImpl implements BookExcelService {
                             }));
                 });
             });
-            return new AttachedFile(file, HEADER_EXCEL_FILENAME);
+            return new SystemFile(file).attach(HEADER_EXCEL_FILENAME);
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("File not found exception raised when generating excel file");
@@ -422,7 +421,7 @@ public class BookExcelServiceImpl implements BookExcelService {
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.server.types.files.AttachedFile;
+import io.micronaut.http.server.types.files.SystemFile;
 import io.micronaut.views.View;
 
 import java.util.HashMap;
@@ -447,7 +446,7 @@ public class HomeController {
     }
 
     @Get("/excel") <i class="conum" data-value="4"></i><b>(4)</b>
-    AttachedFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
+    SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
         return bookExcelService.excelFileFromBooks(bookRepository.findAll());
     }
 }</code></pre>
@@ -473,7 +472,7 @@ public class HomeController {
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>AttachedFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
+<td><code>SystemFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
 </tr>
 </table>
 </div>

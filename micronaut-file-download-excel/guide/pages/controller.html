@@ -113,7 +113,7 @@ function addJsClass() {
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.server.types.files.AttachedFile;
+import io.micronaut.http.server.types.files.SystemFile;
 import io.micronaut.views.View;
 
 import java.util.HashMap;
@@ -138,7 +138,7 @@ public class HomeController {
     }
 
     @Get("/excel") <i class="conum" data-value="4"></i><b>(4)</b>
-    AttachedFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
+    SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
         return bookExcelService.excelFileFromBooks(bookRepository.findAll());
     }
 }</code></pre>
@@ -164,7 +164,7 @@ public class HomeController {
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>AttachedFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
+<td><code>SystemFile</code> is used as the return value of a route execution to indicate the given file should be downloaded by the client instead of displayed.</td>
 </tr>
 </table>
 </div>
