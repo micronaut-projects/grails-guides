@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.4 Home null</title>
+    <title>3.3 Home null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -73,7 +73,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3.4 Home</h1>
+                    <h1>3.3 Home</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -82,7 +82,7 @@ function addJsClass() {
 
                 
 
-<h2 id="home">3.4 Home</h2>
+<h2 id="home">3.3 Home</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
@@ -159,28 +159,19 @@ public class HomeController {
 
 &lt;nav&gt;
     &lt;ul&gt;
-        &lt;li th:unless="${security}"&gt;&lt;a href="/enter"&gt;Enter&lt;/a&gt;&lt;/li&gt;
-        &lt;li th:if="${security &amp;&amp; endsessionurl}"&gt;&lt;a th:href="${endsessionurl}"&gt;Logout&lt;/a&gt;&lt;/li&gt;
-
+        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/okta"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:if="${security}"&gt;&lt;a href="/oauth/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
 &lt;/nav&gt;
-
-
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Please, note that we don&#8217;t even have an <code>/enter</code> endpoint, thus if you click it, you are accessing an unauthorized url and a redirection to the authentication endpoint of the Okta Authorization server is triggered.</p>
-</div>
-<div class="paragraph">
-<p>Also, note that we return an empty model in the controller. However, we are accessing <code>security</code> and <code>endsessionurl</code> in the thymeleaf template.</p>
+<p>Also, note that we return an empty model in the controller. However, we are accessing <code>security</code> in the thymeleaf template.</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>The <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/api/io/micronaut/security/oauth2/openid/endpoints/endsession/EndsessionViewModelProcessor.html">EndsessionViewModelProcessor</a> injects into the model the <code>endsessionurl</code> of the authorization server correctly configured. See <a href="https://micronaut-projects.github.io/micronaut-oauth2/snapshot/guide/index.html#logouturl">Logout URL documentation</a>.</p>
-</li>
 <li>
 <p>The <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a> injects into the model a <code>security</code> map with the authenticated user.  See <a href="https://docs.micronaut.io/snapshot/guide/index.html#accessSecurityInViews">User in a view</a> documentation.</p>
 </li>

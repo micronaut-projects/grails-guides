@@ -100,7 +100,7 @@ function addJsClass() {
 <p>Check <code>Authorization Code</code> grant type.</p>
 </li>
 <li>
-<p>Add <code><a href="http://localhost:8080/authcode/cb" class="bare">http://localhost:8080/authcode/cb</a></code> as a login redirect URIs.</p>
+<p>Add <code><a href="http://localhost:8080/oauth/callback/okta" class="bare">http://localhost:8080/oauth/callback/okta</a></code> as a login redirect URIs.</p>
 </li>
 <li>
 <p>Add <code><a href="http://localhost:8080/logout" class="bare">http://localhost:8080/logout</a></code> as a Logout redirect URIs.</p>
@@ -119,12 +119,19 @@ function addJsClass() {
 <p>To use OAuth 2.0 integration, add the next dependency:</p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.0.BUILD-SNAPSHOT
+micronuatOauthVersion=1.2.0.BUILD-SNAPSHOT</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    compile "io.micronaut.configuration:micronaut-oauth2:1.0.0.BUILD-SNAPSHOT"
+    compile "io.micronaut.configuration:micronaut-security-oauth2:$micronuatOauthVersion"
 }</code></pre>
 </div>
 </div>
@@ -151,13 +158,13 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">    security:
         enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
         oauth2:
-            client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="2"></i><b>(2)</b>
-            client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="3"></i><b>(3)</b>
-            issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="4"></i><b>(4)</b>
-            authorization:
-                scopes: <i class="conum" data-value="5"></i><b>(5)</b>
-                    - 'openid'
-                    - 'email'
+            enabled: true
+            clients:
+                okta: <i class="conum" data-value="2"></i><b>(2)</b>
+                    client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+                    client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="4"></i><b>(4)</b>
+                    openid:
+                        issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="5"></i><b>(5)</b>
         token:
             jwt:
                 enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
@@ -177,19 +184,19 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Client Secret. See previous screenshot.</td>
+<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/okta</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Client ID. See previous screenshot.</td>
+<td>Client Secret. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+<td>Client ID. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>By default <code>openid</code> scope isued. You can supply multiple scopes by providing a list.</td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
