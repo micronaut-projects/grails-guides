@@ -127,8 +127,8 @@ public class HelloControllerTest {
     RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
-    public void testHello() throws Exception {
-        HttpRequest request = HttpRequest.GET("/hello"); <i class="conum" data-value="3"></i><b>(3)</b>
+    public void testHello() {
+        HttpRequest&lt;String&gt; request = HttpRequest.GET("/hello"); <i class="conum" data-value="3"></i><b>(3)</b>
         String body = client.toBlocking().retrieve(request);
 
         assertNotNull(body);
