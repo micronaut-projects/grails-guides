@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/howToComplete.html"><strong>5</strong><span>How to Complete</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/mavenPlugin.html"><strong>6</strong><span>Maven Plugin for Azure App Service</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>7</strong><span>Sample Controller</span></a>
@@ -110,7 +110,28 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>TODO</p>
+<p>To see the log of your application running on Azure, you have to first enable storage of your app logging, and then perform a tail for live streaming.</p>
+</div>
+<div class="paragraph">
+<p>To enable logging storage, use the following Azure CLI command. Check your <code>pom.xml</code> for the generated <code>&lt;resourceGroup&gt;</code> and the <code>&lt;appName&gt;</code></p>
+</div>
+<div class="paragraph">
+<p><code>az webapp log config --name [appName] -g [resourceGroup] --web-server-logging filesystem</code></p>
+</div>
+<div class="paragraph">
+<p>Once this is done, you can then tail the log live from the cloud:</p>
+</div>
+<div class="paragraph">
+<p><code>az webapp log tail --name [appName] -g [resourceGroup]</code></p>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t see any log, try changing the level of the project&#8217;s Logback configuration in <code>logback.xml</code> to a higher value such as <code>debug</code>, then run the Maven deployment command again:</p>
+</div>
+<div class="paragraph">
+<p><code>mvn package azure-webapp:deploy</code></p>
+</div>
+<div class="paragraph">
+<p>And then run the tail command above once again.</p>
 </div>
 
 

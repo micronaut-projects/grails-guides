@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/howToComplete.html"><strong>5</strong><span>How to Complete</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/mavenPlugin.html"><strong>6</strong><span>Maven Plugin for Azure App Service</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>7</strong><span>Sample Controller</span></a>
@@ -111,11 +111,20 @@ function addJsClass() {
 
 <div class="paragraph">
 <p>After you&#8217;ve finished this guide, you can clean up the resources you created on
-Azure so you won&#8217;t be billed for them in the future. The following
+Azure so you won&#8217;t take the risk of being billed because of them in the future. The following
 sections describe how to delete or turn off these resources.</p>
 </div>
 <div class="paragraph">
-<p>TODO</p>
+<p>Delete the resource group and all of its resources created along this guide with the following command:</p>
+</div>
+<div class="paragraph">
+<p><code>az group delete -g [resourceGroup]</code></p>
+</div>
+<div class="paragraph">
+<p>Answer <code>y</code> to confirm.</p>
+</div>
+<div class="paragraph">
+<p>You can add the <code>--no-wait</code> parameter to not wait for the command to finish.</p>
 </div>
 
 

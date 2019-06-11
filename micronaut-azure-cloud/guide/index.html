@@ -66,7 +66,7 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#howToComplete"><strong>5</strong><span>How to Complete</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#cloudSDK"><strong>6</strong><span>Cloud SDK</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#mavenPlugin"><strong>6</strong><span>Maven Plugin for Azure App Service</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>7</strong><span>Sample Controller</span></a></div>
             
@@ -85,7 +85,7 @@
     <header>
         <h1>Deploy a Micronaut app to Microsoft Azure</h1>
         <p>Learn how to deploy a Micronaut application to Microsoft Azure.</p>
-        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Authors:</strong> Bruno Borges</p>
         <p><strong>Micronaut Version:</strong> 1.1.0</p>
     </header>
     
@@ -157,10 +157,7 @@ getJSON('https://oci-training.cfapps.io/training', function(err, data) {
 
 <div class="paragraph">
 <p>In this guide, you are going to deploy a Micronaut application
-to Azure</p>
-</div>
-<div class="paragraph">
-<p>TODO</p>
+to <a href="https://azure.microsoft.com/en-us/services/app-service/web/?WT.mc_id=opensource-micronaut-brborges">Microsoft Azure App Service for Web Apps</a>.</p>
 </div>
 
 
@@ -174,8 +171,7 @@ to Azure</p>
 
 
 <div class="paragraph">
-<p>This guide uses paid services; you may need to enable Billing in Microsoft Azure
-to complete some steps in this guide.</p>
+<p>This guide uses services available in the <a href="https://azure.microsoft.com/free/free-account-faq/?WT.mc_id=opensource-micronaut-brborges">Always Free Tier</a> of <a href="https://azure.microsoft.com/free/?WT.mc_id=opensource-micronaut-brborges">Microsoft Azure Free Account</a>. If you don&#8217;t have one already, <a href="https://azure.microsoft.com/free/?WT.mc_id=opensource-micronaut-brborges">create your account</a> to complete this guide.</p>
 </div>
 
 
@@ -200,7 +196,10 @@ to complete some steps in this guide.</p>
 <p>A decent text editor or IDE</p>
 </li>
 <li>
-<p>JDK 1.8 or greater installed with JAVA_HOME configured appropriately</p>
+<p><a href="https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=opensource-micronaut-brborges">Azure CLI</a> installed and <a href="https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?WT.mc_id=opensource-micronaut-brborges&amp;view=azure-cli-latest#sign-in-interactively">authenticated</a></p>
+</li>
+<li>
+<p>JDK 8 installed with JAVA_HOME configured appropriately (cannot be Java 9 or later)</p>
 </li>
 </ul>
 </div>
@@ -219,21 +218,152 @@ to complete some steps in this guide.</p>
 <p>To get started do the following:</p>
 </div>
 <div class="paragraph">
-<p>TODO</p>
+<p>Download and unzip the source or clone the following GitHub repository:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">git clone https://github.com/micronaut-guides/micronaut-maven-azure.git</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This Micronaut guide contains two folders:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>initial</code> Initial project. A simple Micronaut app as you may have created with Micronaut CLI.``</p>
+</li>
+<li>
+<p><code>complete</code> A completed example. It is the result of working through the steps presented by the guide and applying those changes to the initial folder.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To complete the guide, go to the initial folder</p>
+</div>
+<div class="paragraph">
+<p><code>cd initial</code></p>
+</div>
+<div class="paragraph">
+<p>and follow the instructions in the next sections.</p>
+</div>
+<div class="paragraph">
+<p>or you can go right to the completed example:</p>
+</div>
+<div class="paragraph">
+<p><code>cd complete</code></p>
+</div>
+<div class="paragraph">
+<p>Although you can go right to the completed example, in order to deploy the app you
+would need to complete several configuration steps in Microsoft Azure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Install the <a href="https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=opensource-micronaut-brborges">Azure CLI</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?WT.mc_id=opensource-micronaut-brborges&amp;view=azure-cli-latest#sign-in-interactively">Authenticate</a> with your Azure account</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After you&#8217;ve checked out the links above, follow below for the next steps on setting up the Maven plugin for Azure deployment.</p>
 </div>
 
 
-<h1 id="cloudSDK">6 Cloud SDK</h1>
+<h1 id="mavenPlugin">6 Maven Plugin for Azure App Service</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/cloudSDK.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-azure-cloud/edit/master/src/main/docs/guide/mavenPlugin.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>TODO</p>
+<p>First, make sure you have the Azure CLI installed and authenticated:</p>
+</div>
+<div class="paragraph">
+<p><code>$ az login</code></p>
+</div>
+<div class="paragraph">
+<p>Then, open the <code>pom.xml</code> file and add the following <code>&lt;plugin&gt;</code> inside the <code>&lt;plugins&gt;</code> section of the Maven <code>&lt;build&gt;</code> definition of the POM:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">      &lt;plugin&gt;
+        &lt;groupId&gt;com.microsoft.azure&lt;/groupId&gt;
+        &lt;artifactId&gt;azure-webapp-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;1.6.0&lt;/version&gt;
+      &lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Save the file.</p>
+</div>
+<div class="paragraph">
+<p>Now you can run the following goal to help you configure the required settings:</p>
+</div>
+<div class="paragraph">
+<p><code>mvn azure-webapp:config</code></p>
+</div>
+<div class="paragraph">
+<p>Make sure you select the following options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OS: linux</p>
+</li>
+<li>
+<p>javaVersion: jre8</p>
+</li>
+<li>
+<p>runtimeStack: jre8</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is how it looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[INFO] --- azure-webapp-maven-plugin:1.6.0:config (default-cli) @ example-micronaut ---
+[WARNING] The plugin may not work if you change the os of an existing webapp.
+Define value for OS(Default: Linux):
+1. linux [*]
+2. windows
+3. docker
+Enter index to use: 1
+Define value for javaVersion(Default: jre8):
+1. jre8 [*]
+2. java11
+Enter index to use: 1
+Define value for runtimeStack(Default: TOMCAT 8.5):
+1. TOMCAT 9.0
+2. jre8
+3. TOMCAT 8.5 [*]
+4. WILDFLY 14
+Enter index to use: 2
+Please confirm webapp properties
+AppName : example-micronaut-1560245627178
+ResourceGroup : example-micronaut-1560245627178-rg
+Region : westeurope
+PricingTier : Premium_P1V2
+OS : Linux
+RuntimeStack : JAVA 8-jre8
+Deploy to slot : false
+Confirm (Y/N)? :
+[INFO] Saving configuration to pom.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check your <code>pom.xml</code> to see the new configuration done for you.</p>
 </div>
 
 
@@ -252,7 +382,7 @@ to complete some steps in this guide.</p>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/HelloController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -282,7 +412,33 @@ public class HelloController {
 <p>To deploy the app to Azure run:</p>
 </div>
 <div class="paragraph">
-<p>TODO</p>
+<p><code>mvn package azure-webapp:deploy</code></p>
+</div>
+<div class="paragraph">
+<p>With a <code>BUILD SUCCESS</code>, you should see a message containing the URL of your newly deployed web app:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>...
+[INFO] Authenticate with Azure CLI 2.0
+[INFO] Target Web App doesn't exist. Creating a new one...
+[INFO] Creating App Service Plan 'ServicePlan2ef7a87d-fb15-4d3e'...
+[INFO] Successfully created App Service Plan.
+[INFO] Successfully created Web App.
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources to /azure/projects/micronaut-azure-cloud/initial/target/azure-webapp/example-micronaut-1560242864679
+[INFO] Trying to deploy artifact to example-micronaut-1560242864679...
+[INFO] Renaming /azure/projects/micronaut-azure-cloud/initial/target/azure-webapp/example-micronaut-1560242864679/example-micronaut-0.1.jar to app.jar
+[INFO] Deploying the zip package example-micronaut-1560242864679.zip...
+[INFO] Exception occurred during deployment: java.net.SocketTimeoutException: timeout, retry immediately(1/3)...
+[INFO] Successfully deployed the artifact to https://example-micronaut-1560242864679.azurewebsites.net
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 01:59 min
+[INFO] Finished at: 2019-06-11T02:02:15-07:00
+[INFO] ------------------------------------------------------------------------</pre>
+</div>
 </div>
 
 
@@ -296,7 +452,28 @@ public class HelloController {
 
 
 <div class="paragraph">
-<p>TODO</p>
+<p>To see the log of your application running on Azure, you have to first enable storage of your app logging, and then perform a tail for live streaming.</p>
+</div>
+<div class="paragraph">
+<p>To enable logging storage, use the following Azure CLI command. Check your <code>pom.xml</code> for the generated <code>&lt;resourceGroup&gt;</code> and the <code>&lt;appName&gt;</code></p>
+</div>
+<div class="paragraph">
+<p><code>az webapp log config --name [appName] -g [resourceGroup] --web-server-logging filesystem</code></p>
+</div>
+<div class="paragraph">
+<p>Once this is done, you can then tail the log live from the cloud:</p>
+</div>
+<div class="paragraph">
+<p><code>az webapp log tail --name [appName] -g [resourceGroup]</code></p>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t see any log, try changing the level of the project&#8217;s Logback configuration in <code>logback.xml</code> to a higher value such as <code>debug</code>, then run the Maven deployment command again:</p>
+</div>
+<div class="paragraph">
+<p><code>mvn package azure-webapp:deploy</code></p>
+</div>
+<div class="paragraph">
+<p>And then run the tail command above once again.</p>
 </div>
 
 
@@ -311,11 +488,20 @@ public class HelloController {
 
 <div class="paragraph">
 <p>After you&#8217;ve finished this guide, you can clean up the resources you created on
-Azure so you won&#8217;t be billed for them in the future. The following
+Azure so you won&#8217;t take the risk of being billed because of them in the future. The following
 sections describe how to delete or turn off these resources.</p>
 </div>
 <div class="paragraph">
-<p>TODO</p>
+<p>Delete the resource group and all of its resources created along this guide with the following command:</p>
+</div>
+<div class="paragraph">
+<p><code>az group delete -g [resourceGroup]</code></p>
+</div>
+<div class="paragraph">
+<p>Answer <code>y</code> to confirm.</p>
+</div>
+<div class="paragraph">
+<p>You can add the <code>--no-wait</code> parameter to not wait for the command to finish.</p>
 </div>
 
 
@@ -329,10 +515,7 @@ sections describe how to delete or turn off these resources.</p>
 
 
 <div class="paragraph">
-<p>If you want to learn more about Microsoft Azure and Micronaut integration, checkout &#8230;&#8203;</p>
-</div>
-<div class="paragraph">
-<p>TODO</p>
+<p>If you want to learn more about Microsoft Azure for Java development, visit <a href="https://docs.microsoft.com/java/azure" class="bare">https://docs.microsoft.com/java/azure</a>.</p>
 </div>
 
 </article>

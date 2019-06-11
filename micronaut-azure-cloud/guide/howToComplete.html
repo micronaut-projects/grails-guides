@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/howToComplete.html"><strong>5</strong><span>How to Complete</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/mavenPlugin.html"><strong>6</strong><span>Maven Plugin for Azure App Service</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>7</strong><span>Sample Controller</span></a>
@@ -86,7 +86,7 @@ function addJsClass() {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/mavenPlugin.html"><strong>6</strong><span>Maven Plugin for Azure App Service</span> >></a></div>
                 
 
 
@@ -113,7 +113,57 @@ function addJsClass() {
 <p>To get started do the following:</p>
 </div>
 <div class="paragraph">
-<p>TODO</p>
+<p>Download and unzip the source or clone the following GitHub repository:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">git clone https://github.com/micronaut-guides/micronaut-maven-azure.git</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This Micronaut guide contains two folders:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>initial</code> Initial project. A simple Micronaut app as you may have created with Micronaut CLI.``</p>
+</li>
+<li>
+<p><code>complete</code> A completed example. It is the result of working through the steps presented by the guide and applying those changes to the initial folder.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To complete the guide, go to the initial folder</p>
+</div>
+<div class="paragraph">
+<p><code>cd initial</code></p>
+</div>
+<div class="paragraph">
+<p>and follow the instructions in the next sections.</p>
+</div>
+<div class="paragraph">
+<p>or you can go right to the completed example:</p>
+</div>
+<div class="paragraph">
+<p><code>cd complete</code></p>
+</div>
+<div class="paragraph">
+<p>Although you can go right to the completed example, in order to deploy the app you
+would need to complete several configuration steps in Microsoft Azure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Install the <a href="https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=opensource-micronaut-brborges">Azure CLI</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?WT.mc_id=opensource-micronaut-brborges&amp;view=azure-cli-latest#sign-in-interactively">Authenticate</a> with your Azure account</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After you&#8217;ve checked out the links above, follow below for the next steps on setting up the Maven plugin for Azure deployment.</p>
 </div>
 
 
@@ -121,7 +171,7 @@ function addJsClass() {
                 
                     <div class="toc-item prev-left"><a href="../guide/whatYouWillNeed.html">&lt;&lt; <strong>4</strong><span>What you will need</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/cloudSDK.html"><strong>6</strong><span>Cloud SDK</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/mavenPlugin.html"><strong>6</strong><span>Maven Plugin for Azure App Service</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
