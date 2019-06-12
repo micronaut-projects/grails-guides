@@ -1,4 +1,4 @@
-**Micronaut Training** - Developed and delivered by the folks who created and actively maintain the Micronaut framework!.
+**Micronaut Training** - Developed and delivered by the folks who created and actively maintain the Micronaut framework!
 
 ++++
 <div id="ocitraining"></div>
