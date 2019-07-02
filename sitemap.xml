@@ -91,6 +91,9 @@
     <loc>https://guides.micronaut.io/micronaut-azure-cloud/guide/index.html</loc>
   </url>
   <url>
+    <loc>https://guides.micronaut.io/micronaut-oauth2-oidc-google/guide/index.html</loc>
+  </url>
+  <url>
     <loc>index.html</loc>
   </url>
 </urlset>
