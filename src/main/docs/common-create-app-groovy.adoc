@@ -4,5 +4,5 @@ Create a Groovy Micronaut app using the http://docs.micronaut.io/snapshot/guide/
 
 The previous command createas a micronaut app with the default package `example.micronaut` in a folder named `complete`.
 
-Due to the `--features groovy` flag, it generates a Groovy Micronaut app and it uses http://gradle.org[Gradle] build system. However, you could use
+Due to the `--lang groovy` flag, it generates a Groovy Micronaut app and it uses http://gradle.org[Gradle] build system. However, you could use
 other build tool such as `Maven` or other programming languages such as `Java` or `Kotlin`.
