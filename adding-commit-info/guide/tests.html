@@ -177,7 +177,7 @@ public class InfoTest {
 
         HttpResponse&lt;Map&gt; rsp = client.toBlocking().exchange(request, Map.class);
 
-        assertEquals(rsp.status().getCode(), 200);
+        assertEquals(200, rsp.status().getCode());
 
         Map json = rsp.body(); <i class="conum" data-value="4"></i><b>(4)</b>
 
