@@ -134,28 +134,28 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
+
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class InfoSpec extends Specification {
 
     @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Client("/")
+    @Inject
+    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Shared
-    @AutoCleanup
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
-
-    def "test git commit info appears in JSON"() {
+    void 'test git commit info appears in JSON'() {
         given:
-        HttpRequest request = HttpRequest.GET('/info') <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.GET('/info') <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         HttpResponse&lt;Map&gt; rsp = client.toBlocking().exchange(request, Map)
@@ -164,7 +164,7 @@ class InfoSpec extends Specification {
         rsp.status().code == 200
 
         when:
-        Map json = rsp.body() <i class="conum" data-value="5"></i><b>(5)</b>
+        Map json = rsp.body() <i class="conum" data-value="4"></i><b>(4)</b>
 
         then:
         json.git
@@ -182,22 +182,18 @@ class InfoSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Use <code>.body()</code> to retrieve the parsed payload.</td>
 </tr>
 </table>
