@@ -99,67 +99,51 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import static org.junit.Assert.assertEquals;
-
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
 import example.micronaut.domain.Genre;
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreControllerTest {
 
-    private static EmbeddedServer server; <i class="conum" data-value="1"></i><b>(1)</b>
-    private static HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @BeforeClass
-    public static void setupServer() {
-        server = ApplicationContext
-                .build()
-                .run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
-        client = server.getApplicationContext().createBean(HttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        if (server != null) {
-            server.stop();
-        }
-        if (client != null) {
-            client.stop();
-        }
-    }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    @Inject
+    @Client("/")
+    HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void supplyAnInvalidOrderTriggersValidationFailure() {
-        thrown.expect(HttpClientResponseException.class);
-        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.BAD_REQUEST))));
-        client.toBlocking().exchange(HttpRequest.GET("/genres/list?order=foo"));
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -&gt; {
+            client.toBlocking().exchange(HttpRequest.GET("/genres/list?order=foo"));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     @Test
     public void testFindNonExistingGenreReturns404() {
-        thrown.expect(HttpClientResponseException.class);
-        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.NOT_FOUND))));
-        HttpResponse response = client.toBlocking().exchange(HttpRequest.GET("/genres/99"));
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -&gt; {
+            client.toBlocking().exchange(HttpRequest.GET("/genres/99"));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @Test
@@ -180,7 +164,7 @@ public class GenreControllerTest {
 
         Long id = entityId(response);
         genreIds.add(id);
-        request = HttpRequest.GET("/genres/"+id);
+        request = HttpRequest.GET("/genres/" + id);
 
         Genre genre = client.toBlocking().retrieve(request, Genre.class); <i class="conum" data-value="4"></i><b>(4)</b>
 
@@ -219,7 +203,7 @@ public class GenreControllerTest {
 
         // cleanup:
         for (Long genreId : genreIds) {
-            request = HttpRequest.DELETE("/genres/"+genreId);
+            request = HttpRequest.DELETE("/genres/" + genreId);
             response = client.toBlocking().exchange(request);
             assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
         }
@@ -228,11 +212,11 @@ public class GenreControllerTest {
     protected Long entityId(HttpResponse response) {
         String path = "/genres/";
         String value = response.header(HttpHeaders.LOCATION);
-        if ( value == null) {
+        if (value == null) {
             return null;
         }
         int index = value.indexOf(path);
-        if ( index != -1) {
+        if (index != -1) {
             return Long.valueOf(value.substring(index + path.length()));
         }
         return null;
@@ -244,11 +228,11 @@ public class GenreControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/latest/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The EmbeddedServer interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>

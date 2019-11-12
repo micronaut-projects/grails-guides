@@ -99,12 +99,12 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">docker run -it \
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">docker run -it --rm \
     -p 5432:5432 \
     -e POSTGRES_USER=dbuser \
     -e POSTGRES_PASSWORD=theSecretPassword \
     -e POSTGRES_DB=micronaut \
-    postgres:10.5-alpine</code></pre>
+    postgres:11.5-alpine</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -142,7 +142,7 @@ $ export JDBC_DRIVER=org.postgresql.Driver</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">..
 ...
-08:40:02.746 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+08:40:02.746 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
 ....</code></pre>
 </div>
 </div>
