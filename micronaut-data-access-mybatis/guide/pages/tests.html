@@ -204,7 +204,7 @@ public class GenreControllerTest {
     private List&lt;Genre&gt; listGenres(ListingArguments args) {
         URI uri = args.of(UriBuilder.of("/genres/list"));
         HttpRequest request = HttpRequest.GET(uri);
-        return getClient().retrieve(request, Argument.of(List.class, Genre.class));
+        return getClient().retrieve(request, Argument.of(List.class, Genre.class)); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
     private Genre show(Long id) {
@@ -215,7 +215,7 @@ public class GenreControllerTest {
 
     private HttpResponse update(Long id, String name) {
         HttpRequest request = HttpRequest.PUT("/genres", new GenreUpdateCommand(id, name));
-        return getClient().exchange(request);
+        return getClient().exchange(request); <i class="conum" data-value="5"></i><b>(5)</b>
     }
 
     private HttpResponse delete(Long id) {

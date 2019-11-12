@@ -89,10 +89,12 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
 <p>Add the next snippet to <code>build.gradle</code></p>
@@ -100,7 +102,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -111,15 +113,18 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
-import javax.validation.constraints.NotBlank;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
+
+@Introspected
 public class GenreSaveCommand {
 
     @NotBlank
     private String name;
 
-    public GenreSaveCommand() {}
+    public GenreSaveCommand() {
+    }
 
     public GenreSaveCommand(String name) {
         this.name = name;
@@ -140,17 +145,22 @@ public class GenreSaveCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Introspected
 public class GenreUpdateCommand {
+
     @NotNull
     private Long id;
 
     @NotBlank
     private String name;
 
-    public GenreUpdateCommand() {}
+    public GenreUpdateCommand() {
+    }
 
     public GenreUpdateCommand(Long id, String name) {
         this.id = id;
@@ -183,6 +193,7 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.uri.UriBuilder;
 
 import javax.annotation.Nullable;
@@ -190,11 +201,11 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
+@Introspected
 public class ListingArguments {
+
     @PositiveOrZero
     private Integer offset = 0;
 
@@ -376,44 +387,42 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
-import io.micronaut.validation.Validated;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-@Validated <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/genres") <i class="conum" data-value="2"></i><b>(2)</b>
+@Controller("/genres") <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreController {
 
     protected final GenreRepository genreRepository;
 
-    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
+    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.genreRepository = genreRepository;
     }
 
-    @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get("/{id}") <i class="conum" data-value="3"></i><b>(3)</b>
     public Genre show(Long id) {
         return genreRepository
                 .findById(id)
-                .orElse(null); <i class="conum" data-value="5"></i><b>(5)</b>
+                .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
-    @Put("/") <i class="conum" data-value="6"></i><b>(6)</b>
-    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="7"></i><b>(7)</b>
+    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
         return HttpResponse
                 .noContent()
-                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
+                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
     }
 
-    @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Get(value = "/list{?args*}") <i class="conum" data-value="8"></i><b>(8)</b>
     public List&lt;Genre&gt; list(@Valid ListingArguments args) {
         return genreRepository.findAll(args);
     }
 
-    @Post("/") <i class="conum" data-value="10"></i><b>(10)</b>
+    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
@@ -422,7 +431,7 @@ public class GenreController {
                 .headers(headers -&gt; headers.location(location(genre.getId())));
     }
 
-    @Delete("/{id}") <i class="conum" data-value="11"></i><b>(11)</b>
+    @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
     public HttpResponse delete(Long id) {
         genreRepository.deleteById(id);
         return HttpResponse.noContent();
@@ -442,46 +451,42 @@ public class GenreController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Constructor injection.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Returning <code>null</code> when the genre doesn&#8217;t exist makes Micronaut to response with 404 (not found).</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>It is easy to add custom headers to the response.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates optional URL parameters.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td>Maps a <code>DELETE</code> request to <code>/genres/{id}</code> which attempts to remove a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 </table>

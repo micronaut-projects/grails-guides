@@ -131,13 +131,13 @@ public interface GenreMapper {
 
     @Select("select * from genre order by ${sort} ${order}")
     List&lt;Genre&gt; findAllBySortAndOrder(@NotNull @Pattern(regexp = "id|name") String sort,
-                                             @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+                                      @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
 
     @Select("select * from genre order by ${sort} ${order} limit ${offset}, ${max}")
     List&lt;Genre&gt; findAllByOffsetAndMaxAndSortAndOrder(@NotNull @PositiveOrZero Integer offset,
-                                                            @Positive @NotNull Integer max,
-                                                            @NotNull @Pattern(regexp = "id|name") String sort,
-                                                            @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
+                                                     @Positive @NotNull Integer max,
+                                                     @NotNull @Pattern(regexp = "id|name") String sort,
+                                                     @NotNull @Pattern(regexp = "asc|ASC|desc|DESC") String order);
 
     @Select("select * from genre limit ${offset}, ${max}")
     List&lt;Genre&gt; findAllByOffsetAndMax(@NotNull @PositiveOrZero Integer offset, @Positive @NotNull Integer max);
@@ -312,17 +312,14 @@ public interface GenreRepository {
 
 import example.micronaut.ListingArguments;
 import example.micronaut.domain.Genre;
-import io.micronaut.validation.Validated;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Validated
 public class GenreRepositoryImpl implements GenreRepository {
 
     private final GenreMapper genreMapper;
@@ -347,8 +344,6 @@ public class GenreRepositoryImpl implements GenreRepository {
     public void deleteById(@NotNull Long id) {
         findById(id).ifPresent(genre -&gt; genreMapper.deleteById(id));
     }
-
-    private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
     public List&lt;Genre&gt; findAll(@NotNull ListingArguments args) {
 
