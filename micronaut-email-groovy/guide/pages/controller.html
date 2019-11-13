@@ -102,27 +102,25 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.validation.Validated
+
 import javax.validation.Valid
 
 @Slf4j
 @CompileStatic
 @Controller('/mail') <i class="conum" data-value="1"></i><b>(1)</b>
-@Validated <i class="conum" data-value="2"></i><b>(2)</b>
 class MailController {
 
     EmailService emailService
 
-    MailController( EmailService  emailService) { <i class="conum" data-value="3"></i><b>(3)</b>
+    MailController(EmailService  emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.emailService = emailService
     }
 
-
-    @Post('/send') <i class="conum" data-value="4"></i><b>(4)</b>
-    HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="5"></i><b>(5)</b>
+    @Post('/send') <i class="conum" data-value="3"></i><b>(3)</b>
+    HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
         log.info '{}', cmd.toString()
         emailService.send(cmd)
-        HttpResponse.ok()  <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpResponse.ok()  <i class="conum" data-value="5"></i><b>(5)</b>
     }
 }</code></pre>
 </div>
@@ -131,26 +129,22 @@ class MailController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path /mail/send</td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/mail/send</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Add @Validated annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Constructor injection</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Add <code>@Valid</code> to any method parameter which requires validation. Also use a POGO supplied as a JSON payload in the request to populate the email.</td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Return 200 OK as the result</td>
 </tr>
 </table>

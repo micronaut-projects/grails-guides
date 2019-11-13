@@ -95,16 +95,17 @@ function addJsClass() {
 <p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add a dependency to it:</p>
+<p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-validation"
-    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -113,39 +114,40 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/MailControllerValidationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
 
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerValidationSpec extends Specification {
 
     @Shared
-    @AutoCleanup
-    <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'spec.name': 'mailcontroller',
-    ], 'test')  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    ApplicationContext applicationContext
 
     @Shared
-    @AutoCleanup
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
-
+    @Inject
+    @Client("/")
+    RxHttpClient client
 
     def "/mail/send cannot be invoked without subject"() {
         given:
         EmailCmd cmd = new EmailCmd(
                 recipient: 'delamos@micronaut.example',
                 textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -160,7 +162,7 @@ class MailControllerValidationSpec extends Specification {
         EmailCmd cmd = new EmailCmd(
                 subject: 'Hola',
                 textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -175,7 +177,7 @@ class MailControllerValidationSpec extends Specification {
         EmailCmd cmd = new EmailCmd(
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',)
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -191,7 +193,7 @@ class MailControllerValidationSpec extends Specification {
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',
                 textBody: 'Hello')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         HttpResponse rsp = client.toBlocking().exchange(request)
@@ -206,7 +208,7 @@ class MailControllerValidationSpec extends Specification {
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',
                 htmlBody: '&lt;h1&gt;Hello&lt;/h1&gt;')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         HttpResponse rsp = client.toBlocking().exchange(request)
@@ -221,18 +223,14 @@ class MailControllerValidationSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Define a property available for the application.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 </table>
@@ -254,56 +252,55 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = { EmailConstraintsValidator.class })
-@Target( { ElementType.TYPE })
+@Constraint(validatedBy = {})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @CompileStatic
 @interface EmailConstraints {
 
     String message() default "{email.invalid}";
-    Class&lt;?&gt;[] groups() default { };
-    Class&lt;? extends Payload&gt;[] payload() default { };
+
+    Class&lt;?&gt;[] groups() default {};
+
+    Class&lt;? extends Payload&gt;[] payload() default {};
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>and a validator:</p>
+<p>and a contraint validator in a <code>@Factory</code> class:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/EmailConstraintsValidator.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/EmailConstraintsFactory.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import groovy.transform.CompileStatic
 
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
+import io.micronaut.context.annotation.Factory
+import io.micronaut.validation.validator.constraints.ConstraintValidator
 
-@CompileStatic
-class EmailConstraintsValidator implements ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+import javax.inject.Singleton
 
-    @Override
-    boolean isValid(EmailCmd email, ConstraintValidatorContext context) {
-        email &amp;&amp; (email.textBody || email.htmlBody)
+@Factory
+class EmailConstraintsFactory {
+
+    @Singleton
+    ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; emailBodyValidator() {
+        return { value, annotationMetadata, context -&gt;
+            value &amp;&amp; (value.textBody || value.htmlBody)
+        }
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Annotate Email with <code>EmailConstraints</code> and populate the <code>hasErrors</code> method.</p>
+<p>Annotate Email with <code>EmailConstraints</code> and <code>@Introspected</code> (to generate the
+<a href="https://docs.micronaut.io/latest/guide/index.html#introspection">Bean Introspection information</a>).</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import groovy.transform.CompileStatic
-import groovy.transform.ToString
-import javax.validation.Validation
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-
-@ToString
-@CompileStatic
-@EmailConstraints <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@Introspected
+@EmailConstraints
 class EmailCmd implements Email {
 
     @NotNull
