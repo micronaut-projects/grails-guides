@@ -106,7 +106,7 @@
         <h1>LDAP and Database authentication providers</h1>
         <p>Learn how to create a LDAP and a database authentication provider in a Micronaut App.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -203,13 +203,13 @@
 <p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=groovy</code></p>
 </div>
 <div class="paragraph">
 <p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
@@ -218,7 +218,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-security-jwt"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -299,7 +299,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut.configuration:micronaut-security-ldap"
+    implementation "io.micronaut.configuration:micronaut-security-ldap"
 }</code></pre>
 </div>
 </div>
@@ -385,23 +385,25 @@ testing and an automatic GraphQL schema generator.</p>
 <p>Add a GORM dependency to the project:</p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>...
+gormVersion=7.0.1.RELEASE
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
-    gormVersion = '7.0.0.RELEASE'
-    h2Version = '1.4.196'
-    tomcatJdbcVersion = '8.5.28'
-}
-
-dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    compile "io.micronaut.configuration:micronaut-hibernate-validator"
-    compile "io.micronaut.configuration:micronaut-hibernate-gorm"
-    compile "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
-    runtime "com.h2database:h2:$h2Version"
-    runtime "org.apache.tomcat:tomcat-jdbc:$tomcatJdbcVersion"
+    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
+    implementation "org.grails:grails-datastore-gorm-hibernate5"
+    runtime "com.h2database:h2"
+    runtime "org.apache.tomcat:tomcat-jdbc"
 }</code></pre>
 </div>
 </div>
@@ -957,19 +959,21 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
 <p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>...
+springSecurityCryptoVersion=5.2.1.RELEASE
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">ext {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
 .
-    springSecurityCryptoVersion='4.2.5.RELEASE'
-}
-dependencies {
-...
-..
-.
-    compile "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
 }</code></pre>
 </div>
 </div>
@@ -1025,34 +1029,35 @@ class BCryptPasswordEncoderService implements PasswordEncoder {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims
 import io.micronaut.security.token.jwt.render.AccessRefreshToken
 import io.micronaut.security.token.jwt.validator.JwtTokenValidator
-import io.micronaut.security.token.validator.TokenValidator
+import io.micronaut.test.annotation.MicronautTest
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class LoginLdapSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client('/')
+    HttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    JwtTokenValidator tokenValidator <i class="conum" data-value="3"></i><b>(3)</b>
 
     void '/login with valid credentials returns 200 and access token and refresh token'() {
         when:
@@ -1098,7 +1103,7 @@ class LoginLdapSpec extends Specification {
         accessToken
 
         when:
-        Publisher authentication = tokenValidator.validateToken(accessToken)
+        Publisher authentication = tokenValidator.validateToken(accessToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
         then:
         Flowable.fromPublisher(authentication).blockingFirst()
@@ -1125,17 +1130,13 @@ class LoginLdapSpec extends Specification {
         refreshToken
 
         when:
-        Publisher authentication = tokenValidator.validateToken(refreshToken)
+        Publisher authentication = tokenValidator.validateToken(refreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
         then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
         and:
         !Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
-    }
-
-    TokenValidator getTokenValidator() {
-        embeddedServer.applicationContext.getBean(JwtTokenValidator.class) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -1144,15 +1145,15 @@ class LoginLdapSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject to <code>TokenValidator</code> bean.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -1164,7 +1165,7 @@ class LoginLdapSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>You can retrieve a bean from the application context easily with <code>getBean(Class)</code></td>
+<td>Use the <code>tokenValidator</code> bean previously injected.</td>
 </tr>
 </table>
 </div>
@@ -1187,39 +1188,39 @@ class LoginLdapSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.Authentication
-import io.micronaut.security.authentication.UserDetails
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.AccessRefreshToken
 import io.micronaut.security.token.jwt.validator.JwtTokenValidator
-import io.micronaut.security.token.validator.TokenValidator
+import io.micronaut.test.annotation.MicronautTest
 import io.reactivex.Flowable
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest
 class LoginControllerSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client('/')
+    HttpClient client
 
     @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    JwtTokenValidator tokenValidator
 
     void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
-                .accept(MediaType.APPLICATION_JSON_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
+                .accept(MediaType.APPLICATION_JSON_TYPE)
         client.toBlocking().exchange(request)
 
         then:
@@ -1231,7 +1232,7 @@ class LoginControllerSpec extends Specification {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(new UsernamePasswordCredentials('sherlock', 'elementary')) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('sherlock', 'elementary'))
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
         then:
@@ -1252,36 +1253,8 @@ class LoginControllerSpec extends Specification {
         authentication.getAttributes().containsKey('exp')
         authentication.getAttributes().containsKey('iat')
     }
-
-    TokenValidator getTokenValidator() {
-        embeddedServer.applicationContext.getBean(JwtTokenValidator.class) <i class="conum" data-value="5"></i><b>(5)</b>
-    }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>You can retrieve a bean from the application context easily with <code>getBean(Class)</code></td>
-</tr>
-</table>
 </div>
 
 
@@ -1302,41 +1275,42 @@ class LoginControllerSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims
 import io.micronaut.security.token.jwt.render.AccessRefreshToken
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.security.token.jwt.validator.JwtTokenValidator
-import io.micronaut.security.token.validator.TokenValidator
+import io.micronaut.test.annotation.MicronautTest
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest
 class OauthControllerSpec extends Specification {
 
-    @Shared
-    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client('/')
+    HttpClient client
 
     @Shared
-    @AutoCleanup  <i class="conum" data-value="1"></i><b>(1)</b>
-    HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    JwtTokenValidator tokenValidator
 
     void '/oauth/access_token endpoint returns BAD request if required parameters not present'() {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
-                .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE) <i class="conum" data-value="4"></i><b>(4)</b>
+                .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
         client.toBlocking().exchange(request)
 
         then:
@@ -1348,7 +1322,7 @@ class OauthControllerSpec extends Specification {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(new UsernamePasswordCredentials('euler', 'password'))  <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new UsernamePasswordCredentials('euler', 'password'))
         HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
 
         then:
@@ -1367,7 +1341,7 @@ class OauthControllerSpec extends Specification {
         sleep(1_000)
         request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new TokenRefreshRequest("refresh_token", refreshToken)) <i class="conum" data-value="4"></i><b>(4)</b>
+                .body(new TokenRefreshRequest("refresh_token", refreshToken))
         HttpResponse&lt;AccessRefreshToken&gt; tokenRsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
         then:
@@ -1379,7 +1353,6 @@ class OauthControllerSpec extends Specification {
         tokenRsp.body.get().accessToken != accessToken
 
         when:
-        TokenValidator tokenValidator = embeddedServer.applicationContext.getBean(JwtTokenValidator) <i class="conum" data-value="5"></i><b>(5)</b>
         Publisher authentication = tokenValidator.validateToken(accessToken)
 
         then:
@@ -1390,30 +1363,6 @@ class OauthControllerSpec extends Specification {
     }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>You can retrieve a bean from the application context easily with <code>getBean(Class)</code></td>
-</tr>
-</table>
 </div>
 
 

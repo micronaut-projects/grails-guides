@@ -96,34 +96,35 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims
 import io.micronaut.security.token.jwt.render.AccessRefreshToken
 import io.micronaut.security.token.jwt.validator.JwtTokenValidator
-import io.micronaut.security.token.validator.TokenValidator
+import io.micronaut.test.annotation.MicronautTest
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class LoginLdapSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client('/')
+    HttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    HttpClient client = HttpClient.create(embeddedServer.URL) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    JwtTokenValidator tokenValidator <i class="conum" data-value="3"></i><b>(3)</b>
 
     void '/login with valid credentials returns 200 and access token and refresh token'() {
         when:
@@ -169,7 +170,7 @@ class LoginLdapSpec extends Specification {
         accessToken
 
         when:
-        Publisher authentication = tokenValidator.validateToken(accessToken)
+        Publisher authentication = tokenValidator.validateToken(accessToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
         then:
         Flowable.fromPublisher(authentication).blockingFirst()
@@ -196,17 +197,13 @@ class LoginLdapSpec extends Specification {
         refreshToken
 
         when:
-        Publisher authentication = tokenValidator.validateToken(refreshToken)
+        Publisher authentication = tokenValidator.validateToken(refreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
 
         then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
         and:
         !Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
-    }
-
-    TokenValidator getTokenValidator() {
-        embeddedServer.applicationContext.getBean(JwtTokenValidator.class) <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -215,15 +212,15 @@ class LoginLdapSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject to <code>TokenValidator</code> bean.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -235,7 +232,7 @@ class LoginLdapSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>You can retrieve a bean from the application context easily with <code>getBean(Class)</code></td>
+<td>Use the <code>tokenValidator</code> bean previously injected.</td>
 </tr>
 </table>
 </div>
