@@ -104,8 +104,11 @@ the necessary dependencies:</p>
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile "org.codehaus.groovy:groovy-all:2.4.15"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
 }</code></pre>
 </div>
 </div>
@@ -161,44 +164,46 @@ class MockEmailService implements EmailService {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Shared
 import spock.lang.Specification
 
-import javax.annotation.Nullable
+import javax.inject.Inject
 
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerSpec extends Specification {
 
     @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'spec.name': 'mailcontroller',
-    ], 'test')  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    ApplicationContext applicationContext <i class="conum" data-value="3"></i><b>(3)</b>
 
     @Shared
-    @AutoCleanup
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    @Client("/")
+    RxHttpClient client <i class="conum" data-value="4"></i><b>(4)</b>
 
     def "/mail/send interacts once email service"() {
         given:
         EmailCmd cmd = new EmailCmd(subject: 'Test',
                 recipient: 'delamos@grails.example',
                 textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="5"></i><b>(5)</b>
 
         when:
-        Collection emailServices = embeddedServer.applicationContext.getBeansOfType(EmailService)
+        Collection&lt;Class&gt; emailServices = applicationContext.getBeansOfType(EmailService)
 
         then:
         !emailServices.any { it == SendGridEmailService.class}
         !emailServices.any { it == AwsSesMailService.class}
 
         when:
-        EmailService emailService = embeddedServer.applicationContext.getBean(EmailService)
+        EmailService emailService = applicationContext.getBean(EmailService)
 
         then:
         emailService instanceof MockEmailService
@@ -208,7 +213,7 @@ class MailControllerSpec extends Specification {
 
         then:
         rsp.status.code == 200
-        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="5"></i><b>(5)</b>
+        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -217,22 +222,26 @@ class MailControllerSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Define a property used to run the test</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>HttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>ApplicationContext</code> bean</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+<td>Inject the <code>RxHttpClient</code> bean</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td><code>emailService.send</code> method is invoked once.</td>
 </tr>
 </table>

@@ -101,7 +101,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -115,6 +115,7 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 
 import io.micronaut.context.condition.Condition;
 import io.micronaut.context.condition.ConditionContext;
+import io.micronaut.core.util.StringUtils;
 
 public class SendGridEmailCondition implements Condition {
     @Override
@@ -124,11 +125,7 @@ public class SendGridEmailCondition implements Condition {
     }
 
     private boolean envOrSystemProperty(String env, String prop) {
-        return notBlankAndNotNull(System.getProperty(prop)) || notBlankAndNotNull(System.getenv(env));
-    }
-
-    private boolean notBlankAndNotNull(String str) {
-        return str != null &amp;&amp; !str.equals("");
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
     }
 }</code></pre>
 </div>

@@ -98,7 +98,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -112,6 +112,7 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 
 import io.micronaut.context.condition.Condition;
 import io.micronaut.context.condition.ConditionContext;
+import io.micronaut.core.util.StringUtils;
 
 public class AwsCredentialsProviderCondition implements Condition {
 
@@ -122,11 +123,7 @@ public class AwsCredentialsProviderCondition implements Condition {
     }
 
     private boolean envOrSystemProperty(String env, String prop) {
-        return notBlankAndNotNull(System.getProperty(prop)) || notBlankAndNotNull(System.getenv(env));
-    }
-
-    private boolean notBlankAndNotNull(String str) {
-        return str != null &amp;&amp; !str.equals("");
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
     }
 }</code></pre>
 </div>
@@ -283,17 +280,18 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 
 import io.micronaut.context.condition.Condition;
 import io.micronaut.context.condition.ConditionContext;
+import io.micronaut.core.util.StringUtils;
 
 public class AwsSesMailCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context) {
-        return (notBlankAndNotNull(System.getProperty("aws.sourceemail")) || notBlankAndNotNull(System.getenv("AWS_SOURCE_EMAIL"))) &amp;&amp;
-                (notBlankAndNotNull(System.getProperty("aws.region")) ||  notBlankAndNotNull(System.getenv("AWS_REGION")));
+        return envOrSystemProperty("AWS_SOURCE_EMAIL", "aws.sourceemail") &amp;&amp;
+                envOrSystemProperty("AWS_REGION", "aws.region");
     }
 
-    private boolean notBlankAndNotNull(String str) {
-        return str != null &amp;&amp; !str.equals("");
+    private boolean envOrSystemProperty(String env, String prop) {
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
     }
 }</code></pre>
 </div>
@@ -454,11 +452,11 @@ public class AwsSesMailService implements EmailService {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded unless condition is met.</td>
+<td>Bean will not loaded, if bean is not present.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Bean will not loaded, if bean is not present.</td>
+<td>Bean will not loaded unless condition is met.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
