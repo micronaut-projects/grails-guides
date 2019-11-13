@@ -86,6 +86,9 @@ function addJsClass() {
 
 
 <div class="paragraph">
+<p>We want to ensure any email request contains a subject, recipient and a text body or html body.</p>
+</div>
+<div class="paragraph">
 <p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
@@ -108,7 +111,7 @@ are annotated with <code>javax.validation</code> annotations.</p>
 <div class="listingblock">
 <div class="title">src/test/java/example/micronaut/MailControllerValidationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
@@ -123,8 +126,8 @@ import spock.lang.Specification
 
 import javax.inject.Inject
 
-@MicronautTest
-@Property(name = 'spec.name', value = 'mailcontroller')
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerValidationSpec extends Specification {
 
     @Shared
@@ -141,7 +144,7 @@ class MailControllerValidationSpec extends Specification {
         EmailCmd cmd = new EmailCmd(
                 recipient: 'delamos@micronaut.example',
                 textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -156,7 +159,7 @@ class MailControllerValidationSpec extends Specification {
         EmailCmd cmd = new EmailCmd(
                 subject: 'Hola',
                 textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -171,7 +174,7 @@ class MailControllerValidationSpec extends Specification {
         EmailCmd cmd = new EmailCmd(
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',)
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
@@ -187,7 +190,7 @@ class MailControllerValidationSpec extends Specification {
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',
                 textBody: 'Hello')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         HttpResponse rsp = client.toBlocking().exchange(request)
@@ -202,7 +205,7 @@ class MailControllerValidationSpec extends Specification {
                 subject: 'Hola',
                 recipient: 'delamos@micronaut.example',
                 htmlBody: '&lt;h1&gt;Hello&lt;/h1&gt;')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="1"></i><b>(1)</b>
+        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         HttpResponse rsp = client.toBlocking().exchange(request)
@@ -217,6 +220,14 @@ class MailControllerValidationSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define a property available for the application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 </table>
