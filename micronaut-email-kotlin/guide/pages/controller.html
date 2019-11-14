@@ -97,17 +97,15 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.validation.Validated
 import javax.validation.Valid
 
 @Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
-@Validated <i class="conum" data-value="2"></i><b>(2)</b>
-open class MailController(private val emailService: EmailService) {  <i class="conum" data-value="3"></i><b>(3)</b>
+open class MailController(private val emailService: EmailService) {  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Post("/send") <i class="conum" data-value="4"></i><b>(4)</b>
-    open fun send(@Body @Valid cmd: EmailCmd): HttpResponse&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
+    @Post("/send") <i class="conum" data-value="3"></i><b>(3)</b>
+    open fun send(@Body @Valid cmd: EmailCmd): HttpResponse&lt;*&gt; {  <i class="conum" data-value="4"></i><b>(4)</b>
         emailService.send(cmd)
-        return HttpResponse.ok&lt;Any&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
+        return HttpResponse.ok&lt;Any&gt;() <i class="conum" data-value="5"></i><b>(5)</b>
     }
 }</code></pre>
 </div>
@@ -120,28 +118,24 @@ open class MailController(private val emailService: EmailService) {  <i class="c
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Add @Validated annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Constructor injection</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Return 200 OK as the result</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The previous controller uses a POGO supplied in the request body as a JSON Payload</p>
+<p>The previous controller uses a POJO supplied in the request body as a JSON Payload</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>

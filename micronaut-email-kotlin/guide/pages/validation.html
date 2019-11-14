@@ -92,16 +92,17 @@ function addJsClass() {
 <p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add a dependency to it:</p>
+<p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-validation"
-    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -118,9 +119,10 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class MailControllerValidationSpec: Spek({
 
@@ -214,52 +216,54 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = { EmailConstraintsValidator.class })
-@Target( { ElementType.TYPE })
+@Constraint(validatedBy = {})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailConstraints {
 
     String message() default "{email.invalid}";
-    Class&lt;?&gt;[] groups() default { };
-    Class&lt;? extends Payload&gt;[] payload() default { };
+
+    Class&lt;?&gt;[] groups() default {};
+
+    Class&lt;? extends Payload&gt;[] payload() default {};
 
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>and a validator:</p>
+<p>and a contraint validator in a <code>@Factory</code> class:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/EmailConstraintsValidator.java</div>
+<div class="title">src/main/java/example/micronaut/EmailConstraintsFactory.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.core.util.StringUtils;
+import io.micronaut.validation.validator.constraints.ConstraintValidator;
 
-public class EmailConstraintsValidator implements ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+import javax.inject.Singleton;
 
-    @Override
-    public boolean isValid(EmailCmd email, ConstraintValidatorContext context) {
-        return email !=null &amp;&amp;
-                (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody()));
-    }
+@Factory
+public class EmailConstraintsFactory {
 
-    private boolean notBlankAndNotNull(String str) {
-        return str != null &amp;&amp; !str.equals("");
+    @Singleton
+    ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; emailBodyValidator() {
+        return (value, annotationMetadata, context) -&gt;
+                value != null &amp;&amp;
+                        (StringUtils.isNotEmpty(value.getTextBody()) || StringUtils.isNotEmpty(value.getHtmlBody()));
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Annotate Email with <code>EmailConstraints</code>.</p>
+<p>Annotate <code>EmailCmd</code> with <code>EmailConstraints</code> and <code>@Introspected</code> (to generate the
+<a href="https://docs.micronaut.io/latest/guide/index.html#introspection">Bean Introspection information</a>).</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">@Introspected
 @EmailConstraints
 class EmailCmd : Email {
 

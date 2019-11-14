@@ -94,10 +94,11 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
 
     &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;withJansi&gt;true&lt;/withJansi&gt;
         &lt;!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
         &lt;encoder&gt;
-            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+            &lt;pattern&gt;%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n&lt;/pattern&gt;
         &lt;/encoder&gt;
     &lt;/appender&gt;
 

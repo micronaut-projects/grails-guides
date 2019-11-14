@@ -101,7 +101,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -115,22 +115,17 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 
 import io.micronaut.context.condition.Condition
 import io.micronaut.context.condition.ConditionContext
+import io.micronaut.core.util.StringUtils
 
 class SendGridEmailCondition : Condition {
     override fun matches(context: ConditionContext&lt;*&gt;?): Boolean {
         return envOrSysPropNotBlankAndNotNull("SENDGRID_APIKEY", "sendgrid.apikey")
-                &amp;&amp;  envOrSysPropNotBlankAndNotNull("SENDGRID_FROM_EMAIL", "sendgrid.fromemail")
+                &amp;&amp; envOrSysPropNotBlankAndNotNull("SENDGRID_FROM_EMAIL", "sendgrid.fromemail")
     }
 
     private fun envOrSysPropNotBlankAndNotNull(env: String?, prop: String?): Boolean {
-        return notBlankAndNotNull(System.getProperty(prop)) ||
-                notBlankAndNotNull(System.getenv(env))
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env))
     }
-
-    private fun notBlankAndNotNull(str: String?): Boolean {
-        return str != null &amp;&amp; str != ""
-    }
-
 }</code></pre>
 </div>
 </div>
@@ -144,9 +139,10 @@ class SendGridEmailCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class SendGridEmailConditionSpec: Spek({
 

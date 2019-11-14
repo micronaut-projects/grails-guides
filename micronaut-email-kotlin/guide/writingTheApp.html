@@ -115,13 +115,13 @@ function addJsClass() {
 <p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
 </div>
 <div class="paragraph">
 <p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -193,17 +193,15 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.validation.Validated
 import javax.validation.Valid
 
 @Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
-@Validated <i class="conum" data-value="2"></i><b>(2)</b>
-open class MailController(private val emailService: EmailService) {  <i class="conum" data-value="3"></i><b>(3)</b>
+open class MailController(private val emailService: EmailService) {  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Post("/send") <i class="conum" data-value="4"></i><b>(4)</b>
-    open fun send(@Body @Valid cmd: EmailCmd): HttpResponse&lt;*&gt; {  <i class="conum" data-value="5"></i><b>(5)</b>
+    @Post("/send") <i class="conum" data-value="3"></i><b>(3)</b>
+    open fun send(@Body @Valid cmd: EmailCmd): HttpResponse&lt;*&gt; {  <i class="conum" data-value="4"></i><b>(4)</b>
         emailService.send(cmd)
-        return HttpResponse.ok&lt;Any&gt;() <i class="conum" data-value="6"></i><b>(6)</b>
+        return HttpResponse.ok&lt;Any&gt;() <i class="conum" data-value="5"></i><b>(5)</b>
     }
 }</code></pre>
 </div>
@@ -216,28 +214,24 @@ open class MailController(private val emailService: EmailService) {  <i class="c
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Add @Validated annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Constructor injection</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Post.html">@Post</a> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the email.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Return 200 OK as the result</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The previous controller uses a POGO supplied in the request body as a JSON Payload</p>
+<p>The previous controller uses a POJO supplied in the request body as a JSON Payload</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
@@ -357,7 +351,7 @@ interface Email {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -371,6 +365,7 @@ environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</cod
 
 import io.micronaut.context.condition.Condition
 import io.micronaut.context.condition.ConditionContext
+import io.micronaut.core.util.StringUtils
 
 class AwsCredentialsProviderCondition : Condition {
 
@@ -380,11 +375,7 @@ class AwsCredentialsProviderCondition : Condition {
     }
 
     private fun envOrSystemProperty(env: String, prop: String): Boolean {
-        return notBlankAndNotNull(System.getProperty(prop)) || notBlankAndNotNull(System.getenv(env))
-    }
-
-    private fun notBlankAndNotNull(str: String?): Boolean {
-        return str != null &amp;&amp; str != ""
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env))
     }
 }</code></pre>
 </div>
@@ -399,9 +390,10 @@ class AwsCredentialsProviderCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class AwsCredentialsProviderConditionSpec: Spek({
 
@@ -493,21 +485,17 @@ environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) o
 
 import io.micronaut.context.condition.Condition
 import io.micronaut.context.condition.ConditionContext
+import io.micronaut.core.util.StringUtils
 
 class AwsSesMailCondition : Condition {
 
     override fun matches(context: ConditionContext&lt;*&gt;): Boolean {
         return envOrSysPropNotBlankAndNotNull("AWS_SOURCE_EMAIL", "aws.sourceemail")
-        &amp;&amp;  envOrSysPropNotBlankAndNotNull("AWS_REGION", "aws.region")
+                &amp;&amp; envOrSysPropNotBlankAndNotNull("AWS_REGION", "aws.region")
     }
 
     private fun envOrSysPropNotBlankAndNotNull(env: String?, prop: String?): Boolean {
-        return notBlankAndNotNull(System.getProperty(prop)) ||
-                notBlankAndNotNull(System.getenv(env))
-    }
-
-    private fun notBlankAndNotNull(str: String?): Boolean {
-        return str != null &amp;&amp; str != ""
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env))
     }
 }</code></pre>
 </div>
@@ -522,9 +510,10 @@ class AwsSesMailCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class AwsSesMailConditionSpec: Spek({
 
@@ -675,9 +664,10 @@ class AwsSesMailService(@Value("\${AWS_REGION:none}") awsRegionEnv: String,  <i 
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class AwsSesMailServiceSpec: Spek({
 
@@ -726,7 +716,7 @@ class AwsSesMailServiceSpec: Spek({
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -740,22 +730,17 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 
 import io.micronaut.context.condition.Condition
 import io.micronaut.context.condition.ConditionContext
+import io.micronaut.core.util.StringUtils
 
 class SendGridEmailCondition : Condition {
     override fun matches(context: ConditionContext&lt;*&gt;?): Boolean {
         return envOrSysPropNotBlankAndNotNull("SENDGRID_APIKEY", "sendgrid.apikey")
-                &amp;&amp;  envOrSysPropNotBlankAndNotNull("SENDGRID_FROM_EMAIL", "sendgrid.fromemail")
+                &amp;&amp; envOrSysPropNotBlankAndNotNull("SENDGRID_FROM_EMAIL", "sendgrid.fromemail")
     }
 
     private fun envOrSysPropNotBlankAndNotNull(env: String?, prop: String?): Boolean {
-        return notBlankAndNotNull(System.getProperty(prop)) ||
-                notBlankAndNotNull(System.getenv(env))
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env))
     }
-
-    private fun notBlankAndNotNull(str: String?): Boolean {
-        return str != null &amp;&amp; str != ""
-    }
-
 }</code></pre>
 </div>
 </div>
@@ -769,9 +754,10 @@ class SendGridEmailCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class SendGridEmailConditionSpec: Spek({
 
@@ -932,10 +918,11 @@ class SendGridEmailService(@Value("\${SENDGRID_APIKEY:none}") apiKeyEnv: String,
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
 
     &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;withJansi&gt;true&lt;/withJansi&gt;
         &lt;!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
         &lt;encoder&gt;
-            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+            &lt;pattern&gt;%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n&lt;/pattern&gt;
         &lt;/encoder&gt;
     &lt;/appender&gt;
 
@@ -990,32 +977,23 @@ $ ./gradlew run</code></pre>
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.1.0
-kotlinVersion=1.2.61
-spekVersion=2.0.0-alpha.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
+kotlinVersion=1.3.50</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">bookcatalogue/build.gradle</div>
+<div class="title">complete/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
-...
-..
-    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
-}
-dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
     ...
     ..
     .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
-    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
-}
-
-test {
-    useJUnitPlatform {
-        includeEngines 'spek2'
-    }
+    testImplementation "io.mockk:mockk:1.9.3"
+    testImplementation "io.kotlintest:kotlintest-runner-junit5:3.3.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.jetbrains.spek:spek-api:1.1.5"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
 }</code></pre>
 </div>
 </div>
@@ -1060,10 +1038,11 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class MailControllerSpec: Spek({
 
@@ -1146,16 +1125,17 @@ class MailControllerSpec: Spek({
 <p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add a dependency to it:</p>
+<p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-validation"
-    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1172,9 +1152,10 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class MailControllerValidationSpec: Spek({
 
@@ -1268,52 +1249,54 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = { EmailConstraintsValidator.class })
-@Target( { ElementType.TYPE })
+@Constraint(validatedBy = {})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailConstraints {
 
     String message() default "{email.invalid}";
-    Class&lt;?&gt;[] groups() default { };
-    Class&lt;? extends Payload&gt;[] payload() default { };
+
+    Class&lt;?&gt;[] groups() default {};
+
+    Class&lt;? extends Payload&gt;[] payload() default {};
 
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>and a validator:</p>
+<p>and a contraint validator in a <code>@Factory</code> class:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/EmailConstraintsValidator.java</div>
+<div class="title">src/main/java/example/micronaut/EmailConstraintsFactory.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.core.util.StringUtils;
+import io.micronaut.validation.validator.constraints.ConstraintValidator;
 
-public class EmailConstraintsValidator implements ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; {
+import javax.inject.Singleton;
 
-    @Override
-    public boolean isValid(EmailCmd email, ConstraintValidatorContext context) {
-        return email !=null &amp;&amp;
-                (notBlankAndNotNull(email.getTextBody()) || notBlankAndNotNull(email.getHtmlBody()));
-    }
+@Factory
+public class EmailConstraintsFactory {
 
-    private boolean notBlankAndNotNull(String str) {
-        return str != null &amp;&amp; !str.equals("");
+    @Singleton
+    ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; emailBodyValidator() {
+        return (value, annotationMetadata, context) -&gt;
+                value != null &amp;&amp;
+                        (StringUtils.isNotEmpty(value.getTextBody()) || StringUtils.isNotEmpty(value.getHtmlBody()));
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Annotate Email with <code>EmailConstraints</code>.</p>
+<p>Annotate <code>EmailCmd</code> with <code>EmailConstraints</code> and <code>@Introspected</code> (to generate the
+<a href="https://docs.micronaut.io/latest/guide/index.html#introspection">Bean Introspection information</a>).</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/kotlin/example/micronaut/EmailCmd.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">@Introspected
 @EmailConstraints
 class EmailCmd : Email {
 
