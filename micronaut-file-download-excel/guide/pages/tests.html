@@ -111,8 +111,11 @@ the necessary dependencies:</p>
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile "org.codehaus.groovy:groovy-all:2.5.2"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
 }</code></pre>
 </div>
 </div>
@@ -138,11 +141,11 @@ sourceLanguage: java</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "org.gebish:geb-spock:2.2"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.12.0"
-    testCompile "org.seleniumhq.selenium:selenium-support:3.12.0"
-    testCompile "org.seleniumhq.selenium:selenium-remote-driver:3.12.0"
-    testCompile "org.seleniumhq.selenium:selenium-api:3.12.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.gebish:geb-spock:$gebVersion"
+testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -220,28 +223,19 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    }
-    dependencies {
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-    }
-}
-
-apply plugin:"com.energizedwork.webdriver-binaries"
-
-
-dependencies {
-...
-..
-.
+    id "com.github.erdi.webdriver-binaries" version "2.1"
 }
 
 webdriverBinaries {
-    chromedriver '2.41'
-    geckodriver '0.21.0'
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
 }
 
 tasks.withType(Test) {
@@ -279,19 +273,18 @@ import builders.dsl.spreadsheet.query.api.SpreadsheetCriteria
 import builders.dsl.spreadsheet.query.api.SpreadsheetCriteriaResult
 import builders.dsl.spreadsheet.query.poi.PoiSpreadsheetCriteria
 import geb.spock.GebSpec
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.env.Environment
 import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.IgnoreIf
-import spock.lang.Shared
 import spock.util.concurrent.PollingConditions
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class DownloadExcelSpec extends GebSpec {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:], Environment.TEST) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
     @IgnoreIf({ !sys['download.folder'] || sys['geb.env'] != 'chrome' })
     def "books can be downloaded as an excel file"() {
@@ -338,11 +331,11 @@ class DownloadExcelSpec extends GebSpec {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the close() method of an object (e.g. EmbeddedServer) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the EmbeddedServer interface</td>
+<td>Inject the Embedded Server.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
