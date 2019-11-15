@@ -407,6 +407,22 @@ gormVersion=7.0.1.RELEASE
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>And the database configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">hibernate:
+  hbm2ddl:
+    auto: update
+dataSource:
+  driverClassName: org.h2.Driver
+  username: sa
+  password: ''
+  url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE</code></pre>
+</div>
+</div>
 
 
 <h2 id="domainClasses">2.2.1 Domain Classes</h2>
