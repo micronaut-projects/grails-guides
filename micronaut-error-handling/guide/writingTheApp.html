@@ -135,20 +135,38 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-views"
-    runtime "org.apache.velocity:velocity-engine-core:2.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-views"
+runtime "org.apache.velocity:velocity-engine-core:2.0"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Micronaut ships out-of-the-box with support for <a href="http://velocity.apache.org/">Apache Velocity</a>, <a href="https://www.thymeleaf.org/">Thymeleaf</a> or <a href="http://jknack.github.io/handlebars.java/">Handlebars</a>. In this guide, we use Apache Velocity.</p>
 </div>
 <div class="paragraph">
-<p>Create a <code>notfound.vm</code> view:</p>
+<p>Create a <code>notFound.vm</code> view:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/views/notfound.vm</div>
+<div class="title">src/main/resources/views/notFound.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-error-handling/complete/src/main/resources/views/notfound.vm[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Not Found&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;NOT FOUND&lt;/h1&gt;
+
+&lt;p&gt;&lt;b&gt;The page you were looking for appears to have been moved, deleted or does not exist.&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;This is most likely due to:&lt;/p&gt;
+
+&lt;ul&gt;
+    &lt;li&gt;An outdated link on another site&lt;/li&gt;
+    &lt;li&gt;A typo in the address / URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -235,21 +253,20 @@ public class NotFoundController {
 
 
 <div class="paragraph">
-<p>In this section, we are going to create a local error handling to display validation errors when a form submission fails.</p>
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
-</div>
-<div class="paragraph">
-<p>Add a dependency to it:</p>
+<p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -263,7 +280,7 @@ public class NotFoundController {
 <div class="listingblock">
 <div class="title">src/main/resources/views/bookscreate.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;!DOCTYPE html&gt;
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -313,44 +330,36 @@ public class NotFoundController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.util.List;
-import io.micronaut.core.io.Writable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
-import io.micronaut.validation.Validated;
 import io.micronaut.views.View;
-import io.micronaut.views.ViewsRenderer;
-import io.micronaut.http.annotation.Error;
-import javax.validation.ConstraintViolation;
+
 import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-@Validated <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/books") <i class="conum" data-value="2"></i><b>(2)</b>
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 public class BookController {
 
-    @View("bookscreate") <i class="conum" data-value="3"></i><b>(3)</b>
-    @Get("/create") <i class="conum" data-value="4"></i><b>(4)</b>
+    @View("bookscreate") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/create") <i class="conum" data-value="3"></i><b>(3)</b>
     public Map&lt;String, Object&gt; create() {
         return createModelWithBlankValues();
     }
 
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED) <i class="conum" data-value="5"></i><b>(5)</b>
-    @Post("/save") <i class="conum" data-value="6"></i><b>(6)</b>
-    public HttpResponse save(@Valid @Body CommandBookSave cmd) { <i class="conum" data-value="7"></i><b>(7)</b>
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Post("/save") <i class="conum" data-value="5"></i><b>(5)</b>
+    public HttpResponse save(@Valid @Body CommandBookSave cmd) { <i class="conum" data-value="6"></i><b>(6)</b>
         return HttpResponse.ok();
     }
 
@@ -370,27 +379,23 @@ public class BookController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Use <code>@View</code> annotation to indicate the view name which should be used to render a view for the route.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>You can specify the HTTP verb that a controller’s action responds to. To respond to a GET request, use the <code>io.micronaut.http.annotation.Get</code> annotation.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><code>@Consumes</code> annotation takes a <code>String[]</code> of supported media types for an incoming request.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>The <code>@Post</code> annotation is used to map the index method to all requests that use an HTTP POST</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Add <code>@Valid</code> to any method parameter which requires validation. We use a POGO to encapsulate the form submission.</td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. We use a POJO to encapsulate the form submission.</td>
 </tr>
 </table>
 </div>
@@ -402,20 +407,22 @@ public class BookController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+@Introspected <i class="conum" data-value="1"></i><b>(1)</b>
 public class CommandBookSave {
-    @NotBlank <i class="conum" data-value="1"></i><b>(1)</b>
+    @NotBlank <i class="conum" data-value="2"></i><b>(2)</b>
     private String title;
 
-    @NotNull <i class="conum" data-value="2"></i><b>(2)</b>
-    @Positive <i class="conum" data-value="3"></i><b>(3)</b>
+    @NotNull <i class="conum" data-value="3"></i><b>(3)</b>
+    @Positive <i class="conum" data-value="4"></i><b>(4)</b>
     private Integer pages;
 
     public CommandBookSave() {
-
     }
 
     public String getTitle() {
@@ -440,14 +447,18 @@ public class CommandBookSave {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>title</code> is required and must be not blank.</td>
+<td>Annotate the class with <code>@Introspected</code> to generate the Bean Metainformation at compile time.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>pages</code> is required.</td>
+<td><code>title</code> is required and must be not blank.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>pages</code> is required.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><code>pages</code> must be greater than 0.</td>
 </tr>
 </table>
@@ -470,16 +481,16 @@ public class CommandBookSave {
 class BookController {
 ...
 ..
-    private  final MessageSource messageSource;
+    private final MessageSource messageSource;
 
-    public BookController(MessageSource messageSource) {
+    public BookController(MessageSource messageSource) { <i class="conum" data-value="1"></i><b>(1)</b>
         this.messageSource = messageSource;
     }
 ...
 .
     @View("bookscreate")
-    @Error(exception = ConstraintViolationException.class) <i class="conum" data-value="3"></i><b>(3)</b>
-    public Map&lt;String, Object&gt; onSavedFailed(HttpRequest request, ConstraintViolationException ex) { <i class="conum" data-value="4"></i><b>(4)</b>
+    @Error(exception = ConstraintViolationException.class) <i class="conum" data-value="2"></i><b>(2)</b>
+    public Map&lt;String, Object&gt; onSavedFailed(HttpRequest request, ConstraintViolationException ex) { <i class="conum" data-value="3"></i><b>(3)</b>
         final Map&lt;String, Object&gt; model = createModelWithBlankValues();
         model.put("errors", messageSource.violationsMessages(ex.getConstraintViolations()));
         Optional&lt;CommandBookSave&gt; cmd = request.getBody(CommandBookSave.class);
@@ -491,8 +502,6 @@ class BookController {
         model.put("title", bookSave.getTitle());
         model.put("pages", bookSave.getPages());
     }
-
-
 
 
 ..
@@ -508,14 +517,10 @@ class BookController {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Annotate a controller’s action with <code>@Produces</code> to change the response content type.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>By default <code>@Error</code> annotations are local. We specify the exception which we want to handle.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>You can access the original <code>HttpRequest</code> which triggered the exception.</td>
 </tr>
 </table>
@@ -585,8 +590,7 @@ public class MessageSource {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/BookController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Validated <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/books") <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 public class BookController {
 ...
 ..
@@ -598,6 +602,14 @@ public class BookController {
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/books</code></td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/OutOfStockException.java</div>

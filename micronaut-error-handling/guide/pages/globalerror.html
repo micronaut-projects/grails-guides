@@ -102,20 +102,38 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    compile "io.micronaut:micronaut-views"
-    runtime "org.apache.velocity:velocity-engine-core:2.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-views"
+runtime "org.apache.velocity:velocity-engine-core:2.0"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Micronaut ships out-of-the-box with support for <a href="http://velocity.apache.org/">Apache Velocity</a>, <a href="https://www.thymeleaf.org/">Thymeleaf</a> or <a href="http://jknack.github.io/handlebars.java/">Handlebars</a>. In this guide, we use Apache Velocity.</p>
 </div>
 <div class="paragraph">
-<p>Create a <code>notfound.vm</code> view:</p>
+<p>Create a <code>notFound.vm</code> view:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/views/notfound.vm</div>
+<div class="title">src/main/resources/views/notFound.vm</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-error-handling/complete/src/main/resources/views/notfound.vm[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Not Found&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;NOT FOUND&lt;/h1&gt;
+
+&lt;p&gt;&lt;b&gt;The page you were looking for appears to have been moved, deleted or does not exist.&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;This is most likely due to:&lt;/p&gt;
+
+&lt;ul&gt;
+    &lt;li&gt;An outdated link on another site&lt;/li&gt;
+    &lt;li&gt;A typo in the address / URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
