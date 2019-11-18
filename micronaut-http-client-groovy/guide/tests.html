@@ -114,27 +114,25 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxStreamingHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import io.reactivex.Flowable
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class BintrayControllerSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Shared
-    @AutoCleanup
-    RxStreamingHttpClient client = embeddedServer.applicationContext.createBean(RxStreamingHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    @Client("/")
+    RxStreamingHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Shared
     List&lt;String&gt; expectedProfileNames = ['base', 'federation', 'function', 'function-aws', 'service']
@@ -143,12 +141,12 @@ class BintrayControllerSpec extends Specification {
         when:
         HttpRequest request = HttpRequest.GET('/bintray/packages-lowlevel')
 
-        HttpResponse&lt;List&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="4"></i><b>(4)</b>
-                Argument.of(List, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;List&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="3"></i><b>(3)</b>
+                Argument.listOf(BintrayPackage)) <i class="conum" data-value="4"></i><b>(4)</b>
 
         then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK <i class="conum" data-value="6"></i><b>(6)</b>
-        rsp.body() <i class="conum" data-value="7"></i><b>(7)</b>
+        rsp.status == HttpStatus.OK <i class="conum" data-value="5"></i><b>(5)</b>
+        rsp.body() <i class="conum" data-value="6"></i><b>(6)</b>
 
         when:
         List&lt;BintrayPackage&gt; packages = rsp.body()
@@ -163,7 +161,7 @@ class BintrayControllerSpec extends Specification {
         when:
         HttpRequest request = HttpRequest.GET('/bintray/packages')
 
-        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="8"></i><b>(8)</b>
+        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="7"></i><b>(7)</b>
         Iterable&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
 
         then:
@@ -178,34 +176,30 @@ class BintrayControllerSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>RxStreamingHttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Micronaut’s HTTP client includes support for streaming data over HTTP via the <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/client/RxStreamingHttpClient.html">RxStreamingHttpClient</a>. Register a <code>RxStreamingHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Sometimes, receiving just the object is not enough and you need information about the response. In this case, instead of <code>retrieve</code> you should use the <code>exchange</code> method.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Micronaut makes it easy to parse JSON into Java objects.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Use <code>status</code> to check the HTTP status code.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Use <code>.body()</code> to retrieve the parsed payload.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Use the <code>jsonStream</code> method, which returns a <code>Flowable</code>, to consume the endpoint which generates a JSON Stream.</td>
 </tr>
 </table>

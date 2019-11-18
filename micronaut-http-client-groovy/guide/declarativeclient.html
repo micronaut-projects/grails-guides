@@ -125,6 +125,7 @@ import io.reactivex.Flowable
 @CompileStatic
 @Client(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 interface BintrayClient {
+
     @Get('/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages') <i class="conum" data-value="2"></i><b>(2)</b>
     Flowable&lt;BintrayPackage&gt; fetchPackages() <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>

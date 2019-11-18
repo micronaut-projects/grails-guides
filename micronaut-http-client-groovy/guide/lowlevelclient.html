@@ -118,7 +118,9 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.core.annotation.Introspected
 
+@Introspected
 @CompileStatic
 class BintrayPackage {
     String name
@@ -160,7 +162,7 @@ class BintrayLowLevelClient {
 
     Maybe&lt;List&lt;BintrayPackage&gt;&gt; fetchPackages() {
         HttpRequest&lt;?&gt; req = HttpRequest.GET(uri) <i class="conum" data-value="4"></i><b>(4)</b>
-        Flowable flowable = httpClient.retrieve(req, Argument.of(List, BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.listOf(BintrayPackage)) <i class="conum" data-value="5"></i><b>(5)</b>
         flowable.firstElement() as Maybe&lt;List&lt;BintrayPackage&gt;&gt; <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
