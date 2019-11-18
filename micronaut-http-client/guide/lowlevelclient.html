@@ -177,7 +177,7 @@ public class BintrayLowLevelClient {
 
     Maybe&lt;List&lt;BintrayPackage&gt;&gt; fetchPackages() {
         HttpRequest&lt;?&gt; req = HttpRequest.GET(uri);  <i class="conum" data-value="4"></i><b>(4)</b>
-        Flowable flowable = httpClient.retrieve(req, Argument.of(List.class, BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
+        Flowable flowable = httpClient.retrieve(req, Argument.listOf(BintrayPackage.class)); <i class="conum" data-value="5"></i><b>(5)</b>
         return (Maybe&lt;List&lt;BintrayPackage&gt;&gt;) flowable.firstElement(); <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
