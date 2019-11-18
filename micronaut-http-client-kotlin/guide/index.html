@@ -88,7 +88,7 @@
         <h1>Micronaut HTTP Client</h1>
         <p>Learn how to use Micronaut low-level HTTP Client. Simplify your code with the declarative HTTP client.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -180,13 +180,13 @@
 <p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
 </div>
 <div class="paragraph">
 <p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -272,9 +272,9 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1</code></pre>
+  organization: micronaut
+  repository: profiles
+  apiversion: v1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -324,7 +324,7 @@ class BintrayConfiguration {
 </div>
 </div>
 <div class="paragraph">
-<p>In this guide, you are going to fetch <a href="https://bintray.com/micronaut/profiles">Micronaut profiles packages</a>. Those packages are used by the <a href="https://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut CLI</a>.</p>
+<p>In this guide, you are going to fetch <a href="https://bintray.com/micronaut/profiles">Micronaut profiles packages</a>. Those packages are used by the <a href="https://docs.micronaut.io/latest/guide/index.html#cli">Micronaut CLI</a>.</p>
 </div>
 <div class="paragraph">
 <p>To consume the Bintray API, you will use Micronaut HTTP Client.</p>
@@ -384,7 +384,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
 
     internal fun fetchPackages(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {
         val req = HttpRequest.GET&lt;Any&gt;(uri)  <i class="conum" data-value="4"></i><b>(4)</b>
-        val flowable = httpClient.retrieve(req, Argument.of(List::class.java, BintrayPackage::class.java))  <i class="conum" data-value="5"></i><b>(5)</b>
+        val flowable = httpClient.retrieve(req, Argument.listOf(BintrayPackage::class.java))  <i class="conum" data-value="5"></i><b>(5)</b>
         return flowable.firstElement() as Maybe&lt;List&lt;BintrayPackage&gt;&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
@@ -395,7 +395,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class as a singleton.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -506,7 +506,7 @@ interface BintrayClient {
 compose multiple HTTP client calls without blocking (which will limit the throughput and scalability of your application).</p>
 </li>
 <li>
-<p>Micronaut enables you to consume/produce <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientStreaming">JSON Streams</a>.</p>
+<p>Micronaut enables you to consume/produce <a href="https://docs.micronaut.io/latest/guide/index.html#clientStreaming">JSON Streams</a>.</p>
 </li>
 </ul>
 </div>
@@ -541,7 +541,7 @@ class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClien
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/bintray</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/bintray</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -549,7 +549,7 @@ class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClien
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the index method to all requests that use an HTTP GET</td>
+<td>The <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>packagesWithLowLevelClient</code> method to a HTTP GET that uses the path <code>/packages-lowlevel</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -582,32 +582,19 @@ class BintrayController(private val bintrayLowLevelClient : BintrayLowLevelClien
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.1.0
-kotlinVersion=1.2.61
-spekVersion=2.0.0-alpha.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
+kotlinVersion=1.3.50</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">bookcatalogue/build.gradle</div>
+<div class="title">complete/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
-...
-..
-    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
-}
-dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
     ...
     ..
     .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
-    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
-}
-
-test {
-    useJUnitPlatform {
-        includeEngines 'spek2'
-    }
+    testImplementation "org.jetbrains.spek:spek-api:1.1.5"
+    testRuntimeOnly "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
 }</code></pre>
 </div>
 </div>
@@ -626,11 +613,10 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxStreamingHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.reactivex.Flowable
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.*
 
 class BintrayControllerSpec: Spek({
     val expectedProfileNames = arrayOf("base", "federation", "function", "function-aws", "service")
@@ -641,7 +627,7 @@ class BintrayControllerSpec: Spek({
         it("Verify bintray packages can be fetched with low level HttpClient") {
             val request = HttpRequest.GET&lt;Any&gt;("/bintray/packages-lowlevel")
             val rsp = client.toBlocking().exchange(request,   <i class="conum" data-value="3"></i><b>(3)</b>
-                    Argument.of(List::class.java, BintrayPackage::class.java))  <i class="conum" data-value="4"></i><b>(4)</b>
+                    Argument.listOf(BintrayPackage::class.java))  <i class="conum" data-value="4"></i><b>(4)</b>
 
             assertEquals(rsp.status()!!, HttpStatus.OK) <i class="conum" data-value="5"></i><b>(5)</b>
             assertNotNull(rsp.body()) <i class="conum" data-value="6"></i><b>(6)</b>
@@ -691,7 +677,7 @@ class BintrayControllerSpec: Spek({
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Micronaut’s HTTP client includes support for streaming data over HTTP via the <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/http/client/RxStreamingHttpClient.html">RxStreamingHttpClient</a>. Register a <code>RxStreamingHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Micronaut’s HTTP client includes support for streaming data over HTTP via the <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/RxStreamingHttpClient.html">RxStreamingHttpClient</a>. Register a <code>RxStreamingHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -771,13 +757,12 @@ $ open build/reports/tests/test/index.html</code></pre>
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.annotation.Requires
-import io.micronaut.context.annotation.Value
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Filter
 import io.micronaut.http.filter.ClientFilterChain
-import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
+import org.reactivestreams.Publisher
 
 @Filter("/api/\${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
 @Requires(condition = BintrayFilterCondition::class) <i class="conum" data-value="2"></i><b>(2)</b>
@@ -787,8 +772,7 @@ class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClient
         if ( bintrayConfiguration.username != null &amp;&amp; bintrayConfiguration.token != null) {
             return chain.proceed(request.basicAuth(bintrayConfiguration.username, bintrayConfiguration.token)) <i class="conum" data-value="4"></i><b>(4)</b>
         }
-        return return chain.proceed(request)
-
+        return chain.proceed(request)
     }
 }</code></pre>
 </div>
@@ -855,10 +839,11 @@ class BintrayFilterCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class BintrayFilterConditionSpec: Spek({
 
@@ -898,11 +883,11 @@ class BintrayFilterConditionSpec: Spek({
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1
-    username: yourbintrayusername
-    token: XXXXXXXXXXX</code></pre>
+  organization: micronaut
+  repository: profiles
+  apiversion: v1
+  username: yourbintrayusername
+  token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -934,7 +919,7 @@ class BintrayFilterConditionSpec: Spek({
 
 
 <div class="paragraph">
-<p>Visit <a href="https://docs.micronaut.io/snapshot/guide/index.html#httpClient">Micronaut HTTP Client documentation</a> to learn more.</p>
+<p>Visit <a href="https://docs.micronaut.io/latest/guide/index.html#httpClient">Micronaut HTTP Client documentation</a> to learn more.</p>
 </div>
 
 </article>

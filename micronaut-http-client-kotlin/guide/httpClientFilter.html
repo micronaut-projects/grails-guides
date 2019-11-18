@@ -131,13 +131,12 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.annotation.Requires
-import io.micronaut.context.annotation.Value
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Filter
 import io.micronaut.http.filter.ClientFilterChain
-import org.reactivestreams.Publisher
 import io.micronaut.http.filter.HttpClientFilter
+import org.reactivestreams.Publisher
 
 @Filter("/api/\${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
 @Requires(condition = BintrayFilterCondition::class) <i class="conum" data-value="2"></i><b>(2)</b>
@@ -147,8 +146,7 @@ class BintrayFilter(var bintrayConfiguration: BintrayConfiguration) : HttpClient
         if ( bintrayConfiguration.username != null &amp;&amp; bintrayConfiguration.token != null) {
             return chain.proceed(request.basicAuth(bintrayConfiguration.username, bintrayConfiguration.token)) <i class="conum" data-value="4"></i><b>(4)</b>
         }
-        return return chain.proceed(request)
-
+        return chain.proceed(request)
     }
 }</code></pre>
 </div>
@@ -215,10 +213,11 @@ class BintrayFilterCondition : Condition {
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.NoSuchBeanException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class BintrayFilterConditionSpec: Spek({
 
@@ -258,11 +257,11 @@ class BintrayFilterConditionSpec: Spek({
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1
-    username: yourbintrayusername
-    token: XXXXXXXXXXX</code></pre>
+  organization: micronaut
+  repository: profiles
+  apiversion: v1
+  username: yourbintrayusername
+  token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">

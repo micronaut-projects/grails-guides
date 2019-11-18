@@ -150,7 +150,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
 
     internal fun fetchPackages(): Maybe&lt;List&lt;BintrayPackage&gt;&gt; {
         val req = HttpRequest.GET&lt;Any&gt;(uri)  <i class="conum" data-value="4"></i><b>(4)</b>
-        val flowable = httpClient.retrieve(req, Argument.of(List::class.java, BintrayPackage::class.java))  <i class="conum" data-value="5"></i><b>(5)</b>
+        val flowable = httpClient.retrieve(req, Argument.listOf(BintrayPackage::class.java))  <i class="conum" data-value="5"></i><b>(5)</b>
         return flowable.firstElement() as Maybe&lt;List&lt;BintrayPackage&gt;&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
     }
 
@@ -161,7 +161,7 @@ class BintrayLowLevelClient(@param:Client(BintrayConfiguration.BINTRAY_URL) priv
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class as a singleton.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
