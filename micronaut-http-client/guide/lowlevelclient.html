@@ -117,9 +117,13 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class BintrayPackage {
-    String name;
-    boolean linked;
+
+    private String name;
+    private boolean linked;
 
     public String getName() {
         return name;
@@ -161,7 +165,6 @@ import java.util.List;
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class BintrayLowLevelClient {
 
-
     private final RxHttpClient httpClient;
     private final String uri;
 
@@ -185,11 +188,11 @@ public class BintrayLowLevelClient {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class as a singleton.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject <code>RxClient</code> via constructor injection</td>
+<td>Inject <code>RxClient</code> via constructor injection.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -197,7 +200,7 @@ public class BintrayLowLevelClient {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Creating HTTP Requests is easy thanks to Micronaut’s fluid API.</td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>

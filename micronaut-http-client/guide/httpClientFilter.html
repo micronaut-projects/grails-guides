@@ -141,11 +141,11 @@ import org.reactivestreams.Publisher;
 @Filter("/api/${bintray.apiversion}/repos/**") <i class="conum" data-value="1"></i><b>(1)</b>
 @Requires(property = BintrayConfiguration.PREFIX + ".username") <i class="conum" data-value="2"></i><b>(2)</b>
 @Requires(property = BintrayConfiguration.PREFIX + ".token") <i class="conum" data-value="2"></i><b>(2)</b>
-public class BintrayFilter  implements HttpClientFilter {
+public class BintrayFilter implements HttpClientFilter {
 
     private final BintrayConfiguration configuration;
 
-    public BintrayFilter(BintrayConfiguration configuration ) { <i class="conum" data-value="3"></i><b>(3)</b>
+    public BintrayFilter(BintrayConfiguration configuration) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.configuration = configuration;
     }
 
@@ -184,11 +184,11 @@ public class BintrayFilter  implements HttpClientFilter {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1
-    username: yourbintrayusername
-    token: XXXXXXXXXXX</code></pre>
+  organization: micronaut
+  repository: profiles
+  apiversion: v1
+  username: yourbintrayusername
+  token: XXXXXXXXXXX</code></pre>
 </div>
 </div>
 <div class="paragraph">

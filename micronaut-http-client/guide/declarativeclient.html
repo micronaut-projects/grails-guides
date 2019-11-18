@@ -107,7 +107,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>It is time to take a look at Micronaut’s support for declarative clients via the Client annotation.</p>
+<p>It is time to take a look at Micronaut&#8217;s support for declarative clients via the Client annotation.</p>
 </div>
 <div class="paragraph">
 <p>Create <code>BintrayClient</code> which clearly illustrates how a declarative Micronaut HTTP Client, which is generated at compile-time, simplifies our code.</p>
@@ -124,7 +124,7 @@ import io.reactivex.Flowable;
 @Client(BintrayConfiguration.BINTRAY_API_URL) <i class="conum" data-value="1"></i><b>(1)</b>
 public interface BintrayClient {
 
-    @Get("/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages")  <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/api/${bintray.apiversion}/repos/${bintray.organization}/${bintray.repository}/packages") <i class="conum" data-value="2"></i><b>(2)</b>
     Flowable&lt;BintrayPackage&gt; fetchPackages(); <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
