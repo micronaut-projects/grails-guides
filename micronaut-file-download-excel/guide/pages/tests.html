@@ -93,7 +93,8 @@ function addJsClass() {
 easy is to test that the file downloads but also that the downloaded file contents match our expectations.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -102,8 +103,7 @@ easy is to test that the file downloads but also that the downloaded file conten
 <p>We need to modify <code>build.gradle</code>.</p>
 </div>
 <div class="paragraph">
-<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
-the necessary dependencies:</p>
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -331,7 +331,7 @@ class DownloadExcelSpec extends GebSpec {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedder server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a></td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
