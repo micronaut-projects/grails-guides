@@ -128,7 +128,7 @@ function addJsClass() {
     }
 
     dependencies {
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.0.0-rc4'
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.2.0'
     }
 }</code></pre>
 </div>
@@ -158,11 +158,11 @@ ext {
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">appengine {
-  stage.artifact = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
-  deploy {
-      projectId = appEngineProjectId
-      version = appEngineProjectVersion
-  }
+    stage.artifact = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
+    deploy {
+        projectId = appEngineProjectId
+        version = appEngineProjectVersion
+    }
 }</code></pre>
 </div>
 </div>
