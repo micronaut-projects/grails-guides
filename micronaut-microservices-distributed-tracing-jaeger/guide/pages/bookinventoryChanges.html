@@ -101,7 +101,7 @@ function addJsClass() {
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -115,7 +115,7 @@ function addJsClass() {
     ...
     ..
     .
-    compile 'io.jaegertracing:jaeger-thrift'
+    implementation 'io.jaegertracing:jaeger-thrift'
 }</code></pre>
 </div>
 </div>
@@ -126,10 +126,10 @@ function addJsClass() {
 <div class="title">bookinventory/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -150,8 +150,8 @@ function addJsClass() {
 <div class="title">bookinventory/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: false</code></pre>
+  jaeger:
+    enabled: false</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -168,11 +168,10 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.validation.Validated;
+
 import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
-@Validated
 @Controller("/books")
 public class BooksController {
 
@@ -184,10 +183,10 @@ public class BooksController {
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
-        if(isbn.equals("1491950358")) {
+        if (isbn.equals("1491950358")) {
             return Optional.of(new BookInventory(isbn, 4));
 
-        } else if(isbn.equals("1680502395")) {
+        } else if (isbn.equals("1680502395")) {
             return Optional.of(new BookInventory(isbn, 0));
         }
         return Optional.empty();
@@ -204,7 +203,7 @@ public class BooksController {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need
-either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`</code></td>
+either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code>.</td>
 </tr>
 </table>
 </div>
