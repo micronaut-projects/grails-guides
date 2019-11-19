@@ -138,7 +138,7 @@ interface BookCatalogueClient : BookCatalogueOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -194,7 +194,7 @@ interface BookInventoryClient : BookInventoryOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -212,7 +212,7 @@ import io.reactivex.Flowable
 
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 class BooksController(private val bookCatalogueOperations: BookCatalogueOperations,
-                     private val bookInventoryOperations: BookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
+                      private val bookInventoryOperations: BookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     fun index(): Flowable&lt;BookRecommendation&gt; {
@@ -230,7 +230,7 @@ class BooksController(private val bookCatalogueOperations: BookCatalogueOperatio
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -257,7 +257,7 @@ data class BookRecommendation(val name: String)</code></pre>
 <p><code>BookCatalogueClient</code> and <code>BookInventoryClient</code> will fail to consume the <code>bookcatalogue</code> and <code>bookinventory</code> during the tests phase.</p>
 </div>
 <div class="paragraph">
-<p>Using the <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
+<p>Using the <a href="https://docs.micronaut.io/latest/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
 </div>
 <div class="paragraph">
 <p>Create <code>@Fallback</code> alternatives in the <code>test</code> classpath.</p>
@@ -277,7 +277,7 @@ import javax.validation.constraints.NotBlank
 @Requires(env = arrayOf(Environment.TEST))
 @Fallback
 @Singleton
-class BookInventoryClientStub : BookInventoryOperations {
+open class BookInventoryClientStub : BookInventoryOperations {
 
     override fun stock(@NotBlank isbn: String): Maybe&lt;Boolean&gt; {
         if (isbn == "1491950358") {
@@ -332,16 +332,16 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
-object BookControllerSpec: Spek({
+object BookControllerSpec : Spek({
     describe("BookController Suite") {
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client : RxStreamingHttpClient  = embeddedServer.applicationContext.createBean(RxStreamingHttpClient::class.java, embeddedServer.url)
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
+        var client: RxStreamingHttpClient = embeddedServer.applicationContext.createBean(RxStreamingHttpClient::class.java, embeddedServer.url)
 
         it("books can be retrieved") {
             val req = HttpRequest.GET&lt;Any&gt;("/books")
             val books = client.jsonStream(req, BookRecommendation::class.java)
-            assertEquals(books.toList().blockingGet().size, 1)
-            assertEquals(books.toList().blockingGet()[0].name, "Building Microservices")
+            assertEquals(1, books.toList().blockingGet().size)
+            assertEquals("Building Microservices", books.toList().blockingGet()[0].name)
         }
 
         afterGroup {
@@ -360,10 +360,10 @@ object BookControllerSpec: Spek({
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -385,8 +385,8 @@ object BookControllerSpec: Spek({
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

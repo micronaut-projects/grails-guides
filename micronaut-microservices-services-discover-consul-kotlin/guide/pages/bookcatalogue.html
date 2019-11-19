@@ -128,7 +128,7 @@ class BooksController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -165,15 +165,15 @@ import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-object BooksControllerSpec: Spek({
+object BooksControllerSpec : Spek({
     describe("BookController Suite") {
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client : HttpClient  = HttpClient.create(embeddedServer.url)
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
+        var client: HttpClient = HttpClient.create(embeddedServer.url)
 
         it("books can be retrieved") {
             val req = HttpRequest.GET&lt;Any&gt;("/books") <i class="conum" data-value="1"></i><b>(1)</b>
             val books = client.toBlocking().retrieve(req, Argument.of(List::class.java, Book::class.java)) <i class="conum" data-value="2"></i><b>(2)</b>
-            assertEquals(expected = books.size, actual = 3)
+            assertEquals(actual = 3, expected = books.size)
             assertTrue(books.contains(Book("1491950358", "Building Microservices")))
             assertTrue(books.contains(Book("1680502395", "Release It!")))
         }
@@ -206,10 +206,10 @@ object BooksControllerSpec: Spek({
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -231,8 +231,8 @@ object BooksControllerSpec: Spek({
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
