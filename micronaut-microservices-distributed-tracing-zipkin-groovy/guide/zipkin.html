@@ -164,7 +164,7 @@ function addJsClass() {
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -180,7 +180,7 @@ function addJsClass() {
     .
     runtime 'io.zipkin.brave:brave-instrumentation-http'
     runtime 'io.zipkin.reporter2:zipkin-reporter'
-    compile 'io.opentracing.brave:brave-opentracing'
+    implementation 'io.opentracing.brave:brave-opentracing'
 }</code></pre>
 </div>
 </div>
@@ -191,12 +191,12 @@ function addJsClass() {
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        http:
-            url: http://localhost:9411
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -217,8 +217,8 @@ function addJsClass() {
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        enabled: false</code></pre>
+  zipkin:
+    enabled: false</code></pre>
 </div>
 </div>
 
@@ -242,7 +242,7 @@ function addJsClass() {
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -258,7 +258,7 @@ function addJsClass() {
     .
     runtime 'io.zipkin.brave:brave-instrumentation-http'
     runtime 'io.zipkin.reporter2:zipkin-reporter'
-    compile 'io.opentracing.brave:brave-opentracing'
+    implementation 'io.opentracing.brave:brave-opentracing'
 }</code></pre>
 </div>
 </div>
@@ -269,12 +269,12 @@ function addJsClass() {
 <div class="title">bookinventory/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        http:
-            url: http://localhost:9411
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -295,8 +295,8 @@ function addJsClass() {
 <div class="title">bookinventory/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        enabled: false</code></pre>
+  zipkin:
+    enabled: false</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -314,11 +314,10 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.SpanTag
-import io.micronaut.validation.Validated
+
 import javax.validation.constraints.NotBlank
 
 @CompileStatic
-@Validated
 @Controller("/books")
 class BooksController {
 
@@ -330,10 +329,10 @@ class BooksController {
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
-        if(isbn == "1491950358") {
+        if (isbn == "1491950358") {
             return Optional.of(new BookInventory(isbn, 4))
 
-        } else if(isbn == "1680502395") {
+        } else if (isbn == "1680502395") {
             return Optional.of(new BookInventory(isbn, 0))
         }
         Optional.empty()
@@ -374,7 +373,7 @@ class BooksController {
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -401,12 +400,12 @@ class BooksController {
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        http:
-            url: http://localhost:9411
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -427,8 +426,8 @@ class BooksController {
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    zipkin:
-        enabled: false</code></pre>
+  zipkin:
+    enabled: false</code></pre>
 </div>
 </div>
 
