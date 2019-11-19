@@ -88,7 +88,7 @@
         <h1>Microservices distributed tracing with Jaeger and Micronaut</h1>
         <p>Use Jaeger distributed tracing to investigate the behaviour of your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -197,7 +197,7 @@
 <p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
 </li>
 <li>
-<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order.  I uses a domain consisting of a stock level and isbn.</p>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order. It uses a domain consisting of a stock level and isbn.</p>
 </li>
 <li>
 <p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
@@ -288,7 +288,7 @@
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -302,7 +302,7 @@
     ...
     ..
     .
-    compile 'io.jaegertracing:jaeger-thrift'
+    implementation 'io.jaegertracing:jaeger-thrift'
 }</code></pre>
 </div>
 </div>
@@ -313,10 +313,10 @@
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -337,8 +337,8 @@
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: false</code></pre>
+  jaeger:
+    enabled: false</code></pre>
 </div>
 </div>
 
@@ -362,7 +362,7 @@
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -376,7 +376,7 @@
     ...
     ..
     .
-    compile 'io.jaegertracing:jaeger-thrift'
+    implementation 'io.jaegertracing:jaeger-thrift'
 }</code></pre>
 </div>
 </div>
@@ -387,10 +387,10 @@
 <div class="title">bookinventory/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -411,8 +411,8 @@
 <div class="title">bookinventory/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: false</code></pre>
+  jaeger:
+    enabled: false</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -430,11 +430,10 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.SpanTag
-import io.micronaut.validation.Validated
+
 import javax.validation.constraints.NotBlank
 
 @CompileStatic
-@Validated
 @Controller("/books")
 class BooksController {
 
@@ -446,10 +445,10 @@ class BooksController {
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
-        if(isbn == "1491950358") {
+        if (isbn == "1491950358") {
             return Optional.of(new BookInventory(isbn, 4))
 
-        } else if(isbn == "1680502395") {
+        } else if (isbn == "1680502395") {
             return Optional.of(new BookInventory(isbn, 0))
         }
         Optional.empty()
@@ -491,7 +490,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    compile "io.micronaut:micronaut-tracing"
+    implementation "io.micronaut:micronaut-tracing"
 }</code></pre>
 </div>
 </div>
@@ -505,7 +504,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    compile 'io.jaegertracing:jaeger-thrift'
+    implementation 'io.jaegertracing:jaeger-thrift'
 }</code></pre>
 </div>
 </div>
@@ -516,10 +515,10 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: true
-        sampler:
-            probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -540,8 +539,8 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
-    jaeger:
-        enabled: false</code></pre>
+  jaeger:
+    enabled: false</code></pre>
 </div>
 </div>
 
@@ -562,8 +561,8 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew run
 ...
- &gt; Task :bookcatalogue:run
- 14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+&gt; Task :bookcatalogue:run
+14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -573,8 +572,8 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew run
 ...
- &gt; Task :bookcatalogue:run
- 14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8082</code></pre>
+&gt; Task :bookinventory:run
+14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 506ms. Server Running: http://localhost:8082</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -625,7 +624,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
 <p>The <code>stock.isbn</code> tags that we configured with <code>@SpanTag</code> are present.</p>
 </div>
 <div class="paragraph">
-<p>Moreover, you can see the requests to <code>bookinventory</code> are done in paralell.</p>
+<p>Moreover, you can see the requests to <code>bookinventory</code> are done in parallel.</p>
 </div>
 
 
