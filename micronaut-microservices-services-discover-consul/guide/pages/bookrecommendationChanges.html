@@ -131,7 +131,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Flowable;
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
-public interface BookCatalogueClient extends BookCatalogueOperations {
+interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
     Flowable&lt;Book&gt; findAll();
@@ -158,7 +158,7 @@ import io.reactivex.Maybe;
 import javax.validation.constraints.NotBlank;
 
 @Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
-public interface BookInventoryClient extends BookInventoryOperations {
+interface BookInventoryClient extends BookInventoryOperations {
 
     @Get("/books/stock/{isbn}")
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn);
@@ -180,9 +180,9 @@ public interface BookInventoryClient extends BookInventoryOperations {
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">consul:
-    client:
-        registration:
-            enabled: false</code></pre>
+  client:
+    registration:
+      enabled: false</code></pre>
 </div>
 </div>
 
