@@ -101,7 +101,8 @@ function addJsClass() {
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">kotlinVersion=1.3.50
-micronautVersion=1.2.6</code></pre>
+micronautVersion=1.2.6
+spekVersion=2.0.8</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -111,10 +112,15 @@ micronautVersion=1.2.6</code></pre>
     ...
     ..
     .
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testImplementation "org.jetbrains.spek:spek-api:1.1.5"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testRuntimeOnly "org.jetbrains.spek:spek-junit-platform-engine:1.1.5"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
+        exclude group: 'org.junit.platform'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 }</code></pre>
 </div>
 </div>
@@ -129,18 +135,17 @@ micronautVersion=1.2.6</code></pre>
 import io.micronaut.context.ApplicationContext
 import io.micronaut.http.client.HttpClient
 import io.micronaut.runtime.server.EmbeddedServer
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
+import kotlin.test.assertEquals
 
-object HelloControllerSpec: Spek({
+object HelloControllerSpec : Spek({
     describe("HelloController Suite") {
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client : HttpClient = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client: HttpClient = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
 
         it("test /hello responds Hello World") {
-            var rsp : String = client.toBlocking().retrieve("/hello")
+            var rsp: String = client.toBlocking().retrieve("/hello")
             assertEquals("Hello World", rsp)
         }
 
