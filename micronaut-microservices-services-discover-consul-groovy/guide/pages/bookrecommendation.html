@@ -137,7 +137,7 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -201,7 +201,7 @@ interface BookInventoryClient extends BookInventoryOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -226,19 +226,19 @@ class BookController {
     private final BookInventoryOperations bookInventoryOperations
 
     BookController(BookCatalogueOperations bookCatalogueOperations,
-                          BookInventoryOperations bookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
+                   BookInventoryOperations bookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.bookCatalogueOperations = bookCatalogueOperations
         this.bookInventoryOperations = bookInventoryOperations
     }
 
-
     @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     Flowable&lt;BookRecommendation&gt; index() {
         return bookCatalogueOperations.findAll()
-                .flatMapMaybe { b -&gt; bookInventoryOperations.stock(b.isbn)
-                        .filter { hasStock -&gt; hasStock == Boolean.TRUE }
-                        .map {rsp -&gt; b }
-        }.map { book -&gt; new BookRecommendation(book.name) }
+            .flatMapMaybe { b -&gt;
+                bookInventoryOperations.stock(b.isbn)
+                    .filter { hasStock -&gt; hasStock == Boolean.TRUE }
+                    .map { rsp -&gt; b }
+            }.map { book -&gt; new BookRecommendation(book.name) }
     }
 }</code></pre>
 </div>
@@ -247,7 +247,7 @@ class BookController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -283,7 +283,7 @@ class BookRecommendation {
 <p><code>BookCatalogueClient</code> and <code>BookInventoryClient</code> will fail to consume the <code>bookcatalogue</code> and <code>bookinventory</code> during the tests phase.</p>
 </div>
 <div class="paragraph">
-<p>Using the <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
+<p>Using the <a href="https://docs.micronaut.io/latest/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
 </div>
 <div class="paragraph">
 <p>Create <code>@Fallback</code> alternatives in the <code>test</code> classpath.</p>
@@ -297,6 +297,7 @@ import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.micronaut.retry.annotation.Fallback
 import io.reactivex.Maybe
+
 import javax.inject.Singleton
 import javax.validation.constraints.NotBlank
 
@@ -307,10 +308,10 @@ class BookInventoryClientStub implements BookInventoryOperations {
 
     @Override
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
-        if(isbn == "1491950358") {
+        if (isbn == "1491950358") {
             return Maybe.just(Boolean.TRUE)
 
-        } else if(isbn == "1680502395") {
+        } else if (isbn == "1680502395") {
             return Maybe.just(Boolean.FALSE)
         }
         Maybe.empty()
@@ -352,29 +353,27 @@ class BookCatalogueClientStub implements BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 
-class BookControllerSpec extends Specification {
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+import javax.inject.Inject
 
-    @Shared
-    @AutoCleanup
-    HttpClient client = HttpClient.create(embeddedServer.URL)
+@MicronautTest
+class BookControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client
 
     void "retrieve books"() {
         when:
-        HttpResponse response = client.toBlocking().exchange(HttpRequest.GET("/books"), Argument.of(List, BookRecommendation))
+        HttpResponse response = client.toBlocking().exchange(HttpRequest.GET("/books"), Argument.listOf(BookRecommendation))
 
         then:
         response.status() == HttpStatus.OK
@@ -391,10 +390,10 @@ class BookControllerSpec extends Specification {
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -416,8 +415,8 @@ class BookControllerSpec extends Specification {
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
