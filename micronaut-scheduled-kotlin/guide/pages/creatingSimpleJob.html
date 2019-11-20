@@ -95,22 +95,21 @@ function addJsClass() {
 
 import io.micronaut.scheduling.annotation.Scheduled
 import org.slf4j.LoggerFactory
-
-import javax.inject.Singleton
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class HelloWorldJob {
 
     @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
     fun executeEveryTen() {
-        LOG.info("Simple Job every 10 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
+        LOG.info("Simple Job every 10 seconds: {}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
     @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
     fun executeEveryFourtyFive() {
-        LOG.info("Simple Job every 45 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
+        LOG.info("Simple Job every 45 seconds: {}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
     companion object {

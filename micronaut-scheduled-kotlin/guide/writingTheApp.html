@@ -106,14 +106,14 @@ function addJsClass() {
 <p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -213,22 +213,21 @@ other build tool such as <code>Maven</code> or other programming languages such 
 
 import io.micronaut.scheduling.annotation.Scheduled
 import org.slf4j.LoggerFactory
-
-import javax.inject.Singleton
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class HelloWorldJob {
 
     @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
     fun executeEveryTen() {
-        LOG.info("Simple Job every 10 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
+        LOG.info("Simple Job every 10 seconds: {}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
     @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
     fun executeEveryFourtyFive() {
-        LOG.info("Simple Job every 45 seconds :{}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
+        LOG.info("Simple Job every 45 seconds: {}", SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(Date()))
     }
 
     companion object {
@@ -328,10 +327,9 @@ class HelloWorldJob {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import org.slf4j.LoggerFactory
-
-import javax.inject.Singleton
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import javax.inject.Singleton
 
 @Singleton
 class EmailUseCase {
@@ -488,14 +486,12 @@ class EmailTask(private val emailUseCase: EmailUseCase, private val email: Strin
 
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.TaskScheduler
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.inject.Named
-import javax.inject.Singleton
 import java.text.SimpleDateFormat
 import java.time.Duration
-import java.util.Date
+import java.util.*
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Singleton
 class RegisterUseCase(private val emailUseCase: EmailUseCase, <i class="conum" data-value="1"></i><b>(1)</b>
