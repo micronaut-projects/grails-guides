@@ -106,14 +106,14 @@ function addJsClass() {
 <p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=groovy</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
 
@@ -139,7 +139,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    &lt;logger name="example.micronaut" level="info" /&gt;
+    &lt;logger name="example.micronaut" level="info"/&gt;
 &lt;/configuration&gt;</code></pre>
 </div>
 </div>
@@ -165,11 +165,12 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.scheduling.annotation.Scheduled
+
 import javax.inject.Singleton
 import java.text.SimpleDateFormat
-import groovy.transform.CompileStatic
 
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
@@ -178,12 +179,12 @@ class HelloWorldJob {
 
     @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
     void executeEveryTen() {
-        log.info("Simple Job every 10 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
+        log.info("Simple Job every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 
     @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
     void executeEveryFourtyFive() {
-        log.info("Simple Job every 45 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
+        log.info("Simple Job every 45 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -280,6 +281,7 @@ class HelloWorldJob {
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
 import javax.inject.Singleton
 import java.text.SimpleDateFormat
 
@@ -289,7 +291,7 @@ import java.text.SimpleDateFormat
 class EmailUseCase {
 
     void send(String user, String message) {
-        log.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
+        log.info("Sending email to {}: {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()))
     }
 }</code></pre>
 </div>
@@ -304,6 +306,7 @@ class EmailUseCase {
 
 import groovy.transform.CompileStatic
 import io.micronaut.scheduling.annotation.Scheduled
+
 import javax.inject.Singleton
 
 @CompileStatic
@@ -371,10 +374,11 @@ class DailyEmailJob {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import groovy.transform.CompileStatic
 import io.micronaut.context.event.ApplicationEventListener
 import io.micronaut.runtime.Micronaut
-import groovy.transform.CompileStatic
 import io.micronaut.runtime.server.event.ServerStartupEvent
+
 import javax.inject.Singleton
 
 @CompileStatic
@@ -390,7 +394,6 @@ class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; 
     static void main(String[] args) {
         Micronaut.run(Application.class)
     }
-
 
     @Override
     void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="4"></i><b>(4)</b>
@@ -467,6 +470,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.TaskScheduler
+
 import javax.inject.Named
 import javax.inject.Singleton
 import java.text.SimpleDateFormat
@@ -481,7 +485,7 @@ class RegisterUseCase {
     protected final EmailUseCase emailUseCase
 
     RegisterUseCase(EmailUseCase emailUseCase, <i class="conum" data-value="1"></i><b>(1)</b>
-                           @Named(TaskExecutors.SCHEDULED) TaskScheduler taskScheduler) { <i class="conum" data-value="2"></i><b>(2)</b>
+                    @Named(TaskExecutors.SCHEDULED) TaskScheduler taskScheduler) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.emailUseCase = emailUseCase
         this.taskScheduler = taskScheduler
     }
