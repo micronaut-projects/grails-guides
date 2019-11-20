@@ -90,7 +90,7 @@
         <h1>RabbitMQ and Micronaut - Event driven applications</h1>
         <p>Use RabbitMQ to communicate your Micronaut apps.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -271,7 +271,7 @@ public class BookController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a>
 annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
@@ -296,8 +296,11 @@ annotation mapped to the path <code>/books</code></td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class Book {
     private String isbn;
     private String name;
@@ -469,6 +472,9 @@ public class AnalyticsService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.analytics;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class BookAnalytics {
 
     private String bookIsbn;
@@ -646,10 +652,10 @@ BUILD SUCCESSFUL in 10s
 <div class="title">analytics/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: analytics
-    server:
-        port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  application:
+    name: analytics
+  server:
+    port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -767,7 +773,7 @@ $ curl http://localhost:8081/analytics
     ...
     ..
     .
-    compile 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
 }</code></pre>
 </div>
 </div>
@@ -974,7 +980,7 @@ public class AnalyticsFilter implements HttpServerFilter { <i class="conum" data
     ...
     ..
     .
-    compile 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
 }</code></pre>
 </div>
 </div>

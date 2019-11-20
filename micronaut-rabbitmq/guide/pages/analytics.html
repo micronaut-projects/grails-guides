@@ -160,6 +160,9 @@ public class AnalyticsService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.analytics;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class BookAnalytics {
 
     private String bookIsbn;
@@ -337,10 +340,10 @@ BUILD SUCCESSFUL in 10s
 <div class="title">analytics/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: analytics
-    server:
-        port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  application:
+    name: analytics
+  server:
+    port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

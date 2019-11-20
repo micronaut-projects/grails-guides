@@ -185,7 +185,7 @@ public class BookController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a>
 annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
@@ -210,8 +210,11 @@ annotation mapped to the path <code>/books</code></td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class Book {
     private String isbn;
     private String name;
@@ -383,6 +386,9 @@ public class AnalyticsService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.analytics;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class BookAnalytics {
 
     private String bookIsbn;
@@ -560,10 +566,10 @@ BUILD SUCCESSFUL in 10s
 <div class="title">analytics/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: analytics
-    server:
-        port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  application:
+    name: analytics
+  server:
+    port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
