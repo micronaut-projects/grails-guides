@@ -130,7 +130,7 @@ public class BooksController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -146,17 +146,21 @@ public class BooksController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class Book {
     private String isbn;
     private String name;
 
-    public Book() {}
+    public Book() {
+    }
 
     public Book(String isbn, String name) {
         this.isbn = isbn;
-        this.name =  name;
+        this.name = name;
     }
 
     public String getIsbn() {
@@ -186,7 +190,6 @@ public class Book {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(isbn, name);
     }
 }</code></pre>
@@ -200,47 +203,30 @@ public class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.RxStreamingHttpClient;
-import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class BooksControllerTest {
-    private static EmbeddedServer server;
-    private static HttpClient client;
 
-    @BeforeClass <i class="conum" data-value="1"></i><b>(1)</b>
-    public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class);
-        client = server
-                .getApplicationContext()
-                .createBean(HttpClient.class, server.getURL());
-    }
-
-    @AfterClass <i class="conum" data-value="1"></i><b>(1)</b>
-    public static void stopServer() {
-        if(server != null) {
-            server.stop();
-        }
-        if(client != null) {
-            client.stop();
-        }
-    }
+    @Inject
+    @Client("/")
+    HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void testRetrieveBooks() {
-        HttpRequest request = HttpRequest.GET("/books"); <i class="conum" data-value="2"></i><b>(2)</b>
-        List books = client.toBlocking().retrieve(request, Argument.of(List.class, Book.class)); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpRequest request = HttpRequest.GET("/books"); <i class="conum" data-value="3"></i><b>(3)</b>
+        List books = client.toBlocking().retrieve(request, Argument.of(List.class, Book.class));
         assertEquals(3, books.size());
         assertTrue(books.contains(new Book("1491950358", "Building Microservices")));
         assertTrue(books.contains(new Book("1680502395", "Release It!")));
@@ -252,14 +238,18 @@ public class BooksControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>For JUnit you can write methods to start and stop the server for the scope of the test</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>It is easy to create HTTP requests with a fluid API.</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Parse easily JSON into Java objects.</td>
 </tr>
 </table>
@@ -271,10 +261,10 @@ public class BooksControllerTest {
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -296,8 +286,8 @@ public class BooksControllerTest {
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

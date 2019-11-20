@@ -137,7 +137,7 @@ public interface BookCatalogueClient extends BookCatalogueOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -149,17 +149,21 @@ public interface BookCatalogueClient extends BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class Book {
     private String isbn;
     private String name;
 
-    public Book() {}
+    public Book() {
+    }
 
     public Book(String isbn, String name) {
         this.isbn = isbn;
-        this.name =  name;
+        this.name = name;
     }
 
     public String getIsbn() {
@@ -189,7 +193,6 @@ public class Book {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(isbn, name);
     }
 }</code></pre>
@@ -235,7 +238,7 @@ public interface BookInventoryClient extends BookInventoryOperations {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
 </tr>
 </table>
 </div>
@@ -263,7 +266,6 @@ public class BookController {
         this.bookInventoryOperations = bookInventoryOperations;
     }
 
-
     @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     public Flowable&lt;BookRecommendation&gt; index() {
         return bookCatalogueOperations.findAll()
@@ -279,7 +281,7 @@ public class BookController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -299,12 +301,16 @@ public class BookController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class BookRecommendation {
     private String name;
 
-    public BookRecommendation() {}
+    public BookRecommendation() {
+    }
 
     public BookRecommendation(String name) {
         this.name = name;
@@ -328,7 +334,6 @@ public class BookRecommendation {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(name);
     }
 }</code></pre>
@@ -338,7 +343,7 @@ public class BookRecommendation {
 <p><code>BookCatalogueClient</code> and <code>BookInventoryClient</code> will fail to consume the <code>bookcatalogue</code> and <code>bookinventory</code> during the tests phase.</p>
 </div>
 <div class="paragraph">
-<p>Using the <a href="https://docs.micronaut.io/snapshot/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
+<p>Using the <a href="https://docs.micronaut.io/latest/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
 </div>
 <div class="paragraph">
 <p>Create <code>@Fallback</code> alternatives in the <code>test</code> classpath.</p>
@@ -352,26 +357,47 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.retry.annotation.Fallback;
 import io.reactivex.Maybe;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
 
-@Requires(env = Environment.TEST)
+@Requires(env = Environment.TEST) <i class="conum" data-value="1"></i><b>(1)</b>
 @Fallback
 @Singleton
 public class BookInventoryClientStub implements BookInventoryOperations {
 
     @Override
     public Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
-        if(isbn.equals("1491950358")) {
+        if (isbn.equals("1491950358")) { <i class="conum" data-value="2"></i><b>(2)</b>
             return Maybe.just(Boolean.TRUE);
 
-        } else if(isbn.equals("1680502395")) {
+        } else if (isbn.equals("1680502395")) { <i class="conum" data-value="3"></i><b>(3)</b>
             return Maybe.just(Boolean.FALSE);
         }
-        return Maybe.empty();
+        return Maybe.empty(); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make this fallback class to be effective only when the micronaut environment <em>TEST</em> is active</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we arbitrarily decided that if everything else fails, that book&#8217;s <code>stock</code> would be true</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Similarly, we decided that other book&#8217;s <code>stock</code> method would be false</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Finally, any other book will have their <code>stock</code> method return an empty value</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">bookrecommendation/src/test/java/example/micronaut/bookrecommendation/BookCatalogueClientStub.java</div>
@@ -394,7 +420,8 @@ public class BookCatalogueClientStub implements BookCatalogueOperations {
     public Flowable&lt;Book&gt; findAll() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
         Book releaseIt = new Book("1680502395", "Release It!");
-        return Flowable.just(buildingMicroservices, releaseIt);    }
+        return Flowable.just(buildingMicroservices, releaseIt);
+    }
 }</code></pre>
 </div>
 </div>
@@ -406,55 +433,32 @@ public class BookCatalogueClientStub implements BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.RxStreamingHttpClient;
-import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.test.annotation.MicronautTest;
 import io.reactivex.Flowable;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import java.util.Collections;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MicronautTest
 public class BookControllerTest {
-    private static EmbeddedServer server;
-    private static RxStreamingHttpClient client;
 
-    @BeforeClass <i class="conum" data-value="1"></i><b>(1)</b>
-    public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class);
-        client = server
-                .getApplicationContext()
-                .createBean(RxStreamingHttpClient.class, server.getURL());
-    }
-
-    @AfterClass <i class="conum" data-value="1"></i><b>(1)</b>
-    public static void stopServer() {
-        if(server != null) {
-            server.stop();
-        }
-        if(client != null) {
-            client.stop();
-        }
-    }
+    @Inject
+    @Client("/")
+    RxStreamingHttpClient client;
 
     @Test
     public void testRetrieveBooks() throws Exception {
         Flowable&lt;BookRecommendation&gt; books = client.jsonStream(HttpRequest.GET("/books"), BookRecommendation.class);
-        assertEquals(books.toList().blockingGet().size(), 1);
-        assertEquals(books.toList().blockingGet().get(0).getName(), "Building Microservices");
+        assertEquals(1, books.toList().blockingGet().size());
+        assertEquals("Building Microservices", books.toList().blockingGet().get(0).getName());
     }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>For JUnit you can write methods to start and stop the server for the scope of the test</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>Edit <code>application.yml</code></p>
@@ -463,10 +467,10 @@ public class BookControllerTest {
 <div class="title">bookrecommendation/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -488,8 +492,8 @@ public class BookControllerTest {
 <div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
