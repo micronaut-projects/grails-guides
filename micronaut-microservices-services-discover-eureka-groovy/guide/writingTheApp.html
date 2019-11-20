@@ -256,7 +256,7 @@ class BooksControllerSpec extends Specification {
     void "it is possible to retrieve books"() {
         when:
         HttpRequest request = HttpRequest.GET("/books") <i class="conum" data-value="3"></i><b>(3)</b>
-        List books = client.toBlocking().retrieve(request, Argument.listOf(Book)) <i class="conum" data-value="3"></i><b>(3)</b>
+        List books = client.toBlocking().retrieve(request, Argument.listOf(Book)) <i class="conum" data-value="4"></i><b>(4)</b>
 
         then:
         books.size() == 3
