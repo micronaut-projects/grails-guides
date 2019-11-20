@@ -108,7 +108,7 @@ public class EmailUseCase {
     private static final Logger LOG = LoggerFactory.getLogger(EmailUseCase.class); <i class="conum" data-value="2"></i><b>(2)</b>
 
     void send(String user, String message) {
-        LOG.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Sending email to {}: {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 }</code></pre>
 </div>

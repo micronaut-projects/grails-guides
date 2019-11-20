@@ -112,8 +112,8 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -147,7 +147,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    &lt;logger name="example.micronaut" level="info" /&gt;
+    &lt;logger name="example.micronaut" level="info"/&gt;
 &lt;/configuration&gt;</code></pre>
 </div>
 </div>
@@ -187,12 +187,12 @@ public class HelloWorldJob {
 
     @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
     void executeEveryTen() {
-        LOG.info("Simple Job every 10 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Simple Job every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 
     @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
     void executeEveryFourtyFive() {
-        LOG.info("Simple Job every 45 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Simple Job every 45 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 }</code></pre>
 </div>
@@ -299,7 +299,7 @@ public class EmailUseCase {
     private static final Logger LOG = LoggerFactory.getLogger(EmailUseCase.class); <i class="conum" data-value="2"></i><b>(2)</b>
 
     void send(String user, String message) {
-        LOG.info("Sending email to {} : {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Sending email to {}: {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 }</code></pre>
 </div>

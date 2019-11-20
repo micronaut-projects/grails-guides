@@ -107,12 +107,12 @@ public class HelloWorldJob {
 
     @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
     void executeEveryTen() {
-        LOG.info("Simple Job every 10 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Simple Job every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 
     @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
     void executeEveryFourtyFive() {
-        LOG.info("Simple Job every 45 seconds :{}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        LOG.info("Simple Job every 45 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
     }
 }</code></pre>
 </div>
