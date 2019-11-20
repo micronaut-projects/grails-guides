@@ -86,7 +86,7 @@
         <h1>RabbitMQ RPC and Micronaut</h1>
         <p>Use RabbitMQ RPC to use request-reply pattern in your Micronaut applications.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -248,15 +248,6 @@ Micronaut HTTP client and Server.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous dependency uses Groovy&#8217;s string interpolation to resolve the  Micronaut version which is defined in <code>gradle.properties</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.1.0</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>By default Micronaut will connect to a RabbitMQ instance running on <code>localhost</code> so it is not necessary to add anything
 to <code>application.yml</code>. In case you want to change the configuration, add the following:</p>
 </div>
@@ -394,8 +385,11 @@ public class BookCatalogueService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class Book {
     private String isbn;
     private String name;
@@ -487,15 +481,6 @@ Micronaut HTTP client and Server.</p>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The previous dependency uses Groovy&#8217;s string interpolation to resolve the  Micronaut version which is defined in <code>gradle.properties</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.1.0</code></pre>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
 <div class="paragraph">
@@ -558,8 +543,11 @@ public class BookInventoryService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class BookInventory {
     private String isbn;
     private Integer stock;
@@ -639,15 +627,6 @@ REST request so it is not necessary to remove any dependency.</p>
     .
     compile "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The previous dependency uses Groovy&#8217;s string interpolation to resolve the  Micronaut version which is defined in <code>gradle.properties</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.1.0</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -817,8 +796,11 @@ public class BookController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class BookRecommendation {
     private String name;
 
@@ -906,7 +888,7 @@ public class BookRecommendation {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookinventory:run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew complete:bookinventory:run
 
 &gt; Task :bookinventory:run
 13:30:22.426 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 942ms. Server Running: 1 active message listeners.</code></pre>
@@ -917,7 +899,7 @@ public class BookRecommendation {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookcatalogue:run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew complete:bookcatalogue:run
 13:31:19.887 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1149ms. Server Running: 1 active message listeners.</code></pre>
 </div>
 </div>
@@ -926,7 +908,7 @@ public class BookRecommendation {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew bookrecommendation:run
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew complete:bookrecommendation:run
 13:32:06.045 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1259ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>

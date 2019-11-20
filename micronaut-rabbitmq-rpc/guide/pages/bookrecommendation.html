@@ -116,15 +116,6 @@ REST request so it is not necessary to remove any dependency.</p>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The previous dependency uses Groovy&#8217;s string interpolation to resolve the  Micronaut version which is defined in <code>gradle.properties</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.1.0</code></pre>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_create_rabbitmq_exchange_queue_and_binding">Create RabbitMQ exchange, queue and binding</h3>
 <div class="paragraph">
@@ -292,8 +283,11 @@ public class BookController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.Objects;
 
+@Introspected
 public class BookRecommendation {
     private String name;
 
