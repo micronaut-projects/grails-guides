@@ -115,8 +115,8 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -149,7 +149,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    compile "io.micronaut:micronaut-views"
+    implementation "io.micronaut:micronaut-views"
 }</code></pre>
 </div>
 </div>
@@ -215,7 +215,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.0.RC1</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.6</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -224,7 +224,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    compile "io.micronaut.configuration:micronaut-security-oauth2"
+    implementation "io.micronaut.configuration:micronaut-security-oauth2"
 }</code></pre>
 </div>
 </div>
@@ -238,7 +238,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
   ...
   ..
     annotationProcessor "io.micronaut:micronaut-security"
-    compile "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -270,7 +270,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
           secret:
             generator: <i class="conum" data-value="8"></i><b>(8)</b>
               secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b>
-endpoints:
+    endpoints:
       logout:
         enabled: true <i class="conum" data-value="10"></i><b>(10)</b>
         get-allowed: true <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
@@ -300,15 +300,15 @@ endpoints:
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>ID Token is a JWT token. We need to enable <a href="https://docs.micronaut.io/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
+<td>ID Token is a JWT token. We need to enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://docs.micronaut.io/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
+<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
+<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -316,7 +316,7 @@ endpoints:
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>Enable <a href="https://docs.micronaut.io/snapshot/guide/index.html#logout">Logout Controller</a></td>
+<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout#logout">Logout Controller</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
@@ -388,7 +388,7 @@ public class HomeController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -400,7 +400,7 @@ public class HomeController {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/</code> requests.</td>
+<td>The <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/</code> requests.</td>
 </tr>
 </table>
 </div>
@@ -437,7 +437,7 @@ public class HomeController {
 <div class="ulist">
 <ul>
 <li>
-<p>The <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a> injects into the model a <code>security</code> map with the authenticated user. See <a href="https://micronaut-projects.github.io/micronaut-views/snapshot/guide/index.html#views-security">User in a view</a> documentation.</p>
+<p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a> injects into the model a <code>security</code> map with the authenticated user. See <a href="https://micronaut-projects.github.io/micronaut-views/latest/guide/index.html#views-security">User in a view</a> documentation.</p>
 </li>
 </ul>
 </div>
