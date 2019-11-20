@@ -129,7 +129,7 @@ class BooksController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -166,27 +166,26 @@ class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookcatalogue
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 
-class BooksControllerSpec extends Specification {
-    @Shared
-    @AutoCleanup EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+import javax.inject.Inject
 
-    @Shared
-    @AutoCleanup
-    HttpClient client = HttpClient.create(embeddedServer.URL)
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class BooksControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     void "it is possible to retrieve books"() {
         when:
-        HttpRequest request = HttpRequest.GET("/books") <i class="conum" data-value="1"></i><b>(1)</b>
-        List books = client.toBlocking().retrieve(request, Argument.of(List, Book)) <i class="conum" data-value="2"></i><b>(2)</b>
+        HttpRequest request = HttpRequest.GET("/books") <i class="conum" data-value="3"></i><b>(3)</b>
+        List books = client.toBlocking().retrieve(request, Argument.listOf(Book)) <i class="conum" data-value="3"></i><b>(3)</b>
 
         then:
         books.size() == 3
@@ -200,10 +199,18 @@ class BooksControllerSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>It is easy to create HTTP requests with a fluid API.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Parse easily JSON into Groovy objects.</td>
 </tr>
 </table>
@@ -215,10 +222,10 @@ class BooksControllerSpec extends Specification {
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
-    server:
-        port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  application:
+    name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -240,8 +247,8 @@ class BooksControllerSpec extends Specification {
 <div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    server:
-        port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
