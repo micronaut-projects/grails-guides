@@ -99,13 +99,11 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
 
-import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Produces
 import io.micronaut.security.annotation.Secured
-import java.security.Principal
 import io.micronaut.views.View
+import java.security.Principal
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
@@ -162,7 +160,7 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
 import io.micronaut.views.View
-import java.util.HashMap
+import java.util.*
 
 @Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
