@@ -112,11 +112,11 @@ function addJsClass() {
 ...
 ..
 .
-    testCompile "org.gebish:geb-spock:2.1"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-support:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-api:3.6.0"
+    testImplementation "org.gebish:geb-spock:$gebVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
 }</code></pre>
 </div>
 </div>
@@ -124,6 +124,7 @@ function addJsClass() {
 <p>Create a Geb Configuration file to setup different environments:</p>
 </div>
 <div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -165,7 +166,7 @@ environments {
 <p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way.</p>
 </div>
 <div class="paragraph">
-<p>Create two pages:</p>
+<p>Create three pages:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
@@ -235,17 +236,32 @@ class LoginPage extends Page {
 }</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginFailedPage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class LoginFailedPage extends Page {
+
+    static at = { title == 'Login Failed' }
+
+    static url = '/login/authFailed'
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Create a test which verifies the user authentication flow.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/SessionAuthenticationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">class SessionAuthenticationSpec extends GebSpec {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class SessionAuthenticationSpec extends GebSpec {
 
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
     def "verify session based authentication works"() {
         given:
@@ -312,6 +328,18 @@ class LoginPage extends Page {
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+</table>
+</div>
 
 
 <h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
@@ -330,28 +358,19 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    }
-    dependencies {
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-    }
-}
-
-apply plugin:"com.energizedwork.webdriver-binaries"
-
-
-dependencies {
-...
-..
-.
+    id "com.github.erdi.webdriver-binaries" version "2.1"
 }
 
 webdriverBinaries {
-    chromedriver '2.40'
-    geckodriver '0.21.0'
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
 }
 
 tasks.withType(Test) {

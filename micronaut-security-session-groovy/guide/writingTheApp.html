@@ -115,14 +115,14 @@ function addJsClass() {
 <p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=groovy</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
 
@@ -145,7 +145,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-session"
+    implementation "io.micronaut:micronaut-security-session"
 }</code></pre>
 </div>
 </div>
@@ -164,12 +164,9 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <p>Create the next configuration file:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/application.yaml</div>
+<div class="title">src/main/resources/application.yaml[]</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-..
-..
-.
   security:
     enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
@@ -203,11 +200,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>After the user logs in, redirect him to the Home page.</td>
+<td>After the user logs in, redirect them to the Home page.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>If the login fails, redirect him to /login/authFailed</td>
+<td>If the login fails, redirect them to /login/authFailed</td>
 </tr>
 </table>
 </div>
@@ -238,15 +235,15 @@ import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
-import javax.inject.Singleton
 
+import javax.inject.Singleton
 
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     @Override
     Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+        if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, new ArrayList&lt;&gt;())
             return Flowable.just(userDetails) as Flowable&lt;AuthenticationResponse&gt;
         }
@@ -303,8 +300,8 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "io.micronaut:micronaut-views"
-    compile "org.apache.velocity:velocity-engine-core:2.0"
+    implementation "io.micronaut:micronaut-views"
+    implementation "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -406,8 +403,8 @@ class HomeController {
 
     @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
-    Map&lt;String, Object&gt;  index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
-        Map&lt;String, Object&gt; data = ["loggedIn": principal!=null]
+    Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
+        Map&lt;String, Object&gt; data = ["loggedIn": principal != null]
         if (principal) {
             data.username = principal.name
         }
@@ -450,7 +447,6 @@ class HomeController {
 <div class="title">src/main/groovy/example/micronaut/controllers/LoginAuthController.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.controllers
-
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
