@@ -90,7 +90,7 @@
         <h1>Micronaut JWT authentication via Cookies</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) based authentication where the JWT tokens are transported via Cookies.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -197,8 +197,8 @@ JWT tokens are transported and read via Cookies.</p>
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -229,7 +229,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -304,7 +304,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
+<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -343,11 +343,11 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
+        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
         }
         return Flowable.just(new AuthenticationFailed());
@@ -403,8 +403,8 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "io.micronaut:micronaut-views"
-    compile "org.apache.velocity:velocity-engine-core:2.0"
+    implementation "io.micronaut:micronaut-views"
+    implementation "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -510,8 +510,8 @@ public class HomeController {
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
     Map&lt;String, Object&gt; index(@Nullable Principal principal) {  <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();
-        data.put("loggedIn", principal!=null);
-        if (principal!=null) {
+        data.put("loggedIn", principal != null);
+        if (principal != null) {
             data.put("username", principal.getName());
         }
         return data;
@@ -617,7 +617,8 @@ public class LoginAuthController {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -626,8 +627,7 @@ public class LoginAuthController {
 <p>We need to modify <code>build.gradle</code>.</p>
 </div>
 <div class="paragraph">
-<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
-the necessary dependencies:</p>
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -635,8 +635,11 @@ the necessary dependencies:</p>
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
 }</code></pre>
 </div>
 </div>
@@ -666,11 +669,11 @@ sourceLanguage: java</code></pre>
 ...
 ..
 .
-    testCompile "org.gebish:geb-spock:2.1"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-support:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-api:3.6.0"
+    testImplementation "org.gebish:geb-spock:$gebVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
 }</code></pre>
 </div>
 </div>
@@ -795,11 +798,11 @@ class LoginPage extends Page {
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AuthenticationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">class AuthenticationSpec extends GebSpec {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthenticationSpec extends GebSpec {
 
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
     @IgnoreIf({ !sys['geb.env'] })
     def "verify session based authentication works"() {
@@ -861,6 +864,18 @@ class LoginPage extends Page {
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+</table>
+</div>
 
 
 <h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
@@ -879,28 +894,19 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    }
-    dependencies {
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-    }
-}
-
-apply plugin:"com.energizedwork.webdriver-binaries"
-
-
-dependencies {
-...
-..
-.
+    id "com.github.erdi.webdriver-binaries" version "2.1"
 }
 
 webdriverBinaries {
-    chromedriver '2.40'
-    geckodriver '0.21.0'
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
 }
 
 tasks.withType(Test) {
