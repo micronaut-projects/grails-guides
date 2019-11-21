@@ -200,7 +200,7 @@ Make sure to run the <code>cp</code> commands at the same directory level as the
 copyClientResources.doFirst { <i class="conum" data-value="2"></i><b>(2)</b>
     copy {
         from project(':client').buildDir.absolutePath
-        into "${project(':server').buildDir}/resources/main/public"
+        into "${project(':server').buildDir}/resources/public"
     }
 }
 

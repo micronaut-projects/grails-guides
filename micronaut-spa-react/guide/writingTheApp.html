@@ -402,7 +402,7 @@ Make sure to run the <code>cp</code> commands at the same directory level as the
 copyClientResources.doFirst { <i class="conum" data-value="2"></i><b>(2)</b>
     copy {
         from project(':client').buildDir.absolutePath
-        into "${project(':server').buildDir}/resources/main/public"
+        into "${project(':server').buildDir}/resources/public"
     }
 }
 
@@ -453,11 +453,10 @@ task check {
 <div class="listingblock">
 <div class="title">server/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
-micronaut:
-    server:
-        cors:
-            enabled: true</code></pre>
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
+  server:
+    cors:
+      enabled: true</code></pre>
 </div>
 </div>
 
@@ -477,14 +476,13 @@ micronaut:
 <div class="listingblock">
 <div class="title">server/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
-micronaut:
-    router:
-        static-resources:
-            default:
-                enabled: true   <i class="conum" data-value="1"></i><b>(1)</b>
-                mapping: "/**"  <i class="conum" data-value="2"></i><b>(2)</b>
-                paths: "classpath:public" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
+  router:
+    static-resources:
+      default:
+        enabled: true   <i class="conum" data-value="1"></i><b>(1)</b>
+        mapping: "/**"  <i class="conum" data-value="2"></i><b>(2)</b>
+        paths: "classpath:public" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
