@@ -118,8 +118,8 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -150,7 +150,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -192,11 +192,11 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
+<td>Enable Micronaut&#8217;s security capabilities.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose <code>/login</code> endpoint</td>
+<td>Expose <code>/login</code> endpoint.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -204,7 +204,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Enable JWT based authentication</td>
+<td>Enable JWT based authentication.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -212,7 +212,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS).</td>
 </tr>
 </table>
 </div>
@@ -247,12 +247,12 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
+        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
         }
         return Flowable.just(new AuthenticationFailed());
@@ -294,13 +294,14 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
+
 import java.security.Principal;
 
 @Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
         return principal.getName();
     }

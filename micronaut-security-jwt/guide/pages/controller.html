@@ -102,13 +102,14 @@ function addJsClass() {
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
+
 import java.security.Principal;
 
 @Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
         return principal.getName();
     }
