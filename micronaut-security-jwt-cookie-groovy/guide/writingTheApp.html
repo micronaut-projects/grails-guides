@@ -115,14 +115,14 @@ function addJsClass() {
 <p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=groovy</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=groovy</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features groovy</code> flag, it generates a Groovy Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
 
@@ -145,7 +145,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -167,9 +167,6 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: complete
-micronaut:
   security:
     enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
@@ -223,7 +220,7 @@ micronaut:
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
+<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -258,6 +255,7 @@ import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+
 import javax.inject.Singleton
 
 @CompileStatic
@@ -266,10 +264,10 @@ class AuthenticationProviderUserPassword implements AuthenticationProvider { <i 
 
     @Override
     Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.identity == "sherlock" &amp;&amp;
-                authenticationRequest.secret == "password") {
+        if (authenticationRequest.identity == "sherlock" &amp;&amp;
+            authenticationRequest.secret == "password") {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, [])
-            return Flowable.just(userDetails)  as Publisher&lt;AuthenticationResponse&gt;
+            return Flowable.just(userDetails) as Publisher&lt;AuthenticationResponse&gt;
         }
         Flowable.just(new AuthenticationFailed()) as Publisher&lt;AuthenticationResponse&gt;
     }
@@ -324,8 +322,8 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "io.micronaut:micronaut-views"
-    runtime "org.apache.velocity:velocity-engine-core:2.0"
+    implementation "io.micronaut:micronaut-views"
+    implementation "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
 </div>
@@ -413,7 +411,6 @@ going to produce HTML in our controllers.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
 
-
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -493,7 +490,7 @@ class LoginAuthController {
     }
 
     @Get("/authFailed") <i class="conum" data-value="5"></i><b>(5)</b>
-    @View("auth")  <i class="conum" data-value="4"></i><b>(4)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
     Map&lt;String, Object&gt; authFailed() {
         [errors: true] as Map&lt;String, Object&gt;
     }

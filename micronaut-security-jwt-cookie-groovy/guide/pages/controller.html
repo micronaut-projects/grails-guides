@@ -99,7 +99,6 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
 
-
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -179,7 +178,7 @@ class LoginAuthController {
     }
 
     @Get("/authFailed") <i class="conum" data-value="5"></i><b>(5)</b>
-    @View("auth")  <i class="conum" data-value="4"></i><b>(4)</b>
+    @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
     Map&lt;String, Object&gt; authFailed() {
         [errors: true] as Map&lt;String, Object&gt;
     }

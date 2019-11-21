@@ -107,6 +107,7 @@ import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+
 import javax.inject.Singleton
 
 @CompileStatic
@@ -115,10 +116,10 @@ class AuthenticationProviderUserPassword implements AuthenticationProvider { <i 
 
     @Override
     Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.identity == "sherlock" &amp;&amp;
-                authenticationRequest.secret == "password") {
+        if (authenticationRequest.identity == "sherlock" &amp;&amp;
+            authenticationRequest.secret == "password") {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, [])
-            return Flowable.just(userDetails)  as Publisher&lt;AuthenticationResponse&gt;
+            return Flowable.just(userDetails) as Publisher&lt;AuthenticationResponse&gt;
         }
         Flowable.just(new AuthenticationFailed()) as Publisher&lt;AuthenticationResponse&gt;
     }
