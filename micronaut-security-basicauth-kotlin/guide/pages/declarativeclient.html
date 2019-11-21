@@ -102,9 +102,9 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
+import io.micronaut.http.client.annotation.Client
 
 @Client("/")
 interface AppClient {
@@ -127,23 +127,23 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.util.Base64
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class BasicAuthClientSpec: Spek({
+class BasicAuthClientSpec : Spek({
     describe("Verify HTTP Basic Auth works") {
 
-        val embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        val embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
         it("Accessing a secured URL using a @Client which supplies basic auth in Authorization header") {
             val credsEncoded: String = Base64.getEncoder().encodeToString("sherlock:password".byteInputStream().readBytes())
 
             var exceptionThrown = false
             try {
                 val appClient: AppClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
-                val rsp : String = appClient.home("Basic $credsEncoded") <i class="conum" data-value="3"></i><b>(3)</b>
+                val rsp: String = appClient.home("Basic $credsEncoded") <i class="conum" data-value="3"></i><b>(3)</b>
                 assertEquals(rsp, "sherlock")
-            } catch(e: HttpClientResponseException) {  <i class="conum" data-value="4"></i><b>(4)</b>
+            } catch (e: HttpClientResponseException) {  <i class="conum" data-value="4"></i><b>(4)</b>
                 exceptionThrown = true
             }
             assertFalse(exceptionThrown)

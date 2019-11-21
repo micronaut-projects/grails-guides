@@ -112,14 +112,14 @@ function addJsClass() {
 <p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -188,7 +188,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security"
 }</code></pre>
 </div>
 </div>
@@ -248,21 +248,21 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
+import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
 import io.micronaut.security.authentication.AuthenticationResponse
-import org.reactivestreams.Publisher
-import io.micronaut.security.authentication.AuthenticationFailed
-import io.reactivex.Flowable
-import java.util.ArrayList
 import io.micronaut.security.authentication.UserDetails
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest!=null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
-            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+            if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
                 return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
             }
         }
@@ -315,7 +315,7 @@ class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     @Get("/")  <i class="conum" data-value="4"></i><b>(4)</b>
-    fun index(principal: Principal) : String {  <i class="conum" data-value="5"></i><b>(5)</b>
+    fun index(principal: Principal): String {  <i class="conum" data-value="5"></i><b>(5)</b>
         return principal.name
     }
 }</code></pre>
