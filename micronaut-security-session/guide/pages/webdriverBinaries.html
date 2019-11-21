@@ -98,28 +98,19 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    }
-    dependencies {
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-    }
-}
-
-apply plugin:"com.energizedwork.webdriver-binaries"
-
-
-dependencies {
-...
-..
-.
+    id "com.github.erdi.webdriver-binaries" version "2.1"
 }
 
 webdriverBinaries {
-    chromedriver '2.38'
-    geckodriver '0.20.1'
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
 }
 
 tasks.withType(Test) {

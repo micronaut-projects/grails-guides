@@ -90,7 +90,7 @@
         <h1>Session based authentication</h1>
         <p>Learn how to secure a Micronaut app using Session based authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -196,8 +196,8 @@
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -228,7 +228,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-session"
+    implementation "io.micronaut:micronaut-security-session"
 }</code></pre>
 </div>
 </div>
@@ -249,7 +249,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
     enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
@@ -322,11 +322,11 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
+        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password")) {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;());
             return Flowable.just(userDetails);
         }
@@ -383,7 +383,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "io.micronaut:micronaut-views"
+    implementation "io.micronaut:micronaut-views"
     runtime "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
@@ -474,7 +474,6 @@ going to produce HTML in our controllers.</p>
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.views.View;
 
@@ -487,12 +486,12 @@ import java.util.Map;
 @Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
-    Map&lt;String, Object&gt; index(@Nullable Principal principal) {  <i class="conum" data-value="5"></i><b>(5)</b>
+    Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();
-        data.put("loggedIn", principal!=null);
-        if (principal!=null) {
+        data.put("loggedIn", principal != null);
+        if (principal != null) {
             data.put("username", principal.getName());
         }
         return data;
@@ -600,7 +599,8 @@ public class LoginAuthController {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -609,8 +609,7 @@ public class LoginAuthController {
 <p>We need to modify <code>build.gradle</code>.</p>
 </div>
 <div class="paragraph">
-<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
-the necessary dependencies:</p>
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -618,8 +617,11 @@ the necessary dependencies:</p>
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
 }</code></pre>
 </div>
 </div>
@@ -649,11 +651,11 @@ sourceLanguage: java</code></pre>
 ...
 ..
 .
-    testCompile "org.gebish:geb-spock:2.1"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-support:3.6.0"
-    testCompile "org.seleniumhq.selenium:selenium-api:3.6.0"
+    testImplementation "org.gebish:geb-spock:$gebVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
 }</code></pre>
 </div>
 </div>
@@ -661,6 +663,7 @@ sourceLanguage: java</code></pre>
 <p>Create a Geb Configuration file to setup different environments:</p>
 </div>
 <div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -702,7 +705,7 @@ environments {
 <p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way.</p>
 </div>
 <div class="paragraph">
-<p>Create two pages:</p>
+<p>Create three pages:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
@@ -772,17 +775,32 @@ class LoginPage extends Page {
 }</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginFailedPage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class LoginFailedPage extends Page {
+
+    static at = { title == 'Login Failed' }
+
+    static url = '/login/authFailed'
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Create a test which verifies the user authentication flow.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/SessionAuthenticationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">class SessionAuthenticationSpec extends GebSpec {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class SessionAuthenticationSpec extends GebSpec {
 
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
     def "verify session based authentication works"() {
         given:
@@ -849,6 +867,18 @@ class LoginPage extends Page {
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+</table>
+</div>
 
 
 <h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
@@ -867,28 +897,19 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">buildscript {
-    repositories {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    }
-    dependencies {
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-    }
-}
-
-apply plugin:"com.energizedwork.webdriver-binaries"
-
-
-dependencies {
-...
-..
-.
+    id "com.github.erdi.webdriver-binaries" version "2.1"
 }
 
 webdriverBinaries {
-    chromedriver '2.38'
-    geckodriver '0.20.1'
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
 }
 
 tasks.withType(Test) {

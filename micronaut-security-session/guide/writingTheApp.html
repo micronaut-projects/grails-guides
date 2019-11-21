@@ -121,8 +121,8 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -153,7 +153,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-session"
+    implementation "io.micronaut:micronaut-security-session"
 }</code></pre>
 </div>
 </div>
@@ -174,7 +174,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
     enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
@@ -247,11 +247,11 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
+public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
+        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                authenticationRequest.getSecret().equals("password")) {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;());
             return Flowable.just(userDetails);
         }
@@ -308,7 +308,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    compile "io.micronaut:micronaut-views"
+    implementation "io.micronaut:micronaut-views"
     runtime "org.apache.velocity:velocity-engine-core:2.0"
 }</code></pre>
 </div>
@@ -399,7 +399,6 @@ going to produce HTML in our controllers.</p>
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.views.View;
 
@@ -412,12 +411,12 @@ import java.util.Map;
 @Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
-    Map&lt;String, Object&gt; index(@Nullable Principal principal) {  <i class="conum" data-value="5"></i><b>(5)</b>
+    Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();
-        data.put("loggedIn", principal!=null);
-        if (principal!=null) {
+        data.put("loggedIn", principal != null);
+        if (principal != null) {
             data.put("username", principal.getName());
         }
         return data;
