@@ -90,7 +90,7 @@
         <h1>Micronaut JWT Authentication</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -193,14 +193,14 @@
 <p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --features=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command createas a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--features kotlin</code> flag, it generates a Kotlin Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -269,7 +269,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
 </div>
@@ -327,7 +327,7 @@ other build tool such as <code>Maven</code> or other programming languages such 
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
+<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
@@ -354,21 +354,21 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
+import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
 import io.micronaut.security.authentication.AuthenticationResponse
-import org.reactivestreams.Publisher
-import io.micronaut.security.authentication.AuthenticationFailed
-import io.reactivex.Flowable
-import java.util.ArrayList
 import io.micronaut.security.authentication.UserDetails
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
     override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest!=null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
-            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+            if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
                 return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
             }
         }
@@ -421,7 +421,7 @@ class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     @Get("/")  <i class="conum" data-value="4"></i><b>(4)</b>
-    fun index(principal: Principal) : String {  <i class="conum" data-value="5"></i><b>(5)</b>
+    fun index(principal: Principal): String {  <i class="conum" data-value="5"></i><b>(5)</b>
         return principal.name
     }
 }</code></pre>
@@ -468,33 +468,27 @@ class HomeController {
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.1.0
-kotlinVersion=1.2.61
-spekVersion=2.0.0-alpha.1
-junitVersion=5.1.0</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
+kotlinVersion=1.3.50
+spekVersion=2.0.8</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">bookcatalogue/build.gradle</div>
+<div class="title">complete/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
-...
-..
-    maven { url "https://dl.bintray.com/spekframework/spek-dev" }
-}
-dependencies {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
     ...
     ..
     .
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
-    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
-}
-
-test {
-    useJUnitPlatform {
-        includeEngines 'spek2'
+    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
+        exclude group: 'org.jetbrains.kotlin'
     }
+    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
+        exclude group: 'org.junit.platform'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 }</code></pre>
 </div>
 </div>
@@ -524,17 +518,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class BasicAuthSpec: Spek({
+class BasicAuthSpec : Spek({
     describe("Verify JWT authentication works") {
 
-        var embeddedServer : EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client : RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
         it("Accessing a secured URL without authenticating") {
             var exceptionThrown = false
             try {
                 val request = HttpRequest.GET&lt;Any&gt;("/")
                 client.toBlocking().exchange(request, String::class.java)
-            } catch(e: HttpClientResponseException) {  <i class="conum" data-value="3"></i><b>(3)</b>
+            } catch (e: HttpClientResponseException) {  <i class="conum" data-value="3"></i><b>(3)</b>
                 exceptionThrown = true
             }
             assertTrue(exceptionThrown)
@@ -543,7 +537,7 @@ class BasicAuthSpec: Spek({
             val creds = UsernamePasswordCredentials("sherlock", "password")
             val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
 
-            val rsp : HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
+            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
                     BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
 
             assertEquals(rsp.status()!!, HttpStatus.OK)
@@ -552,9 +546,9 @@ class BasicAuthSpec: Spek({
             assertNotNull(rsp.body()!!.refreshToken)
             assertNotNull(JWTParser.parse(rsp.body()!!.refreshToken) is SignedJWT)
 
-            val accessToken : String = rsp.body()!!.accessToken
-            val requestWithAuthorization = HttpRequest.GET&lt;Any&gt;("/" ).header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken") <i class="conum" data-value="6"></i><b>(6)</b>
-            val response : HttpResponse&lt;String&gt;  = client.toBlocking().exchange(requestWithAuthorization, String::class.java)
+            val accessToken: String = rsp.body()!!.accessToken
+            val requestWithAuthorization = HttpRequest.GET&lt;Any&gt;("/").header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken") <i class="conum" data-value="6"></i><b>(6)</b>
+            val response: HttpResponse&lt;String&gt; = client.toBlocking().exchange(requestWithAuthorization, String::class.java)
 
             assertEquals(response.status()!!, HttpStatus.OK)
             assertTrue(response.body()!! == "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
@@ -636,7 +630,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class OauthAccessTokenSpec: Spek({
+class OauthAccessTokenSpec : Spek({
     describe("Verify JWT access token refresh works") {
 
         var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
@@ -653,7 +647,7 @@ class OauthAccessTokenSpec: Spek({
 
             val refreshToken: String = rsp.body()!!.refreshToken
             val accessToken: String = rsp.body()!!.accessToken
-             sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
+            sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
             val refreshTokenRequest: HttpRequest&lt;TokenRefreshRequest&gt; = HttpRequest.POST("/oauth/access_token",
                     TokenRefreshRequest("refresh_token", refreshToken)) <i class="conum" data-value="1"></i><b>(1)</b>
             val response: HttpResponse&lt;AccessRefreshToken&gt; = client.toBlocking().exchange(refreshTokenRequest, AccessRefreshToken::class.java)
@@ -743,19 +737,19 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class DeclarativeHttpClientWithJwtSpec: Spek({
+class DeclarativeHttpClientWithJwtSpec : Spek({
     describe("Verify JWT authentication works with declarative @Client") {
 
         var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
         var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
 
-        var appClient : AppClient? = null
+        var appClient: AppClient? = null
         it("AppClient Bean can be retrieved from Application context") {
             var exceptionThrown = false
             try {
                 appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            } catch(e: HttpClientResponseException) {
+            } catch (e: HttpClientResponseException) {
                 exceptionThrown = true
             }
             assertFalse(exceptionThrown)
@@ -765,7 +759,7 @@ class DeclarativeHttpClientWithJwtSpec: Spek({
             try {
                 val request = HttpRequest.GET&lt;Any&gt;("/")
                 client.toBlocking().exchange(request, String::class.java)
-            } catch(e: HttpClientResponseException) {
+            } catch (e: HttpClientResponseException) {
                 exceptionThrown = true
             }
             assertTrue(exceptionThrown)
