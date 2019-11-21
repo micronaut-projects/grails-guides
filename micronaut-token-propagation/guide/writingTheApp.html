@@ -123,6 +123,16 @@ function addJsClass() {
 <p><code>mn create-app example.micronaut.gateway</code></p>
 </div>
 <div class="paragraph">
+<p>Add the security-jwt module to the configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>To keep this guide simple, create a naive AuthenticationProvider to simulate user’s authentication.</p>
 </div>
 <div class="listingblock">
@@ -146,8 +156,8 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if ( (authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
+        if ((authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
+                authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
         }
         return Flowable.just(new AuthenticationFailed());
@@ -297,29 +307,29 @@ public interface UserEchoClient extends UsernameFetcher {
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: gateway
-    server:
-        port: 8080 <i class="conum" data-value="1"></i><b>(1)</b>
-    security:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-        endpoints:
-            login:
-                enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
-            oauth:
-                enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-        token:
-            jwt:
-                enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
-                signatures:
-                    secret:
-                        generator: <i class="conum" data-value="6"></i><b>(6)</b>
-                            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="7"></i><b>(7)</b>
-    http:
-        services:
-            userecho: <i class="conum" data-value="8"></i><b>(8)</b>
-                urls:
-                - "http://localhost:8081" <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+  application:
+    name: gateway
+  server:
+    port: 8080 <i class="conum" data-value="1"></i><b>(1)</b>
+  security:
+    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+      oauth:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="6"></i><b>(6)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="7"></i><b>(7)</b>
+  http:
+    services:
+      userecho: <i class="conum" data-value="8"></i><b>(8)</b>
+        urls:
+          - "http://localhost:8081" <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -398,54 +408,35 @@ public class UserEchoClientReplacement implements UsernameFetcher {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import javax.inject.Inject;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class UserControllerTest {
-    private static EmbeddedServer server;
-    private static HttpClient client;
 
-    @BeforeClass
-    public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
-        client = server
-                .getApplicationContext()
-                .createBean(HttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        if (server != null) {
-            server.stop();
-        }
-        if (client != null) {
-            client.stop();
-        }
-    }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    @Inject
+    @Client("/")
+    RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void testUserEndpointIsSecured() { <i class="conum" data-value="3"></i><b>(3)</b>
-        thrown.expect(HttpClientResponseException.class);
-        thrown.expect(hasProperty("response", hasProperty("status", is(HttpStatus.UNAUTHORIZED))));
-        client.toBlocking().exchange(HttpRequest.GET("/user"));
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -&gt; {
+            client.toBlocking().exchange(HttpRequest.GET("/user"));
+        });
+
+        assertEquals(HttpStatus.UNAUTHORIZED, thrown.getResponse().getStatus());
     }
 
     @Test
@@ -467,11 +458,11 @@ public class UserControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>RxHttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -496,6 +487,16 @@ public class UserControllerTest {
 </div>
 <div class="paragraph">
 <p><code>mn create-app example.micronaut.userecho</code></p>
+</div>
+<div class="paragraph">
+<p>Add the security-jwt module to the configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Create a class <code>UserController</code> which exposes <code>/user</code> endpoint.</p>
@@ -556,19 +557,19 @@ public class UserController {
 <div class="title">userecho/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: userecho
-    server:
-        port: 8081 <i class="conum" data-value="1"></i><b>(1)</b>
-    security:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-        token:
-            jwt:
-                enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
-                signatures:
-                    secret: <i class="conum" data-value="4"></i><b>(4)</b>
-                        validation:
-                            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+  application:
+    name: userecho
+  server:
+    port: 8081 <i class="conum" data-value="1"></i><b>(1)</b>
+  security:
+    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        signatures:
+          secret: <i class="conum" data-value="4"></i><b>(4)</b>
+            validation:
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -619,17 +620,17 @@ includes a feature called token propagation. We can tell our app to propagate th
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    security:
-        token:
+  security:
+    token:
     ...
     ..
     ..
-            writer:
-                header:
-                    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-            propagation:
-                enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-                service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
+      writer:
+        header:
+          enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+      propagation:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+        service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
 ....
 ..</code></pre>
 </div>
@@ -638,7 +639,7 @@ includes a feature called token propagation. We can tell our app to propagate th
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Micronaut ships with several <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
+<td>Micronaut ships with several <a href="https://docs.micronaut.io/latest/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -736,7 +737,6 @@ public interface UserEchoClient extends UsernameFetcher {
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-import io.micronaut.http.annotation.Header;
 import io.reactivex.Single;
 
 import javax.inject.Singleton;

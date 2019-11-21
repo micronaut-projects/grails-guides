@@ -101,17 +101,17 @@ includes a feature called token propagation. We can tell our app to propagate th
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    security:
-        token:
+  security:
+    token:
     ...
     ..
     ..
-            writer:
-                header:
-                    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-            propagation:
-                enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-                service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
+      writer:
+        header:
+          enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+      propagation:
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+        service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
 ....
 ..</code></pre>
 </div>
@@ -120,7 +120,7 @@ includes a feature called token propagation. We can tell our app to propagate th
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Micronaut ships with several <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
+<td>Micronaut ships with several <a href="https://docs.micronaut.io/latest/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -218,7 +218,6 @@ public interface UserEchoClient extends UsernameFetcher {
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-import io.micronaut.http.annotation.Header;
 import io.reactivex.Single;
 
 import javax.inject.Singleton;

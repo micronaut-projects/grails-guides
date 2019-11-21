@@ -95,6 +95,16 @@ function addJsClass() {
 <p><code>mn create-app example.micronaut.userecho</code></p>
 </div>
 <div class="paragraph">
+<p>Add the security-jwt module to the configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Create a class <code>UserController</code> which exposes <code>/user</code> endpoint.</p>
 </div>
 <div class="listingblock">
@@ -153,19 +163,19 @@ public class UserController {
 <div class="title">userecho/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-    application:
-        name: userecho
-    server:
-        port: 8081 <i class="conum" data-value="1"></i><b>(1)</b>
-    security:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-        token:
-            jwt:
-                enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
-                signatures:
-                    secret: <i class="conum" data-value="4"></i><b>(4)</b>
-                        validation:
-                            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+  application:
+    name: userecho
+  server:
+    port: 8081 <i class="conum" data-value="1"></i><b>(1)</b>
+  security:
+    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        signatures:
+          secret: <i class="conum" data-value="4"></i><b>(4)</b>
+            validation:
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
