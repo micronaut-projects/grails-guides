@@ -53,7 +53,7 @@ include::{sourceDir}/../completegraal/src/main/resources/META-INF/native-image/n
 - The `-H:Class` argument specifies the entry point of your application (the class that defines a static void main method.
 
 
-The easiest way to install GraalVM you can use https://sdkman.io[SDKMan.io].
+The easiest way to install GraalVM is to use https://sdkman.io[SDKMan.io].
 
 [source,bash]
 ----
