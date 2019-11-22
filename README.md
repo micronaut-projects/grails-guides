@@ -111,3 +111,71 @@ See https://docs.travis-ci.com/user/environment-variables/ for more details on e
 The Travis CI will begin building your guide upon the next push to the repo. You can view the status of your guide at: https://travis-ci.org/micronaut-guides/[your-guide].
 
 If the build is sucessful the Guide will be published to http://guides.micronaut.io/my-new-guide 
+
+
+## How to add GraalVM section to any guide
+
+Add a section to `src/main/docs/guide/toc.yml`
+
+```yaml
+...
+graal:
+  title: Generating a Native Image with GraalVM
+```  
+
+Create a file `src/main/docs/guide/graal.adoc`
+
+```asciidoc
+include::{commondir}/common-graal.adoc[]
+```  
+
+Copy your `complete` folder to `completegraal`.
+
+Add the file `completegraal/Dockerfile`
+
+```
+FROM oracle/graalvm-ce:19.2.1 as graalvm
+COPY . /home/app/micronautguide
+WORKDIR /home/app/micronautguide
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/completegraal-0.1-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/micronautguide .
+ENTRYPOINT ["./micronautguide"]
+```
+
+Add the file `completegraal/docker-build.sh`
+
+```
+#!/bin/sh
+docker build . -t micronautguide
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 micronautguide"
+```
+
+Add the file `completegraal/src/main/resources/META-INF/native-image/native-image.properties`
+
+```
+Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=micronautguide \
+       -H:Class=example.micronaut.Application
+```
+
+Add these dependencies with assidoc comments to `completegraal/build.gradle`
+
+```groovy
+
+dependendencies {
+...
+    //tag::micronaut-graal[]
+    annotationProcessor "io.micronaut:micronaut-graal"
+    //end::micronaut-graal[]
+    //tag::substratevm[]
+    compileOnly "com.oracle.substratevm:svm"
+    //end::substratevm[]
+}
+```
