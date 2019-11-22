@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>6</strong><span>Generating a Native Image with GraalVM</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -100,7 +103,8 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a> or <a href="https://spekframework.org">Spek</a>.</p>
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
@@ -109,8 +113,7 @@ function addJsClass() {
 <p>We need to modify <code>build.gradle</code>.</p>
 </div>
 <div class="paragraph">
-<p>Replace <code>apply plugin: 'java'</code> with <code>apply plugin: 'groovy'</code> and add
-the necessary dependencies:</p>
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -118,8 +121,12 @@ the necessary dependencies:</p>
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
 ...
 ..
-    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut.test:micronaut-test-spock"
 }</code></pre>
 </div>
 </div>
@@ -182,7 +189,6 @@ class BasicAuthSpec extends Specification {
         rsp.status == HttpStatus.OK
         rsp.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
     }
-}
 }</code></pre>
 </div>
 </div>
@@ -265,13 +271,6 @@ public interface AppClient {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.http.HttpHeaders
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.MutableHttpMessage
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
 import spock.lang.Shared

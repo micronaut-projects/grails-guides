@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>6</strong><span>Generating a Native Image with GraalVM</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -118,8 +121,8 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>create-app</code> generates a Java Micronaut app and it uses <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tool such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -150,7 +153,8 @@ other build tool such as <code>Maven</code> or other programming languages such 
 ...
 ..
 .
-    compile "io.micronaut:micronaut-security"
+    annotationProcessor "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security"
 }</code></pre>
 </div>
 </div>
@@ -206,9 +210,9 @@ other build tool such as <code>Maven</code> or other programming languages such 
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
+<div class="title">src/main/java/example/micronaut/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
@@ -262,12 +266,14 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/controllers/HomeController.java</div>
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import java.security.Principal;
 
@@ -275,6 +281,7 @@ import java.security.Principal;
 @Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
+    @Produces(MediaType.TEXT_PLAIN)
     @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
     String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
         return principal.getName();

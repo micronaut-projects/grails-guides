@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>6</strong><span>Generating a Native Image with GraalVM</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -95,9 +98,9 @@ function addJsClass() {
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
+<div class="title">src/main/java/example/micronaut/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
