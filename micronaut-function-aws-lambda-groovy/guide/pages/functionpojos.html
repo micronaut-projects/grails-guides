@@ -117,8 +117,10 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
+@Introspected
 class VatValidationRequest implements Serializable {
     String memberStateCode
     String vatNumber
@@ -143,8 +145,10 @@ class VatValidationRequest implements Serializable {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
+@Introspected
 class VatValidation extends VatValidationRequest implements Serializable {
     Boolean valid
 }</code></pre>

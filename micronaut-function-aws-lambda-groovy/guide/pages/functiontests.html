@@ -163,33 +163,25 @@ interface ViesVatValidatorClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class ViesVatValidatorFunctionSpec extends Specification {
+
+    @Inject
+    ViesVatValidatorClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Unroll("#code #vatNumber is #description")
     void testViesVatValidatorFunction(String code, String vatNumber, boolean expected, String description) throws Exception {
-        given:
-        EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class)
-
-        when:
-        ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class)
-
-        then:
-        noExceptionThrown()
-
         when:
         VatValidationRequest req = new VatValidationRequest(memberStateCode: code, vatNumber: vatNumber)
 
         then:
         expected == client.apply(req).blockingGet().valid
-
-        cleanup:
-        server.stop()
-        server.close()
 
         where:
         code | vatNumber   | expected
@@ -198,7 +190,6 @@ class ViesVatValidatorFunctionSpec extends Specification {
         "es" | "XXXXXXXXX" | false
 
         description = expected ? 'is valid' : 'is invalid'
-
     }
 }</code></pre>
 </div>

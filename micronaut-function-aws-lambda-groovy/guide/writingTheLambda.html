@@ -153,8 +153,10 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
+@Introspected
 class VatValidationRequest implements Serializable {
     String memberStateCode
     String vatNumber
@@ -179,8 +181,10 @@ class VatValidationRequest implements Serializable {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
+@Introspected
 class VatValidation extends VatValidationRequest implements Serializable {
     Boolean valid
 }</code></pre>
@@ -223,7 +227,7 @@ the SOAP envelope manually.</p>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut:micronaut-http-client"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-http-client"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -366,15 +370,17 @@ and JSON Payload response.</td>
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
 
     &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;withJansi&gt;true&lt;/withJansi&gt;
         &lt;!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
         &lt;encoder&gt;
-            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+            &lt;pattern&gt;%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
+            &lt;/pattern&gt;
         &lt;/encoder&gt;
     &lt;/appender&gt;
 
     &lt;root level="info"&gt;
-        &lt;appender-ref ref="STDOUT" /&gt;
+        &lt;appender-ref ref="STDOUT"/&gt;
     &lt;/root&gt;
     &lt;logger name="example.micronaut" level="DEBUG"/&gt;
 &lt;/configuration&gt;</code></pre>
@@ -454,33 +460,25 @@ interface ViesVatValidatorClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class ViesVatValidatorFunctionSpec extends Specification {
+
+    @Inject
+    ViesVatValidatorClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Unroll("#code #vatNumber is #description")
     void testViesVatValidatorFunction(String code, String vatNumber, boolean expected, String description) throws Exception {
-        given:
-        EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class)
-
-        when:
-        ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class)
-
-        then:
-        noExceptionThrown()
-
         when:
         VatValidationRequest req = new VatValidationRequest(memberStateCode: code, vatNumber: vatNumber)
 
         then:
         expected == client.apply(req).blockingGet().valid
-
-        cleanup:
-        server.stop()
-        server.close()
 
         where:
         code | vatNumber   | expected
@@ -489,7 +487,6 @@ class ViesVatValidatorFunctionSpec extends Specification {
         "es" | "XXXXXXXXX" | false
 
         description = expected ? 'is valid' : 'is invalid'
-
     }
 }</code></pre>
 </div>

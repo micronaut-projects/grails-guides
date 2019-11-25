@@ -101,18 +101,20 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
 <p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
-<div class="title">invoice/build.gradle</div>
+<div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -125,14 +127,12 @@ import io.micronaut.context.annotation.Value
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.validation.Validated
 import io.reactivex.Single
 
 import javax.validation.Valid
 
 @CompileStatic
-@Validated <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/invoice") <i class="conum" data-value="2"></i><b>(2)</b>
+@Controller("/invoice") <i class="conum" data-value="1"></i><b>(1)</b>
 class InvoiceController {
 
     private final BigDecimal vatPercentage
@@ -141,17 +141,17 @@ class InvoiceController {
 
     private final int scale
 
-    InvoiceController(@Value('${vat.percentage}') BigDecimal vatPercentage, <i class="conum" data-value="3"></i><b>(3)</b>
+    InvoiceController(@Value('${vat.percentage}') BigDecimal vatPercentage, <i class="conum" data-value="2"></i><b>(2)</b>
                       @Value('${vat.scale}') int scale,
-                      VatValidator vatValidator) { <i class="conum" data-value="4"></i><b>(4)</b>
+                      VatValidator vatValidator) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.vatPercentage = vatPercentage
         this.scale = scale
         this.vatValidator = vatValidator
     }
 
-    @Post("/vat") <i class="conum" data-value="5"></i><b>(5)</b>
-    Single&lt;Taxes&gt; calculateVat(@Valid @Body Invoice invoice) {  <i class="conum" data-value="6"></i><b>(6)</b>
-        vatValidator.validateVat(new VatValidationRequest(memberStateCode: invoice.countryCode, vatNumber: invoice.vatNumber)) <i class="conum" data-value="7"></i><b>(7)</b>
+    @Post("/vat") <i class="conum" data-value="4"></i><b>(4)</b>
+    Single&lt;Taxes&gt; calculateVat(@Valid @Body Invoice invoice) {  <i class="conum" data-value="5"></i><b>(5)</b>
+        vatValidator.validateVat(new VatValidationRequest(memberStateCode: invoice.countryCode, vatNumber: invoice.vatNumber)) <i class="conum" data-value="6"></i><b>(6)</b>
                 .map { VatValidation vatValidation -&gt;
                     BigDecimal percentage = vatValidation.valid ? vatPercentage : new BigDecimal("0")
                     new Taxes(vat: invoice.lines.stream()
@@ -168,30 +168,26 @@ class InvoiceController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/invoice</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Constructor injection of a configuration property.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Constructor injection of a bean.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>The <code>@Post</code> annotation is used to map the <code>calculateVat</code> method to all requests to <code>/invoice/vat</code> that use an HTTP POST.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the invoice.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>This invokes the function in AWS Lambda.</td>
 </tr>
 </table>

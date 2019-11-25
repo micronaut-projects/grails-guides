@@ -115,6 +115,7 @@ import groovy.transform.CompileStatic
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.reactivex.Single
+
 import javax.inject.Singleton
 
 @CompileStatic
@@ -126,8 +127,8 @@ class VatValidatorMock implements VatValidator {
     Single&lt;VatValidation&gt; validateVat(VatValidationRequest request) {
         List&lt;String&gt; validVatNumbers = Collections.singletonList("B84965375")
         Single.just(new VatValidation(memberStateCode: request.memberStateCode,
-                vatNumber: request.vatNumber,
-                valid: validVatNumbers.contains(request.vatNumber)))
+                                      vatNumber: request.vatNumber,
+                                      valid: validVatNumbers.contains(request.vatNumber)))
     }
 }</code></pre>
 </div>
@@ -140,32 +141,32 @@ class VatValidatorMock implements VatValidator {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class InvoiceControllerSpec extends Specification {
 
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Inject
+    @Client("/")
+    RxHttpClient rxHttpClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Shared
-    @AutoCleanup
-    RxHttpClient rxHttpClient = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    EmbeddedServer server <i class="conum" data-value="3"></i><b>(3)</b>
 
-    void "test BooksController"() {
-
+    void "test InvoiceController"() {
         when:
-        VatValidator bean = embeddedServer.getApplicationContext().getBean(VatValidator.class)
+        VatValidator bean = server.getApplicationContext().getBean(VatValidator.class)
 
         then:
         noExceptionThrown()
-        bean instanceof VatValidatorMock <i class="conum" data-value="3"></i><b>(3)</b>
+        bean instanceof VatValidatorMock <i class="conum" data-value="4"></i><b>(4)</b>
 
         when:
         Invoice invoice = new Invoice(vatNumber: "B84965375", countryCode: "es", lines: [
@@ -194,14 +195,18 @@ class InvoiceControllerSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>RxHttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Verify the bean for interface <code>VatValidator</code> is <code>VatValidatorMock</code>.</td>
 </tr>
 </table>
