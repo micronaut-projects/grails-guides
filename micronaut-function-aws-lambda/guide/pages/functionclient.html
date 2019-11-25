@@ -128,9 +128,11 @@ public interface VatValidator {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.io.Serializable;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
+@Introspected
 public class VatValidationRequest implements Serializable {
     private String memberStateCode;
     private String vatNumber;
@@ -166,9 +168,11 @@ public class VatValidationRequest implements Serializable {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.io.Serializable;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
+@Introspected
 public class VatValidation extends VatValidationRequest implements Serializable {
 
     private Boolean valid;
@@ -202,8 +206,8 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="listingblock">
 <div class="title">invoice/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-function-client"
-    runtime 'com.amazonaws:aws-java-sdk-lambda:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-function-client"
+runtime 'com.amazonaws:aws-java-sdk-lambda:1.11.285'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -213,12 +217,12 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="title">invoice/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">aws:
-    lambda:
-        functions:
-            vat:
-                functionName: vies-vat-validator
-                qualifer: vat
-        region: eu-west-3 # Paris Region</code></pre>
+  lambda:
+    functions:
+      vat:
+        functionName: vies-vat-validator
+        qualifer: vat
+    region: eu-west-3 # Paris Region</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -228,11 +232,11 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="title">invoice/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">vat:
-    percentage: 0.21
-    scale: 2
-    retry:
-        attempts: 5
-        delay: 5s</code></pre>
+  percentage: 0.21
+  scale: 2
+  retry:
+    attempts: 5
+    delay: 5s</code></pre>
 </div>
 </div>
 <div class="paragraph">

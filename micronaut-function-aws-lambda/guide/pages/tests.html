@@ -146,49 +146,36 @@ public class VatValidatorMock implements VatValidator {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class InvoiceControllerTest {
 
-    private static EmbeddedServer server;
-    private static RxHttpClient rxHttpClient;
+    @Inject
+    @Client("/")
+    RxHttpClient rxHttpClient; <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @BeforeClass
-    public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
-        rxHttpClient = server
-                .getApplicationContext()
-                .createBean(RxHttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        if (server != null) {
-            server.stop();
-        }
-        if (rxHttpClient != null) {
-            rxHttpClient.stop();
-        }
-    }
+    @Inject
+    EmbeddedServer server; <i class="conum" data-value="3"></i><b>(3)</b>
 
     @Test
-    public void testBooksController() {
+    public void testInvoiceController() {
 
         VatValidator bean = server.getApplicationContext().getBean(VatValidator.class);
-        assertTrue(bean instanceof VatValidatorMock); <i class="conum" data-value="3"></i><b>(3)</b>
+        assertTrue(bean instanceof VatValidatorMock); <i class="conum" data-value="4"></i><b>(4)</b>
 
         List&lt;InvoiceLine&gt; lines = new ArrayList&lt;InvoiceLine&gt;();
         lines.add(new InvoiceLine("1491950358", 2, new BigDecimal(19.99)));
@@ -198,7 +185,6 @@ public class InvoiceControllerTest {
         Taxes rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
         BigDecimal expected = new BigDecimal("11.55");
         assertEquals(expected, rsp.getVat());
-
 
         invoice.setVatNumber("B99999999");
         rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
@@ -212,14 +198,18 @@ public class InvoiceControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>RxHttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Verify the bean for interface <code>VatValidator</code> is <code>VatValidatorMock</code>.</td>
 </tr>
 </table>

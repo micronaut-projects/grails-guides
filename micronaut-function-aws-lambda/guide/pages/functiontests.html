@@ -109,8 +109,8 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testRuntime "io.micronaut:micronaut-http-server-netty"
-    testRuntime "io.micronaut:micronaut-function-web"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testRuntime "io.micronaut:micronaut-http-server-netty"
+testRuntime "io.micronaut:micronaut-function-web"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -151,33 +151,45 @@ public interface ViesVatValidatorClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.Test;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import javax.inject.Inject;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class ViesVatValidatorFunctionTest {
+
+    @Inject
+    ViesVatValidatorClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void testViesVatValidatorFunction() throws Exception {
-        EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class);
-
-        ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class);
-
         VatValidationRequest req = new VatValidationRequest("es", "B99286353");
         assertTrue(client.apply(req).blockingGet().isValid());
+
         req = new VatValidationRequest("es", "B19280031");
         assertTrue(client.apply(req).blockingGet().isValid());
+
         req = new VatValidationRequest("es", "XXXXXXXXX");
         assertFalse(client.apply(req).blockingGet().isValid());
-
-        server.stop();
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>ViesVatValidatorClient</code> bean in the application context.</td>
+</tr>
+</table>
 </div>
 
 

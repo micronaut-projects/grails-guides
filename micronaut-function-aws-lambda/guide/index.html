@@ -104,7 +104,7 @@
         <h1>Micronaut Functions deployed in AWS Lambda</h1>
         <p>Learn how to write a function with Micronaut and deploy it to AWS Lambda.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.1.0</p>
+        <p><strong>Micronaut Version:</strong> 1.2.6</p>
     </header>
     
 
@@ -254,8 +254,11 @@
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.io.Serializable;
 
+@Introspected
 public class VatValidationRequest implements Serializable {
     private String memberStateCode;
     private String vatNumber;
@@ -303,9 +306,11 @@ public class VatValidationRequest implements Serializable {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.io.Serializable;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
+@Introspected
 public class VatValidation extends VatValidationRequest implements Serializable {
     private Boolean valid;
 
@@ -369,7 +374,7 @@ the SOAP envelope manually.</p>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-http-client"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-http-client"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -543,15 +548,17 @@ and JSON Payload response.</td>
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">&lt;configuration&gt;
 
     &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;withJansi&gt;true&lt;/withJansi&gt;
         &lt;!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default --&gt;
         &lt;encoder&gt;
-            &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;
+            &lt;pattern&gt;%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
+            &lt;/pattern&gt;
         &lt;/encoder&gt;
     &lt;/appender&gt;
 
     &lt;root level="info"&gt;
-        &lt;appender-ref ref="STDOUT" /&gt;
+        &lt;appender-ref ref="STDOUT"/&gt;
     &lt;/root&gt;
     &lt;logger name="example.micronaut" level="DEBUG"/&gt;
 &lt;/configuration&gt;</code></pre>
@@ -574,8 +581,8 @@ and JSON Payload response.</td>
 <div class="listingblock">
 <div class="title">vies-vat-validator/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testRuntime "io.micronaut:micronaut-http-server-netty"
-    testRuntime "io.micronaut:micronaut-function-web"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testRuntime "io.micronaut:micronaut-http-server-netty"
+testRuntime "io.micronaut:micronaut-function-web"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -616,33 +623,45 @@ public interface ViesVatValidatorClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.Test;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import javax.inject.Inject;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class ViesVatValidatorFunctionTest {
+
+    @Inject
+    ViesVatValidatorClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Test
     public void testViesVatValidatorFunction() throws Exception {
-        EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class);
-
-        ViesVatValidatorClient client = server.getApplicationContext().getBean(ViesVatValidatorClient.class);
-
         VatValidationRequest req = new VatValidationRequest("es", "B99286353");
         assertTrue(client.apply(req).blockingGet().isValid());
+
         req = new VatValidationRequest("es", "B19280031");
         assertTrue(client.apply(req).blockingGet().isValid());
+
         req = new VatValidationRequest("es", "XXXXXXXXX");
         assertFalse(client.apply(req).blockingGet().isValid());
-
-        server.stop();
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>ViesVatValidatorClient</code> bean in the application context.</td>
+</tr>
+</table>
 </div>
 
 
@@ -696,17 +715,17 @@ Transform: AWS::Serverless-2016-10-31
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
-    Function:
-        Timeout: 25
+  Function:
+    Timeout: 25
 
 Resources:
 
-    ViesVatValidatorFunction:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-        Properties:
-            CodeUri: build/libs/complete/vies-vat-validator-0.1-all.jar
-            Handler: io.micronaut.function.aws.MicronautRequestStreamHandler
-            Runtime: java8</code></pre>
+  ViesVatValidatorFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: build/libs/complete/vies-vat-validator-0.1-all.jar
+      Handler: io.micronaut.function.aws.MicronautRequestStreamHandler
+      Runtime: java8</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -871,12 +890,15 @@ REPORT RequestId: e32a669c-bb51-4079-a1a1-781c2f144e4e	Duration: 5627.70 ms	Bill
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.util.List;
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
+@Introspected
 public class Invoice {
 
     @NotNull
@@ -891,7 +913,6 @@ public class Invoice {
     private List&lt;InvoiceLine&gt; lines;
 
     public Invoice() {
-
     }
 
     public Invoice(@NotNull @NotBlank String vatNumber,
@@ -948,12 +969,15 @@ public class Invoice {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Introspected
 public class InvoiceLine {
     @NotNull
     @NotBlank
@@ -966,7 +990,8 @@ public class InvoiceLine {
     @Positive
     private BigDecimal price;
 
-    public InvoiceLine() {}
+    public InvoiceLine() {
+    }
 
     public InvoiceLine(String productId, Integer count, BigDecimal price) {
         this.productId = productId;
@@ -1055,9 +1080,11 @@ public interface VatValidator {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.io.Serializable;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
+@Introspected
 public class VatValidationRequest implements Serializable {
     private String memberStateCode;
     private String vatNumber;
@@ -1093,9 +1120,11 @@ public class VatValidationRequest implements Serializable {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.io.Serializable;
-import java.util.Objects;
+import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
+@Introspected
 public class VatValidation extends VatValidationRequest implements Serializable {
 
     private Boolean valid;
@@ -1129,8 +1158,8 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="listingblock">
 <div class="title">invoice/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut:micronaut-function-client"
-    runtime 'com.amazonaws:aws-java-sdk-lambda:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-function-client"
+runtime 'com.amazonaws:aws-java-sdk-lambda:1.11.285'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1140,12 +1169,12 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="title">invoice/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">aws:
-    lambda:
-        functions:
-            vat:
-                functionName: vies-vat-validator
-                qualifer: vat
-        region: eu-west-3 # Paris Region</code></pre>
+  lambda:
+    functions:
+      vat:
+        functionName: vies-vat-validator
+        qualifer: vat
+    region: eu-west-3 # Paris Region</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1155,11 +1184,11 @@ public class VatValidation extends VatValidationRequest implements Serializable 
 <div class="title">invoice/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">vat:
-    percentage: 0.21
-    scale: 2
-    retry:
-        attempts: 5
-        delay: 5s</code></pre>
+  percentage: 0.21
+  scale: 2
+  retry:
+    attempts: 5
+    delay: 5s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1223,18 +1252,20 @@ With <a href="https://docs.micronaut.io/snapshot/guide/index.html#retry">Microna
 
 
 <div class="paragraph">
-<p>Micronaut’s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
+<p>Micronaut&#8217;s validation is built on with the standard framework – JSR 380, also known as Bean Validation 2.0.</p>
 </div>
 <div class="paragraph">
-<p>Hibernate Validator is a reference implementation of the validation API.</p>
+<p>Hibernate Validator is a reference implementation of the validation API. Starting with Micronaut 1.2, Micronaut
+<a href="https://docs.micronaut.io/latest/guide/index.html#beanValidation">has built-in support for validation beans</a> that
+are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
 <p>Add the next snippet to <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
-<div class="title">invoice/build.gradle</div>
+<div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    compile "io.micronaut.configuration:micronaut-hibernate-validator"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1246,14 +1277,12 @@ import io.micronaut.context.annotation.Value;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.validation.Validated;
 import io.reactivex.Single;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
 
-@Validated <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/invoice") <i class="conum" data-value="2"></i><b>(2)</b>
+@Controller("/invoice") <i class="conum" data-value="1"></i><b>(1)</b>
 public class InvoiceController {
 
     private final BigDecimal vatPercentage;
@@ -1262,17 +1291,17 @@ public class InvoiceController {
 
     private final int scale;
 
-    public InvoiceController(@Value("${vat.percentage}") BigDecimal vatPercentage, <i class="conum" data-value="3"></i><b>(3)</b>
+    public InvoiceController(@Value("${vat.percentage}") BigDecimal vatPercentage, <i class="conum" data-value="2"></i><b>(2)</b>
                              @Value("${vat.scale}") int scale,
-                             VatValidator vatValidator) { <i class="conum" data-value="4"></i><b>(4)</b>
+                             VatValidator vatValidator) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.vatPercentage = vatPercentage;
         this.scale = scale;
         this.vatValidator = vatValidator;
     }
 
-    @Post("/vat") <i class="conum" data-value="5"></i><b>(5)</b>
-    Single&lt;Taxes&gt; calculateVat(@Valid @Body Invoice invoice) {  <i class="conum" data-value="6"></i><b>(6)</b>
-        return vatValidator.validateVat(new VatValidationRequest(invoice.getCountryCode(), invoice.getVatNumber())) <i class="conum" data-value="7"></i><b>(7)</b>
+    @Post("/vat") <i class="conum" data-value="4"></i><b>(4)</b>
+    Single&lt;Taxes&gt; calculateVat(@Valid @Body Invoice invoice) {  <i class="conum" data-value="5"></i><b>(5)</b>
+        return vatValidator.validateVat(new VatValidationRequest(invoice.getCountryCode(), invoice.getVatNumber())) <i class="conum" data-value="6"></i><b>(6)</b>
                 .map(vatValidation -&gt; {
                         BigDecimal percentage = vatValidation.isValid() ? vatPercentage : new BigDecimal("0");
                     return new Taxes(invoice.getLines().stream()
@@ -1288,30 +1317,26 @@ public class InvoiceController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Add <code>@Validated</code> annotation at the class level to any class that requires validation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/invoice</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Constructor injection of a configuration property.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Constructor injection of a bean.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>The <code>@Post</code> annotation is used to map the <code>calculateVat</code> method to all requests to <code>/invoice/vat</code> that use an HTTP POST.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POGO supplied as a JSON payload in the request to populate the invoice.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>This invokes the function in AWS Lambda.</td>
 </tr>
 </table>
@@ -1370,49 +1395,36 @@ public class VatValidatorMock implements VatValidator {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.runtime.server.EmbeddedServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 public class InvoiceControllerTest {
 
-    private static EmbeddedServer server;
-    private static RxHttpClient rxHttpClient;
+    @Inject
+    @Client("/")
+    RxHttpClient rxHttpClient; <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @BeforeClass
-    public static void setupServer() {
-        server = ApplicationContext.run(EmbeddedServer.class); <i class="conum" data-value="1"></i><b>(1)</b>
-        rxHttpClient = server
-                .getApplicationContext()
-                .createBean(RxHttpClient.class, server.getURL()); <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        if (server != null) {
-            server.stop();
-        }
-        if (rxHttpClient != null) {
-            rxHttpClient.stop();
-        }
-    }
+    @Inject
+    EmbeddedServer server; <i class="conum" data-value="3"></i><b>(3)</b>
 
     @Test
-    public void testBooksController() {
+    public void testInvoiceController() {
 
         VatValidator bean = server.getApplicationContext().getBean(VatValidator.class);
-        assertTrue(bean instanceof VatValidatorMock); <i class="conum" data-value="3"></i><b>(3)</b>
+        assertTrue(bean instanceof VatValidatorMock); <i class="conum" data-value="4"></i><b>(4)</b>
 
         List&lt;InvoiceLine&gt; lines = new ArrayList&lt;InvoiceLine&gt;();
         lines.add(new InvoiceLine("1491950358", 2, new BigDecimal(19.99)));
@@ -1422,7 +1434,6 @@ public class InvoiceControllerTest {
         Taxes rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
         BigDecimal expected = new BigDecimal("11.55");
         assertEquals(expected, rsp.getVat());
-
 
         invoice.setVatNumber("B99999999");
         rsp = rxHttpClient.toBlocking().retrieve(request, Taxes.class);
@@ -1436,14 +1447,18 @@ public class InvoiceControllerTest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxHttpClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>RxHttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Verify the bean for interface <code>VatValidator</code> is <code>VatValidatorMock</code>.</td>
 </tr>
 </table>
@@ -1642,16 +1657,16 @@ maintain, monitor, and secure APIs at any scale.</p>
 <div class="title">invoice/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
-    http:
-        services:
-            viesvatvalidator: <i class="conum" data-value="1"></i><b>(1)</b>
-                urls:
-                    - "https://8ah5p89xof.execute-api.eu-west-3.amazonaws.com"
-                stage: "beta"
-    application:
-        name: invoice
-    server:
-        port: 8080</code></pre>
+  http:
+    services:
+      viesvatvalidator: <i class="conum" data-value="1"></i><b>(1)</b>
+        urls:
+          - "https://8ah5p89xof.execute-api.eu-west-3.amazonaws.com"
+        stage: "beta"
+  application:
+    name: invoice
+  server:
+    port: 8080</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1759,8 +1774,9 @@ jar {
 <h3 id="_1_install_graal">1. Install Graal</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 1.0.0-rc-15-grl
-sdk use java 1.0.0-rc-15-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdk install java 19.2.1-grl
+sdk use java 19.2.1-grl
+gu install native-image</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">

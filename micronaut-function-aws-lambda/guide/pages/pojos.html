@@ -134,12 +134,15 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.util.List;
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
+@Introspected
 public class Invoice {
 
     @NotNull
@@ -154,7 +157,6 @@ public class Invoice {
     private List&lt;InvoiceLine&gt; lines;
 
     public Invoice() {
-
     }
 
     public Invoice(@NotNull @NotBlank String vatNumber,
@@ -211,12 +213,15 @@ public class Invoice {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.core.annotation.Introspected;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Introspected
 public class InvoiceLine {
     @NotNull
     @NotBlank
@@ -229,7 +234,8 @@ public class InvoiceLine {
     @Positive
     private BigDecimal price;
 
-    public InvoiceLine() {}
+    public InvoiceLine() {
+    }
 
     public InvoiceLine(String productId, Integer count, BigDecimal price) {
         this.productId = productId;
