@@ -439,26 +439,27 @@ sourceLanguage: java</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.HttpRequest
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class BasicAuthSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Shared
-    @AutoCleanup
-    RxHttpClient client = embeddedServer.applicationContext.createBean(RxHttpClient, embeddedServer.getURL()) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject
+    @Client("/")
+    RxHttpClient client <i class="conum" data-value="3"></i><b>(3)</b>
 
     def "Verify HTTP Basic Auth works"() {
         when: 'Accessing a secured URL without authenticating'
@@ -484,15 +485,15 @@ class BasicAuthSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>EmbeddedServer</code> bean.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>RxHttpClient</code> bean.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -558,28 +559,21 @@ public interface AppClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
 class BasicAuthClientSpec extends Specification {
 
-    @Shared
-    @AutoCleanup <i class="conum" data-value="1"></i><b>(1)</b>
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    AppClient appClient <i class="conum" data-value="2"></i><b>(2)</b>
 
     def "Verify HTTP Basic Auth works"() {
         when:
-        AppClient appClient = embeddedServer.applicationContext.getBean(AppClient) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        then:
-        noExceptionThrown() <i class="conum" data-value="4"></i><b>(4)</b>
-
-        when:
         String credsEncoded = "sherlock:password".bytes.encodeBase64().toString()
-        String rsp = appClient.home("Basic ${credsEncoded}") <i class="conum" data-value="5"></i><b>(5)</b>
+        String rsp = appClient.home("Basic ${credsEncoded}") <i class="conum" data-value="3"></i><b>(3)</b>
 
         then:
         rsp == 'sherlock'
@@ -591,22 +585,14 @@ class BasicAuthClientSpec extends Specification {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The AutoCleanup extension makes sure the <code>close()</code> method of an object (e.g. <code>EmbeddedServer</code>) is called each time a feature method is finished</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject the <code>AppClient</code> bean.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Retrieve <code>AppClient</code> bean from application context.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>If the bean is found no exception is thrown</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Generate Basic Auth header value and pass it as the parameter value.</td>
 </tr>
 </table>
@@ -706,20 +692,15 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-.
-Args = -H:IncludeResources=logback.xml|application.yml \
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
        -H:Name=micronautguide \
-       -H:Class=example.micronaut.Application
-}</code></pre>
+       -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>*-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
+<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
 </li>
 <li>
 <p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
@@ -730,7 +711,7 @@ Args = -H:IncludeResources=logback.xml|application.yml \
 </ul>
 </div>
 <div class="paragraph">
-<p>The easiest way to install GraalVM you can use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">

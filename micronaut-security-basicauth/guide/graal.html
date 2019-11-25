@@ -142,20 +142,15 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-.
-Args = -H:IncludeResources=logback.xml|application.yml \
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
        -H:Name=micronautguide \
-       -H:Class=example.micronaut.Application
-}</code></pre>
+       -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>*-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
+<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
 </li>
 <li>
 <p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
@@ -166,7 +161,7 @@ Args = -H:IncludeResources=logback.xml|application.yml \
 </ul>
 </div>
 <div class="paragraph">
-<p>The easiest way to install GraalVM you can use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
