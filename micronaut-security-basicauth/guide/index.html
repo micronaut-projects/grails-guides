@@ -643,16 +643,19 @@ $ open build/reports/tests/test/index.html</code></pre>
 
 
 <div class="paragraph">
-<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image of our Micronaut application.</p>
+<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
+of our Micronaut application.</p>
 </div>
 <div class="paragraph">
-<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based applications.</p>
+<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
+applications.</p>
 </div>
 <div class="paragraph">
 <p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
 </div>
 <div class="paragraph">
-<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata that is automatically picked up by the <code>native-image</code> tool:</p>
+<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
+that is automatically picked up by the <code>native-image</code> tool:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -668,7 +671,11 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image. This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
+This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
+components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
+VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
+program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
 </div>
 </blockquote>
 </div>
@@ -687,10 +694,11 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You need to add a <code>native-image.properties</code> configuration file <code>src/main/resources/META-INF/native-image</code> to simplify building the image.</p>
+<p>You need to add a <code>native-image.properties</code> configuration file <code>src/main/resources/META-INF/native-image/application</code> to
+simplify building the image.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/META-INF/native-image/native-image.properties</div>
+<div class="title">src/main/resources/META-INF/native-image/application/native-image.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
        -H:Name=micronautguide \
@@ -737,7 +745,7 @@ $ sdk install java 19.2.1-grl</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gu install native-image</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -755,6 +763,7 @@ $ sdk install java 19.2.1-grl</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
 /Users/sdelamo/.sdkman/candidates/java/19.2.1-grl/bin/java
+
 $ native-image --no-server -cp build/libs/complete-0.1-all.jar
 [micronautguide:39362]    classlist:   3,884.97 ms
 [micronautguide:39362]        (cap):   5,919.80 ms
@@ -796,12 +805,13 @@ $ native-image --no-server -cp build/libs/complete-0.1-all.jar
 COPY . /home/app/micronautguide
 WORKDIR /home/app/micronautguide
 RUN gu install native-image
-RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
+RUN native-image --no-server -cp build/libs/completegraal-0.1-all.jar
 
 FROM frolvlad/alpine-glibc
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide .
-ENTRYPOINT ["./micronautguide"]</code></pre>
+COPY --from=graalvm /opt/graalvm-ce-19.2.1/jre/lib/amd64/libsunec.so /app/libsunec.so
+COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ENTRYPOINT ["/app/micronautguide", "-Djava.library.path=/app"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -820,15 +830,15 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
 $ ./docker-build.sh
 Sending build context to Docker daemon   64.8MB
-Step 1/9 : FROM oracle/graalvm-ce:19.2.1 as graalvm
+Step 1/10 : FROM oracle/graalvm-ce:19.2.1 as graalvm
  ---&gt; d8c8cb0dedca
-Step 2/9 : COPY . /home/app/micronautguide
+Step 2/10 : COPY . /home/app/micronautguide
  ---&gt; 97f7b04a94cc
-Step 3/9 : WORKDIR /home/app/micronautguide
+Step 3/10 : WORKDIR /home/app/micronautguide
  ---&gt; Running in 99f7d93c3dd8
 Removing intermediate container 99f7d93c3dd8
  ---&gt; db898395c874
-Step 4/9 : RUN gu install native-image
+Step 4/10 : RUN gu install native-image
  ---&gt; Running in 345a08932afb
 Downloading: Component catalog from www.graalvm.org
 Processing component archive: Native Image
@@ -837,7 +847,7 @@ Installing new component: Native Image (org.graalvm.native-image, version 19.2.1
 Refreshed alternative links in /usr/bin/
 Removing intermediate container 345a08932afb
  ---&gt; 20d0a0d73273
-Step 5/9 : RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
+Step 5/10 : RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
  ---&gt; Running in 599fffd75dfc
 [micronautguide:28]    classlist:   8,773.36 ms
 [micronautguide:28]        (cap):   1,044.04 ms
@@ -857,16 +867,18 @@ Step 5/9 : RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
 [micronautguide:28]      [total]:  99,095.08 ms
 Removing intermediate container 599fffd75dfc
  ---&gt; 193888026b43
-Step 6/9 : FROM frolvlad/alpine-glibc
+Step 6/10 : FROM frolvlad/alpine-glibc
  ---&gt; 914aed4f321e
-Step 7/9 : EXPOSE 8080
+Step 7/10 : EXPOSE 8080
  ---&gt; Using cache
  ---&gt; 7d24ddc7d4b9
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide .
+Step 8/10 : COPY --from=graalvm /opt/graalvm-ce-19.2.1/jre/lib/amd64/libsunec.so /app/libsunec.so
+ ---&gt; 78b21f6420c0
+Step 9/10 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
  ---&gt; 2cd5a7232645
-Step 9/9 : ENTRYPOINT ["./micronautguide"]
+Step 10/10 : ENTRYPOINT ["/app/micronautguide", "-Djava.library.path=/app"]
  ---&gt; Running in b7280b0816d2
-Removing intermediate container b7280b0816d2
+Removing intermediate container 2cd5a7232645
  ---&gt; 27620cb4e0a3
 Successfully built 27620cb4e0a3
 Successfully tagged micronautguide:latest
