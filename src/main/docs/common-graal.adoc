@@ -29,7 +29,7 @@ components like memory management and thread scheduling from a different virtual
 VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
 program has faster startup time and lower runtime memory overhead compared to a Java VM.
 
-We need to add a dependency to `substratevm`:
+We need to add a dependency to `svm`:
 
 [source,groovy]
 .build.gradle
@@ -38,7 +38,7 @@ dependencies {
 ...
 ..
 .
-include::{sourceDir}/../complete/build.gradle[tag=substratevm]
+include::{sourceDir}/../complete/build.gradle[tag=svm]
 }
 ----
 
@@ -67,14 +67,18 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 19.3.0.r11   | grl     |            | 19.3.0.r11-grl
-               |     | 19.3.0.r8    | grl     |            | 19.3.0.r8-grl
-               |     | 19.2.1       | grl     | installed  | 19.2.1-grl
+ GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
+               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+               |     | 19.2.1       | grl     |            | 19.2.1-grl
                |     | 19.1.1       | grl     |            | 19.1.1-grl
                |     | 19.0.2       | grl     |            | 19.0.2-grl
 
 
-$ sdk install java 19.2.1-grl
+# For Java 8
+$ sdk install java 19.3.0.r8-grl
+
+# For Java 11
+$ sdk install java 19.3.0.r11-grl
 ----
 
 You need to install the `native-image` component which is not installed by default.
@@ -96,7 +100,7 @@ Invoke `native-image`. It may take a minute to complete.
 [source,bash]
 ----
 $ which java
-/Users/sdelamo/.sdkman/candidates/java/19.2.1-grl/bin/java
+/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java
 
 $ native-image --no-server -cp build/libs/complete-0.1-all.jar
 [micronautguide:39362]    classlist:   3,884.97 ms
@@ -132,17 +136,18 @@ Alternatively, you can use `Dockerfile`  to construct the native image and a scr
 [source,bash]
 .Dockerfile
 ----
-FROM oracle/graalvm-ce:19.2.1 as graalvm
+FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+#FROM oracle/graalvm-ce:19.3.0-java11 as graalvm # For JDK 11
 COPY . /home/app/micronautguide
 WORKDIR /home/app/micronautguide
 RUN gu install native-image
-RUN native-image --no-server -cp build/libs/completegraal-0.1-all.jar
+RUN yum install -y libstdc++-static
+RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
 
 FROM frolvlad/alpine-glibc
 EXPOSE 8080
-COPY --from=graalvm /opt/graalvm-ce-19.2.1/jre/lib/amd64/libsunec.so /app/libsunec.so
 COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
-ENTRYPOINT ["/app/micronautguide", "-Djava.library.path=/app"]
+ENTRYPOINT ["/app/micronautguide"]
 ----
 
 [source,bash]
@@ -154,27 +159,32 @@ include::{sourceDir}/../complete/docker-build.sh[]
 [source, bash]
 ----
 $ ./gradlew assemble
+
 $ ./docker-build.sh
-Sending build context to Docker daemon   64.8MB
-Step 1/10 : FROM oracle/graalvm-ce:19.2.1 as graalvm
- ---> d8c8cb0dedca
+Sending build context to Docker daemon  64.67MB
+Step 1/10 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+ ---> d625000893c9
 Step 2/10 : COPY . /home/app/micronautguide
- ---> 97f7b04a94cc
+ ---> 4c0daf50c6f3
 Step 3/10 : WORKDIR /home/app/micronautguide
- ---> Running in 99f7d93c3dd8
-Removing intermediate container 99f7d93c3dd8
- ---> db898395c874
+ ---> Running in e07cf22b668a
+Removing intermediate container e07cf22b668a
+ ---> d3699ea8e284
 Step 4/10 : RUN gu install native-image
- ---> Running in 345a08932afb
+ ---> Running in 71edf17b9a11
 Downloading: Component catalog from www.graalvm.org
-Processing component archive: Native Image
+Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.2.1)
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
 Refreshed alternative links in /usr/bin/
-Removing intermediate container 345a08932afb
- ---> 20d0a0d73273
-Step 5/10 : RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
- ---> Running in 599fffd75dfc
+Removing intermediate container 71edf17b9a11
+ ---> ee26c71bbd1e
+Step 5/10 : RUN yum install -y libstdc++-static
+ ---> Running in 0f48db1f6f17
+Removing intermediate container 0f48db1f6f17
+ ---> c943e492cfda
+Step 6/10 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+ ---> Running in d2cd451f33be
 [micronautguide:28]    classlist:   8,773.36 ms
 [micronautguide:28]        (cap):   1,044.04 ms
 [micronautguide:28]        setup:   2,748.03 ms
@@ -191,22 +201,20 @@ Step 5/10 : RUN native-image --no-server -cp build/libs/complete-0.1-all.jar
 [micronautguide:28]        image:   3,811.46 ms
 [micronautguide:28]        write:     643.59 ms
 [micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container 599fffd75dfc
- ---> 193888026b43
-Step 6/10 : FROM frolvlad/alpine-glibc
- ---> 914aed4f321e
-Step 7/10 : EXPOSE 8080
+Removing intermediate container d2cd451f33be
+ ---> 429a467e2fdd
+Step 7/10 : FROM frolvlad/alpine-glibc
+ ---> 38dd85a430e8
+Step 8/10 : EXPOSE 8080
  ---> Using cache
- ---> 7d24ddc7d4b9
-Step 8/10 : COPY --from=graalvm /opt/graalvm-ce-19.2.1/jre/lib/amd64/libsunec.so /app/libsunec.so
- ---> 78b21f6420c0
+ ---> 643f9d29e3f8
 Step 9/10 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---> 2cd5a7232645
-Step 10/10 : ENTRYPOINT ["/app/micronautguide", "-Djava.library.path=/app"]
- ---> Running in b7280b0816d2
-Removing intermediate container 2cd5a7232645
- ---> 27620cb4e0a3
-Successfully built 27620cb4e0a3
+ ---> 0d41749e3ceb
+Step 10/10 : ENTRYPOINT ["/app/micronautguide"]
+ ---> Running in 31b4c6c21e68
+Removing intermediate container 31b4c6c21e68
+ ---> 3ff1de337ef4
+Successfully built 3ff1de337ef4
 Successfully tagged micronautguide:latest
 
 
@@ -219,5 +227,5 @@ You can use docker to run the image with the app's native-image:
 [source, bash]
 ----
  docker run -p 8080:8080 micronautguide
-06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 128ms. Server Running: http://f8143044b1ee:8080
+06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080
 ----
