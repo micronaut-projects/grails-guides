@@ -253,6 +253,14 @@ $ native-image --no-server -cp build/libs/complete-0.1-all.jar
 </div>
 </div>
 <div class="paragraph">
+<p>You can invoke the controller exposed by the native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl "http://localhost:8080" -u 'sherlock:password'</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
 </div>
 <div class="listingblock">
