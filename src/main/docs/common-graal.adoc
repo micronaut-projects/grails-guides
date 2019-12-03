@@ -42,13 +42,15 @@ include::{sourceDir}/../complete/build.gradle[tag=svm]
 }
 ----
 
-You need to add a `native-image.properties` configuration file `src/main/resources/META-INF/native-image/application` to
-simplify building the image.
+To simplify building the image you need to create a `native-image.properties` file.
+The convention is to use the folder `src/main/resources/META-INF/native-image` and then a folder following the maven coordinates of the application. For our example `example.micronaut/micronautguide`.
+
+Add a `native-image.properties` inside  `src/main/resources/META-INF/native-image/example.micronaut/micronautguide` folder.
 
 [source,groovy]
-.src/main/resources/META-INF/native-image/application/native-image.properties
+.src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties
 ----
-include::{sourceDir}/../complete/src/main/resources/META-INF/native-image/application/native-image.properties[]
+include::{sourceDir}/../complete/src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties[]
 ----
 
 - The `-H:IncludeResources` argument allows you to tweak which static resources to include. You can use regular expressions.
