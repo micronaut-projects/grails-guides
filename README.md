@@ -175,7 +175,7 @@ dependendencies {
     annotationProcessor "io.micronaut:micronaut-graal"
     //end::micronaut-graal[]
     //tag::substratevm[]
-    compileOnly "com.oracle.substratevm:svm"
+    compileOnly "org.graalvm.nativeimage:svm"
     //end::substratevm[]
 }
 ```
