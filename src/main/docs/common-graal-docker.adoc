@@ -1,0 +1,84 @@
+
+Alternatively, you can use `Dockerfile`  to construct the native image and a script `docker-build.sh` to run it:
+
+[source,bash]
+.Dockerfile
+----
+include::{sourceDir}/../complete/Dockerfile[]
+----
+
+[source,bash]
+.docker-build.sh
+----
+include::{sourceDir}/../complete/docker-build.sh[]
+----
+
+[source, bash]
+----
+$ ./gradlew assemble
+
+$ ./docker-build.sh
+Sending build context to Docker daemon  64.67MB
+Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+ ---> d625000893c9
+Step 2/9 : COPY . /home/app/micronautguide
+ ---> 4c0daf50c6f3
+Step 3/9 : WORKDIR /home/app/micronautguide
+ ---> Running in e07cf22b668a
+Removing intermediate container e07cf22b668a
+ ---> d3699ea8e284
+Step 4/9 : RUN gu install native-image
+ ---> Running in 71edf17b9a11
+Downloading: Component catalog from www.graalvm.org
+Processing Component: Native Image
+Downloading: Component native-image: Native Image  from github.com
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Refreshed alternative links in /usr/bin/
+Removing intermediate container 71edf17b9a11
+ ---> ee26c71bbd1e
+Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+ ---> Running in d2cd451f33be
+[micronautguide:28]    classlist:   8,773.36 ms
+[micronautguide:28]        (cap):   1,044.04 ms
+[micronautguide:28]        setup:   2,748.03 ms
+[micronautguide:28]   (typeflow):  20,611.56 ms
+[micronautguide:28]    (objects):  20,377.15 ms
+[micronautguide:28]   (features):   2,168.30 ms
+[micronautguide:28]     analysis:  45,559.16 ms
+[micronautguide:28]     (clinit):   1,141.31 ms
+[micronautguide:28]     universe:   2,719.10 ms
+[micronautguide:28]      (parse):   2,808.15 ms
+[micronautguide:28]     (inline):   3,094.66 ms
+[micronautguide:28]    (compile):  25,648.31 ms
+[micronautguide:28]      compile:  34,018.50 ms
+[micronautguide:28]        image:   3,811.46 ms
+[micronautguide:28]        write:     643.59 ms
+[micronautguide:28]      [total]:  99,095.08 ms
+Removing intermediate container d2cd451f33be
+ ---> 429a467e2fdd
+Step 6/9 : FROM frolvlad/alpine-glibc
+ ---> 38dd85a430e8
+Step 7/9 : EXPOSE 8080
+ ---> Using cache
+ ---> 643f9d29e3f8
+Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---> 0d41749e3ceb
+Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
+ ---> Running in 31b4c6c21e68
+Removing intermediate container 31b4c6c21e68
+ ---> 3ff1de337ef4
+Successfully built 3ff1de337ef4
+Successfully tagged micronautguide:latest
+
+
+To run the docker container execute:
+    $ docker run -p 8080:8080 micronautguide
+----
+
+You can use docker to run the image with the app's native-image:
+
+[source, bash]
+----
+ docker run -p 8080:8080 micronautguide
+06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080
+----
