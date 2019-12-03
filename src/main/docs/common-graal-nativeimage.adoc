@@ -1,0 +1,75 @@
+
+The easiest way to install GraalVM is to use https://sdkman.io[SDKMan.io].
+
+[source,bash]
+----
+$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
+               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+               |     | 19.2.1       | grl     |            | 19.2.1-grl
+               |     | 19.1.1       | grl     |            | 19.1.1-grl
+               |     | 19.0.2       | grl     |            | 19.0.2-grl
+
+
+# For Java 8
+$ sdk install java 19.3.0.r8-grl
+
+# For Java 11
+$ sdk install java 19.3.0.r11-grl
+----
+
+You need to install the `native-image` component which is not installed by default.
+
+[source,bash]
+----
+$ gu install native-image
+----
+
+To generate the native image you need to generate the FAT JAR first.
+
+[source,bash]
+----
+$ ./gradlew assemble
+----
+
+Invoke `native-image`. It may take a minute to complete.
+
+[source,bash]
+----
+$ which java
+/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java
+
+$ native-image --no-server -cp build/libs/complete-0.1-all.jar
+[micronautguide:39362]    classlist:   3,884.97 ms
+[micronautguide:39362]        (cap):   5,919.80 ms
+[micronautguide:39362]        setup:   7,222.88 ms
+[micronautguide:39362]   (typeflow):  14,037.78 ms
+[micronautguide:39362]    (objects):  17,689.40 ms
+[micronautguide:39362]   (features):   1,751.37 ms
+[micronautguide:39362]     analysis:  35,421.99 ms
+[micronautguide:39362]     (clinit):     978.01 ms
+[micronautguide:39362]     universe:   2,114.65 ms
+[micronautguide:39362]      (parse):   2,327.75 ms
+[micronautguide:39362]     (inline):   2,153.46 ms
+[micronautguide:39362]    (compile):  13,066.94 ms
+[micronautguide:39362]      compile:  19,714.97 ms
+[micronautguide:39362]        image:   3,509.84 ms
+[micronautguide:39362]        write:   1,114.96 ms
+[micronautguide:39362]      [total]:  73,294.82 ms
+----
+
+`--no-server` options tells to not use server-based image building.
+
+You can invoke the generated native image `micronautguide`. Startup will be really fast.
+
+[source, bash]
+----
+ $ ./micronautguide -Xmx68m
+07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080
+----
