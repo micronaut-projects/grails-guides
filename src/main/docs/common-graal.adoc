@@ -129,7 +129,7 @@ You can invoke the generated native image `micronautguide`. Startup will be real
 
 [source, bash]
 ----
- $ ./micronautguide -Xmx=68m
+ $ ./micronautguide -Xmx68m
 07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080
 ----
 
