@@ -188,6 +188,7 @@ By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.CacheInvalidate;
 import io.micronaut.cache.annotation.CachePut;
 import io.micronaut.cache.annotation.Cacheable;
@@ -203,6 +204,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@CacheConfig("headlines") <i class="conum" data-value="2"></i><b>(2)</b>
 public class NewsService {
 
     Map&lt;Month, List&lt;String&gt;&gt; headlines = new HashMap&lt;Month, List&lt;String&gt;&gt;() {{
@@ -211,17 +213,17 @@ public class NewsService {
         put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
     }};
 
-    @Cacheable(value = "headlines", parameters = {"month"}) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Cacheable(parameters = {"month"}) <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;String&gt; headlines(Month month) {
         try {
-            TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="3"></i><b>(3)</b>
+            TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="4"></i><b>(4)</b>
             return headlines.get(month);
         } catch (InterruptedException e) {
             return null;
         }
     }
 
-    @CachePut(value = "headlines", parameters = {"month"}) <i class="conum" data-value="4"></i><b>(4)</b>
+    @CachePut(parameters = {"month"}) <i class="conum" data-value="5"></i><b>(5)</b>
     public List&lt;String&gt; addHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
             List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
@@ -233,7 +235,7 @@ public class NewsService {
         return headlines.get(month);
     }
 
-    @CacheInvalidate(value = "headlines", parameters = {"month"}) <i class="conum" data-value="5"></i><b>(5)</b>
+    @CacheInvalidate(parameters = {"month"}) <i class="conum" data-value="6"></i><b>(6)</b>
     public void removeHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
             List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
@@ -252,19 +254,35 @@ public class NewsService {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
+<td>Specifies the cache name <code>headlines</code> to store cache operation values in.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Emulate an expensive operation by sleeping for several seconds.</td>
+<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The return value is cached with name <code>headlines</code> for the supplied <code>month</code>. The method invocation is never skipped even if the cache <code>headlines</code> for the supplied <code>month</code> already existed.</td>
+<td>Emulate an expensive operation by sleeping for several seconds.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The return value is cached with name <code>headlines</code> for the supplied <code>month</code>. The method invocation is never skipped even if the cache <code>headlines</code> for the supplied <code>month</code> already existed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Method invocation causes the invalidation of the cache <code>headlines</code> for the supplied <code>month</code>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you don&#8217;t annotate the class with <code>@CacheConfig</code>, specify the cache name in the cache annotations. E.g. <code>@Cacheable(value = "headlines", parameters = {"month"})</code>
+</td>
 </tr>
 </table>
 </div>
