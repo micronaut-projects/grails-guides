@@ -138,7 +138,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 
 
 <div class="paragraph">
-<p>In this sample application, we cache news headlines. Configure your caches size in <code>application.yml</code>:</p>
+<p>In this sample application, we cache news headlines. Configure your caches in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -153,7 +153,19 @@ other build tools such as <code>Maven</code> or other programming languages such
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure a cache called "headlines".</td>
+<td>Configure a cache called <code>headlines</code>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
+</td>
 </tr>
 </table>
 </div>
@@ -164,7 +176,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
+Check the <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#io.micronaut.cache.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
 </td>
 </tr>
 </table>
@@ -213,7 +225,7 @@ public class NewsService {
         put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
     }};
 
-    @Cacheable(parameters = {"month"}) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Cacheable <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;String&gt; headlines(Month month) {
         try {
             TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="4"></i><b>(4)</b>
@@ -258,7 +270,7 @@ public class NewsService {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
+<td>Indicates a method is cacheable. The cache name <code>headlines</code> specified in <code>@CacheConfig</code> is used. Since the method has only one parameter, you don&#8217;t need to specify the <code>month</code> parameters attribute of the the annation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>

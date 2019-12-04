@@ -121,7 +121,7 @@ public class NewsService {
         put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
     }};
 
-    @Cacheable(parameters = {"month"}) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Cacheable <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;String&gt; headlines(Month month) {
         try {
             TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="4"></i><b>(4)</b>
@@ -166,7 +166,7 @@ public class NewsService {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
+<td>Indicates a method is cacheable. The cache name <code>headlines</code> specified in <code>@CacheConfig</code> is used. Since the method has only one parameter, you don&#8217;t need to specify the <code>month</code> parameters attribute of the the annation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
