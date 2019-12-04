@@ -1,0 +1,586 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the Application null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Cache
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>3</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/next.html"><strong>4</strong><span>Where To Go From Here?</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/graal.html"><strong>3</strong><span>Generate a Micronaut app's Native Image with GraalVM</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the Application</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#configure"><strong>2.1</strong><span>Configure the Application</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#cacheApi"><strong>2.2</strong><span>Micronaut Cache Api</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#test"><strong>2.3</strong><span>Test the Cache</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="configure">2.1 Configure the Application</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/configure.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this sample application, we cache news headlines. Configure your caches size in <code>application.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
+  caches:
+    headlines: <i class="conum" data-value="1"></i><b>(1)</b>
+      charset: 'UTF-8'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure a cache called "headlines".</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the cache with a maximum size of 20.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
+</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="cacheApi">2.2 Micronaut Cache Api</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/cacheApi.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Imagine a service which retrieves headlines for a given month. This operation may be expensive and you may want to cache it.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/NewsService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.cache.annotation.CacheInvalidate;
+import io.micronaut.cache.annotation.CachePut;
+import io.micronaut.cache.annotation.Cacheable;
+
+import javax.inject.Singleton;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class NewsService {
+
+    Map&lt;Month, List&lt;String&gt;&gt; headlines = new HashMap&lt;Month, List&lt;String&gt;&gt;() {{
+        put(Month.NOVEMBER, Arrays.asList("Micronaut Graduates to Trial Level in Thoughtworks technology radar Vol.1",
+                "Micronaut AOP: Awesome flexibility without the complexity"));
+        put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
+    }};
+
+    @Cacheable(value = "headlines", parameters = {"month"}) <i class="conum" data-value="2"></i><b>(2)</b>
+    public List&lt;String&gt; headlines(Month month) {
+        try {
+            TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="3"></i><b>(3)</b>
+            return headlines.get(month);
+        } catch (InterruptedException e) {
+            return null;
+        }
+    }
+
+    @CachePut(value = "headlines", parameters = {"month"}) <i class="conum" data-value="4"></i><b>(4)</b>
+    public List&lt;String&gt; addHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
+            l.add(headline);
+            headlines.put(month, l);
+        } else {
+            headlines.put(month, Arrays.asList(headline));
+        }
+        return headlines.get(month);
+    }
+
+    @CacheInvalidate(value = "headlines", parameters = {"month"}) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void removeHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
+            l.remove(headline);
+            headlines.put(month, l);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Emulate an expensive operation by sleeping for several seconds.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The return value is cached with name <code>headlines</code> for the supplied <code>month</code>. The method invocation is never skipped even if the cache <code>headlines</code> for the supplied <code>month</code> already existed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Method invocation causes the invalidation of the cache <code>headlines</code> for the supplied <code>month</code>.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="test">2.3 Test the Cache</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We can verify that the cache works as expected:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/micronaut/example/micronaut/NewsServiceTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Timeout;
+
+import javax.inject.Inject;
+import java.time.Month;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest <i class="conum" data-value="2"></i><b>(2)</b>
+class NewsServiceTest {
+
+    @Inject <i class="conum" data-value="3"></i><b>(3)</b>
+    NewsService newsService;
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(1) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void firstInvocationOfNovemberDoesNotHitCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(2) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void secondInvocationOfNovemberHitsCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(3) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void firstInvocationOfOctoberDoesNotHitCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(4) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void secondInvocationOfOctoberHitsCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(5) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void addingAHeadlineToNovemberUpdatesCache() {
+        List&lt;String&gt; headlines = newsService.addHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+        assertEquals(3, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(6) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(3, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(7) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void invalidateNovemberCacheWithCacheInvalidate() {
+        assertDoesNotThrow(() -&gt; {
+            newsService.removeHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+        });
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(8) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void octoberCacheIsStillValid() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(9) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void novemberCacheWasInvalidated() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Used to configure the test method execution order for the annotated test class.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotation used to define a Micronaut test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject <code>NewsService</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Timeout annotation fails a test if its execution exceeds a given duration. It helps us verify that we are leaveraging the cache.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Used to configure the order in which the test method should executed relative to other tests in the class.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller which engages the previous service:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/micronaut/example/micronaut/News.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.annotation.Introspected;
+
+import java.time.Month;
+import java.util.List;
+
+@Introspected
+public class News {
+    private Month month;
+
+    private List&lt;String&gt; headlines;
+
+    public News() {
+
+    }
+
+    public News(Month month, List&lt;String&gt; headlines) {
+        this.month = month;
+        this.headlines = headlines;
+    }
+
+    public Month getMonth() {
+        return month;
+    }
+
+    public void setMonth(Month month) {
+        this.month = month;
+    }
+
+    public List&lt;String&gt; getHeadlines() {
+        return headlines;
+    }
+
+    public void setHeadlines(List&lt;String&gt; headlines) {
+        this.headlines = headlines;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/micronaut/example/micronaut/NewsController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+
+import java.time.Month;
+
+@Controller
+public class NewsController {
+
+    private final NewsService newsService;
+
+    public NewsController(NewsService newsService) {
+        this.newsService = newsService;
+    }
+
+    @Get("/{month}")
+    public News index(Month month) {
+        return new News(month, newsService.headlines(month));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/micronaut/example/micronaut/NewsControllerTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import javax.inject.Inject;
+import java.time.Month;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MicronautTest
+public class NewsControllerTest {
+
+    @Inject
+    EmbeddedServer server;
+
+    @Inject
+    @Client("/")
+    HttpClient client;
+
+    @Timeout(4) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Test
+    void fetchingOctoberHeadlinesUsesCache() {
+        HttpRequest request = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.toString()).build());
+        News news = client.toBlocking().retrieve(request, News.class);
+        String expected = "Micronaut AOP: Awesome flexibility without the complexity";
+        assertEquals(Arrays.asList(expected), news.getHeadlines());
+
+        news = client.toBlocking().retrieve(request, News.class);
+        assertEquals(Arrays.asList(expected), news.getHeadlines());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We call the endpoint twice and verify with the <code>@Timeout</code> annotation that the cache is being used.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/graal.html"><strong>3</strong><span>Generate a Micronaut app's Native Image with GraalVM</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Micronaut Cache | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Micronaut Cache. Learn how to use Micronaut's caching annotations' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-cache/guide/index.html">Micronaut Cache</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-cache"><img src="https://travis-ci.org/micronaut-guides/micronaut-cache.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-cache&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-cache.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-cache.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-cache.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-cache/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#howto"><strong>1.2</strong><span>How to complete the guide</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#configure"><strong>2.1</strong><span>Configure the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#cacheApi"><strong>2.2</strong><span>Micronaut Cache Api</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#test"><strong>2.3</strong><span>Test the Cache</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>3</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#next"><strong>4</strong><span>Where To Go From Here?</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Micronaut Cache</h1>
+        <p>Learn how to use Micronaut's caching annotations</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, you are going to use Micronaut&#8217;s caching annotations to speed up your application.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="howto">1.2 How to complete the guide</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/howto.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-cache/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-cache.git" class="bare">https://github.com/micronaut-guides/micronaut-cache.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="configure">2.1 Configure the Application</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/configure.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this sample application, we cache news headlines. Configure your caches size in <code>application.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
+  caches:
+    headlines: <i class="conum" data-value="1"></i><b>(1)</b>
+      charset: 'UTF-8'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure a cache called "headlines".</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the cache with a maximum size of 20.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
+</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="cacheApi">2.2 Micronaut Cache Api</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/cacheApi.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Imagine a service which retrieves headlines for a given month. This operation may be expensive and you may want to cache it.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/NewsService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.cache.annotation.CacheInvalidate;
+import io.micronaut.cache.annotation.CachePut;
+import io.micronaut.cache.annotation.Cacheable;
+
+import javax.inject.Singleton;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class NewsService {
+
+    Map&lt;Month, List&lt;String&gt;&gt; headlines = new HashMap&lt;Month, List&lt;String&gt;&gt;() {{
+        put(Month.NOVEMBER, Arrays.asList("Micronaut Graduates to Trial Level in Thoughtworks technology radar Vol.1",
+                "Micronaut AOP: Awesome flexibility without the complexity"));
+        put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
+    }};
+
+    @Cacheable(value = "headlines", parameters = {"month"}) <i class="conum" data-value="2"></i><b>(2)</b>
+    public List&lt;String&gt; headlines(Month month) {
+        try {
+            TimeUnit.SECONDS.sleep(3); <i class="conum" data-value="3"></i><b>(3)</b>
+            return headlines.get(month);
+        } catch (InterruptedException e) {
+            return null;
+        }
+    }
+
+    @CachePut(value = "headlines", parameters = {"month"}) <i class="conum" data-value="4"></i><b>(4)</b>
+    public List&lt;String&gt; addHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
+            l.add(headline);
+            headlines.put(month, l);
+        } else {
+            headlines.put(month, Arrays.asList(headline));
+        }
+        return headlines.get(month);
+    }
+
+    @CacheInvalidate(value = "headlines", parameters = {"month"}) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void removeHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List&lt;String&gt; l = new ArrayList&lt;&gt;(headlines.get(month));
+            l.remove(headline);
+            headlines.put(month, l);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicates a method is cacheable within the <code>headlines</code> cache name and for the <code>month</code> parameter.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Emulate an expensive operation by sleeping for several seconds.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The return value is cached with name <code>headlines</code> for the supplied <code>month</code>. The method invocation is never skipped even if the cache <code>headlines</code> for the supplied <code>month</code> already existed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Method invocation causes the invalidation of the cache <code>headlines</code> for the supplied <code>month</code>.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="test">2.3 Test the Cache</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We can verify that the cache works as expected:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/micronaut/example/micronaut/NewsServiceTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Timeout;
+
+import javax.inject.Inject;
+import java.time.Month;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest <i class="conum" data-value="2"></i><b>(2)</b>
+class NewsServiceTest {
+
+    @Inject <i class="conum" data-value="3"></i><b>(3)</b>
+    NewsService newsService;
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(1) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void firstInvocationOfNovemberDoesNotHitCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(2) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void secondInvocationOfNovemberHitsCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(3) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void firstInvocationOfOctoberDoesNotHitCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(4) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void secondInvocationOfOctoberHitsCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(5) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void addingAHeadlineToNovemberUpdatesCache() {
+        List&lt;String&gt; headlines = newsService.addHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+        assertEquals(3, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(6) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(3, headlines.size());
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(7) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void invalidateNovemberCacheWithCacheInvalidate() {
+        assertDoesNotThrow(() -&gt; {
+            newsService.removeHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+        });
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(8) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void octoberCacheIsStillValid() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.OCTOBER);
+        assertEquals(1, headlines.size());
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(9) <i class="conum" data-value="5"></i><b>(5)</b>
+    public void novemberCacheWasInvalidated() {
+        List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Used to configure the test method execution order for the annotated test class.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotation used to define a Micronaut test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject <code>NewsService</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Timeout annotation fails a test if its execution exceeds a given duration. It helps us verify that we are leaveraging the cache.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Used to configure the order in which the test method should executed relative to other tests in the class.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller which engages the previous service:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/micronaut/example/micronaut/News.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.annotation.Introspected;
+
+import java.time.Month;
+import java.util.List;
+
+@Introspected
+public class News {
+    private Month month;
+
+    private List&lt;String&gt; headlines;
+
+    public News() {
+
+    }
+
+    public News(Month month, List&lt;String&gt; headlines) {
+        this.month = month;
+        this.headlines = headlines;
+    }
+
+    public Month getMonth() {
+        return month;
+    }
+
+    public void setMonth(Month month) {
+        this.month = month;
+    }
+
+    public List&lt;String&gt; getHeadlines() {
+        return headlines;
+    }
+
+    public void setHeadlines(List&lt;String&gt; headlines) {
+        this.headlines = headlines;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/micronaut/example/micronaut/NewsController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+
+import java.time.Month;
+
+@Controller
+public class NewsController {
+
+    private final NewsService newsService;
+
+    public NewsController(NewsService newsService) {
+        this.newsService = newsService;
+    }
+
+    @Get("/{month}")
+    public News index(Month month) {
+        return new News(month, newsService.headlines(month));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/micronaut/example/micronaut/NewsControllerTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import javax.inject.Inject;
+import java.time.Month;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MicronautTest
+public class NewsControllerTest {
+
+    @Inject
+    EmbeddedServer server;
+
+    @Inject
+    @Client("/")
+    HttpClient client;
+
+    @Timeout(4) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Test
+    void fetchingOctoberHeadlinesUsesCache() {
+        HttpRequest request = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.toString()).build());
+        News news = client.toBlocking().retrieve(request, News.class);
+        String expected = "Micronaut AOP: Awesome flexibility without the complexity";
+        assertEquals(Arrays.asList(expected), news.getHeadlines());
+
+        news = client.toBlocking().retrieve(request, News.class);
+        assertEquals(Arrays.asList(expected), news.getHeadlines());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We call the endpoint twice and verify with the <code>@Timeout</code> annotation that the cache is being used.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="graal">3 Generate a Micronaut app's Native Image with GraalVM</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/graal.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
+of our Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
+applications.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="paragraph">
+<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
+that is automatically picked up by the <code>native-image</code> tool:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut:micronaut-graal"
+}</code></pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
+This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
+components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
+VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
+program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We need to add a dependency to <code>svm</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To simplify building the image you need to create a <code>native-image.properties</code> file.
+The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application. For our example <code>example.micronaut/micronautguide</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside  <code>src/main/resources/META-INF/native-image/example.micronaut/micronautguide</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=micronautguide \
+       -H:Class=example.micronaut.Application</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
+</li>
+<li>
+<p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
+</li>
+<li>
+<p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
+               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+               |     | 19.2.1       | grl     |            | 19.2.1-grl
+               |     | 19.1.1       | grl     |            | 19.1.1-grl
+               |     | 19.0.2       | grl     |            | 19.0.2-grl
+
+
+# For Java 8
+$ sdk install java 19.3.0.r8-grl
+
+# For Java 11
+$ sdk install java 19.3.0.r11-grl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To generate the native image you need to generate the FAT JAR first.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoke <code>native-image</code>. It may take a minute to complete.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
+/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
+[micronautguide:39362]    classlist:   3,884.97 ms
+[micronautguide:39362]        (cap):   5,919.80 ms
+[micronautguide:39362]        setup:   7,222.88 ms
+[micronautguide:39362]   (typeflow):  14,037.78 ms
+[micronautguide:39362]    (objects):  17,689.40 ms
+[micronautguide:39362]   (features):   1,751.37 ms
+[micronautguide:39362]     analysis:  35,421.99 ms
+[micronautguide:39362]     (clinit):     978.01 ms
+[micronautguide:39362]     universe:   2,114.65 ms
+[micronautguide:39362]      (parse):   2,327.75 ms
+[micronautguide:39362]     (inline):   2,153.46 ms
+[micronautguide:39362]    (compile):  13,066.94 ms
+[micronautguide:39362]      compile:  19,714.97 ms
+[micronautguide:39362]        image:   3,509.84 ms
+[micronautguide:39362]        write:   1,114.96 ms
+[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+<div class="paragraph">
+<p>You can invoke the generated native image <code>micronautguide</code>. Startup will be really fast.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> $ ./micronautguide -Xmx68m
+07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can invoke the generated native image <code>micronautguide</code>.</p>
+</div>
+<div class="paragraph">
+<p>First request will be slow because you will hit the multiple seconds sleep.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl "http://localhost:8080/OCTOBER"
+{"month":"OCTOBER","headlines":["Micronaut AOP: Awesome flexibility without the complexity"]}%</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Second request uses the cache and the response is instantaneously.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl "http://localhost:8080/OCTOBER"
+{"month":"OCTOBER","headlines":["Micronaut AOP: Awesome flexibility without the complexity"]}%</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
+</div>
+<div class="listingblock">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/micronautguide
+WORKDIR /home/app/micronautguide
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/complete-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/micronautguide /app/micronautguide
+ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">docker-build.sh</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t micronautguide
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+
+$ ./docker-build.sh
+Sending build context to Docker daemon  64.67MB
+Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+ ---&gt; d625000893c9
+Step 2/9 : COPY . /home/app/micronautguide
+ ---&gt; 4c0daf50c6f3
+Step 3/9 : WORKDIR /home/app/micronautguide
+ ---&gt; Running in e07cf22b668a
+Removing intermediate container e07cf22b668a
+ ---&gt; d3699ea8e284
+Step 4/9 : RUN gu install native-image
+ ---&gt; Running in 71edf17b9a11
+Downloading: Component catalog from www.graalvm.org
+Processing Component: Native Image
+Downloading: Component native-image: Native Image  from github.com
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Refreshed alternative links in /usr/bin/
+Removing intermediate container 71edf17b9a11
+ ---&gt; ee26c71bbd1e
+Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+ ---&gt; Running in d2cd451f33be
+[micronautguide:28]    classlist:   8,773.36 ms
+[micronautguide:28]        (cap):   1,044.04 ms
+[micronautguide:28]        setup:   2,748.03 ms
+[micronautguide:28]   (typeflow):  20,611.56 ms
+[micronautguide:28]    (objects):  20,377.15 ms
+[micronautguide:28]   (features):   2,168.30 ms
+[micronautguide:28]     analysis:  45,559.16 ms
+[micronautguide:28]     (clinit):   1,141.31 ms
+[micronautguide:28]     universe:   2,719.10 ms
+[micronautguide:28]      (parse):   2,808.15 ms
+[micronautguide:28]     (inline):   3,094.66 ms
+[micronautguide:28]    (compile):  25,648.31 ms
+[micronautguide:28]      compile:  34,018.50 ms
+[micronautguide:28]        image:   3,811.46 ms
+[micronautguide:28]        write:     643.59 ms
+[micronautguide:28]      [total]:  99,095.08 ms
+Removing intermediate container d2cd451f33be
+ ---&gt; 429a467e2fdd
+Step 6/9 : FROM frolvlad/alpine-glibc
+ ---&gt; 38dd85a430e8
+Step 7/9 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 643f9d29e3f8
+Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---&gt; 0d41749e3ceb
+Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
+ ---&gt; Running in 31b4c6c21e68
+Removing intermediate container 31b4c6c21e68
+ ---&gt; 3ff1de337ef4
+Successfully built 3ff1de337ef4
+Successfully tagged micronautguide:latest
+
+
+To run the docker container execute:
+    $ docker run -p 8080:8080 micronautguide</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use docker to run the image with the app&#8217;s native-image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
+06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+</div>
+</div>
+
+
+<h1 id="next">4 Where To Go From Here?</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache/edit/master/src/main/docs/guide/next.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read about Micronaut&#8217;s <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#caching">Cache Advise</a>. Moreover, check the <a href="https://micronaut-projects.github.io/micronaut-cache/latest/guide/index.html">Micronaut Cache</a> project for more information.</p>
+</div>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
