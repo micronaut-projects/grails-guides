@@ -177,8 +177,19 @@ dependendencies {
     //tag::micronaut-graal[]
     annotationProcessor "io.micronaut:micronaut-graal"
     //end::micronaut-graal[]
-    //tag::substratevm[]
-    compileOnly "org.graalvm.nativeimage:svm"
-    //end::substratevm[]
+    //tag::svm[]
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+    //end::svm[]
 }
+```
+
+or for kotlin projects:
+
+```groovy
+    //tag::micronaut-graal[]
+    kapt "io.micronaut:micronaut-graal"
+    //end::micronaut-graal[]
+    //tag::svm[]
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+    //end::svm[]
 ```
