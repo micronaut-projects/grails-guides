@@ -44,7 +44,10 @@ Invoke `native-image`. It may take a minute to complete.
 ----
 $ which java
 /Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java
+----
 
+[source,bash]
+----
 $ native-image --no-server -cp build/libs/complete-0.1-all.jar
 [micronautguide:39362]    classlist:   3,884.97 ms
 [micronautguide:39362]        (cap):   5,919.80 ms
