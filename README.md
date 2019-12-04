@@ -149,7 +149,7 @@ ENTRYPOINT ["/app/micronautguide","-Xmx68m"]
 
 ```
 
-Add the file `completegraal/docker-build.sh`
+Add the file `complete/docker-build.sh`
 
 ```
 #!/bin/sh
@@ -160,7 +160,7 @@ echo "To run the docker container execute:"
 echo "    $ docker run -p 8080:8080 micronautguide"
 ```
 
-Add the file `completegraal/src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties`
+Add the file `complete/src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties`
 
 ```
 Args = -H:IncludeResources=logback.xml|application.yml \
@@ -168,7 +168,7 @@ Args = -H:IncludeResources=logback.xml|application.yml \
        -H:Class=example.micronaut.Application
 ```
 
-Add these dependencies with assidoc comments to `completegraal/build.gradle`
+Add these dependencies with assidoc comments to `complete/build.gradle`
 
 ```groovy
 
