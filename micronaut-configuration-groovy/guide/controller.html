@@ -125,19 +125,20 @@ class MyController {
     TeamConfiguration teamConfiguration
     StadiumConfiguration stadiumConfiguration
 
-    MyController(@Nullable TeamConfiguration teamConfiguration, @Nullable @Named("pnc") StadiumConfiguration stadiumConfiguration) { <i class="conum" data-value="1"></i><b>(1)</b>
+    MyController(TeamConfiguration teamConfiguration,
+                 @Named("pnc") StadiumConfiguration stadiumConfiguration) { <i class="conum" data-value="1"></i><b>(1)</b>
         this.teamConfiguration = teamConfiguration
         this.stadiumConfiguration = stadiumConfiguration
     }
 
     @Get("/team")
-    HttpResponse&lt;TeamConfiguration&gt; team() {
-        return HttpResponse.ok(this.teamConfiguration)
+    TeamConfiguration team() {
+        this.teamConfiguration
     }
 
     @Get("/stadium")
-    HttpResponse&lt;StadiumConfiguration&gt; stadium() {
-        return HttpResponse.ok(this.stadiumConfiguration)
+    StadiumConfiguration stadium() {
+        this.stadiumConfiguration
     }
 }</code></pre>
 </div>

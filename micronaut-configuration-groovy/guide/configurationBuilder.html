@@ -146,9 +146,14 @@ We can add a coach, manager and president to the team.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class TeamAdmin { <i class="conum" data-value="1"></i><b>(1)</b>
 
-    String manager, coach, president
+    String manager
+    String coach
+    String president
 
     // should use the builder pattern to create the object
     private TeamAdmin() {
@@ -300,6 +305,9 @@ class TeamConfiguration {
         teamAdmin.manager == "Jerry Jones" <i class="conum" data-value="3"></i><b>(3)</b>
         teamAdmin.coach == "Tommy O'Neill"
         teamAdmin.president == "Mark Scanell"
+
+        cleanup:
+        ctx.close()
     }</code></pre>
 </div>
 </div>
