@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4 Team Admin Builder with @ConfigurationBuilder null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        @Configuration and @ConfigurationBuilder
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/configurationProperties.html"><strong>3</strong><span>Team Configuration with @ConfigurationProperties</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/configurationBuilder.html"><strong>4</strong><span>Team Admin Builder with @ConfigurationBuilder</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/eachProperty.html"><strong>5</strong><span>Stadiums with @EachProperty</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>7</strong><span>Controller</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/next.html"><strong>8</strong><span>Where To Go From Here?</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/configurationProperties.html">&lt;&lt; <strong>3</strong><span>Team Configuration with @ConfigurationProperties</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/eachProperty.html"><strong>5</strong><span>Stadiums with @EachProperty</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4 Team Admin Builder with @ConfigurationBuilder</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#configurationBuilderTest"><strong>4.1</strong><span>Test @ConfigurationBuilder</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="configurationBuilder">4 Team Admin Builder with @ConfigurationBuilder</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-configuration-groovy/edit/master/src/main/docs/guide/configurationBuilder.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The Builder pattern is a great way to build configuration objects incrementally. Read about the Builder pattern in this
+<a href="https://dzone.com/articles/design-patterns-the-builder-pattern">DZone</a> article to learn more.  Micronaut supports the Builder
+pattern with <code>@ConfigurationBuilder</code>.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s suppose we want to add team administrators to a team. The team administration is composed by using a builder pattern object.
+We can add a coach, manager and president to the team.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">team:
+  name: 'Steelers'
+  color: 'Black'
+  player-names: ['Mason Rudolph', 'James Connor']
+  team-admin:
+    manager: 'Nirav Assar' <i class="conum" data-value="1"></i><b>(1)</b>
+    coach: 'Mike Tomlin'
+    president: 'Dan Rooney'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>manager</code> property is an example of an element that will be built</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>TeamAdmin</code> object abides by the Builder pattern.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamAdmin.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+
+class TeamAdmin { <i class="conum" data-value="1"></i><b>(1)</b>
+
+    String manager, coach, president
+
+    // should use the builder pattern to create the object
+    private TeamAdmin() {
+    }
+
+    static Builder builder() {
+        return new Builder()
+    }
+
+    static class Builder { <i class="conum" data-value="2"></i><b>(2)</b>
+        String manager
+        String coach
+        String president
+
+        <i class="conum" data-value="3"></i><b>(3)</b>
+        Builder withManager(String manager) {
+            this.manager = manager
+            this
+        }
+
+        Builder withCoach(String coach) {
+            this.coach = coach
+            this
+        }
+
+        Builder withPresident(String president) {
+            this.president = president
+            this
+        }
+
+        TeamAdmin build() { <i class="conum" data-value="4"></i><b>(4)</b>
+            TeamAdmin teamAdmin = new TeamAdmin()
+            teamAdmin.manager = this.manager
+            teamAdmin.coach = this.coach
+            teamAdmin.president = this.president
+            teamAdmin
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>TeamAdmin</code> is the configuration object which consumes the declared properties.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The builder object is used to incrementally construct the object.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>An example of a builder method, where a attribute is set and then the builder itself is returned.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The final <code>build()</code> method creates the <code>TeamAdmin</code> object.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>At the bottom of <code>TeamConfiguration</code>, we add the inner class <code>TeamAdmin.Builder</code> and annotate it with <code>@ConfigurationBuilder</code>.
+This tells Micronaut that configuration can be read in and an object can be constructed using the Builder pattern.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We are using the builder only here, so we will have to call <code>builder.build()</code> to actually get the <code>TeamAdmin</code> object, at a later time.
+In our case, we will call <code>builder.build()</code> in the spock test.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamConfiguration.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@ConfigurationProperties("team")
+class TeamConfiguration {
+    String name
+    String color
+    List&lt;String&gt; playerNames
+
+    @ConfigurationBuilder(prefixes = "with", configurationPrefix = "team-admin") <i class="conum" data-value="1"></i><b>(1)</b>
+    TeamAdmin.Builder builder = TeamAdmin.builder() <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>prefixes</code> tells Micronaut to find methods that are prefixed by <code>with</code>; <code>configurationPrefix</code> allows the developer to customize the <code>application.yml</code> element</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Instantiate the builder object so it can be populated with configuration values.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="configurationBuilderTest">4.1 Test @ConfigurationBuilder</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-configuration-groovy/edit/master/src/main/docs/guide/configurationBuilderTest.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We can validate <code>@ConfigurationBuilder</code> is applied properly with the following spock test. The test format is similar to previous tests.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/micronaut/configuration/groovy/TeamConfigurationSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    void "test team configuration admin configuration builder "() {
+        given:
+        ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
+                "team.name": 'evolution',
+                "team.color": 'green',
+                "team.player-names": ['Nirav Assar', 'Lionel Messi'],
+                "team.team-admin.manager": "Jerry Jones", <i class="conum" data-value="1"></i><b>(1)</b>
+                "team.team-admin.coach": "Tommy O'Neill",
+                "team.team-admin.president": "Mark Scanell"
+        ])
+
+        when:
+        TeamConfiguration teamConfiguration = ctx.getBean(TeamConfiguration)
+        TeamAdmin teamAdmin = teamConfiguration.builder.build() <i class="conum" data-value="2"></i><b>(2)</b>
+
+        then:
+        teamConfiguration.name == "evolution"
+        teamConfiguration.color == "green"
+        teamConfiguration.playerNames[0] == "Nirav Assar"
+        teamConfiguration.playerNames[1] == "Lionel Messi"
+
+        // check the builder has values set
+        teamConfiguration.builder.manager == "Jerry Jones"
+        teamConfiguration.builder.coach == "Tommy O'Neill"
+        teamConfiguration.builder.president == "Mark Scanell"
+
+        // check the object can be built
+        teamAdmin.manager == "Jerry Jones" <i class="conum" data-value="3"></i><b>(3)</b>
+        teamAdmin.coach == "Tommy O'Neill"
+        teamAdmin.president == "Mark Scanell"
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Properties which will invoke the builder methods on <code>TeamAdmin.Builder</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The builder object is now configured, so we must run <code>build()</code> on it to create the <code>TeamAdmin</code> object</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Verify the object is created with the <code>applicaton.yml</code> properties</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/configurationProperties.html">&lt;&lt; <strong>3</strong><span>Team Configuration with @ConfigurationProperties</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/eachProperty.html"><strong>5</strong><span>Stadiums with @EachProperty</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
