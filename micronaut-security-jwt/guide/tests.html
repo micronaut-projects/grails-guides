@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>6</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -200,7 +203,7 @@ class JwtAuthenticationSpec extends Specification {
 
         when:
         String accessToken = rsp.body().accessToken
-        HttpRequest requestWithAuthorization = HttpRequest.GET('/' ).header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken") <i class="conum" data-value="7"></i><b>(7)</b>
+        HttpRequest requestWithAuthorization = HttpRequest.GET('/' ).bearerAuth(accessToken) <i class="conum" data-value="7"></i><b>(7)</b>
         HttpResponse&lt;String&gt; response = client.toBlocking().exchange(requestWithAuthorization, String)
 
         then:
