@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1.1 What you will need null</title>
+    <title>4.3 Execute Native Images null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -62,16 +62,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the App</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.1 What you will need</h1>
+                    <h1>4.3 Execute Native Images</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -80,36 +82,60 @@ function addJsClass() {
 
                 
 
-<h2 id="requirements">1.1 What you will need</h2>
+<h2 id="graalexecute">4.3 Execute Native Images</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/requirements.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-token-propagation/edit/master/src/main/docs/guide/graal/graalexecute.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>To complete this guide, you will need the following:</p>
+<p>Execute gateway native image:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Some time on your hands</p>
-</li>
-<li>
-<p>A decent text editor or IDE</p>
-</li>
-<li>
-<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> ./gateway
+15:05:06.684 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 26ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Execute userecho native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> ./userecho
+15:06:25.364 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 24ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Login to get the access token:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl -X "POST" "http://localhost:8080/login" -H 'Content-Type: application/json; charset=utf-8' -d $'{"username": "sherlock","password": "password"}'
+
+{"username":"sherlock","access_token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTU3NTY0MTE4Nywicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTc1NjQ0Nzg3LCJpYXQiOjE1NzU2NDExODd9.KeqG7XKB9RSEX4TncMCRVhikeMaFz3zzU9V190ioG3s","refresh_token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTU3NTY0MTE4Nywicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiaWF0IjoxNTc1NjQxMTg3fQ._lceQy-ujMQpPEkmrxvXeSnY_oNQsBnUvaglmLI569E","token_type":"Bearer","expires_in":3600}%</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the access token to invoke <code>gateway</code> service <code>/user</code> endpoint. Token propagation will happen and we receive the username.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl "http://localhost:8080/user" -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGVybG9jayIsIm5iZiI6MTU3NTY0MTE4Nywicm9sZXMiOltdLCJpc3MiOiJnYXRld2F5IiwiZXhwIjoxNTc1NjQ0Nzg3LCJpYXQiOjE1NzU2NDExODd9.KeqG7XKB9RSEX4TncMCRVhikeMaFz3zzU9V190ioG3s'
+
+sherlock</code></pre>
+</div>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the App</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
