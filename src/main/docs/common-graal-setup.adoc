@@ -1,11 +1,3 @@
-# Native Image with GraalVM
-
-We are going to use https://www.graalvm.org[GraalVM], the polyglot embeddable virtual machine, to generate a Native image
-of our Micronaut application.
-
-Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
-applications.
-
 Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.
 
 First, add Micronaut Graal's annotation processor that helps to handle generating the `reflection-config.json` metadata
