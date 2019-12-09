@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1.2 Solution null</title>
+    <title>2.1 Management null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -62,16 +62,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.2 Solution</h1>
+                    <h1>2.1 Management</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -80,43 +82,39 @@ function addJsClass() {
 
                 
 
-<h2 id="solution">1.2 Solution</h2>
+<h2 id="management">2.1 Management</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/adding-commit-info/edit/master/src/main/docs/guide/solution.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/adding-commit-info/edit/master/src/main/docs/guide/writingTheApp/management.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/micronaut-guides/adding-commit-info/archive/master.zip">Download</a> and unzip the source</p>
-</li>
-</ul>
+<p>Inspired by Spring Boot and <a href="http://grails.org">Grails</a>, the Micronaut management dependency adds support for monitoring
+of your application via endpoints: special URIs that return details about the health and state of your application.</p>
 </div>
 <div class="paragraph">
-<p>or</p>
+<p>To use the management features described in this section, add the dependency on your classpath. For example, in build.gradle</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/adding-commit-info.git" class="bare">https://github.com/micronaut-guides/adding-commit-info.git</a></code></p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+    implementation "io.micronaut:micronaut-management"
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

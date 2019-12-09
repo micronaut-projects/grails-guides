@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1.2 Solution null</title>
+    <title>4.1 Micronaut + GraalVM changes null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -62,16 +62,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the Application</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.2 Solution</h1>
+                    <h1>4.1 Micronaut + GraalVM changes</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -80,43 +82,105 @@ function addJsClass() {
 
                 
 
-<h2 id="solution">1.2 Solution</h2>
+<h2 id="graalchanges">4.1 Micronaut + GraalVM changes</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/adding-commit-info/edit/master/src/main/docs/guide/solution.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/adding-commit-info/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="paragraph">
+<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
+that is automatically picked up by the <code>native-image</code> tool:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut:micronaut-graal"
+}</code></pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
+This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
+components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
+VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
+program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We need to add a dependency to <code>svm</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To simplify building the image you need to create a <code>native-image.properties</code> file.
+The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application. For our example <code>example.micronaut/micronautguide</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside  <code>src/main/resources/META-INF/native-image/example.micronaut/micronautguide</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml|git.properties \
+       -H:Name=micronautguide \
+       -H:Class=example.micronaut.Application</code></pre>
+</div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/micronaut-guides/adding-commit-info/archive/master.zip">Download</a> and unzip the source</p>
+<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
 </li>
-</ul>
-</div>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="ulist">
-<ul>
 <li>
-<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/adding-commit-info.git" class="bare">https://github.com/micronaut-guides/adding-commit-info.git</a></code></p>
+<p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
+</li>
+<li>
+<p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You need to include the <code>git.properties</code> file generated by the Gradle plugin, in the <code>IncludeResources</code> set.
+</td>
+</tr>
+</table>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
