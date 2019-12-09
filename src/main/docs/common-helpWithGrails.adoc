@@ -105,9 +105,9 @@
 <div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
 <div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
 
-<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/grails/consulting-support/">OCI Grails Team</a>
-includes Grails co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
-Check our <a href="https://objectcomputing.com/training/catalog/grails/">Grails courses</a> and learn from the engineers who developed,
-matured and maintain Grails.</h3>
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
 
-<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Grails OCI Team">
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
