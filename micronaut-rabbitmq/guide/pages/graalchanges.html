@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.4 Running the App null</title>
+    <title>6.1 Micronaut + GraalVM changes null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -68,18 +68,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/nextSteps.html">&lt;&lt; <strong>5</strong><span>Next Steps</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>4.4 Running the App</h1>
+                    <h1>6.1 Micronaut + GraalVM changes</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -88,87 +88,106 @@ function addJsClass() {
 
                 
 
-<h2 id="runningTheAppWithRabbitMQ">4.4 Running the App</h2>
+<h2 id="graalchanges">6.1 Micronaut + GraalVM changes</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq/edit/master/src/main/docs/guide/rabbitmq/runningTheAppWithRabbitMQ.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Run <code>books</code> microservice:</p>
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image. This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We are going to add Micronaut Graal’s annotation processor and <code>svm</code> to both application builds. It helps to handle generating the <code>reflection-config.json</code> metadata that is automatically picked up by the native-image tool.</p>
+</div>
+<div class="paragraph">
+<p>Also, to simplify building the image you need to create a <code>native-image.properties</code> file. The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application.</p>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_books_to_generate_a_graalvm_native_image">Changes to books to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>books/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
 </div>
 <div class="listingblock">
+<div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">books $ ./gradlew run
-
-18:19:02.206 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1338ms. Server Running: http://localhost:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Execute a <code>curl</code> request to get one book:</p>
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/books</code> folder.</p>
 </div>
 <div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/books/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books/1491950358
-{"isbn":"1491950358","name":"Building Microservices"}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=books \
+       -H:Class=example.micronaut.books.Application</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_analytics_to_generate_a_graalvm_native_image">Changes to analytics to generate a GraalVM native image</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Open RabbitMQ Admin UI on <code><a href="http://localhost:15672" class="bare">http://localhost:15672</a></code> and use <code>guest</code> for both username and password. Select <code>queues</code> and
-<code>analytics</code> queue. You can see that there is a message in the queue.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../img/rabbitmq-message.png" alt="rabbitmq message">
-</div>
-</div>
-<div class="paragraph">
-<p>Expand the "Get messages" option and get one message. You can see all the information: <code>exchange</code>, <code>routing key</code> and the
-<code>payload</code> serialized to json:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../img/rabbitmq-message-detail.png" alt="rabbitmq message detail">
-</div>
-</div>
-<div class="paragraph">
-<p>Run <code>analytics</code> microservice:</p>
+<p>Modify <code>analytics/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
 </div>
 <div class="listingblock">
+<div class="title">analytics/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">analytics $ ./gradlew run
-
-18:24:45.810 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1307ms. Server Running: http://localhost:8081</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The application will consume and process the message automatically after the startup. Go to RabbitMQ Admin UI and check
-that the message has been consumed:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../img/rabbitmq-message-consumed.png" alt="rabbitmq message consumed">
-</div>
-</div>
-<div class="paragraph">
-<p>Now, run a <code>curl</code> to get the analytics:</p>
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/analytics</code> folder.</p>
 </div>
 <div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/analytics/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8081/analytics
-[{"bookIsbn":"1491950358","count":1}]</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=analytics \
+       -H:Class=example.micronaut.analytics.Application</code></pre>
+</div>
+</div>
 </div>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/nextSteps.html">&lt;&lt; <strong>5</strong><span>Next Steps</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
