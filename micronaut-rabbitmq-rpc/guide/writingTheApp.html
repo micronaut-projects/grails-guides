@@ -41,7 +41,13 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>5</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -161,8 +167,8 @@ Micronaut HTTP client and Server.</p>
     ...
     ..
     .
-    //compile "io.micronaut:micronaut-http-client"
-    //compile "io.micronaut:micronaut-http-server-netty"
+    //implementation "io.micronaut:micronaut-http-client"
+    //implementation "io.micronaut:micronaut-http-server-netty"
     compile "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
@@ -395,9 +401,9 @@ Micronaut HTTP client and Server.</p>
     ...
     ..
     .
-    //compile "io.micronaut:micronaut-http-client"
-    //compile "io.micronaut:micronaut-http-server-netty"
-    compile "io.micronaut.configuration:micronaut-rabbitmq"
+    //implementation "io.micronaut:micronaut-http-client"
+    //implementation "io.micronaut:micronaut-http-server-netty"
+    implementation "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
 </div>
@@ -545,7 +551,7 @@ REST request so it is not necessary to remove any dependency.</p>
     ...
     ..
     .
-    compile "io.micronaut.configuration:micronaut-rabbitmq"
+    implementation "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
 </div>

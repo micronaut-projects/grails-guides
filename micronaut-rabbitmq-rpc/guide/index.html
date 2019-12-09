@@ -76,7 +76,19 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the app</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>5</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalchanges"><strong>5.1</strong><span>Micronaut + GraalVM changes</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>5.2</strong><span>Native Image generation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalexecute"><strong>5.3</strong><span>Execute Native Images</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>5.4</strong><span>Native Image generation with Docker</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>6</strong><span>Next Steps</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>7</strong><span>Help with Micronaut</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -85,8 +97,8 @@
     <header>
         <h1>RabbitMQ RPC and Micronaut</h1>
         <p>Use RabbitMQ RPC to use request-reply pattern in your Micronaut applications.</p>
-        <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez</p>
-        <p><strong>Micronaut Version:</strong> 1.2.6</p>
+        <p><strong>Authors:</strong> Iv&iuml;&iquest;&frac12;n L&iuml;&iquest;&frac12;pez</p>
+        <p><strong>Micronaut Version:</strong> 1.2.7</p>
     </header>
     
 
@@ -241,8 +253,8 @@ Micronaut HTTP client and Server.</p>
     ...
     ..
     .
-    //compile "io.micronaut:micronaut-http-client"
-    //compile "io.micronaut:micronaut-http-server-netty"
+    //implementation "io.micronaut:micronaut-http-client"
+    //implementation "io.micronaut:micronaut-http-server-netty"
     compile "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
@@ -475,9 +487,9 @@ Micronaut HTTP client and Server.</p>
     ...
     ..
     .
-    //compile "io.micronaut:micronaut-http-client"
-    //compile "io.micronaut:micronaut-http-server-netty"
-    compile "io.micronaut.configuration:micronaut-rabbitmq"
+    //implementation "io.micronaut:micronaut-http-client"
+    //implementation "io.micronaut:micronaut-http-server-netty"
+    implementation "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
 </div>
@@ -625,7 +637,7 @@ REST request so it is not necessary to remove any dependency.</p>
     ...
     ..
     .
-    compile "io.micronaut.configuration:micronaut-rabbitmq"
+    implementation "io.micronaut.configuration:micronaut-rabbitmq"
 }</code></pre>
 </div>
 </div>
@@ -884,6 +896,17 @@ public class BookRecommendation {
 
 
 <div class="paragraph">
+<p>Configure <code>bookinventory</code> to run on port 8082:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: 8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Run <code>bookinventory</code> microservice:</p>
 </div>
 <div class="listingblock">
@@ -895,6 +918,17 @@ public class BookRecommendation {
 </div>
 </div>
 <div class="paragraph">
+<p>Configure <code>bookcatalogue</code> to run on port 8081:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: 8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Run <code>bookcatalogue</code> microservice:</p>
 </div>
 <div class="listingblock">
@@ -902,6 +936,29 @@ public class BookRecommendation {
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">complete $ ./gradlew complete:bookcatalogue:run
 13:31:19.887 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1149ms. Server Running: 1 active message listeners.</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Configure <code>bookrecommendation</code> to run on port 8080:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: 8080</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+8080 is the default port if you don&#8217;t specify <code>micronaut.server.port</code> property
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Run <code>bookrecommendation</code> microservice:</p>
@@ -923,7 +980,477 @@ public class BookRecommendation {
 </div>
 
 
-<h1 id="nextSteps">5 Next Steps</h1>
+<h1 id="graal">5 Generate a Micronaut app's Native Image with GraalVM</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
+of our Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
+applications.</p>
+</div>
+
+
+<h2 id="graalchanges">5.1 Micronaut + GraalVM changes</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image. This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We are going to add Micronaut Graal’s annotation processor and <code>svm</code> to both application builds. It helps to handle generating the <code>reflection-config.json</code> metadata that is automatically picked up by the native-image tool.</p>
+</div>
+<div class="paragraph">
+<p>Also, to simplify building the image you need to create a <code>native-image.properties</code> file. The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application.</p>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookcatalogue_to_generate_a_graalvm_native_image">Changes to bookcatalogue to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookcatalogue/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookcatalogue</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookcatalogue/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookcatalogue \
+       -H:Class=example.micronaut.bookcatalogue.Application</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookinventory_to_generate_a_graalvm_native_image">Changes to bookinventory to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookinventory/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookinventory</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookinventory/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookinventory \
+       -H:Class=example.micronaut.bookinventory.Application</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookrecommendation_to_generate_a_graalvm_native_image">Changes to bookrecommendation to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookrecommendation/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookrecommendation</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookrecommendation/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookrecommendation \
+       -H:Class=example.micronaut.bookrecommendation.Application</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<h2 id="graalnativeimage">5.2 Native Image generation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
+               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+               |     | 19.2.1       | grl     |            | 19.2.1-grl
+               |     | 19.1.1       | grl     |            | 19.1.1-grl
+               |     | 19.0.2       | grl     |            | 19.0.2-grl
+
+
+# For Java 8
+$ sdk install java 19.3.0.r8-grl
+
+# For Java 11
+$ sdk install java 19.3.0.r11-grl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookcatalogue">Generate GraalVM native image for bookcatalogue</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To generate the native image you need to generate the FAT JAR first.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoke native-image. It may take a minute to complete.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">userecho $  native-image --no-server -cp build/libs/bookcatalogue-0.1-all.jar
+[userecho:14552]    classlist:   8,403.72 ms
+[userecho:14552]        (cap):   2,196.75 ms
+[userecho:14552]        setup:   3,163.33 ms
+[userecho:14552]   (typeflow):  14,912.31 ms
+[userecho:14552]    (objects):  17,479.74 ms
+[userecho:14552]   (features):   2,182.07 ms
+[userecho:14552]     analysis:  36,708.00 ms
+[userecho:14552]     (clinit):   1,147.36 ms
+[userecho:14552]     universe:   2,441.84 ms
+[userecho:14552]      (parse):   1,114.89 ms
+[userecho:14552]     (inline):   2,769.22 ms
+[userecho:14552]    (compile):  13,846.04 ms
+[userecho:14552]      compile:  19,961.65 ms
+[userecho:14552]        image:   3,631.87 ms
+[userecho:14552]        write:   1,139.84 ms
+[userecho:14552]      [total]:  75,733.82 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookinventory">Generate GraalVM native image for bookinventory</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookinventory-0.1-all.jar
+[gateway:14380]    classlist:   4,769.83 ms
+[gateway:14380]        (cap):   2,178.91 ms
+[gateway:14380]        setup:   3,102.47 ms
+[gateway:14380]   (typeflow):  13,167.91 ms
+[gateway:14380]    (objects):  17,513.79 ms
+[gateway:14380]   (features):   2,323.89 ms
+[gateway:14380]     analysis:  35,342.33 ms
+[gateway:14380]     (clinit):   1,119.21 ms
+[gateway:14380]     universe:   2,471.35 ms
+[gateway:14380]      (parse):   2,535.37 ms
+[gateway:14380]     (inline):   2,379.36 ms
+[gateway:14380]    (compile):  14,645.46 ms
+[gateway:14380]      compile:  21,854.85 ms
+[gateway:14380]        image:   5,309.31 ms
+[gateway:14380]        write:   1,257.64 ms
+[gateway:14380]      [total]:  74,390.31 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookinventory_2">Generate GraalVM native image for bookinventory</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookinventory-0.1-all.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookrecommendation">Generate GraalVM native image for bookrecommendation</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookrecommendation-0.1-all.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<h2 id="graalexecute">5.3 Execute Native Images</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graalexecute.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Execute `bookcatalogue&#8217;s native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> ./bookcatalogue
+15:05:06.684 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 26ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Execute bookinventory native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> ./bookinventory
+15:06:25.364 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 24ms. Server Running: http://localhost:8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Execute bookrecommendation native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> ./bookrecommendation
+15:06:25.364 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 24ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a <code>curl</code> command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+
+
+<h2 id="graaldocker">5.4 Native Image generation with Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Alternatively, you can use Docker to construct the GraalVM Native Image.</p>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookcatalogue_to_generate_a_graalvm_native_image_with_docker">Changes to bookcatalogue to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookcatalogue/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/bookcatalogue
+WORKDIR /home/app/bookcatalogue
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/bookcatalogue-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookcatalogue /app/bookcatalogue
+ENTRYPOINT ["/app/bookcatalogue","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookcatalogue
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookcatalogue"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookinventory_to_generate_a_graalvm_native_image_with_docker">Changes to bookinventory to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookinventory/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/bookinventory
+WORKDIR /home/app/bookinventory
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/bookinventory-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookinventory /app/bookinventory
+ENTRYPOINT ["/app/bookinventory","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookinventory
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookinventory"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookrecommendation_to_generate_a_graalvm_native_image_with_docker">Changes to bookrecommendation to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookrecommendation/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/bookrecommendation
+WORKDIR /home/app/bookrecommendation
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/bookrecommendation-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookrecommendation /app/bookrecommendation
+ENTRYPOINT ["/app/bookrecommendation","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookrecommendation
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookrecommendation"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_native_images_with_docker">Running native images with docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use docker to run the images:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run -p 8080:8080 bookcatalogue
+$ docker run -p 8081:8081 bookinventory
+$ docker run -p 8081:8081 bookrecommendation</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<h1 id="nextSteps">6 Next Steps</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/nextSteps.adoc"'>
@@ -936,6 +1463,129 @@ public class BookRecommendation {
 <p>Read more about <a href="https://micronaut-projects.github.io/micronaut-rabbitmq/latest/guide/#rpc">RabbitMQ RPC support</a>
 inside Micronaut.</p>
 </div>
+
+
+<h1 id="help">7 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
 
 </article>
 </div>
