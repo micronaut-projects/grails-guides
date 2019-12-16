@@ -59,7 +59,10 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/next.html"><strong>10</strong><span>Where To Go From Here?</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>11</strong><span>Help with Micronaut</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>11</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>12</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -128,6 +131,10 @@ public class BintrayPackage {
     private String name;
     private boolean linked;
 
+    public BintrayPackage() {
+
+    }
+
     public String getName() {
         return name;
     }
@@ -158,24 +165,31 @@ import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.http.uri.UriTemplate;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 
 import javax.inject.Singleton;
+import java.net.URI;
 import java.util.List;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class BintrayLowLevelClient {
 
     private final RxHttpClient httpClient;
-    private final String uri;
+    private final URI uri;
 
     public BintrayLowLevelClient(@Client(BintrayConfiguration.BINTRAY_API_URL) RxHttpClient httpClient,  <i class="conum" data-value="2"></i><b>(2)</b>
                                  BintrayConfiguration configuration) {  <i class="conum" data-value="3"></i><b>(3)</b>
         this.httpClient = httpClient;
-        String path = "/api/{apiversion}/repos/{organization}/{repository}/packages";
-        uri = UriTemplate.of(path).expand(configuration.toMap());
+        this.uri = UriBuilder.of("/api")
+                .path(configuration.getApiversion())
+                .path("repos")
+                .path(configuration.getOrganization())
+                .path(configuration.getRepository())
+                .path("packages")
+                .build();
     }
 
     Maybe&lt;List&lt;BintrayPackage&gt;&gt; fetchPackages() {
