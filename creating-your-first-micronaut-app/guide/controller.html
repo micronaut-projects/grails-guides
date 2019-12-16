@@ -50,10 +50,13 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>7</strong><span>Running the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>8</strong><span>Next steps</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>8</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>9</strong><span>Help with Micronaut</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>9</strong><span>Next steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>10</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -121,7 +124,7 @@ import io.micronaut.http.annotation.Produces;
 
 @Controller("/hello") <i class="conum" data-value="1"></i><b>(1)</b>
 public class HelloController {
-    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get <i class="conum" data-value="2"></i><b>(2)</b>
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     public String index() {
         return "Hello World"; <i class="conum" data-value="4"></i><b>(4)</b>

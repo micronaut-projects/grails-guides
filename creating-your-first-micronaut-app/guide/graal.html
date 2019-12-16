@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>8 Generate a Micronaut app's Native Image with GraalVM null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Creating your first Micronaut app
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/application.html"><strong>3</strong><span>Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/controller.html"><strong>4</strong><span>Controller</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/tests.html"><strong>5</strong><span>Test</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>6</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>7</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>8</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>9</strong><span>Next steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>10</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/runningTheApp.html">&lt;&lt; <strong>7</strong><span>Running the Application</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>9</strong><span>Next steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>8 Generate a Micronaut app's Native Image with GraalVM</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#graalchanges"><strong>8.1</strong><span>Micronaut + GraalVM changes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#graalnativeimage"><strong>8.2</strong><span>Native Image generation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#graaldocker"><strong>8.3</strong><span>Native Image generation with Docker</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="graal">8 Generate a Micronaut app's Native Image with GraalVM</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
+of our Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
+applications.</p>
+</div>
+
+
+<h2 id="graalchanges">8.1 Micronaut + GraalVM changes</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="paragraph">
+<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
+that is automatically picked up by the <code>native-image</code> tool:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut:micronaut-graal"
+}</code></pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
+This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
+components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
+VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
+program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We need to add a dependency to <code>svm</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To simplify building the image you need to create a <code>native-image.properties</code> file.
+The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application. For our example <code>example.micronaut/micronautguide</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside  <code>src/main/resources/META-INF/native-image/example.micronaut/micronautguide</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=micronautguide \
+       -H:Class=example.micronaut.Application</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
+</li>
+<li>
+<p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
+</li>
+<li>
+<p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="graalnativeimage">8.2 Native Image generation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
+               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+               |     | 19.2.1       | grl     |            | 19.2.1-grl
+               |     | 19.1.1       | grl     |            | 19.1.1-grl
+               |     | 19.0.2       | grl     |            | 19.0.2-grl
+
+
+# For Java 8
+$ sdk install java 19.3.0.r8-grl
+
+# For Java 11
+$ sdk install java 19.3.0.r11-grl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To generate the native image you need to generate the FAT JAR first.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoke <code>native-image</code>. It may take a minute to complete.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
+/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
+[micronautguide:39362]    classlist:   3,884.97 ms
+[micronautguide:39362]        (cap):   5,919.80 ms
+[micronautguide:39362]        setup:   7,222.88 ms
+[micronautguide:39362]   (typeflow):  14,037.78 ms
+[micronautguide:39362]    (objects):  17,689.40 ms
+[micronautguide:39362]   (features):   1,751.37 ms
+[micronautguide:39362]     analysis:  35,421.99 ms
+[micronautguide:39362]     (clinit):     978.01 ms
+[micronautguide:39362]     universe:   2,114.65 ms
+[micronautguide:39362]      (parse):   2,327.75 ms
+[micronautguide:39362]     (inline):   2,153.46 ms
+[micronautguide:39362]    (compile):  13,066.94 ms
+[micronautguide:39362]      compile:  19,714.97 ms
+[micronautguide:39362]        image:   3,509.84 ms
+[micronautguide:39362]        write:   1,114.96 ms
+[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+<div class="paragraph">
+<p>You can invoke the generated native image <code>micronautguide</code>. Startup will be really fast.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> $ ./micronautguide -Xmx68m
+07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can execute the endpoint exposed by the native image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl localhost:8080/hello
+Hello World</code></pre>
+</div>
+</div>
+
+
+<h2 id="graaldocker">8.3 Native Image generation with Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
+</div>
+<div class="listingblock">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/micronautguide
+WORKDIR /home/app/micronautguide
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/complete-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/micronautguide /app/micronautguide
+ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">docker-build.sh</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t micronautguide
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+
+$ ./docker-build.sh
+Sending build context to Docker daemon  64.67MB
+Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+ ---&gt; d625000893c9
+Step 2/9 : COPY . /home/app/micronautguide
+ ---&gt; 4c0daf50c6f3
+Step 3/9 : WORKDIR /home/app/micronautguide
+ ---&gt; Running in e07cf22b668a
+Removing intermediate container e07cf22b668a
+ ---&gt; d3699ea8e284
+Step 4/9 : RUN gu install native-image
+ ---&gt; Running in 71edf17b9a11
+Downloading: Component catalog from www.graalvm.org
+Processing Component: Native Image
+Downloading: Component native-image: Native Image  from github.com
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Refreshed alternative links in /usr/bin/
+Removing intermediate container 71edf17b9a11
+ ---&gt; ee26c71bbd1e
+Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+ ---&gt; Running in d2cd451f33be
+[micronautguide:28]    classlist:   8,773.36 ms
+[micronautguide:28]        (cap):   1,044.04 ms
+[micronautguide:28]        setup:   2,748.03 ms
+[micronautguide:28]   (typeflow):  20,611.56 ms
+[micronautguide:28]    (objects):  20,377.15 ms
+[micronautguide:28]   (features):   2,168.30 ms
+[micronautguide:28]     analysis:  45,559.16 ms
+[micronautguide:28]     (clinit):   1,141.31 ms
+[micronautguide:28]     universe:   2,719.10 ms
+[micronautguide:28]      (parse):   2,808.15 ms
+[micronautguide:28]     (inline):   3,094.66 ms
+[micronautguide:28]    (compile):  25,648.31 ms
+[micronautguide:28]      compile:  34,018.50 ms
+[micronautguide:28]        image:   3,811.46 ms
+[micronautguide:28]        write:     643.59 ms
+[micronautguide:28]      [total]:  99,095.08 ms
+Removing intermediate container d2cd451f33be
+ ---&gt; 429a467e2fdd
+Step 6/9 : FROM frolvlad/alpine-glibc
+ ---&gt; 38dd85a430e8
+Step 7/9 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 643f9d29e3f8
+Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---&gt; 0d41749e3ceb
+Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
+ ---&gt; Running in 31b4c6c21e68
+Removing intermediate container 31b4c6c21e68
+ ---&gt; 3ff1de337ef4
+Successfully built 3ff1de337ef4
+Successfully tagged micronautguide:latest
+
+
+To run the docker container execute:
+    $ docker run -p 8080:8080 micronautguide</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use docker to run the image with the app&#8217;s native-image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
+06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/runningTheApp.html">&lt;&lt; <strong>7</strong><span>Running the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>9</strong><span>Next steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1.1 What you will need null</title>
+    <title>8.3 Native Image generation with Docker null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -77,16 +77,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>7</strong><span>Running the Application</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>9</strong><span>Next steps</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.1 What you will need</h1>
+                    <h1>8.3 Native Image generation with Docker</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -95,36 +97,122 @@ function addJsClass() {
 
                 
 
-<h2 id="requirements">1.1 What you will need</h2>
+<h2 id="graaldocker">8.3 Native Image generation with Docker</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/requirements.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>To complete this guide, you will need the following:</p>
+<p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Some time on your hands</p>
-</li>
-<li>
-<p>A decent text editor or IDE</p>
-</li>
-<li>
-<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/micronautguide
+WORKDIR /home/app/micronautguide
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/complete-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/micronautguide /app/micronautguide
+ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">docker-build.sh</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t micronautguide
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+
+$ ./docker-build.sh
+Sending build context to Docker daemon  64.67MB
+Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+ ---&gt; d625000893c9
+Step 2/9 : COPY . /home/app/micronautguide
+ ---&gt; 4c0daf50c6f3
+Step 3/9 : WORKDIR /home/app/micronautguide
+ ---&gt; Running in e07cf22b668a
+Removing intermediate container e07cf22b668a
+ ---&gt; d3699ea8e284
+Step 4/9 : RUN gu install native-image
+ ---&gt; Running in 71edf17b9a11
+Downloading: Component catalog from www.graalvm.org
+Processing Component: Native Image
+Downloading: Component native-image: Native Image  from github.com
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Refreshed alternative links in /usr/bin/
+Removing intermediate container 71edf17b9a11
+ ---&gt; ee26c71bbd1e
+Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+ ---&gt; Running in d2cd451f33be
+[micronautguide:28]    classlist:   8,773.36 ms
+[micronautguide:28]        (cap):   1,044.04 ms
+[micronautguide:28]        setup:   2,748.03 ms
+[micronautguide:28]   (typeflow):  20,611.56 ms
+[micronautguide:28]    (objects):  20,377.15 ms
+[micronautguide:28]   (features):   2,168.30 ms
+[micronautguide:28]     analysis:  45,559.16 ms
+[micronautguide:28]     (clinit):   1,141.31 ms
+[micronautguide:28]     universe:   2,719.10 ms
+[micronautguide:28]      (parse):   2,808.15 ms
+[micronautguide:28]     (inline):   3,094.66 ms
+[micronautguide:28]    (compile):  25,648.31 ms
+[micronautguide:28]      compile:  34,018.50 ms
+[micronautguide:28]        image:   3,811.46 ms
+[micronautguide:28]        write:     643.59 ms
+[micronautguide:28]      [total]:  99,095.08 ms
+Removing intermediate container d2cd451f33be
+ ---&gt; 429a467e2fdd
+Step 6/9 : FROM frolvlad/alpine-glibc
+ ---&gt; 38dd85a430e8
+Step 7/9 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 643f9d29e3f8
+Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---&gt; 0d41749e3ceb
+Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
+ ---&gt; Running in 31b4c6c21e68
+Removing intermediate container 31b4c6c21e68
+ ---&gt; 3ff1de337ef4
+Successfully built 3ff1de337ef4
+Successfully tagged micronautguide:latest
+
+
+To run the docker container execute:
+    $ docker run -p 8080:8080 micronautguide</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use docker to run the image with the app&#8217;s native-image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
+06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+</div>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>7</strong><span>Running the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>9</strong><span>Next steps</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
