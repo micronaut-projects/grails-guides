@@ -19,7 +19,7 @@ function addJsClass() {
 <div id="navigation">
     <div class="navTitle">
         
-        Secure a Micronaut app with Okta
+        Secure a Micronaut app with Cognito
     </div>
     <div class="navLinks">
         <ul>
@@ -85,7 +85,7 @@ function addJsClass() {
 <h2 id="home">2.3 Home</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-cognito/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -152,14 +152,14 @@ public class HomeController {
     &lt;title&gt;Home&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;h1&gt;Micronaut - Okta example&lt;/h1&gt;
+&lt;h1&gt;Micronaut - Cognito example&lt;/h1&gt;
 
 &lt;h2 th:if="${security}"&gt;username: &lt;span th:text="${security.attributes.get('email')}"&gt;&lt;/span&gt;&lt;/h2&gt;
 &lt;h2 th:unless="${security}"&gt;username: Anonymous&lt;/h2&gt;
 
 &lt;nav&gt;
     &lt;ul&gt;
-        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/okta"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/cognito"&gt;Enter&lt;/a&gt;&lt;/li&gt;
         &lt;li th:if="${security}"&gt;&lt;a href="/oauth/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
 &lt;/nav&gt;

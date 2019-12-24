@@ -19,7 +19,7 @@ function addJsClass() {
 <div id="navigation">
     <div class="navTitle">
         
-        Secure a Micronaut app with Okta
+        Secure a Micronaut app with Cognito
     </div>
     <div class="navLinks">
         <ul>
@@ -99,7 +99,7 @@ function addJsClass() {
 <h1 id="writingTheApp">2 Writing the App</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-cognito/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -131,7 +131,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <h2 id="views">2.1 Views</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/views.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-cognito/edit/master/src/main/docs/guide/writingTheApp/views.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -171,34 +171,76 @@ other build tools such as <code>Maven</code> or other programming languages such
 <h2 id="oauth2">2.2 OAuth 2.0</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-cognito/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Sign up at <a href="https://developer.okta.com">developer.okta.com</a> and create a Web app with the following characteristics:</p>
+<p>To provide authentication, sign in to your <a href="https://aws.amazon.com">AWS</a> account and go to <a href="https://aws.amazon.com/cognito">AWS Cognito</a>.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Check <code>Authorization Code</code> grant type.</p>
-</li>
-<li>
-<p>Add <code><a href="http://localhost:8080/oauth/callback/okta" class="bare">http://localhost:8080/oauth/callback/okta</a></code> as a login redirect URIs.</p>
-</li>
-<li>
-<p>Add <code><a href="http://localhost:8080/logout" class="bare">http://localhost:8080/logout</a></code> as a Logout redirect URIs.</p>
-</li>
-<li>
-<p>Annotate the Client ID and Secret.</p>
-</li>
-</ul>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>With the Amazon Cognito SDK, you just write a few lines of code to enable your users to sign-up and sign-in to your mobile and web apps.</p>
+</div>
+<div class="paragraph">
+<p><strong>Standards-based authentication</strong></p>
+</div>
+<div class="paragraph">
+<p>Amazon Cognito uses common identity management standards including OpenID Connect, OAuth 2.0, and SAML 2.0.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>First, create an Amazon Cognito User Pool:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>Amazon Cognito User Pools - A directory for all your users</strong></p>
+</div>
+<div class="paragraph">
+<p>You can quickly create your own directory to sign up and sign in users, and to store user profiles using Amazon Cognito User Pools. User Pools provide a user interface you can customize to match your app. User Pools also enable easy integration with social identity providers such as Facebook, Google, and Amazon, and enterprise identity providers such as Microsoft Active Directory through SAML.</p>
+</div>
+</blockquote>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../img/okta-app.png" alt="okta app">
+<img src="../img/aws-cognito-1.png" alt="aws cognito 1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/aws-cognito-2.png" alt="aws cognito 2">
+</div>
+</div>
+<div class="paragraph">
+<p>Amazon Cognito Pools are regional. Thus, annotate the region you are using.</p>
+</div>
+<div class="paragraph">
+<p>While you setup the Amazon Cognito User Pool, you will need to save the pool id:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/aws-cognito-3.png" alt="aws cognito 3">
+</div>
+</div>
+<div class="paragraph">
+<p>Configure the appropriate callback, make sure you allow <code>Authorization code grant</code> OAuth Flow, and also the scopes <code>openid</code> and <code>email</code> are selected.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/aws-cognito-5.png" alt="aws cognito 5">
+</div>
+</div>
+<div class="paragraph">
+<p>Save the client id and client secret:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/aws-cognito-4.png" alt="aws cognito 4">
 </div>
 </div>
 <div class="paragraph">
@@ -246,11 +288,11 @@ other build tools such as <code>Maven</code> or other programming languages such
     oauth2:
       enabled: true
       clients:
-        okta: <i class="conum" data-value="2"></i><b>(2)</b>
+        cognito: <i class="conum" data-value="2"></i><b>(2)</b>
           client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
           client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="4"></i><b>(4)</b>
           openid:
-            issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="5"></i><b>(5)</b>
+            issuer: 'https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_POOL_ID}/' <i class="conum" data-value="5"></i><b>(5)</b>
     token:
       jwt:
         enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
@@ -274,7 +316,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/okta</code></td>
+<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/cognito</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -286,7 +328,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server. Note: we will use the pool id and region mentioned previously.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
@@ -313,12 +355,17 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre>export OAUTH_CLIENT_ID=XXXXXXXXXX
 export OAUTH_CLIENT_SECRET=YYYYYYYYYY
-export OIDC_ISSUER_DOMAIN=https://dev-XXXXX.oktapreview.com
-export OIDC_ISSUER_AUTHSERVERID=default</pre>
+export COGNITO_REGION=eu-west-1
+export COGNITO_POOL_ID=eu-west-XXCCCAZZZ</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Check OKTA <a href="https://developer.okta.com/docs/api/resources/oidc#well-knownopenid-configuration">.well-known/openid-configuration documentation</a>.</p>
+<p>Although undocumented in the <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-userpools-server-contract-reference.html">Amazon Cognito User Pools Auth API Reference</a>, Cognito provides an <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">openid-configuration endpoint</a> which is used by Micronaut to configure your app.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/openid-configuration</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>We want to use an <strong>Authorization Code</strong> grant type flow which it is described in the following diagram:</p>
@@ -333,7 +380,7 @@ export OIDC_ISSUER_AUTHSERVERID=default</pre>
 <h2 id="home">2.3 Home</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-cognito/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -400,14 +447,14 @@ public class HomeController {
     &lt;title&gt;Home&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;h1&gt;Micronaut - Okta example&lt;/h1&gt;
+&lt;h1&gt;Micronaut - Cognito example&lt;/h1&gt;
 
 &lt;h2 th:if="${security}"&gt;username: &lt;span th:text="${security.attributes.get('email')}"&gt;&lt;/span&gt;&lt;/h2&gt;
 &lt;h2 th:unless="${security}"&gt;username: Anonymous&lt;/h2&gt;
 
 &lt;nav&gt;
     &lt;ul&gt;
-        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/okta"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/cognito"&gt;Enter&lt;/a&gt;&lt;/li&gt;
         &lt;li th:if="${security}"&gt;&lt;a href="/oauth/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
 &lt;/nav&gt;
