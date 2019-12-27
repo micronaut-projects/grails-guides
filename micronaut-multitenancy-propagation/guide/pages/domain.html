@@ -41,6 +41,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -98,10 +101,10 @@ function addJsClass() {
 <div class="title">books/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">grails:
-    gorm:
-        multiTenancy:
-            mode: DATABASE <i class="conum" data-value="1"></i><b>(1)</b>
-            tenantResolverClass: 'io.micronaut.multitenancy.gorm.HttpHeaderTenantResolver' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  gorm:
+    multiTenancy:
+      mode: 'DATABASE' <i class="conum" data-value="1"></i><b>(1)</b>
+      tenantResolverClass: 'io.micronaut.multitenancy.gorm.HttpHeaderTenantResolver' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

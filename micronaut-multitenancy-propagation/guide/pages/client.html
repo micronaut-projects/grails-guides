@@ -41,6 +41,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -155,13 +158,11 @@ public interface BookClient extends BookFetcher {
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">micronaut:
-...
-
-    http:
-        services:
-            books: <i class="conum" data-value="1"></i><b>(1)</b>
-                urls:
-                - "http://localhost:8081" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  http:
+    services:
+      books: <i class="conum" data-value="1"></i><b>(1)</b>
+        urls:
+          - "http://localhost:8081" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

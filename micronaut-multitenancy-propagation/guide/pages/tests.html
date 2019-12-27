@@ -41,6 +41,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -89,15 +92,6 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Add <code>inject-groovy</code> as a <code>testCompile</code> dependency to define beans in Groovy in the test classpath.</p>
-</div>
-<div class="listingblock">
-<div class="title">gateway/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    testCompile "io.micronaut:micronaut-inject-groovy"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Provide a <code>BookFetcher</code> bean replacement for the Test environment.</p>
 </div>
 <div class="listingblock">
@@ -108,7 +102,6 @@ function addJsClass() {
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.reactivex.Single
-
 import javax.inject.Singleton
 
 @Singleton
@@ -117,16 +110,18 @@ class MockBookFetcher implements BookFetcher {
 
     @Override
     Single&lt;List&lt;String&gt;&gt; fetchBooks() {
-        Single.just(Arrays.asList("The Empty Hearse",
-                "The Hounds of Baskerville",
-                "The Woman",
-                "The Six Thatchers",
-                "The Aluminium Crutch",
-                "The Speckled Blonde",
-                "The Geek Interpreter",
-                "The Great Game",
-                "The Blind Banker",
-                "A Study in Pink"))
+        Single.just(Arrays.asList(
+            "The Empty Hearse",
+            "The Hounds of Baskerville",
+            "The Woman",
+            "The Six Thatchers",
+            "The Aluminium Crutch",
+            "The Speckled Blonde",
+            "The Geek Interpreter",
+            "The Great Game",
+            "The Blind Banker",
+            "A Study in Pink")
+        )
     }
 }</code></pre>
 </div>
@@ -143,15 +138,14 @@ import geb.spock.GebSpec
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
-import spock.lang.IgnoreIf
 import spock.lang.Shared
 
 class HomePageSpec extends GebSpec {
-    @Shared
-    @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer) <i class="conum" data-value="1"></i><b>(1)</b>
 
-    @IgnoreIf({ !(sys['geb.env'] in ['chrome', 'firefox']) })
+    @AutoCleanup
+    @Shared
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+
     def "verify tenant can be selected works"() {
         given:
         browser.baseUrl = "http://localhost:${embeddedServer.port}"
@@ -182,7 +176,11 @@ class HomePageSpec extends GebSpec {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface.</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>EmbeddedServer</code>.</td>
 </tr>
 </table>
 </div>

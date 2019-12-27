@@ -41,6 +41,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -107,7 +110,6 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.OncePerRequestHttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.multitenancy.exceptions.TenantNotFoundException;
-import io.micronaut.multitenancy.tenantresolver.CookieTenantResolverConfiguration;
 import io.micronaut.multitenancy.tenantresolver.TenantResolver;
 import org.reactivestreams.Publisher;
 
@@ -116,6 +118,7 @@ import java.net.URI;
 @Filter("/") <i class="conum" data-value="1"></i><b>(1)</b>
 public class HomePageFilter extends OncePerRequestHttpServerFilter {
 
+    public static final String TENANT = "/tenant";
     private final TenantResolver tenantResolver;
 
     public HomePageFilter(TenantResolver tenantResolver) { <i class="conum" data-value="2"></i><b>(2)</b>
@@ -127,9 +130,14 @@ public class HomePageFilter extends OncePerRequestHttpServerFilter {
         try {
             tenantResolver.resolveTenantIdentifier();
         } catch (TenantNotFoundException e) {
-            return Publishers.just(HttpResponse.seeOther(URI.create("/tenant")));
+            return Publishers.just(HttpResponse.seeOther(URI.create(TENANT)));
         }
         return chain.proceed(request);
+    }
+
+    @Override
+    public int getOrder() {
+        return LOWEST_PRECEDENCE - 100;
     }
 }</code></pre>
 </div>
