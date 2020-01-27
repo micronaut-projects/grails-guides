@@ -183,7 +183,8 @@ annotationProcessor "io.micronaut:micronaut-graal"</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
        -H:Name=vies-vat-validator \
-       -H:Class=io.micronaut.function.executor.FunctionApplication</code></pre>
+       -H:Class=io.micronaut.function.executor.FunctionApplication \
+       --initialize-at-build-time=org.apache.logging.log4j,org.apache.logging.slf4j</code></pre>
 </div>
 </div>
 </div>
