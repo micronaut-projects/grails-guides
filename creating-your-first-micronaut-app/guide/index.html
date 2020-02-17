@@ -617,9 +617,10 @@ RUN gu install native-image
 COPY . /home/app/micronautguide
 WORKDIR /home/app/micronautguide
 
-RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
-FROM scratch
+FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/micronautguide/micronautguide /micronautguide/micronautguide
 ENTRYPOINT ["/micronautguide/micronautguide", "-Xmx68m"]</code></pre>
@@ -642,25 +643,25 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/9 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
- ---&gt; d625000893c9
-Step 2/9 : COPY . /home/app/micronautguide
- ---&gt; 4c0daf50c6f3
-Step 3/9 : WORKDIR /home/app/micronautguide
- ---&gt; Running in e07cf22b668a
-Removing intermediate container e07cf22b668a
- ---&gt; d3699ea8e284
-Step 4/9 : RUN gu install native-image
- ---&gt; Running in 71edf17b9a11
+Step 1/10 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+ ---&gt; 1515e8e21105
+Step 2/10 : RUN gu install native-image
+ ---&gt; Running in 805c70f45a9d
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
 Installing new component: Native Image (org.graalvm.native-image, version 19.3.1)
 Refreshed alternative links in /usr/bin/
-Removing intermediate container 71edf17b9a11
- ---&gt; ee26c71bbd1e
-Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
- ---&gt; Running in d2cd451f33be
+Removing intermediate container 805c70f45a9d
+ ---&gt; b098407fe3b2
+Step 3/10 : COPY . /home/app/micronautguide
+ ---&gt; a4ac50285c3e
+Step 4/10 : WORKDIR /home/app/micronautguide
+ ---&gt; Running in 5bcaea479a47
+Removing intermediate container 5bcaea479a47
+ ---&gt; 7683d318359a
+Step 5/10 : RUN native-image --no-server -cp build/libs/micronautguide-*-all.jar
+ ---&gt; Running in f287939a526a
 [micronautguide:28]    classlist:   8,773.36 ms
 [micronautguide:28]        (cap):   1,044.04 ms
 [micronautguide:28]        setup:   2,748.03 ms
@@ -677,21 +678,35 @@ Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.j
 [micronautguide:28]        image:   3,811.46 ms
 [micronautguide:28]        write:     643.59 ms
 [micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container d2cd451f33be
- ---&gt; dba5e85ad292
-Step 6/9 : FROM scratch
- ---&gt;
-Step 7/9 : EXPOSE 8080
- ---&gt; Running in 6f95a9b6d2d3
-Removing intermediate container 6f95a9b6d2d3
- ---&gt; f13ae3f46891
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /micronautguide/micronautguide
- ---&gt; d80190d488eb
-Step 9/9 : ENTRYPOINT ["/micronautguide/micronautguide", "-Xmx68m"]
- ---&gt; Running in 60f22cded514
-Removing intermediate container 60f22cded514
- ---&gt; 49dfcbfef605
-Successfully built 49dfcbfef605
+Removing intermediate container f287939a526a
+ ---&gt; 20a8c370d984
+Step 6/10 : FROM frolvlad/alpine-glibc
+ ---&gt; 38dd85a430e8
+Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
+ ---&gt; Running in 2a3b22d15e04
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/community/x86_64/APKINDEX.tar.gz
+v3.10.4-15-g5600c80ab9 [http://dl-cdn.alpinelinux.org/alpine/v3.10/main]
+v3.10.4-7-g6ee081a8fb [http://dl-cdn.alpinelinux.org/alpine/v3.10/community]
+OK: 10349 distinct packages available
+(1/1) Installing libstdc++ (8.3.0-r0)
+Executing glibc-bin-2.30-r0.trigger
+/usr/glibc-compat/sbin/ldconfig: /usr/glibc-compat/lib/ld-linux-x86-64.so.2 is not a symbolic link
+
+OK: 18 MiB in 18 packages
+Removing intermediate container 2a3b22d15e04
+ ---&gt; 913d6350ff6d
+Step 8/10 : EXPOSE 8080
+ ---&gt; Running in 7f3cdddebf26
+Removing intermediate container 7f3cdddebf26
+ ---&gt; 5b82cacacbfb
+Step 9/10 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---&gt; 5506ff660b65
+Step 10/10 : ENTRYPOINT ["/app/micronautguide"]
+ ---&gt; Running in ef23d1eee195
+Removing intermediate container ef23d1eee195
+ ---&gt; fb30459595cb
+Successfully built fb30459595cb
 Successfully tagged micronautguide:latest
 
 
