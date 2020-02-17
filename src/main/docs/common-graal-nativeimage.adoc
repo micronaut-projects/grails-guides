@@ -10,7 +10,7 @@ Invoke `native-image`. It may take a minute to complete.
 [source,bash]
 ----
 $ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java
+/Users/sdelamo/.sdkman/candidates/java/19.3.1.r8-grl/bin/java
 ----
 
 [source,bash]
