@@ -178,7 +178,7 @@ program has faster startup time and lower runtime memory overhead compared to a 
 ...
 ..
 .
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+    compileOnly "org.graalvm.nativeimage:svm"
 }</code></pre>
 </div>
 </div>
@@ -233,18 +233,19 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
-               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
+ GraalVM       |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     | installed  | 19.3.1.r8-grl
+               |     | 19.3.0.2.r11 | grl     |            | 19.3.0.2.r11-grl
+               |     | 19.3.0.2.r8  | grl     |            | 19.3.0.2.r8-grl
                |     | 19.2.1       | grl     |            | 19.2.1-grl
                |     | 19.1.1       | grl     |            | 19.1.1-grl
                |     | 19.0.2       | grl     |            | 19.0.2-grl
 
-
 # For Java 8
-$ sdk install java 19.3.0.r8-grl
+$ sdk install java 19.3.1.r8-grl
 
 # For Java 11
-$ sdk install java 19.3.0.r11-grl</code></pre>
+$ sdk install java 19.3.1.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -269,7 +270,7 @@ $ sdk install java 19.3.0.r11-grl</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/19.3.1.r8-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -331,16 +332,19 @@ Hello World</code></pre>
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+#FROM oracle/graalvm-ce:19.3.1-java11 as graalvm # For JDK 11
+RUN gu install native-image
+
 COPY . /home/app/micronautguide
 WORKDIR /home/app/micronautguide
-RUN gu install native-image
-RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
-FROM frolvlad/alpine-glibc
+RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
+
+FROM scratch
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide /app/micronautguide
-ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/micronautguide/micronautguide /micronautguide/micronautguide
+ENTRYPOINT ["/micronautguide/micronautguide", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -360,7 +364,7 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+Step 1/9 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
  ---&gt; d625000893c9
 Step 2/9 : COPY . /home/app/micronautguide
  ---&gt; 4c0daf50c6f3
@@ -373,7 +377,7 @@ Step 4/9 : RUN gu install native-image
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Installing new component: Native Image (org.graalvm.native-image, version 19.3.1)
 Refreshed alternative links in /usr/bin/
 Removing intermediate container 71edf17b9a11
  ---&gt; ee26c71bbd1e
@@ -396,19 +400,20 @@ Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.j
 [micronautguide:28]        write:     643.59 ms
 [micronautguide:28]      [total]:  99,095.08 ms
 Removing intermediate container d2cd451f33be
- ---&gt; 429a467e2fdd
-Step 6/9 : FROM frolvlad/alpine-glibc
- ---&gt; 38dd85a430e8
+ ---&gt; dba5e85ad292
+Step 6/9 : FROM scratch
+ ---&gt;
 Step 7/9 : EXPOSE 8080
- ---&gt; Using cache
- ---&gt; 643f9d29e3f8
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---&gt; 0d41749e3ceb
-Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
- ---&gt; Running in 31b4c6c21e68
-Removing intermediate container 31b4c6c21e68
- ---&gt; 3ff1de337ef4
-Successfully built 3ff1de337ef4
+ ---&gt; Running in 6f95a9b6d2d3
+Removing intermediate container 6f95a9b6d2d3
+ ---&gt; f13ae3f46891
+Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /micronautguide/micronautguide
+ ---&gt; d80190d488eb
+Step 9/9 : ENTRYPOINT ["/micronautguide/micronautguide", "-Xmx68m"]
+ ---&gt; Running in 60f22cded514
+Removing intermediate container 60f22cded514
+ ---&gt; 49dfcbfef605
+Successfully built 49dfcbfef605
 Successfully tagged micronautguide:latest
 
 
