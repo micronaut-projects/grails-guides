@@ -19,14 +19,14 @@ $ ./gradlew assemble
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/10 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+Step 1/10 : FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
  ---> 1515e8e21105
 Step 2/10 : RUN gu install native-image
  ---> Running in 805c70f45a9d
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.1)
+Installing new component: Native Image (org.graalvm.native-image, version 20.0.0)
 Refreshed alternative links in /usr/bin/
 Removing intermediate container 805c70f45a9d
  ---> b098407fe3b2
