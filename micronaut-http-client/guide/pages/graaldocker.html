@@ -118,7 +118,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
 RUN gu install native-image
 
 COPY . /home/app/micronautguide
@@ -150,14 +150,14 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/10 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+Step 1/10 : FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
  ---&gt; 1515e8e21105
 Step 2/10 : RUN gu install native-image
  ---&gt; Running in 805c70f45a9d
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.1)
+Installing new component: Native Image (org.graalvm.native-image, version 20.0.0)
 Refreshed alternative links in /usr/bin/
 Removing intermediate container 805c70f45a9d
  ---&gt; b098407fe3b2
