@@ -108,16 +108,19 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/books
 WORKDIR /home/app/books
-RUN gu install native-image
+
 RUN native-image --no-server -cp build/libs/books-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/books /app/books
-ENTRYPOINT ["/app/books","-Xmx68m"]</code></pre>
+ENTRYPOINT ["/app/books", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -143,16 +146,19 @@ echo "    $ docker run -p 8080:8080 books"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/analytics
 WORKDIR /home/app/analytics
-RUN gu install native-image
+
 RUN native-image --no-server -cp build/libs/analytics-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/analytics /app/analytics
-ENTRYPOINT ["/app/analytics","-Xmx68m"]</code></pre>
+ENTRYPOINT ["/app/analytics", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
