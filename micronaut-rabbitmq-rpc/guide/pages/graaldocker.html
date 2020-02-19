@@ -108,16 +108,19 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/bookcatalogue
 WORKDIR /home/app/bookcatalogue
-RUN gu install native-image
+
 RUN native-image --no-server -cp build/libs/bookcatalogue-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/bookcatalogue /app/bookcatalogue
-ENTRYPOINT ["/app/bookcatalogue","-Xmx68m"]</code></pre>
+ENTRYPOINT ["/app/bookcatalogue", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -143,16 +146,19 @@ echo "    $ docker run -p 8080:8080 bookcatalogue"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/bookinventory
 WORKDIR /home/app/bookinventory
-RUN gu install native-image
+
 RUN native-image --no-server -cp build/libs/bookinventory-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/bookinventory /app/bookinventory
-ENTRYPOINT ["/app/bookinventory","-Xmx68m"]</code></pre>
+ENTRYPOINT ["/app/bookinventory", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -178,16 +184,19 @@ echo "    $ docker run -p 8080:8080 bookinventory"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/bookrecommendation
 WORKDIR /home/app/bookrecommendation
-RUN gu install native-image
+
 RUN native-image --no-server -cp build/libs/bookrecommendation-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
 COPY --from=graalvm /home/app/bookrecommendation /app/bookrecommendation
-ENTRYPOINT ["/app/bookrecommendation","-Xmx68m"]</code></pre>
+ENTRYPOINT ["/app/bookrecommendation", "-Xmx68m"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
