@@ -233,19 +233,17 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
-               |     | 19.3.1.r8    | grl     | installed  | 19.3.1.r8-grl
-               |     | 19.3.0.2.r11 | grl     |            | 19.3.0.2.r11-grl
-               |     | 19.3.0.2.r8  | grl     |            | 19.3.0.2.r8-grl
-               |     | 19.2.1       | grl     |            | 19.2.1-grl
-               |     | 19.1.1       | grl     |            | 19.1.1-grl
-               |     | 19.0.2       | grl     |            | 19.0.2-grl
+ GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+               |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
+               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
+....
 
 # For Java 8
-$ sdk install java 19.3.1.r8-grl
+$ sdk install java 20.0.0.r8-grl
 
 # For Java 11
-$ sdk install java 19.3.1.r11-grl</code></pre>
+$ sdk install java 20.0.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -270,28 +268,28 @@ $ sdk install java 19.3.1.r11-grl</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.1.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/20.0.0.r8-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:39362]    classlist:   3,884.97 ms
-[micronautguide:39362]        (cap):   5,919.80 ms
-[micronautguide:39362]        setup:   7,222.88 ms
-[micronautguide:39362]   (typeflow):  14,037.78 ms
-[micronautguide:39362]    (objects):  17,689.40 ms
-[micronautguide:39362]   (features):   1,751.37 ms
-[micronautguide:39362]     analysis:  35,421.99 ms
-[micronautguide:39362]     (clinit):     978.01 ms
-[micronautguide:39362]     universe:   2,114.65 ms
-[micronautguide:39362]      (parse):   2,327.75 ms
-[micronautguide:39362]     (inline):   2,153.46 ms
-[micronautguide:39362]    (compile):  13,066.94 ms
-[micronautguide:39362]      compile:  19,714.97 ms
-[micronautguide:39362]        image:   3,509.84 ms
-[micronautguide:39362]        write:   1,114.96 ms
-[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+[micronautguide:39362]    classlist:   3,884.97 ms,  1.69 GB
+[micronautguide:39362]        (cap):   5,919.80 ms,  1.69 GB
+[micronautguide:39362]        setup:   7,222.88 ms,  1.69 GB
+[micronautguide:39362]   (typeflow):  14,037.78 ms,  4.05 GB
+[micronautguide:39362]    (objects):  17,689.40 ms,  4.05 GB
+[micronautguide:39362]   (features):   1,751.37 ms,  4.05 GB
+[micronautguide:39362]     analysis:  35,421.99 ms,  4.05 GB
+[micronautguide:39362]     (clinit):     978.01 ms,  4.09 GB
+[micronautguide:39362]     universe:   2,114.65 ms,  4.09 GB
+[micronautguide:39362]      (parse):   2,327.75 ms,  4.09 GB
+[micronautguide:39362]     (inline):   2,153.46 ms,  5.81 GB
+[micronautguide:39362]    (compile):  13,066.94 ms,  7.08 GB
+[micronautguide:39362]      compile:  19,714.97 ms,  7.15 GB
+[micronautguide:39362]        image:   3,509.84 ms,  7.15 GB
+[micronautguide:39362]        write:   1,114.96 ms,  7.15 GB
+[micronautguide:39362]      [total]:  73,294.82 ms,  7.15 GB</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -332,8 +330,8 @@ Hello World</code></pre>
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
-#FROM oracle/graalvm-ce:19.3.1-java11 as graalvm # For JDK 11
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+#FROM oracle/graalvm-ce:20.0.0-java11 as graalvm # For JDK 11
 RUN gu install native-image
 
 COPY . /home/app/micronautguide
@@ -365,14 +363,14 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/10 : FROM oracle/graalvm-ce:19.3.1-java8 as graalvm
+Step 1/10 : FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
  ---&gt; 1515e8e21105
 Step 2/10 : RUN gu install native-image
  ---&gt; Running in 805c70f45a9d
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.1)
+Installing new component: Native Image (org.graalvm.native-image, version 20.0.0)
 Refreshed alternative links in /usr/bin/
 Removing intermediate container 805c70f45a9d
  ---&gt; b098407fe3b2
