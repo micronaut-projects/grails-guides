@@ -104,9 +104,41 @@ function addJsClass() {
 <p>Modify <code>Application</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/Application.java</div>
+<div class="title">src/main/java/example/micronaut/Application.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-scheduled/complete/src/main/java/example/Application.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.event.ApplicationEventListener;
+import io.micronaut.runtime.Micronaut;
+import io.micronaut.runtime.server.event.ServerStartupEvent;
+
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+
+    private final RegisterUseCase registerUseCase;
+
+    public Application(RegisterUseCase registerUseCase) {  <i class="conum" data-value="3"></i><b>(3)</b>
+        this.registerUseCase = registerUseCase;
+    }
+
+    public static void main(String[] args) {
+        Micronaut.run(Application.class);
+    }
+
+
+    @Override
+    public void onApplicationEvent(ServerStartupEvent event) {  <i class="conum" data-value="4"></i><b>(4)</b>
+        try {
+            registerUseCase.register("harry@micronaut.example");
+            Thread.sleep(20000);
+            registerUseCase.register("ron@micronaut.example");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
