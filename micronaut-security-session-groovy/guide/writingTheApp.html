@@ -148,6 +148,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
+    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
     implementation "io.micronaut:micronaut-security-session"
 }</code></pre>
 </div>
@@ -171,42 +172,32 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
       login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
       logout:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
     session:
-      enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-      login-success-target-url: / <i class="conum" data-value="5"></i><b>(5)</b>
-      login-failure-target-url: /login/authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+      login-success-target-url: / <i class="conum" data-value="3"></i><b>(3)</b>
+      login-failure-target-url: /login/authFailed <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/login</code> endpoint</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/logout</code> endpoint</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Enable session based authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>After the user logs in, redirect them to the Home page.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>If the login fails, redirect them to /login/authFailed</td>
 </tr>
 </table>
@@ -230,7 +221,9 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
 
+import edu.umd.cs.findbugs.annotations.Nullable
 import groovy.transform.CompileStatic
+import io.micronaut.http.HttpRequest
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
@@ -244,8 +237,9 @@ import javax.inject.Singleton
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
+
     @Override
-    Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
             UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, new ArrayList&lt;&gt;())
             return Flowable.just(userDetails) as Flowable&lt;AuthenticationResponse&gt;
@@ -395,12 +389,13 @@ going to produce HTML in our controllers.</p>
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 
 import javax.annotation.Nullable
 import java.security.Principal
 
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
 class HomeController {
 
@@ -455,10 +450,11 @@ import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 
 @CompileStatic
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
 class LoginAuthController {
 

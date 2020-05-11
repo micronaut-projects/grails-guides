@@ -105,12 +105,13 @@ function addJsClass() {
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 
 import javax.annotation.Nullable
 import java.security.Principal
 
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
 class HomeController {
 
@@ -165,10 +166,11 @@ import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 
 @CompileStatic
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
 class LoginAuthController {
 
