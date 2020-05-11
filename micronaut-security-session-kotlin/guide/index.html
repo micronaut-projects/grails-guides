@@ -76,8 +76,6 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#webdriverBinaries"><strong>3.1</strong><span>WebDriver Binaries</span></a></div>
-            
             <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>4</strong><span>Testing the Application</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the Application</span></a></div>
@@ -92,7 +90,7 @@
         <h1>Micronaut Session based authentication</h1>
         <p>Learn how to secure a Micronaut app using Session based authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
     </header>
     
 
@@ -291,42 +289,32 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
       login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
       logout:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
     session:
-      enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-      login-success-target-url: / <i class="conum" data-value="5"></i><b>(5)</b>
-      login-failure-target-url: /login/authFailed <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+      login-success-target-url: / <i class="conum" data-value="3"></i><b>(3)</b>
+      login-failure-target-url: /login/authFailed <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/login</code> endpoint</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/logout</code> endpoint</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Enable session based authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>After the user logs in, redirect them to the Home page.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>If the login fails, redirect them to /login/authFailed</td>
 </tr>
 </table>
@@ -350,6 +338,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
 
+import io.micronaut.http.HttpRequest
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
@@ -362,7 +351,8 @@ import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
+
+    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
         if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
                 return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
@@ -513,14 +503,15 @@ going to produce HTML in our controllers.</p>
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 import java.security.Principal
 
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller <i class="conum" data-value="2"></i><b>(2)</b>
 class HomeController {
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
     fun index(principal: Principal?): Map&lt;String, Any&gt; { <i class="conum" data-value="5"></i><b>(5)</b>
         val data = mutableMapOf&lt;String, Any&gt;()
@@ -571,10 +562,11 @@ class HomeController {
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 import java.util.*
 
-@Secured("isAnonymous()") <i class="conum" data-value="1"></i><b>(1)</b>
+@Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
 @Controller("/login") <i class="conum" data-value="2"></i><b>(2)</b>
 class LoginAuthController {
 
@@ -686,8 +678,6 @@ sourceLanguage: kotlin</code></pre>
     testImplementation "org.gebish:geb-spock:3.2"
     testImplementation "org.seleniumhq.selenium:htmlunit-driver:2.35.1"
     testRuntime 'net.sourceforge.htmlunit:htmlunit:2.35.0'
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.141.59"
     testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
     testImplementation "org.seleniumhq.selenium:selenium-api:3.141.59"
 }</code></pre>
@@ -699,11 +689,7 @@ sourceLanguage: kotlin</code></pre>
 <div class="listingblock">
 <div class="title">src/test/resources/GebConfig.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.firefox.FirefoxOptions
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 // default is to use htmlunit
 driver = {
@@ -720,33 +706,6 @@ environments {
             htmlUnitDriver.javascriptEnabled = true
             htmlUnitDriver
         }
-    }
-
-    // run via “./gradlew -Dgeb.env=chrome iT”
-    chrome {
-        driver = { new ChromeDriver() }
-    }
-
-    // run via “./gradlew -Dgeb.env=chromeHeadless iT”
-    chromeHeadless {
-        driver = {
-            ChromeOptions o = new ChromeOptions()
-            o.addArguments('headless')
-            new ChromeDriver(o)
-        }
-    }
-
-    firefoxHeadless {
-        driver = {
-            FirefoxOptions o = new FirefoxOptions()
-            o.addArguments('-headless')
-            new FirefoxDriver(o)
-        }
-    }
-
-    // run via “./gradlew -Dgeb.env=firefox iT”
-    firefox {
-        driver = { new FirefoxDriver() }
     }
 }</code></pre>
 </div>
@@ -928,46 +887,6 @@ class SessionAuthenticationSpec extends GebSpec {
 <td>Inject the <code>EmbeddedServer</code> bean.</td>
 </tr>
 </table>
-</div>
-
-
-<h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-session-kotlin/edit/master/src/main/docs/guide/tests/webdriverBinaries.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
-a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
-...
-..
-    id "com.github.erdi.webdriver-binaries" version "2.1"
-}
-
-webdriverBinaries {
-    chromedriver {
-        version = '77.0.3865.40'
-    }
-    geckodriver {
-        version = '0.26.0'
-    }
-}
-
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
-}</code></pre>
-</div>
 </div>
 
 
