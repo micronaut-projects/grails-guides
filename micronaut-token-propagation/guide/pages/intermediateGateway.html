@@ -106,7 +106,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
 implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 </div>
 </div>
@@ -118,6 +118,8 @@ implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -133,7 +135,7 @@ import java.util.Collections;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if ((authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
                 authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
@@ -169,6 +171,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Single;
 
 @Controller("/user") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -180,7 +183,7 @@ public class UserController {
         this.usernameFetcher = usernameFetcher;
     }
 
-    @Secured("isAuthenticated()")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Secured(SecurityRule.IS_AUTHENTICATED)  <i class="conum" data-value="3"></i><b>(3)</b>
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="4"></i><b>(4)</b>
     @Get <i class="conum" data-value="5"></i><b>(5)</b>
     Single&lt;String&gt; index(@Header("Authorization") String authorization) {  <i class="conum" data-value="6"></i><b>(6)</b>

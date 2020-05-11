@@ -94,7 +94,7 @@
         <h1>Micronaut Token Propagation</h1>
         <p>Learn how to leverage token propagation in Micronaut to simplify your code while keeping your microservices secure.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
     </header>
     
 
@@ -237,7 +237,7 @@
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
 implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 </div>
 </div>
@@ -249,6 +249,8 @@ implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -264,7 +266,7 @@ import java.util.Collections;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if ((authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
                 authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
@@ -300,6 +302,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Single;
 
 @Controller("/user") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -311,7 +314,7 @@ public class UserController {
         this.usernameFetcher = usernameFetcher;
     }
 
-    @Secured("isAuthenticated()")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Secured(SecurityRule.IS_AUTHENTICATED)  <i class="conum" data-value="3"></i><b>(3)</b>
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="4"></i><b>(4)</b>
     @Get <i class="conum" data-value="5"></i><b>(5)</b>
     Single&lt;String&gt; index(@Header("Authorization") String authorization) {  <i class="conum" data-value="6"></i><b>(6)</b>
@@ -603,7 +606,7 @@ public class UserControllerTest {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security"
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
 implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 </div>
 </div>
@@ -620,13 +623,14 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 
 import java.security.Principal;
 
 @Controller("/user") <i class="conum" data-value="1"></i><b>(1)</b>
 public class UserController {
 
-    @Secured("isAuthenticated()") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="2"></i><b>(2)</b>
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
     @Get <i class="conum" data-value="4"></i><b>(4)</b>
     String index(Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
@@ -734,12 +738,9 @@ includes a feature called token propagation. We can tell our app to propagate th
     ...
     ..
     ..
-      writer:
-        header:
-          enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
       propagation:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-        service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+        service-id-regex: "userecho" <i class="conum" data-value="2"></i><b>(2)</b>
 ....
 ..</code></pre>
 </div>
@@ -748,14 +749,10 @@ includes a feature called token propagation. We can tell our app to propagate th
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Micronaut ships with several <a href="https://docs.micronaut.io/latest/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Enable token propagation</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>We only want to propagate the token to certain services. We can create a regular expression to match those services ids.</td>
 </tr>
 </table>
@@ -774,9 +771,9 @@ includes a feature called token propagation. We can tell our app to propagate th
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Single;
 
 @Controller("/user")
@@ -788,7 +785,7 @@ public class UserController {
         this.usernameFetcher = usernameFetcher;
     }
 
-    @Secured("isAuthenticated()")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Produces(MediaType.TEXT_PLAIN)
     @Get
     Single&lt;String&gt; index() {
@@ -1074,18 +1071,17 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
-               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
-               |     | 19.2.1       | grl     |            | 19.2.1-grl
-               |     | 19.1.1       | grl     |            | 19.1.1-grl
-               |     | 19.0.2       | grl     |            | 19.0.2-grl
-
+ GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+               |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
+               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
+....
 
 # For Java 8
-$ sdk install java 19.3.0.r8-grl
+$ sdk install java 20.0.0.r8-grl
 
 # For Java 11
-$ sdk install java 19.3.0.r11-grl</code></pre>
+$ sdk install java 20.0.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">

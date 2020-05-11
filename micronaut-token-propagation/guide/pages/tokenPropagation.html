@@ -112,12 +112,9 @@ includes a feature called token propagation. We can tell our app to propagate th
     ...
     ..
     ..
-      writer:
-        header:
-          enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
       propagation:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-        service-id-regex: "userecho" <i class="conum" data-value="3"></i><b>(3)</b>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+        service-id-regex: "userecho" <i class="conum" data-value="2"></i><b>(2)</b>
 ....
 ..</code></pre>
 </div>
@@ -126,14 +123,10 @@ includes a feature called token propagation. We can tell our app to propagate th
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Micronaut ships with several <a href="https://docs.micronaut.io/latest/api/io/micronaut/security/token/writer/TokenWriter.html">TokenWriter</a> beans which you can enable. In this example, we enable the HTTP header token writer which propagates the token in the HTTP Header <code>Authorization</code>. You can code your own <code>TokenWriter</code> to satisfy your requirements.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Enable token propagation</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>We only want to propagate the token to certain services. We can create a regular expression to match those services ids.</td>
 </tr>
 </table>
@@ -152,9 +145,9 @@ includes a feature called token propagation. We can tell our app to propagate th
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Single;
 
 @Controller("/user")
@@ -166,7 +159,7 @@ public class UserController {
         this.usernameFetcher = usernameFetcher;
     }
 
-    @Secured("isAuthenticated()")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Produces(MediaType.TEXT_PLAIN)
     @Get
     Single&lt;String&gt; index() {
