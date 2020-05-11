@@ -6,7 +6,7 @@
     <link rel='icon' href='../img/micronaut-favicon.ico' />
     <meta charset='UTF-8' />
     <title>Secure a Micronaut app with Github | Micronaut Guides | Micronaut Framework</title>
-    <meta name='description' content='Secure a Micronaut app with Github. Learn how to create Micronaut app and secure it with an Authorization Server provided by Github.' />
+    <meta name='description' content='Secure a Micronaut app with Github. Learn how to create Micronaut app and secure it with an Authorization Server provided by Github. Learn how to write your own UserDetails Mapper.' />
     <link rel="stylesheet" href="../css/highlight/agate.css">
     <script src="../js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -88,9 +88,9 @@
     </aside>
     <header>
         <h1>Secure a Micronaut app with Github</h1>
-        <p>Learn how to create Micronaut app and secure it with an Authorization Server provided by Github.</p>
+        <p>Learn how to create Micronaut app and secure it with an Authorization Server provided by Github. Learn how to write your own UserDetails Mapper.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
     </header>
     
 
@@ -385,7 +385,7 @@ injects into the model a <code>security</code> map with the authenticated user. 
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.7</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.M3</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -407,7 +407,7 @@ injects into the model a <code>security</code> map with the authenticated user. 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security"
+    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
     implementation "io.micronaut:micronaut-security-jwt"
 }</code></pre>
 </div>
@@ -421,77 +421,66 @@ injects into the model a <code>security</code> map with the authenticated user. 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
 micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     oauth2:
-      enabled: true
       clients:
-        github: <i class="conum" data-value="2"></i><b>(2)</b>
-          client-id:  '${OAUTH_CLIENT_ID}' <i class="conum" data-value="3"></i><b>(3)</b>
-          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="4"></i><b>(4)</b>
-          scopes: <i class="conum" data-value="5"></i><b>(5)</b>
+        github: <i class="conum" data-value="1"></i><b>(1)</b>
+          client-id:  '${OAUTH_CLIENT_ID}' <i class="conum" data-value="2"></i><b>(2)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+          scopes: <i class="conum" data-value="4"></i><b>(4)</b>
             - user:email
             - read:user
             - public_repo
           authorization:
-            url: 'https://github.com/login/oauth/authorize' <i class="conum" data-value="6"></i><b>(6)</b>
+            url: 'https://github.com/login/oauth/authorize' <i class="conum" data-value="5"></i><b>(5)</b>
           token:
-            url: 'https://github.com/login/oauth/access_token' <i class="conum" data-value="7"></i><b>(7)</b>
+            url: 'https://github.com/login/oauth/access_token' <i class="conum" data-value="6"></i><b>(6)</b>
             auth-method: client-secret-post
     token:
       jwt:
-        enabled: true <i class="conum" data-value="8"></i><b>(8)</b>
         cookie:
-          enabled: true <i class="conum" data-value="9"></i><b>(9)</b>
+          enabled: true <i class="conum" data-value="7"></i><b>(7)</b>
     endpoints:
       logout:
-        enabled: true  <i class="conum" data-value="10"></i><b>(10)</b>
-        get-allowed: true <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
+        enabled: true  <i class="conum" data-value="8"></i><b>(8)</b>
+        get-allowed: true <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable security</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/github</code></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Client Secret. See previous screenshot.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Client ID. See previous screenshot.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Specify the scopes you want to request. <a href="https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">Github Scopes</a> let you sepcify exactly what type of access you need.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Map manually the Github&#8217;s <a href="https://tools.ietf.org/html/rfc6749#section-3.1">Authorization endpoint</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Map manually the Github&#8217;s <a href="https://tools.ietf.org/html/rfc6749#section-3.2">Token endpoint</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>ID Token is a JWT token. We need to enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout">Logout Controller</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>Accept GET request to the <code>/logout</code> endpoint.</td>
 </tr>
 </table>
