@@ -156,8 +156,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    annotationProcessor "io.micronaut:micronaut-security"
-    implementation "io.micronaut:micronaut-security"
+    annotationProcessor 'io.micronaut:micronaut-security-annotations:2.0.0.M2'
+    implementation "io.micronaut:micronaut-security:2.0.0.M2"
 }</code></pre>
 </div>
 </div>
@@ -180,20 +180,15 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
       login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/login</code> endpoint</td>
 </tr>
 </table>
@@ -217,6 +212,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -232,7 +229,7 @@ import java.util.ArrayList;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
                 authenticationRequest.getSecret().equals("password") ) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
@@ -278,14 +275,16 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+
 import java.security.Principal;
 
-@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
+@Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN)
-    @Get("/")  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get  <i class="conum" data-value="3"></i><b>(3)</b>
     String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
         return principal.getName();
     }

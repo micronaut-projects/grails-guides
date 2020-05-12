@@ -157,6 +157,7 @@ sourceLanguage: java</code></pre>
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -178,7 +179,7 @@ class BasicAuthSpec extends Specification {
 
     def "Verify HTTP Basic Auth works"() {
         when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/')) <i class="conum" data-value="4"></i><b>(4)</b>
+        client.toBlocking().exchange(HttpRequest.GET('/').accept(MediaType.TEXT_PLAIN)) <i class="conum" data-value="4"></i><b>(4)</b>
 
         then: 'returns unauthorized'
         HttpClientResponseException e = thrown(HttpClientResponseException) <i class="conum" data-value="5"></i><b>(5)</b>
@@ -186,10 +187,12 @@ class BasicAuthSpec extends Specification {
 
         when: 'A secured URL is accessed with Basic Auth'
         HttpRequest request = HttpRequest.GET('/')
+                .accept(MediaType.TEXT_PLAIN)
                 .basicAuth("sherlock", "password") <i class="conum" data-value="6"></i><b>(6)</b>
         HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(request, String) <i class="conum" data-value="7"></i><b>(7)</b>
 
         then: 'the endpoint can be accessed'
+        noExceptionThrown()
         rsp.status == HttpStatus.OK
         rsp.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
     }
@@ -254,6 +257,8 @@ class BasicAuthSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.client.annotation.Client;
@@ -261,10 +266,19 @@ import io.micronaut.http.client.annotation.Client;
 @Client("/")
 public interface AppClient {
 
+    @Consumes(MediaType.TEXT_PLAIN) <i class="conum" data-value="1"></i><b>(1)</b>
     @Get("/")
     String home(@Header String authorization);
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The method consumes plain text, because of it Micronaut includes the HTTP Header <code>Accept: text/plain</code>.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Create a test which uses the previous <code>@Client</code></p>

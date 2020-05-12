@@ -105,6 +105,8 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -120,7 +122,7 @@ import java.util.ArrayList;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider  { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
                 authenticationRequest.getSecret().equals("password") ) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
