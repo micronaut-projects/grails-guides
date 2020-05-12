@@ -554,7 +554,7 @@ public interface AppClient {
 
     @Consumes(MediaType.TEXT_PLAIN) <i class="conum" data-value="1"></i><b>(1)</b>
     @Get("/")
-    String home(@Header String authorization);
+    String home(@Header String authorization); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -563,6 +563,10 @@ public interface AppClient {
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>The method consumes plain text, because of it Micronaut includes the HTTP Header <code>Accept: text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The first character of the parameter name is capitalized and that value (<code>Authorization</code>) is used the HTTP Header name. If you wish to change the parameter name you can specify the <code>@Header</code> annotation value.</td>
 </tr>
 </table>
 </div>
