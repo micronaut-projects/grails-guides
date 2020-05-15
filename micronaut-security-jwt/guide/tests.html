@@ -38,16 +38,19 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/tests.html"><strong>3</strong><span>Tests</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>6</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>7</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>8</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -74,7 +77,7 @@ function addJsClass() {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span> >></a></div>
                 
 
 
@@ -88,10 +91,7 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#oauth"><strong>3.1</strong><span>Token Refresh</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#jwt"><strong>3.2</strong><span>Use Micronaut's HTTP Client and JWT</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#jwt"><strong>3.1</strong><span>Use Micronaut's HTTP Client and JWT</span></a>
                     </div>
                     
                 </div>
@@ -141,11 +141,12 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example
----
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">applicationType: default
+defaultPackage: example.micronaut
 testFramework: spock
-sourceLanguage: java</code></pre>
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, docker, gradle, http-client, java, java-application, logback, netty-server, readme, shade, spock, yaml]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -158,14 +159,13 @@ sourceLanguage: java</code></pre>
 
 import com.nimbusds.jwt.JWTParser
 import com.nimbusds.jwt.SignedJWT
-import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
@@ -177,41 +177,47 @@ import javax.inject.Inject
 class JwtAuthenticationSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Inject
     @Client("/")
-    RxHttpClient client <i class="conum" data-value="3"></i><b>(3)</b>
+    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
-    def "Verify JWT authentication works"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/', )) <i class="conum" data-value="4"></i><b>(4)</b>
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        when:
+        client.toBlocking().exchange(HttpRequest.GET('/', )) <i class="conum" data-value="3"></i><b>(3)</b>
 
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException)
+        then:
+        HttpClientResponseException e = thrown()
         e.status == HttpStatus.UNAUTHORIZED
+    }
 
+    void "upon successful authentication, a Json Web token is issued to the user"() {
         when: 'Login endpoint is called with valid credentials'
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="5"></i><b>(5)</b>
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="5"></i><b>(5)</b>
 
         then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
-        rsp.body().username == 'sherlock'
-        rsp.body().accessToken
-        JWTParser.parse(rsp.body().accessToken) instanceof SignedJWT
-        rsp.body().refreshToken
-        JWTParser.parse(rsp.body().refreshToken) instanceof SignedJWT
 
         when:
-        String accessToken = rsp.body().accessToken
-        HttpRequest requestWithAuthorization = HttpRequest.GET('/' ).bearerAuth(accessToken) <i class="conum" data-value="7"></i><b>(7)</b>
+        BearerAccessRefreshToken bearerAccessRefreshToken = rsp.body()
+
+        then:
+        bearerAccessRefreshToken.username == 'sherlock'
+        bearerAccessRefreshToken.accessToken
+
+        and: 'the access token is a signed JWT'
+        JWTParser.parse(bearerAccessRefreshToken.accessToken) instanceof SignedJWT
+
+        when: 'passing the access token as in the Authorization HTTP Header with the prefix Bearer allows the user to access a secured endpoint'
+        String accessToken = bearerAccessRefreshToken.accessToken
+        HttpRequest requestWithAuthorization = HttpRequest.GET('/' )
+                .accept(MediaType.TEXT_PLAIN)
+                .bearerAuth(accessToken) <i class="conum" data-value="6"></i><b>(6)</b>
         HttpResponse&lt;String&gt; response = client.toBlocking().exchange(requestWithAuthorization, String)
 
         then:
         response.status == HttpStatus.OK
-        response.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
+        response.body() == 'sherlock' <i class="conum" data-value="7"></i><b>(7)</b>
     }
 }</code></pre>
 </div>
@@ -224,119 +230,33 @@ class JwtAuthenticationSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>EmbeddedServer</code> interfact.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Once you turn on security, every endpoint is secured by default.</td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When you include the security dependencies, security is considered enabled and every endpoint is secured by default.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Micronaut makes it easy to bind JSON responses into Java objects.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Micronaut supports <a href="https://tools.ietf.org/html/rfc6750">RFC 6750 Bearer Token</a> specification out-of-the-box. We supply the JWT token in the <code>Authorization</code> HTTP Header.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Use <code>.body()</code> to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
 
 
-<h2 id="oauth">3.1 Token Refresh</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/oauth.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Create a new test to verify that token refreshing works as expected.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
-import io.micronaut.security.token.jwt.render.AccessRefreshToken
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Specification
-
-import javax.inject.Inject
-
-@MicronautTest
-class OauthAccessTokenSpec extends Specification {
-
-    @Inject
-    EmbeddedServer embeddedServer
-
-    @Inject
-    @Client("/")
-    RxHttpClient client
-
-    def "Verify JWT access token refresh works"() {
-        when: 'login endpoint is called with valid credentials'
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds)
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
-
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK
-
-        when:
-        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
-        String refreshToken = rsp.body().refreshToken
-        String accessToken = rsp.body().accessToken
-
-        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST('/oauth/access_token',
-                new TokenRefreshRequest("refresh_token", refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
-
-        then:
-        response.status == HttpStatus.OK
-        response.body().accessToken
-        response.body().accessToken != accessToken <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-}
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>A different access token is retrieved.</td>
-</tr>
-</table>
-</div>
-
-
-<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+<h2 id="jwt">3.1 Use Micronaut's HTTP Client and JWT</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
@@ -356,14 +276,24 @@ class OauthAccessTokenSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
 
 @Client("/")
 public interface AppClient {
 
-    @Get("/")
+    @Post("/login")
+    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials);
+
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Get
     String home(@Header String authorization);
 }</code></pre>
 </div>
@@ -376,13 +306,12 @@ public interface AppClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
@@ -394,39 +323,23 @@ import javax.inject.Inject
 class DeclarativeHttpClientWithJwtSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer
-
-    @Inject
-    @Client("/")
-    RxHttpClient client
-
-    @Inject
     AppClient appClient <i class="conum" data-value="1"></i><b>(1)</b>
 
     def "Verify JWT authentication works with declarative @Client"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/', ))
-
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status == HttpStatus.UNAUTHORIZED
-
         when: 'Login endpoint is called with valid credentials'
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="2"></i><b>(2)</b>
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK
-        rsp.body().accessToken
-
-        when:
-        String accessToken = rsp.body().accessToken
-        String authorizationValue = "Bearer $accessToken"
-        String msg = appClient.home(authorizationValue) <i class="conum" data-value="4"></i><b>(4)</b>
+        BearerAccessRefreshToken loginRsp = appClient.login(creds) <i class="conum" data-value="2"></i><b>(2)</b>
 
         then:
-        msg == 'sherlock' <i class="conum" data-value="5"></i><b>(5)</b>
+        loginRsp
+        loginRsp.accessToken
+        JWTParser.parse(loginRsp.accessToken) instanceof SignedJWT
+
+        when:
+        String msg = appClient.home("Bearer ${loginRsp.accessToken}") <i class="conum" data-value="3"></i><b>(3)</b>
+
+        then:
+        msg == 'sherlock'
     }
 }</code></pre>
 </div>
@@ -443,15 +356,7 @@ class DeclarativeHttpClientWithJwtSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
@@ -461,7 +366,7 @@ class DeclarativeHttpClientWithJwtSpec extends Specification {
                 
                     <div class="toc-item prev-left"><a href="../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

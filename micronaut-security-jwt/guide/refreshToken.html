@@ -1,0 +1,927 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4 Issuing a Refresh Token null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut JWT Authentication
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/tests.html"><strong>3</strong><span>Tests</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>6</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/graal.html"><strong>7</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>8</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/tests.html">&lt;&lt; <strong>3</strong><span>Tests</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4 Issuing a Refresh Token</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#saveRefreshToken"><strong>4.1</strong><span>Save Refresh Token</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#refreshController"><strong>4.2</strong><span>Refresh Controller</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#testRefreshToken"><strong>4.3</strong><span>Test Refresh Token</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="refreshToken">4 Issuing a Refresh Token</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Access tokens expire. You can control the expiration with <code>micronaut.security.token.jwt.generator.access-token-expiration</code>. In addition to the access token, you can configure your login endpoint to also return a refresh token. You can use the refresh token to obtain a new access token.</p>
+</div>
+<div class="paragraph">
+<p>First, add the following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
+  security:
+    token:
+      jwt:
+        generator:
+          refresh-token:
+            enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable authentication responses (e.g. login response) to include a refresh token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To generate a refresh token you app must provide a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a>. Micronaut Security ships with  <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/jwt/generator/SignedRefreshTokenGenerator.html">SignedRefreshTokenGenerator</a> which signs a UUID with a configured secret.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a test to verify the login endpoint responds both access and refresh token:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginIncludesRefreshTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+import javax.inject.Inject
+import java.text.ParseException
+
+@MicronautTest
+class LoginIncludesRefreshTokenSpec extends Specification {
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    void "upon successful authentication, the user gets an access token and a refresh token"() {
+        when: 'Login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
+        BearerAccessRefreshToken rsp = client.toBlocking().retrieve(request, BearerAccessRefreshToken)
+
+        then:
+        rsp.username == 'sherlock'
+        rsp.accessToken
+        rsp.refreshToken <i class="conum" data-value="1"></i><b>(1)</b>
+
+        and: 'access token is a JWT'
+        JWTParser.parse(rsp.accessToken) instanceof SignedJWT
+
+
+        when: 'refresh token is not a JWT'
+        JWTParser.parse(rsp.refreshToken) <i class="conum" data-value="2"></i><b>(2)</b>
+
+        then:
+        thrown(ParseException)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A refresh token is returned.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The refresh token is not a JWT</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="saveRefreshToken">4.1 Save Refresh Token</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/saveRefreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We may want to save refresh token issued by the application. For example, to be revoke a user&#8217;s refresh tokens. So that a particular user can not obtain a new access token, and thus access the application&#8217;s endpoints.</p>
+</div>
+<div class="paragraph">
+<p>Persist the refresh tokens with help of <a href="https://micronaut-projects.github.io/micronaut-data/latest/guide/index.html">Micronaut Data</a>.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Micronaut Data is a database access toolkit that uses Ahead of Time (AoT) compilation to pre-compute queries for repository interfaces that are then executed by a thin, lightweight runtime layer.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>In particular, use Micronaut JDBC</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Micronaut Data JDBC is an implementation that pre-computes native SQL queries (given a particular database dialect) and provides a repository implementation that is a simple data mapper between a JDBC ResultSet and an object.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add the following dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor("io.micronaut.data:micronaut-data-processor") <i class="conum" data-value="1"></i><b>(1)</b>
+    implementation("io.micronaut.data:micronaut-data-jdbc") <i class="conum" data-value="2"></i><b>(2)</b>
+    runtime("com.h2database:h2") <i class="conum" data-value="3"></i><b>(3)</b>
+    runtime("io.micronaut.configuration:micronaut-jdbc-hikari") <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Micronaut data is a build time tool. You need to add the build time annotation processor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add the Micronaut Data JDBC dependency</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add a JDBC driver. Add <a href="https://www.h2database.com/html/main.html">H2</a> driver.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Add a Hikari connection pool</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create an entity to save the issued Refresh Tokens.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/RefreshTokenEntity.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
+
+@MappedEntity <i class="conum" data-value="1"></i><b>(1)</b>
+public class RefreshTokenEntity {
+    @Id <i class="conum" data-value="2"></i><b>(2)</b>
+    @GeneratedValue <i class="conum" data-value="3"></i><b>(3)</b>
+    @NonNull
+    private Long id;
+
+    @NonNull
+    @NotBlank
+    private String username;
+
+    @NonNull
+    @NotBlank
+    private String refreshToken;
+
+    @NonNull
+    @NotNull
+    private Boolean revoked;
+
+    @DateCreated <i class="conum" data-value="4"></i><b>(4)</b>
+    @NonNull
+    @NotNull
+    private Instant dateCreated;
+
+    public RefreshTokenEntity() {
+    }
+
+
+    // Getters and Setters
+    ...
+    ..
+    .
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specifies the entity is mapped to the database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the ID of an entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies that the property value is generated by the database and not included in inserts</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Allows assigning a data created value (such as a java.time.Instant) prior to an insert</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a <a href="https://micronaut-projects.github.io/micronaut-data/latest/api/io/micronaut/data/repository/CrudRepository.html">CrudRepository</a> to include methods to peform Create, Read, Updated and Delete operations with the <code>RefreshTokenEntity</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/RefreshTokenRepository.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
+
+@JdbcRepository(dialect = Dialect.H2) <i class="conum" data-value="1"></i><b>(1)</b>
+public interface RefreshTokenRepository extends CrudRepository&lt;RefreshTokenEntity, Long&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Transactional
+    RefreshTokenEntity save(@NonNull @NotBlank String username,
+                            @NonNull @NotBlank String refreshToken,
+                            @NonNull @NotNull Boolean revoked); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    Optional&lt;RefreshTokenEntity&gt; findByRefreshToken(@NonNull @NotBlank String refreshToken); <i class="conum" data-value="4"></i><b>(4)</b>
+
+    long updateByUsername(@NonNull @NotBlank String username,
+                          @NonNull @NotNull Boolean revoked); <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The interface is annotated with <a href="https://micronaut-projects.github.io/micronaut-data/latest/api/io/micronaut/data/jdbc/annotation/JdbcRepository.html">@JdbcRepository</a> and specifies a dialect of H2 used to generate queries</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The CrudRepository interface take 2 generic arguments, the entity type (in this case <code>RefreshTokenEntity</code>) and the ID type (in this case Long)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When a new refresh token is issued we will use this method to persist it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Before issuing a new access token, we will use this method to see if the supplied refresh token exists.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>We can revoke the refresh tokens of a particular user with this method.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="refreshController">4.2 Refresh Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/refreshController.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable the <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/guide/index.html#refresh">Refresh Controller</a>, you have to enable it via configuration and provide an implementation of <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a></p>
+</div>
+<div class="paragraph">
+<p>Enable the refresh controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
+  security:
+    endpoints:
+      oauth:
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token. You will invoke this endpoint to obtain a new access token.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a> which leverages the Micronaut Data repository we coded in the previous section:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/CustomRefreshTokenPersistence.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.security.authentication.UserDetails;
+import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
+import io.micronaut.security.token.refresh.RefreshTokenPersistence;
+import io.micronaut.security.errors.OauthErrorResponseException;
+import io.micronaut.security.errors.IssuingAnAccessTokenErrorCode;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
+
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Optional;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public CustomRefreshTokenPersistence(RefreshTokenRepository refreshTokenRepository) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
+
+    @Override
+    @EventListener  <i class="conum" data-value="3"></i><b>(3)</b>
+    public void persistToken(RefreshTokenGeneratedEvent event) {
+        if (event != null &amp;&amp;
+                event.getRefreshToken() != null &amp;&amp;
+                event.getUserDetails() != null &amp;&amp;
+                event.getUserDetails().getUsername() != null) {
+            refreshTokenRepository.save(event.getUserDetails() .getUsername(), event.getRefreshToken(), Boolean.FALSE); <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+    }
+
+    @Override
+    public Publisher&lt;UserDetails&gt; getUserDetails(String refreshToken) {
+        Optional&lt;RefreshTokenEntity&gt; tokenOpt = refreshTokenRepository.findByRefreshToken(refreshToken);
+        if (tokenOpt.isPresent()) {
+            RefreshTokenEntity token = tokenOpt.get();
+            if (token.getRevoked()) {
+                return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token revoked", null)); <i class="conum" data-value="5"></i><b>(5)</b>
+            }
+             return Flowable.just(new UserDetails(token.getUsername(), new ArrayList&lt;&gt;())); <i class="conum" data-value="6"></i><b>(6)</b>
+        }
+        return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token not found", null)); <i class="conum" data-value="7"></i><b>(7)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection of <code>RefreshTokenRepository</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When a new refresh token is issued, the app emits an event of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/event/RefreshTokenGeneratedEvent.html">RefreshTokenGeneratedEvent</a>. We listen to it and save it in the database.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The event contains both the refresh token and the user details associated to the token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Throw an exception if the token is revoked.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Return the user details associated to the refresh token. E.g. username, roles, attributes&#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Throw an exception if the token is not found.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="testRefreshToken">4.3 Test Refresh Token</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/testRefreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect1">
+<h2 id="_test_refresh_token_validation">Test Refresh Token Validation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Refresh tokens issued by <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/jwt/generator/SignedRefreshTokenGenerator.html">SignedRefreshTokenGenerator</a>, the default implementation of <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a>, are signed.</p>
+</div>
+<div class="paragraph">
+<p><code>SignedRefreshTokenGenerator</code> implements both <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a> and  <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/validator/RefreshTokenValidator.html">RefreshTokenValidator</a>.</p>
+</div>
+<div class="paragraph">
+<p>The bean of type <code>RefreshTokenValidator</code> is used by the <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#refresh">Refresh Controller</a> to ensure the refresh token supplied is valid.</p>
+</div>
+<div class="paragraph">
+<p>Create a test for this:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/UnsignedRefreshTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class UnsignedRefreshTokenSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        String unsignedRefreshedToken = "foo" <i class="conum" data-value="1"></i><b>(1)</b>
+        when:
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        client.toBlocking().exchange(HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(unsignedRefreshedToken)), bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'Refresh token is invalid'
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use an unsigned token</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_refresh_token_not_found">Test Refresh Token Not Found</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a test which verifies a that sending a valid refresh token but which was not persisted returns HTTP Status 400.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/RefreshTokenNotFoundSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.token.generator.RefreshTokenGenerator
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class RefreshTokenNotFoundSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    @Inject
+    RefreshTokenGenerator refreshTokenGenerator
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        UserDetails user = new UserDetails("sherlock", [])
+        when:
+        String refreshToken = refreshTokenGenerator.createKey(user)
+        Optional&lt;String&gt; refreshTokenOptional = refreshTokenGenerator.generate(user, refreshToken)
+
+        then:
+        refreshTokenOptional.isPresent()
+
+        when:
+        String signedRefreshToken = refreshTokenOptional.get()  <i class="conum" data-value="1"></i><b>(1)</b>
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        HttpRequest req = HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(signedRefreshToken))
+        client.toBlocking().exchange(req, bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'refresh token not found'
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Supply a signed token which was never saved.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_refresh_token_revocation">Test Refresh Token Revocation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Generate a valid refresh token, save it but flag it as revoked. Expect a 400.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/RefreshTokenRevokedSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.BlockingHttpClient
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.token.generator.RefreshTokenGenerator
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+
+class RefreshTokenRevokedSpec extends Specification {
+
+    @AutoCleanup
+    @Shared
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+
+    @Shared
+    HttpClient client = embeddedServer.applicationContext.createBean(HttpClient, embeddedServer.URL)
+
+    @Shared
+    RefreshTokenGenerator refreshTokenGenerator = embeddedServer.applicationContext.getBean(RefreshTokenGenerator)
+
+    @Shared
+    RefreshTokenRepository refreshTokenRepository = embeddedServer.applicationContext.getBean(RefreshTokenRepository)
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        UserDetails user = new UserDetails("sherlock", [])
+        when:
+        String refreshToken = refreshTokenGenerator.createKey(user)
+        Optional&lt;String&gt; refreshTokenOptional = refreshTokenGenerator.generate(user, refreshToken)
+
+        then:
+        refreshTokenOptional.isPresent()
+
+        when:
+        String signedRefreshToken = refreshTokenOptional.get()
+        refreshTokenRepository.save(user.username, refreshToken, Boolean.TRUE) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        then:
+        refreshTokenRepository.count() == old(refreshTokenRepository.count()) + 1
+
+        when:
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        client.toBlocking().exchange(HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(signedRefreshToken)), bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'refresh token revoked'
+
+        cleanup:
+        refreshTokenRepository.deleteAll()
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Save the token but flag it as revoked</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_access_token_refresh">Test Access Token Refresh</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Login, obtain both access token and refresh token, with the refresh token obtain a different access token:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.HttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
+
+class OauthAccessTokenSpec extends Specification {
+
+    @AutoCleanup
+    @Shared
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+
+    @Shared
+    HttpClient client = embeddedServer.applicationContext.createBean(HttpClient, embeddedServer.URL)
+
+    @Shared
+    RefreshTokenRepository refreshTokenRepository = embeddedServer.applicationContext.getBean(RefreshTokenRepository)
+
+    def "Verify JWT access token refresh works"() {
+        given:
+        String username = 'sherlock'
+
+        when: 'login endpoint is called with valid credentials'
+        def creds = new UsernamePasswordCredentials(username, "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
+        BearerAccessRefreshToken rsp = client.toBlocking().retrieve(request, BearerAccessRefreshToken)
+
+        then: 'the refresh token is saved to the database'
+        new PollingConditions().eventually {
+            assert refreshTokenRepository.count() == old(refreshTokenRepository.count()) + 1
+        }
+
+        and: 'response contains an access token token'
+        rsp.accessToken
+
+        and: 'response contains a refresh token'
+        rsp.refreshToken
+
+        when:
+        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
+        AccessRefreshToken refreshResponse = client.toBlocking().retrieve(HttpRequest.POST('/oauth/access_token',
+                new TokenRefreshRequest(rsp.refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        then:
+        refreshResponse.accessToken
+        refreshResponse.accessToken != rsp.accessToken <i class="conum" data-value="2"></i><b>(2)</b>
+
+        cleanup:
+        refreshTokenRepository.deleteAll()
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A different access token is retrieved.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/tests.html">&lt;&lt; <strong>3</strong><span>Tests</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

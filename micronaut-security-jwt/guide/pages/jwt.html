@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.2 Use Micronaut's HTTP Client and JWT null</title>
+    <title>3.1 Use Micronaut's HTTP Client and JWT null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -38,16 +38,19 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/tests.html"><strong>3</strong><span>Tests</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>6</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>6</strong><span>Running the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>7</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>8</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -74,12 +77,12 @@ function addJsClass() {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>3.2 Use Micronaut's HTTP Client and JWT</h1>
+                    <h1>3.1 Use Micronaut's HTTP Client and JWT</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -88,7 +91,7 @@ function addJsClass() {
 
                 
 
-<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+<h2 id="jwt">3.1 Use Micronaut's HTTP Client and JWT</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
@@ -108,14 +111,24 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
 
 @Client("/")
 public interface AppClient {
 
-    @Get("/")
+    @Post("/login")
+    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials);
+
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Get
     String home(@Header String authorization);
 }</code></pre>
 </div>
@@ -128,13 +141,12 @@ public interface AppClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
@@ -146,39 +158,23 @@ import javax.inject.Inject
 class DeclarativeHttpClientWithJwtSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer
-
-    @Inject
-    @Client("/")
-    RxHttpClient client
-
-    @Inject
     AppClient appClient <i class="conum" data-value="1"></i><b>(1)</b>
 
     def "Verify JWT authentication works with declarative @Client"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/', ))
-
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status == HttpStatus.UNAUTHORIZED
-
         when: 'Login endpoint is called with valid credentials'
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="2"></i><b>(2)</b>
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK
-        rsp.body().accessToken
-
-        when:
-        String accessToken = rsp.body().accessToken
-        String authorizationValue = "Bearer $accessToken"
-        String msg = appClient.home(authorizationValue) <i class="conum" data-value="4"></i><b>(4)</b>
+        BearerAccessRefreshToken loginRsp = appClient.login(creds) <i class="conum" data-value="2"></i><b>(2)</b>
 
         then:
-        msg == 'sherlock' <i class="conum" data-value="5"></i><b>(5)</b>
+        loginRsp
+        loginRsp.accessToken
+        JWTParser.parse(loginRsp.accessToken) instanceof SignedJWT
+
+        when:
+        String msg = appClient.home("Bearer ${loginRsp.accessToken}") <i class="conum" data-value="3"></i><b>(3)</b>
+
+        then:
+        msg == 'sherlock'
     }
 }</code></pre>
 </div>
@@ -195,15 +191,7 @@ class DeclarativeHttpClientWithJwtSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
@@ -213,7 +201,7 @@ class DeclarativeHttpClientWithJwtSpec extends Specification {
                 
                     <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

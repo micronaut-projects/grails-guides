@@ -38,16 +38,19 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/tests.html"><strong>3</strong><span>Tests</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/refreshToken.html"><strong>4</strong><span>Issuing a Refresh Token</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>5</strong><span>Testing the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>6</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>6</strong><span>Running the Application</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>7</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>8</strong><span>Help with Micronaut</span></a>
                         </div>
                         
                     </div>
@@ -107,7 +110,9 @@ function addJsClass() {
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-jwt"
+    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>

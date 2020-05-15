@@ -74,23 +74,29 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3</strong><span>Tests</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#oauth"><strong>3.1</strong><span>Token Refresh</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#jwt"><strong>3.1</strong><span>Use Micronaut's HTTP Client and JWT</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#jwt"><strong>3.2</strong><span>Use Micronaut's HTTP Client and JWT</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#refreshToken"><strong>4</strong><span>Issuing a Refresh Token</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>4</strong><span>Testing the Application</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#saveRefreshToken"><strong>4.1</strong><span>Save Refresh Token</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>5</strong><span>Running the Application</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#refreshController"><strong>4.2</strong><span>Refresh Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>6</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#testRefreshToken"><strong>4.3</strong><span>Test Refresh Token</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graalchanges"><strong>6.1</strong><span>Micronaut + GraalVM changes</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#testingTheApp"><strong>5</strong><span>Testing the Application</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>6.2</strong><span>Native Image generation</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>6</strong><span>Running the Application</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>6.3</strong><span>Native Image generation with Docker</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>7</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>7</strong><span>Help with Micronaut</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#graalchanges"><strong>7.1</strong><span>Micronaut + GraalVM changes</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>7.2</strong><span>Native Image generation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>7.3</strong><span>Native Image generation with Docker</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>8</strong><span>Help with Micronaut</span></a></div>
             
             <div style="clear:both" ></div>
         </div>
@@ -100,7 +106,7 @@
         <h1>Micronaut JWT Authentication</h1>
         <p>Learn how to secure a Micronaut app using JWT (JSON Web Token) Authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
     </header>
     
 
@@ -241,7 +247,9 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-jwt"
+    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -264,45 +272,29 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     endpoints:
       login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-      oauth:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
     token:
       jwt:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
         signatures:
           secret:
-            generator: <i class="conum" data-value="5"></i><b>(5)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+            generator: <i class="conum" data-value="2"></i><b>(2)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Expose <code>/login</code> endpoint.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Enable JWT based authentication.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Change this by your own secret and keep it safe (do not store this in your VCS).</td>
 </tr>
 </table>
@@ -322,10 +314,12 @@ other build tools such as <code>Maven</code> or other programming languages such
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
+<div class="title">src/main/java/example/micronaut/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -341,7 +335,7 @@ import java.util.ArrayList;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
                 authenticationRequest.getSecret().equals("password")) {
             return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
@@ -378,21 +372,25 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/controllers/HomeController.java</div>
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 
 import java.security.Principal;
 
-@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
+@Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     public String index(Principal principal) {  <i class="conum" data-value="4"></i><b>(4)</b>
         return principal.getName();
     }
@@ -463,11 +461,12 @@ public class HomeController {
 <div class="listingblock">
 <div class="title">micronaut-cli.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example
----
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">applicationType: default
+defaultPackage: example.micronaut
 testFramework: spock
-sourceLanguage: java</code></pre>
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, docker, gradle, http-client, java, java-application, logback, netty-server, readme, shade, spock, yaml]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -480,14 +479,13 @@ sourceLanguage: java</code></pre>
 
 import com.nimbusds.jwt.JWTParser
 import com.nimbusds.jwt.SignedJWT
-import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
@@ -499,41 +497,47 @@ import javax.inject.Inject
 class JwtAuthenticationSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Inject
     @Client("/")
-    RxHttpClient client <i class="conum" data-value="3"></i><b>(3)</b>
+    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
-    def "Verify JWT authentication works"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/', )) <i class="conum" data-value="4"></i><b>(4)</b>
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        when:
+        client.toBlocking().exchange(HttpRequest.GET('/', )) <i class="conum" data-value="3"></i><b>(3)</b>
 
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException)
+        then:
+        HttpClientResponseException e = thrown()
         e.status == HttpStatus.UNAUTHORIZED
+    }
 
+    void "upon successful authentication, a Json Web token is issued to the user"() {
         when: 'Login endpoint is called with valid credentials'
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="5"></i><b>(5)</b>
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="5"></i><b>(5)</b>
 
         then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
-        rsp.body().username == 'sherlock'
-        rsp.body().accessToken
-        JWTParser.parse(rsp.body().accessToken) instanceof SignedJWT
-        rsp.body().refreshToken
-        JWTParser.parse(rsp.body().refreshToken) instanceof SignedJWT
 
         when:
-        String accessToken = rsp.body().accessToken
-        HttpRequest requestWithAuthorization = HttpRequest.GET('/' ).bearerAuth(accessToken) <i class="conum" data-value="7"></i><b>(7)</b>
+        BearerAccessRefreshToken bearerAccessRefreshToken = rsp.body()
+
+        then:
+        bearerAccessRefreshToken.username == 'sherlock'
+        bearerAccessRefreshToken.accessToken
+
+        and: 'the access token is a signed JWT'
+        JWTParser.parse(bearerAccessRefreshToken.accessToken) instanceof SignedJWT
+
+        when: 'passing the access token as in the Authorization HTTP Header with the prefix Bearer allows the user to access a secured endpoint'
+        String accessToken = bearerAccessRefreshToken.accessToken
+        HttpRequest requestWithAuthorization = HttpRequest.GET('/' )
+                .accept(MediaType.TEXT_PLAIN)
+                .bearerAuth(accessToken) <i class="conum" data-value="6"></i><b>(6)</b>
         HttpResponse&lt;String&gt; response = client.toBlocking().exchange(requestWithAuthorization, String)
 
         then:
         response.status == HttpStatus.OK
-        response.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
+        response.body() == 'sherlock' <i class="conum" data-value="7"></i><b>(7)</b>
     }
 }</code></pre>
 </div>
@@ -546,119 +550,33 @@ class JwtAuthenticationSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>EmbeddedServer</code> interfact.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Once you turn on security, every endpoint is secured by default.</td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When you include the security dependencies, security is considered enabled and every endpoint is secured by default.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Micronaut makes it easy to bind JSON responses into Java objects.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Micronaut supports <a href="https://tools.ietf.org/html/rfc6750">RFC 6750 Bearer Token</a> specification out-of-the-box. We supply the JWT token in the <code>Authorization</code> HTTP Header.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Use <code>.body()</code> to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
 
 
-<h2 id="oauth">3.1 Token Refresh</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/oauth.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Create a new test to verify that token refreshing works as expected.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
-import io.micronaut.security.token.jwt.render.AccessRefreshToken
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Specification
-
-import javax.inject.Inject
-
-@MicronautTest
-class OauthAccessTokenSpec extends Specification {
-
-    @Inject
-    EmbeddedServer embeddedServer
-
-    @Inject
-    @Client("/")
-    RxHttpClient client
-
-    def "Verify JWT access token refresh works"() {
-        when: 'login endpoint is called with valid credentials'
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds)
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
-
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK
-
-        when:
-        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
-        String refreshToken = rsp.body().refreshToken
-        String accessToken = rsp.body().accessToken
-
-        HttpResponse&lt;AccessRefreshToken&gt; response = client.toBlocking().exchange(HttpRequest.POST('/oauth/access_token',
-                new TokenRefreshRequest("refresh_token", refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
-
-        then:
-        response.status == HttpStatus.OK
-        response.body().accessToken
-        response.body().accessToken != accessToken <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-}
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>A different access token is retrieved.</td>
-</tr>
-</table>
-</div>
-
-
-<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+<h2 id="jwt">3.1 Use Micronaut's HTTP Client and JWT</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
@@ -678,14 +596,24 @@ class OauthAccessTokenSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
 
 @Client("/")
 public interface AppClient {
 
-    @Get("/")
+    @Post("/login")
+    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials);
+
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Get
     String home(@Header String authorization);
 }</code></pre>
 </div>
@@ -698,13 +626,12 @@ public interface AppClient {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
@@ -716,39 +643,23 @@ import javax.inject.Inject
 class DeclarativeHttpClientWithJwtSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer
-
-    @Inject
-    @Client("/")
-    RxHttpClient client
-
-    @Inject
     AppClient appClient <i class="conum" data-value="1"></i><b>(1)</b>
 
     def "Verify JWT authentication works with declarative @Client"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/', ))
-
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status == HttpStatus.UNAUTHORIZED
-
         when: 'Login endpoint is called with valid credentials'
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
-        HttpRequest request = HttpRequest.POST('/login', creds) <i class="conum" data-value="2"></i><b>(2)</b>
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK
-        rsp.body().accessToken
-
-        when:
-        String accessToken = rsp.body().accessToken
-        String authorizationValue = "Bearer $accessToken"
-        String msg = appClient.home(authorizationValue) <i class="conum" data-value="4"></i><b>(4)</b>
+        BearerAccessRefreshToken loginRsp = appClient.login(creds) <i class="conum" data-value="2"></i><b>(2)</b>
 
         then:
-        msg == 'sherlock' <i class="conum" data-value="5"></i><b>(5)</b>
+        loginRsp
+        loginRsp.accessToken
+        JWTParser.parse(loginRsp.accessToken) instanceof SignedJWT
+
+        when:
+        String msg = appClient.home("Bearer ${loginRsp.accessToken}") <i class="conum" data-value="3"></i><b>(3)</b>
+
+        then:
+        msg == 'sherlock'
     }
 }</code></pre>
 </div>
@@ -765,21 +676,801 @@ class DeclarativeHttpClientWithJwtSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
 
 
-<h1 id="testingTheApp">4 Testing the Application</h1>
+<h1 id="refreshToken">4 Issuing a Refresh Token</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Access tokens expire. You can control the expiration with <code>micronaut.security.token.jwt.generator.access-token-expiration</code>. In addition to the access token, you can configure your login endpoint to also return a refresh token. You can use the refresh token to obtain a new access token.</p>
+</div>
+<div class="paragraph">
+<p>First, add the following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
+  security:
+    token:
+      jwt:
+        generator:
+          refresh-token:
+            enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+            secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable authentication responses (e.g. login response) to include a refresh token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>To generate a refresh token you app must provide a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a>. Micronaut Security ships with  <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/jwt/generator/SignedRefreshTokenGenerator.html">SignedRefreshTokenGenerator</a> which signs a UUID with a configured secret.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a test to verify the login endpoint responds both access and refresh token:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginIncludesRefreshTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+import javax.inject.Inject
+import java.text.ParseException
+
+@MicronautTest
+class LoginIncludesRefreshTokenSpec extends Specification {
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    void "upon successful authentication, the user gets an access token and a refresh token"() {
+        when: 'Login endpoint is called with valid credentials'
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials("sherlock", "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
+        BearerAccessRefreshToken rsp = client.toBlocking().retrieve(request, BearerAccessRefreshToken)
+
+        then:
+        rsp.username == 'sherlock'
+        rsp.accessToken
+        rsp.refreshToken <i class="conum" data-value="1"></i><b>(1)</b>
+
+        and: 'access token is a JWT'
+        JWTParser.parse(rsp.accessToken) instanceof SignedJWT
+
+
+        when: 'refresh token is not a JWT'
+        JWTParser.parse(rsp.refreshToken) <i class="conum" data-value="2"></i><b>(2)</b>
+
+        then:
+        thrown(ParseException)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A refresh token is returned.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The refresh token is not a JWT</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="saveRefreshToken">4.1 Save Refresh Token</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/saveRefreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We may want to save refresh token issued by the application. For example, to be revoke a user&#8217;s refresh tokens. So that a particular user can not obtain a new access token, and thus access the application&#8217;s endpoints.</p>
+</div>
+<div class="paragraph">
+<p>Persist the refresh tokens with help of <a href="https://micronaut-projects.github.io/micronaut-data/latest/guide/index.html">Micronaut Data</a>.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Micronaut Data is a database access toolkit that uses Ahead of Time (AoT) compilation to pre-compute queries for repository interfaces that are then executed by a thin, lightweight runtime layer.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>In particular, use Micronaut JDBC</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Micronaut Data JDBC is an implementation that pre-computes native SQL queries (given a particular database dialect) and provides a repository implementation that is a simple data mapper between a JDBC ResultSet and an object.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Add the following dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor("io.micronaut.data:micronaut-data-processor") <i class="conum" data-value="1"></i><b>(1)</b>
+    implementation("io.micronaut.data:micronaut-data-jdbc") <i class="conum" data-value="2"></i><b>(2)</b>
+    runtime("com.h2database:h2") <i class="conum" data-value="3"></i><b>(3)</b>
+    runtime("io.micronaut.configuration:micronaut-jdbc-hikari") <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Micronaut data is a build time tool. You need to add the build time annotation processor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add the Micronaut Data JDBC dependency</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add a JDBC driver. Add <a href="https://www.h2database.com/html/main.html">H2</a> driver.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Add a Hikari connection pool</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create an entity to save the issued Refresh Tokens.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/RefreshTokenEntity.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
+
+@MappedEntity <i class="conum" data-value="1"></i><b>(1)</b>
+public class RefreshTokenEntity {
+    @Id <i class="conum" data-value="2"></i><b>(2)</b>
+    @GeneratedValue <i class="conum" data-value="3"></i><b>(3)</b>
+    @NonNull
+    private Long id;
+
+    @NonNull
+    @NotBlank
+    private String username;
+
+    @NonNull
+    @NotBlank
+    private String refreshToken;
+
+    @NonNull
+    @NotNull
+    private Boolean revoked;
+
+    @DateCreated <i class="conum" data-value="4"></i><b>(4)</b>
+    @NonNull
+    @NotNull
+    private Instant dateCreated;
+
+    public RefreshTokenEntity() {
+    }
+
+
+    // Getters and Setters
+    ...
+    ..
+    .
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specifies the entity is mapped to the database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the ID of an entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies that the property value is generated by the database and not included in inserts</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Allows assigning a data created value (such as a java.time.Instant) prior to an insert</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a <a href="https://micronaut-projects.github.io/micronaut-data/latest/api/io/micronaut/data/repository/CrudRepository.html">CrudRepository</a> to include methods to peform Create, Read, Updated and Delete operations with the <code>RefreshTokenEntity</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/RefreshTokenRepository.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
+
+@JdbcRepository(dialect = Dialect.H2) <i class="conum" data-value="1"></i><b>(1)</b>
+public interface RefreshTokenRepository extends CrudRepository&lt;RefreshTokenEntity, Long&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Transactional
+    RefreshTokenEntity save(@NonNull @NotBlank String username,
+                            @NonNull @NotBlank String refreshToken,
+                            @NonNull @NotNull Boolean revoked); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    Optional&lt;RefreshTokenEntity&gt; findByRefreshToken(@NonNull @NotBlank String refreshToken); <i class="conum" data-value="4"></i><b>(4)</b>
+
+    long updateByUsername(@NonNull @NotBlank String username,
+                          @NonNull @NotNull Boolean revoked); <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The interface is annotated with <a href="https://micronaut-projects.github.io/micronaut-data/latest/api/io/micronaut/data/jdbc/annotation/JdbcRepository.html">@JdbcRepository</a> and specifies a dialect of H2 used to generate queries</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The CrudRepository interface take 2 generic arguments, the entity type (in this case <code>RefreshTokenEntity</code>) and the ID type (in this case Long)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When a new refresh token is issued we will use this method to persist it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Before issuing a new access token, we will use this method to see if the supplied refresh token exists.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>We can revoke the refresh tokens of a particular user with this method.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="refreshController">4.2 Refresh Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/refreshController.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable the <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/guide/index.html#refresh">Refresh Controller</a>, you have to enable it via configuration and provide an implementation of <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a></p>
+</div>
+<div class="paragraph">
+<p>Enable the refresh controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
+  security:
+    endpoints:
+      oauth:
+        enabled: true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token. You will invoke this endpoint to obtain a new access token.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a> which leverages the Micronaut Data repository we coded in the previous section:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/CustomRefreshTokenPersistence.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.security.authentication.UserDetails;
+import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
+import io.micronaut.security.token.refresh.RefreshTokenPersistence;
+import io.micronaut.security.errors.OauthErrorResponseException;
+import io.micronaut.security.errors.IssuingAnAccessTokenErrorCode;
+import io.reactivex.Flowable;
+import org.reactivestreams.Publisher;
+
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Optional;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public CustomRefreshTokenPersistence(RefreshTokenRepository refreshTokenRepository) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
+
+    @Override
+    @EventListener  <i class="conum" data-value="3"></i><b>(3)</b>
+    public void persistToken(RefreshTokenGeneratedEvent event) {
+        if (event != null &amp;&amp;
+                event.getRefreshToken() != null &amp;&amp;
+                event.getUserDetails() != null &amp;&amp;
+                event.getUserDetails().getUsername() != null) {
+            refreshTokenRepository.save(event.getUserDetails() .getUsername(), event.getRefreshToken(), Boolean.FALSE); <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+    }
+
+    @Override
+    public Publisher&lt;UserDetails&gt; getUserDetails(String refreshToken) {
+        Optional&lt;RefreshTokenEntity&gt; tokenOpt = refreshTokenRepository.findByRefreshToken(refreshToken);
+        if (tokenOpt.isPresent()) {
+            RefreshTokenEntity token = tokenOpt.get();
+            if (token.getRevoked()) {
+                return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token revoked", null)); <i class="conum" data-value="5"></i><b>(5)</b>
+            }
+             return Flowable.just(new UserDetails(token.getUsername(), new ArrayList&lt;&gt;())); <i class="conum" data-value="6"></i><b>(6)</b>
+        }
+        return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token not found", null)); <i class="conum" data-value="7"></i><b>(7)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection of <code>RefreshTokenRepository</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>When a new refresh token is issued, the app emits an event of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/event/RefreshTokenGeneratedEvent.html">RefreshTokenGeneratedEvent</a>. We listen to it and save it in the database.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The event contains both the refresh token and the user details associated to the token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Throw an exception if the token is revoked.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Return the user details associated to the refresh token. E.g. username, roles, attributes&#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Throw an exception if the token is not found.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="testRefreshToken">4.3 Test Refresh Token</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/refreshToken/testRefreshToken.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect1">
+<h2 id="_test_refresh_token_validation">Test Refresh Token Validation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Refresh tokens issued by <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/jwt/generator/SignedRefreshTokenGenerator.html">SignedRefreshTokenGenerator</a>, the default implementation of <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a>, are signed.</p>
+</div>
+<div class="paragraph">
+<p><code>SignedRefreshTokenGenerator</code> implements both <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/generator/RefreshTokenGenerator.html">RefreshTokenGenerator</a> and  <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/validator/RefreshTokenValidator.html">RefreshTokenValidator</a>.</p>
+</div>
+<div class="paragraph">
+<p>The bean of type <code>RefreshTokenValidator</code> is used by the <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#refresh">Refresh Controller</a> to ensure the refresh token supplied is valid.</p>
+</div>
+<div class="paragraph">
+<p>Create a test for this:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/UnsignedRefreshTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class UnsignedRefreshTokenSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        String unsignedRefreshedToken = "foo" <i class="conum" data-value="1"></i><b>(1)</b>
+        when:
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        client.toBlocking().exchange(HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(unsignedRefreshedToken)), bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'Refresh token is invalid'
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use an unsigned token</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_refresh_token_not_found">Test Refresh Token Not Found</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a test which verifies a that sending a valid refresh token but which was not persisted returns HTTP Status 400.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/RefreshTokenNotFoundSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.token.generator.RefreshTokenGenerator
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class RefreshTokenNotFoundSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    RxHttpClient client
+
+    @Inject
+    RefreshTokenGenerator refreshTokenGenerator
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        UserDetails user = new UserDetails("sherlock", [])
+        when:
+        String refreshToken = refreshTokenGenerator.createKey(user)
+        Optional&lt;String&gt; refreshTokenOptional = refreshTokenGenerator.generate(user, refreshToken)
+
+        then:
+        refreshTokenOptional.isPresent()
+
+        when:
+        String signedRefreshToken = refreshTokenOptional.get()  <i class="conum" data-value="1"></i><b>(1)</b>
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        HttpRequest req = HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(signedRefreshToken))
+        client.toBlocking().exchange(req, bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'refresh token not found'
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Supply a signed token which was never saved.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_refresh_token_revocation">Test Refresh Token Revocation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Generate a valid refresh token, save it but flag it as revoked. Expect a 400.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/RefreshTokenRevokedSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.BlockingHttpClient
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.token.generator.RefreshTokenGenerator
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+
+class RefreshTokenRevokedSpec extends Specification {
+
+    @AutoCleanup
+    @Shared
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+
+    @Shared
+    HttpClient client = embeddedServer.applicationContext.createBean(HttpClient, embeddedServer.URL)
+
+    @Shared
+    RefreshTokenGenerator refreshTokenGenerator = embeddedServer.applicationContext.getBean(RefreshTokenGenerator)
+
+    @Shared
+    RefreshTokenRepository refreshTokenRepository = embeddedServer.applicationContext.getBean(RefreshTokenRepository)
+
+    void 'Accessing a secured URL without authenticating returns unauthorized'() {
+        given:
+        UserDetails user = new UserDetails("sherlock", [])
+        when:
+        String refreshToken = refreshTokenGenerator.createKey(user)
+        Optional&lt;String&gt; refreshTokenOptional = refreshTokenGenerator.generate(user, refreshToken)
+
+        then:
+        refreshTokenOptional.isPresent()
+
+        when:
+        String signedRefreshToken = refreshTokenOptional.get()
+        refreshTokenRepository.save(user.username, refreshToken, Boolean.TRUE) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        then:
+        refreshTokenRepository.count() == old(refreshTokenRepository.count()) + 1
+
+        when:
+        Argument&lt;BearerAccessRefreshToken&gt; bodyArgument = Argument.of(BearerAccessRefreshToken)
+        Argument&lt;Map&gt; errorArgument = Argument.of(Map)
+        client.toBlocking().exchange(HttpRequest.POST("/oauth/access_token", new TokenRefreshRequest(signedRefreshToken)), bodyArgument, errorArgument)
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+
+        when:
+        Optional&lt;Map&gt; mapOptional = e.response.getBody(Map)
+
+        then:
+        mapOptional.isPresent()
+
+        when:
+        Map m = mapOptional.get()
+
+        then:
+        m.error == 'invalid_grant'
+        m.error_description == 'refresh token revoked'
+
+        cleanup:
+        refreshTokenRepository.deleteAll()
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Save the token but flag it as revoked</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_access_token_refresh">Test Access Token Refresh</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Login, obtain both access token and refresh token, with the refresh token obtain a different access token:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.HttpClient
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import spock.lang.AutoCleanup
+import spock.lang.Shared
+import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
+
+class OauthAccessTokenSpec extends Specification {
+
+    @AutoCleanup
+    @Shared
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+
+    @Shared
+    HttpClient client = embeddedServer.applicationContext.createBean(HttpClient, embeddedServer.URL)
+
+    @Shared
+    RefreshTokenRepository refreshTokenRepository = embeddedServer.applicationContext.getBean(RefreshTokenRepository)
+
+    def "Verify JWT access token refresh works"() {
+        given:
+        String username = 'sherlock'
+
+        when: 'login endpoint is called with valid credentials'
+        def creds = new UsernamePasswordCredentials(username, "password")
+        HttpRequest request = HttpRequest.POST('/login', creds)
+        BearerAccessRefreshToken rsp = client.toBlocking().retrieve(request, BearerAccessRefreshToken)
+
+        then: 'the refresh token is saved to the database'
+        new PollingConditions().eventually {
+            assert refreshTokenRepository.count() == old(refreshTokenRepository.count()) + 1
+        }
+
+        and: 'response contains an access token token'
+        rsp.accessToken
+
+        and: 'response contains a refresh token'
+        rsp.refreshToken
+
+        when:
+        sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
+        AccessRefreshToken refreshResponse = client.toBlocking().retrieve(HttpRequest.POST('/oauth/access_token',
+                new TokenRefreshRequest(rsp.refreshToken)), AccessRefreshToken) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        then:
+        refreshResponse.accessToken
+        refreshResponse.accessToken != rsp.accessToken <i class="conum" data-value="2"></i><b>(2)</b>
+
+        cleanup:
+        refreshTokenRepository.deleteAll()
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A different access token is retrieved.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+
+
+<h1 id="testingTheApp">5 Testing the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/testingTheApp.adoc"'>
@@ -799,7 +1490,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="runningTheApp">5 Running the Application</h1>
+<h1 id="runningTheApp">6 Running the Application</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
@@ -813,7 +1504,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 </div>
 
 
-<h1 id="graal">6 Generate a Micronaut app's Native Image with GraalVM</h1>
+<h1 id="graal">7 Generate a Micronaut app's Native Image with GraalVM</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/graal.adoc"'>
@@ -832,7 +1523,7 @@ applications.</p>
 </div>
 
 
-<h2 id="graalchanges">6.1 Micronaut + GraalVM changes</h2>
+<h2 id="graalchanges">7.1 Micronaut + GraalVM changes</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
@@ -914,7 +1605,7 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 </div>
 
 
-<h2 id="graalnativeimage">6.2 Native Image generation</h2>
+<h2 id="graalnativeimage">7.2 Native Image generation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
@@ -935,18 +1626,17 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
-               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
-               |     | 19.2.1       | grl     |            | 19.2.1-grl
-               |     | 19.1.1       | grl     |            | 19.1.1-grl
-               |     | 19.0.2       | grl     |            | 19.0.2-grl
-
+ GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+               |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
+               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
+....
 
 # For Java 8
-$ sdk install java 19.3.0.r8-grl
+$ sdk install java 20.0.0.r8-grl
 
 # For Java 11
-$ sdk install java 19.3.0.r11-grl</code></pre>
+$ sdk install java 20.0.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -971,28 +1661,28 @@ $ sdk install java 19.3.0.r11-grl</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/20.0.0.r8-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:39362]    classlist:   3,884.97 ms
-[micronautguide:39362]        (cap):   5,919.80 ms
-[micronautguide:39362]        setup:   7,222.88 ms
-[micronautguide:39362]   (typeflow):  14,037.78 ms
-[micronautguide:39362]    (objects):  17,689.40 ms
-[micronautguide:39362]   (features):   1,751.37 ms
-[micronautguide:39362]     analysis:  35,421.99 ms
-[micronautguide:39362]     (clinit):     978.01 ms
-[micronautguide:39362]     universe:   2,114.65 ms
-[micronautguide:39362]      (parse):   2,327.75 ms
-[micronautguide:39362]     (inline):   2,153.46 ms
-[micronautguide:39362]    (compile):  13,066.94 ms
-[micronautguide:39362]      compile:  19,714.97 ms
-[micronautguide:39362]        image:   3,509.84 ms
-[micronautguide:39362]        write:   1,114.96 ms
-[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+[micronautguide:39362]    classlist:   3,884.97 ms,  1.69 GB
+[micronautguide:39362]        (cap):   5,919.80 ms,  1.69 GB
+[micronautguide:39362]        setup:   7,222.88 ms,  1.69 GB
+[micronautguide:39362]   (typeflow):  14,037.78 ms,  4.05 GB
+[micronautguide:39362]    (objects):  17,689.40 ms,  4.05 GB
+[micronautguide:39362]   (features):   1,751.37 ms,  4.05 GB
+[micronautguide:39362]     analysis:  35,421.99 ms,  4.05 GB
+[micronautguide:39362]     (clinit):     978.01 ms,  4.09 GB
+[micronautguide:39362]     universe:   2,114.65 ms,  4.09 GB
+[micronautguide:39362]      (parse):   2,327.75 ms,  4.09 GB
+[micronautguide:39362]     (inline):   2,153.46 ms,  5.81 GB
+[micronautguide:39362]    (compile):  13,066.94 ms,  7.08 GB
+[micronautguide:39362]      compile:  19,714.97 ms,  7.15 GB
+[micronautguide:39362]        image:   3,509.84 ms,  7.15 GB
+[micronautguide:39362]        write:   1,114.96 ms,  7.15 GB
+[micronautguide:39362]      [total]:  73,294.82 ms,  7.15 GB</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1019,7 +1709,7 @@ $ sdk install java 19.3.0.r11-grl</code></pre>
 </div>
 
 
-<h2 id="graaldocker">6.3 Native Image generation with Docker</h2>
+<h2 id="graaldocker">7.3 Native Image generation with Docker</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
@@ -1063,25 +1753,25 @@ echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
 
 $ ./docker-build.sh
 Sending build context to Docker daemon  64.67MB
-Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
- ---&gt; d625000893c9
-Step 2/9 : COPY . /home/app/micronautguide
- ---&gt; 4c0daf50c6f3
-Step 3/9 : WORKDIR /home/app/micronautguide
- ---&gt; Running in e07cf22b668a
-Removing intermediate container e07cf22b668a
- ---&gt; d3699ea8e284
-Step 4/9 : RUN gu install native-image
- ---&gt; Running in 71edf17b9a11
+Step 1/10 : FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+ ---&gt; 1515e8e21105
+Step 2/10 : RUN gu install native-image
+ ---&gt; Running in 805c70f45a9d
 Downloading: Component catalog from www.graalvm.org
 Processing Component: Native Image
 Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
+Installing new component: Native Image (org.graalvm.native-image, version 20.0.0)
 Refreshed alternative links in /usr/bin/
-Removing intermediate container 71edf17b9a11
- ---&gt; ee26c71bbd1e
-Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
- ---&gt; Running in d2cd451f33be
+Removing intermediate container 805c70f45a9d
+ ---&gt; b098407fe3b2
+Step 3/10 : COPY . /home/app/micronautguide
+ ---&gt; a4ac50285c3e
+Step 4/10 : WORKDIR /home/app/micronautguide
+ ---&gt; Running in 5bcaea479a47
+Removing intermediate container 5bcaea479a47
+ ---&gt; 7683d318359a
+Step 5/10 : RUN native-image --no-server -cp build/libs/micronautguide-*-all.jar
+ ---&gt; Running in f287939a526a
 [micronautguide:28]    classlist:   8,773.36 ms
 [micronautguide:28]        (cap):   1,044.04 ms
 [micronautguide:28]        setup:   2,748.03 ms
@@ -1098,20 +1788,35 @@ Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.j
 [micronautguide:28]        image:   3,811.46 ms
 [micronautguide:28]        write:     643.59 ms
 [micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container d2cd451f33be
- ---&gt; 429a467e2fdd
-Step 6/9 : FROM frolvlad/alpine-glibc
+Removing intermediate container f287939a526a
+ ---&gt; 20a8c370d984
+Step 6/10 : FROM frolvlad/alpine-glibc
  ---&gt; 38dd85a430e8
-Step 7/9 : EXPOSE 8080
- ---&gt; Using cache
- ---&gt; 643f9d29e3f8
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---&gt; 0d41749e3ceb
-Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
- ---&gt; Running in 31b4c6c21e68
-Removing intermediate container 31b4c6c21e68
- ---&gt; 3ff1de337ef4
-Successfully built 3ff1de337ef4
+Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
+ ---&gt; Running in 2a3b22d15e04
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/community/x86_64/APKINDEX.tar.gz
+v3.10.4-15-g5600c80ab9 [http://dl-cdn.alpinelinux.org/alpine/v3.10/main]
+v3.10.4-7-g6ee081a8fb [http://dl-cdn.alpinelinux.org/alpine/v3.10/community]
+OK: 10349 distinct packages available
+(1/1) Installing libstdc++ (8.3.0-r0)
+Executing glibc-bin-2.30-r0.trigger
+/usr/glibc-compat/sbin/ldconfig: /usr/glibc-compat/lib/ld-linux-x86-64.so.2 is not a symbolic link
+
+OK: 18 MiB in 18 packages
+Removing intermediate container 2a3b22d15e04
+ ---&gt; 913d6350ff6d
+Step 8/10 : EXPOSE 8080
+ ---&gt; Running in 7f3cdddebf26
+Removing intermediate container 7f3cdddebf26
+ ---&gt; 5b82cacacbfb
+Step 9/10 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
+ ---&gt; 5506ff660b65
+Step 10/10 : ENTRYPOINT ["/app/micronautguide"]
+ ---&gt; Running in ef23d1eee195
+Removing intermediate container ef23d1eee195
+ ---&gt; fb30459595cb
+Successfully built fb30459595cb
 Successfully tagged micronautguide:latest
 
 
@@ -1130,7 +1835,7 @@ To run the docker container execute:
 </div>
 
 
-<h1 id="help">7 Help with Micronaut</h1>
+<h1 id="help">8 Help with Micronaut</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt/edit/master/src/main/docs/guide/help.adoc"'>
