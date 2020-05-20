@@ -104,29 +104,7 @@ function addJsClass() {
 <p>To enable the <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/guide/index.html#refresh">Refresh Controller</a>, you have to enable it via configuration and provide an implementation of <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a></p>
 </div>
 <div class="paragraph">
-<p>Enable the refresh controller:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/application.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
-micronaut:
-  security:
-    endpoints:
-      oauth:
-        enabled: true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token. You will invoke this endpoint to obtain a new access token.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Create a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a> which leverages the Micronaut Data repository we coded in the previous section:</p>
+<p>To enable the refresh controller you need to create a bean of type <a href="https://micronaut-projects.github.io/micronaut-security/snapshot/api/io/micronaut/security/token/refresh/RefreshTokenPersistence.html">RefreshTokenPersistence</a> which leverages the Micronaut Data repository we coded in the previous section:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/CustomRefreshTokenPersistence.groovy</div>
@@ -162,7 +140,8 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
                 event.getRefreshToken() != null &amp;&amp;
                 event.getUserDetails() != null &amp;&amp;
                 event.getUserDetails().getUsername() != null) {
-            refreshTokenRepository.save(event.getUserDetails() .getUsername(), event.getRefreshToken(), Boolean.FALSE); <i class="conum" data-value="4"></i><b>(4)</b>
+            String payload = event.getRefreshToken();
+            refreshTokenRepository.save(event.getUserDetails() .getUsername(), payload, Boolean.FALSE); <i class="conum" data-value="4"></i><b>(4)</b>
         }
     }
 
