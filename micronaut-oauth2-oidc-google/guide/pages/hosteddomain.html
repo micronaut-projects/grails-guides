@@ -110,8 +110,11 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface ApplicationConfiguration {
 
+    @NonNull
     String getHostedDomain();
 }</code></pre>
 </div>
@@ -124,6 +127,7 @@ public interface ApplicationConfiguration {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
@@ -131,13 +135,15 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties("app")
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
+    @NonNull
     private String hostedDomain;
 
-    public void setHostedDomain(String hostedDomain) {
+    public void setHostedDomain(@NonNull String hostedDomain) {
         this.hostedDomain = hostedDomain;
     }
 
     @Override
+    @NonNull
     public String getHostedDomain() {
         return hostedDomain;
     }
@@ -173,7 +179,9 @@ public class HostedDomainClaimValidator implements OpenIdClaimsValidator {
     }
 
     @Override
-    public boolean validate(OpenIdClaims claims, OauthClientConfiguration clientConfiguration, OpenIdProviderMetadata providerMetadata) {
+    public boolean validate(OpenIdClaims claims,
+                            OauthClientConfiguration clientConfiguration,
+                            OpenIdProviderMetadata providerMetadata) {
         Object hd = claims.get(HOSTED_DOMAIN_CLAIM);
         return hd instanceof String &amp;&amp; ((String) hd).equalsIgnoreCase(hostedDomain);
     }

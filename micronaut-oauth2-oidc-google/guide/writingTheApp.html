@@ -218,7 +218,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.7</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.BUILD-SNAPSHOT</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -227,7 +227,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut.configuration:micronaut-security-oauth2"
+    implementation "io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -240,8 +240,9 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security"
-    implementation "io.micronaut:micronaut-security-jwt"
+    annotationProcessor("io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
+    implementation "io.micronaut:micronaut-security:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -255,33 +256,24 @@ other build tools such as <code>Maven</code> or other programming languages such
   application:
     name: complete
   security:
+    authentication: idtoken <i class="conum" data-value="1"></i><b>(1)</b>
     oauth2:
-      enabled: true
       clients:
         google: <i class="conum" data-value="1"></i><b>(1)</b>
-          client-id: '${OAUTH_CLIENT_ID}'  <i class="conum" data-value="2"></i><b>(2)</b>
-          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+          client-id: '290477064382-nt0b8v8bkeeffqppv965prbt70fhficf.apps.googleusercontent.com'  <i class="conum" data-value="2"></i><b>(2)</b>
+          client-secret: 'g_tMz44_IHCigG5ffNt5ISBp' <i class="conum" data-value="3"></i><b>(3)</b>
           openid:
             issuer: 'https://accounts.google.com' <i class="conum" data-value="4"></i><b>(4)</b>
-    token:
-      jwt:
-        cookie:
-          enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
-        signatures:
-          secret:
-            generator: <i class="conum" data-value="6"></i><b>(6)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="7"></i><b>(7)</b>
     endpoints:
       logout:
-        enabled: true <i class="conum" data-value="8"></i><b>(8)</b>
-        get-allowed: true <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+        get-allowed: true <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/google</code></td>
+<td>Set <code>micronaut.security.authentication</code> as <code>idtoken</code>. The idtoken provided by Google when the OAuth 2.0 Authorization code flow ends will be saved in a cookie. The id token is a signed JWT. For every request, Micronaut extracts the JWT from the Cookie, validates the JWT signature with the remote Json Web Key Set exposed by Google. JWKS is exposed by Google via the <code>jws-uri</code> entry of <a href="https://accounts.google.com/.well-known/openid-configuration" class="bare">https://accounts.google.com/.well-known/openid-configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -297,28 +289,12 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout#logout">Logout Controller</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>Accept GET request to the <code>/logout</code> endpoint.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code>, <code>OIDC_ISSUER_DOMAIN</code> and <code>OIDC_ISSUER_AUTHSERVERID</code> environment variables.</p>
+<p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code> environment variables.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -486,8 +462,11 @@ public class HomeController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface ApplicationConfiguration {
 
+    @NonNull
     String getHostedDomain();
 }</code></pre>
 </div>
@@ -500,6 +479,7 @@ public interface ApplicationConfiguration {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
@@ -507,13 +487,15 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties("app")
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
+    @NonNull
     private String hostedDomain;
 
-    public void setHostedDomain(String hostedDomain) {
+    public void setHostedDomain(@NonNull String hostedDomain) {
         this.hostedDomain = hostedDomain;
     }
 
     @Override
+    @NonNull
     public String getHostedDomain() {
         return hostedDomain;
     }
@@ -549,7 +531,9 @@ public class HostedDomainClaimValidator implements OpenIdClaimsValidator {
     }
 
     @Override
-    public boolean validate(OpenIdClaims claims, OauthClientConfiguration clientConfiguration, OpenIdProviderMetadata providerMetadata) {
+    public boolean validate(OpenIdClaims claims,
+                            OauthClientConfiguration clientConfiguration,
+                            OpenIdProviderMetadata providerMetadata) {
         Object hd = claims.get(HOSTED_DOMAIN_CLAIM);
         return hd instanceof String &amp;&amp; ((String) hd).equalsIgnoreCase(hostedDomain);
     }
