@@ -339,7 +339,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Set <code>micronaut.security.authentication</code> as <code>idtoken</code>. The idtoken provided by Google when the OAuth 2.0 Authorization code flow ends will be saved in a cookie. The id token is a signed JWT. For every request, Micronaut extracts the JWT from the Cookie, validates the JWT signature with the remote Json Web Key Set exposed by Google. JWKS is exposed by Google via the <code>jws-uri</code> entry of <a href="https://accounts.google.com/.well-known/openid-configuration" class="bare">https://accounts.google.com/.well-known/openid-configuration</a></td>
+<td>Set <code>micronaut.security.authentication</code> as <code>idtoken</code>. The idtoken provided by Google when the OAuth 2.0 Authorization code flow ends will be saved in a cookie. The id token is a signed JWT. For every request, Micronaut extracts the JWT from the Cookie and validates the JWT signature with the remote Json Web Key Set exposed by Google. JWKS is exposed by Google via the <code>jws-uri</code> entry of <a href="https://accounts.google.com/.well-known/openid-configuration" class="bare">https://accounts.google.com/.well-known/openid-configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
