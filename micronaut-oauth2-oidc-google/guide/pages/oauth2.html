@@ -167,14 +167,14 @@ function addJsClass() {
     authentication: idtoken <i class="conum" data-value="1"></i><b>(1)</b>
     oauth2:
       clients:
-        google: <i class="conum" data-value="1"></i><b>(1)</b>
-          client-id: '${OAUTH_CLIENT_ID}'  <i class="conum" data-value="2"></i><b>(2)</b>
-          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+        google: <i class="conum" data-value="2"></i><b>(2)</b>
+          client-id: '${OAUTH_CLIENT_ID}'  <i class="conum" data-value="3"></i><b>(3)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="4"></i><b>(4)</b>
           openid:
-            issuer: 'https://accounts.google.com' <i class="conum" data-value="4"></i><b>(4)</b>
+            issuer: 'https://accounts.google.com' <i class="conum" data-value="5"></i><b>(5)</b>
     endpoints:
       logout:
-        get-allowed: true <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+        get-allowed: true <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -185,18 +185,22 @@ function addJsClass() {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Client Secret. See previous screenshot.</td>
+<td>You can choose any name. The name you select, will be used in your routes. E.g. If you set <code>google</code> the login route for this OAuth 2.0 client is <code>/oauth/login/google</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Client ID. See previous screenshot.</td>
+<td>Client Secret. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+<td>Client ID. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Accept GET request to the <code>/logout</code> endpoint.</td>
 </tr>
 </table>
