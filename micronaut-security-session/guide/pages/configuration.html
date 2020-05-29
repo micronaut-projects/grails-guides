@@ -104,33 +104,27 @@ function addJsClass() {
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: complete
   security:
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-      logout:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-    session:
-      login-success-target-url: / <i class="conum" data-value="3"></i><b>(3)</b>
-      login-failure-target-url: /login/authFailed <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+    authentication: session <i class="conum" data-value="1"></i><b>(1)</b>
+    redirect:
+      login-success: / <i class="conum" data-value="2"></i><b>(2)</b>
+      login-failure: /login/authFailed <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Expose <code>/login</code> endpoint</td>
+<td>Set <code>micronaut.security.authentication</code> to <code>session</code>. It sets the necessary beans for login and logout using session based authentication.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose <code>/logout</code> endpoint</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>After the user logs in, redirect them to the Home page.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>If the login fails, redirect them to /login/authFailed</td>
 </tr>
 </table>

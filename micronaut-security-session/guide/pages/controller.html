@@ -101,12 +101,14 @@ function addJsClass() {
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/controllers/HomeController.java</div>
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.views.View;
@@ -117,10 +119,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/")  <i class="conum" data-value="2"></i><b>(2)</b>
+@Controller  <i class="conum" data-value="2"></i><b>(2)</b>
 public class HomeController {
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Produces(MediaType.TEXT_HTML)
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
     Map&lt;String, Object&gt; index(@Nullable Principal principal) { <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();
@@ -164,12 +167,14 @@ public class HomeController {
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/controllers/LoginAuthController.java</div>
+<div class="title">src/main/java/example/micronaut/LoginAuthController.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.controllers;
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.views.View;
@@ -182,12 +187,14 @@ import java.util.Map;
 @Controller("/login")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class LoginAuthController {
 
+    @Produces(MediaType.TEXT_HTML)
     @Get("/auth") <i class="conum" data-value="3"></i><b>(3)</b>
     @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
     public Map&lt;String, Object&gt; auth() {
         return new HashMap&lt;&gt;();
     }
 
+    @Produces(MediaType.TEXT_HTML)
     @Get("/authFailed") <i class="conum" data-value="5"></i><b>(5)</b>
     @View("auth") <i class="conum" data-value="4"></i><b>(4)</b>
     public Map&lt;String, Object&gt; authFailed() {

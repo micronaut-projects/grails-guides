@@ -101,9 +101,9 @@ function addJsClass() {
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/services/AuthenticationProviderUserPassword.java</div>
+<div class="title">src/main/java/example/micronaut/AuthenticationProviderUserPassword.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.services;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.http.HttpRequest;
@@ -112,6 +112,7 @@ import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -123,12 +124,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
-        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password")) {
-            UserDetails userDetails = new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;());
-            return Flowable.just(userDetails);
-        }
-        return Flowable.just(new AuthenticationFailed());
+        return Flowable.create(emitter -&gt; {
+            if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                    authenticationRequest.getSecret().equals("password")) {
+                UserDetails userDetails = new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;());
+                emitter.onNext(userDetails);
+            }
+            emitter.onNext(new AuthenticationFailed());
+            emitter.onComplete();
+        }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
 </div>
