@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.3 Authentication Provider null</title>
+    <title>2.2 Authentication Provider null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -79,7 +79,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>2.3 Authentication Provider</h1>
+                    <h1>2.2 Authentication Provider</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -88,7 +88,7 @@ function addJsClass() {
 
                 
 
-<h2 id="authenticationProvider">2.3 Authentication Provider</h2>
+<h2 id="authenticationProvider">2.2 Authentication Provider</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth/edit/master/src/main/docs/guide/writingTheApp/authenticationProvider.adoc"'>
@@ -112,6 +112,7 @@ import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -123,11 +124,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
-        if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password") ) {
-            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
-        }
-        return Flowable.just(new AuthenticationFailed());
+        return Flowable.create(emitter -&gt; {
+            if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                    authenticationRequest.getSecret().equals("password") ) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
+            } else {
+                emitter.onNext(new AuthenticationFailed());
+            }
+            emitter.onComplete();
+        }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
 </div>
