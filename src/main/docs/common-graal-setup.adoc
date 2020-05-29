@@ -45,6 +45,5 @@ Add a `native-image.properties` inside  `src/main/resources/META-INF/native-imag
 include::{sourceDir}/../complete/src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties[]
 ----
 
-- The `-H:IncludeResources` argument allows you to tweak which static resources to include. You can use regular expressions.
 - The `-H:Name` argument specifies the name of the native image that will be generated.
 - The `-H:Class` argument specifies the entry point of your application (the class that defines a static void main method.
