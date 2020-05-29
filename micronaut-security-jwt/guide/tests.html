@@ -109,47 +109,6 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
- <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">applicationType: default
-defaultPackage: example.micronaut
-testFramework: spock
-sourceLanguage: java
-buildTool: gradle
-features: [annotation-api, app-name, docker, gradle, http-client, java, java-application, logback, netty-server, readme, shade, spock, yaml]</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test to verify a user is able to login and access a secured endpoint.</p>
 </div>
 <div class="listingblock">
@@ -272,29 +231,29 @@ class JwtAuthenticationSpec extends Specification {
 <p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/java/example/micronaut/AppClient.java</div>
+<div class="title">src/test/groovy/example/micronaut/AppClient.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Consumes
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.Post
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 
 @Client("/")
-public interface AppClient {
+interface AppClient {
 
     @Post("/login")
-    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials);
+    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials)
 
     @Consumes(MediaType.TEXT_PLAIN)
     @Get
-    String home(@Header String authorization);
+    String home(@Header String authorization)
 }</code></pre>
 </div>
 </div>

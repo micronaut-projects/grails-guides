@@ -117,11 +117,14 @@ function addJsClass() {
 </div>
 
 
+<div class="sect1">
+<h2 id="_create_an_app_with_the_command_line_interface">Create an App with the Command Line Interface</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete</code></p>
+<p><code>mn create-app example.micronaut.complete --test=spock</code></p>
 </div>
 <div class="paragraph">
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
@@ -130,12 +133,27 @@ function addJsClass() {
 <p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_an_app_with_micronaut_launch">Create an App with Micronaut Launch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create the app using <a href="https://micronaut.com/launch">Micronaut Launch</a></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/micronautlaunch.png" alt="micronautlaunch">
+</div>
+</div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
 </div>
 </div>
 
@@ -161,7 +179,6 @@ other build tools such as <code>Maven</code> or other programming languages such
 .
     annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
     implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
-    implementation "io.micronaut:micronaut-security:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -197,7 +214,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Expose <code>/login</code> endpoint.</td>
+<td>Set <code>authentication</code> to <code>bearer</code> to receive a JSON response from the login endpoint.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -235,6 +252,7 @@ import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -246,11 +264,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
-        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password")) {
-            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
-        }
-        return Flowable.just(new AuthenticationFailed());
+        return Flowable.create(emitter -&gt; {
+            if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                    authenticationRequest.getSecret().equals("password")) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
+            } else {
+                emitter.onNext(new AuthenticationFailed());
+            }
+            emitter.onComplete();
+        }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
 </div>

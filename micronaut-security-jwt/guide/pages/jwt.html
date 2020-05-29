@@ -107,29 +107,29 @@ function addJsClass() {
 <p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/java/example/micronaut/AppClient.java</div>
+<div class="title">src/test/groovy/example/micronaut/AppClient.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Consumes
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.Post
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 
 @Client("/")
-public interface AppClient {
+interface AppClient {
 
     @Post("/login")
-    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials);
+    BearerAccessRefreshToken login(@Body UsernamePasswordCredentials credentials)
 
     @Consumes(MediaType.TEXT_PLAIN)
     @Get
-    String home(@Header String authorization);
+    String home(@Header String authorization)
 }</code></pre>
 </div>
 </div>

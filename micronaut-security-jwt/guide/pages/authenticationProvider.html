@@ -115,6 +115,7 @@ import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -126,11 +127,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
-        if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
-                authenticationRequest.getSecret().equals("password")) {
-            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
-        }
-        return Flowable.just(new AuthenticationFailed());
+        return Flowable.create(emitter -&gt; {
+            if (authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
+                    authenticationRequest.getSecret().equals("password")) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
+            } else {
+                emitter.onNext(new AuthenticationFailed());
+            }
+            emitter.onComplete();
+        }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
 </div>
