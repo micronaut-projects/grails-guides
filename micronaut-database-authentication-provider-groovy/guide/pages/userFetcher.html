@@ -92,20 +92,34 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>Create an interface to retrieve a <code>UserState</code> given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/UserFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.NonNull
+
+import javax.validation.constraints.NotBlank
+
+interface UserFetcher {
+    UserState findByUsername(@NotBlank @NonNull String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/UserFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import edu.umd.cs.findbugs.annotations.NonNull
 import groovy.transform.CompileStatic
-import io.micronaut.security.authentication.providers.UserFetcher
-import io.micronaut.security.authentication.providers.UserState
-import io.reactivex.Flowable
-import org.reactivestreams.Publisher
-
 import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
 
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
@@ -118,9 +132,8 @@ class UserFetcherService implements UserFetcher {
     }
 
     @Override
-    Publisher&lt;UserState&gt; findByUsername(String username) {
-        UserState user = userGormService.findByUsername(username) as UserState
-        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
+    UserState findByUsername(@NotBlank @NonNull String username) {
+        userGormService.findByUsername(username) as UserState
     }
 }</code></pre>
 </div>

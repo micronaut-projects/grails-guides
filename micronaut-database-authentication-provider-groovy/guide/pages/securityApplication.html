@@ -96,9 +96,9 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import example.micronaut.services.RegisterService
+
 import groovy.transform.CompileStatic
 import io.micronaut.runtime.Micronaut
 import javax.inject.Singleton
@@ -147,14 +147,13 @@ class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import example.micronaut.domain.User
 import example.micronaut.domain.UserRole
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
-import io.micronaut.security.authentication.providers.PasswordEncoder
 import javax.inject.Singleton
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank

@@ -92,16 +92,27 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+<p>Create an interface to retrieve roles given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.security.authentication.providers.AuthoritiesFetcher
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+
+interface AuthoritiesFetcher {
+    List&lt;String&gt; findAuthoritiesByUsername(String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import javax.inject.Singleton
 
@@ -115,8 +126,8 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
     }
 
     @Override
-    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
-        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
+    List&lt;String&gt; findAuthoritiesByUsername(String username) {
+        userRoleGormService.findAllAuthoritiesByUsername(username)
     }
 }</code></pre>
 </div>

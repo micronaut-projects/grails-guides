@@ -103,7 +103,7 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.User
 import grails.gorm.services.Service
@@ -118,6 +118,8 @@ interface UserGormService {
     User findById(Serializable id)
 
     void delete(Serializable id)
+
+    int count()
 }</code></pre>
 </div>
 </div>
@@ -131,7 +133,7 @@ interface UserGormService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import grails.gorm.services.Service
@@ -154,7 +156,7 @@ interface RoleGormService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import example.micronaut.domain.User

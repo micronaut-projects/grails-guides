@@ -106,7 +106,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut ships with <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/DelegatingAuthenticationProvider.html">DelegatingAuthenticationProvider</a> which can be typically used in environments such as the one described in the next diagramm.</p>
+<p>We are going to setup a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/AuthenticationProvider.html">AuthenticationProvider</a> a described in the next diagramm.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -114,10 +114,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p><code>DelegatingAuthenticationProvider</code> is not enabled unless you provide implementations for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>, <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a> and <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>.</p>
-</div>
-<div class="paragraph">
-<p>Next, we provide an implementation for those interfaces.</p>
+<p>Next, we create interfaces and implementations for each of the pieces of the previous diagram.</p>
 </div>
 
 
@@ -131,20 +128,34 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>Create an interface to retrieve a <code>UserState</code> given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/UserFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.NonNull
+
+import javax.validation.constraints.NotBlank
+
+interface UserFetcher {
+    UserState findByUsername(@NotBlank @NonNull String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/UserFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import edu.umd.cs.findbugs.annotations.NonNull
 import groovy.transform.CompileStatic
-import io.micronaut.security.authentication.providers.UserFetcher
-import io.micronaut.security.authentication.providers.UserState
-import io.reactivex.Flowable
-import org.reactivestreams.Publisher
-
 import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
 
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
@@ -157,9 +168,8 @@ class UserFetcherService implements UserFetcher {
     }
 
     @Override
-    Publisher&lt;UserState&gt; findByUsername(String username) {
-        UserState user = userGormService.findByUsername(username) as UserState
-        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
+    UserState findByUsername(@NotBlank @NonNull String username) {
+        userGormService.findByUsername(username) as UserState
     }
 }</code></pre>
 </div>
@@ -188,16 +198,27 @@ class UserFetcherService implements UserFetcher {
 
 
 <div class="paragraph">
-<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+<p>Create an interface to retrieve roles given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.security.authentication.providers.AuthoritiesFetcher
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+
+interface AuthoritiesFetcher {
+    List&lt;String&gt; findAuthoritiesByUsername(String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import javax.inject.Singleton
 
@@ -211,8 +232,8 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
     }
 
     @Override
-    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
-        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
+    List&lt;String&gt; findAuthoritiesByUsername(String username) {
+        userRoleGormService.findAllAuthoritiesByUsername(username)
     }
 }</code></pre>
 </div>
@@ -241,10 +262,26 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+<p>Create an interface to handle password encoding:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/PasswordEncoder.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import edu.umd.cs.findbugs.annotations.NonNull
+
+import javax.validation.constraints.NotBlank
+
+interface PasswordEncoder {
+    String encode(@NotBlank @NonNull String rawPassword)
+
+    boolean matches(@NotBlank @NonNull String rawPassword, @NotBlank @NonNull String encodedPassword)
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
+<p>To provide an implementation, first include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
 </div>
 <div class="listingblock">
 <div class="title">gradle.properties</div>
@@ -265,27 +302,31 @@ springSecurityCryptoVersion=5.2.1.RELEASE
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Then, write the implementation:</p>
+</div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/BCryptPasswordEncoderService.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.security.authentication.providers.PasswordEncoder
+import edu.umd.cs.findbugs.annotations.NonNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class BCryptPasswordEncoderService implements PasswordEncoder {
 
     org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder()
 
-    String encode(String rawPassword) {
-        return delegate.encode(rawPassword)
+    String encode(@NotBlank @NonNull String rawPassword) {
+        delegate.encode(rawPassword)
     }
 
     @Override
-    boolean matches(String rawPassword, String encodedPassword) {
-        return delegate.matches(rawPassword, encodedPassword)
+    boolean matches(@NotBlank @NonNull String rawPassword, @NotBlank @NonNull String encodedPassword) {
+        delegate.matches(rawPassword, encodedPassword)
     }
 }</code></pre>
 </div>

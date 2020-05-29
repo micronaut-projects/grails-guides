@@ -99,6 +99,8 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import io.micronaut.context.annotation.Property
+import io.micronaut.core.util.StringUtils
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
@@ -117,6 +119,7 @@ import spock.lang.Specification
 
 import javax.inject.Inject
 
+@Property(name = 'micronaut.security.ldap.default.enabled', value = StringUtils.FALSE)
 @MicronautTest
 class LoginControllerSpec extends Specification {
 
@@ -128,6 +131,9 @@ class LoginControllerSpec extends Specification {
     @Inject
     JwtTokenValidator tokenValidator
 
+    @Inject
+    UserGormService userGormService
+
     void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
@@ -135,11 +141,14 @@ class LoginControllerSpec extends Specification {
         client.toBlocking().exchange(request)
 
         then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
+        HttpClientResponseException e = thrown()
         e.status.code == 400
     }
 
-    void '/login with valid credentials for a database user returns 200 and access token and refresh token'() {
+    void '/login with valid credentials for a database user returns 200 and access token'() {
+        expect:
+        userGormService.count() &gt; 0
+
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
@@ -147,15 +156,14 @@ class LoginControllerSpec extends Specification {
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
         then:
+        noExceptionThrown()
         rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
-        rsp.body.get().refreshToken
 
         when:
         String accessToken = rsp.body.get().accessToken
         Authentication authentication = Flowable.fromPublisher(tokenValidator.validateToken(accessToken)).blockingFirst()
-        println authentication.getAttributes()
 
         then:
         authentication.getAttributes()

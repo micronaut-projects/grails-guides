@@ -92,14 +92,36 @@ function addJsClass() {
 
 
 <div class="paragraph">
+<p>Create a interface <code>UserState</code> to model the user state.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+interface UserState {
+    String getUsername();
+
+    String getPassword();
+
+    boolean isEnabled();
+
+    boolean isAccountExpired();
+
+    boolean isAccountLocked();
+
+    boolean isPasswordExpired();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Create <code>User</code> domain class to store users within our application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
+import example.micronaut.UserState
 import grails.gorm.annotation.Entity
-import io.micronaut.security.authentication.providers.UserState
 import org.grails.datastore.gorm.GormEntity
 
 @Entity <i class="conum" data-value="1"></i><b>(1)</b>

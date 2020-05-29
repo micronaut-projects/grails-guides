@@ -124,9 +124,6 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#loginTest"><strong>2.6</strong><span>Login Testing</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#oauthTest"><strong>2.7</strong><span>Oauth Testing</span></a>
-                    </div>
-                    
                 </div>
                 
 
@@ -160,7 +157,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
+implementation("io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -170,52 +168,28 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-  application:
-    name: security <i class="conum" data-value="1"></i><b>(1)</b>
   security:
-    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
-      oauth:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+    authentication: bearer <i class="conum" data-value="1"></i><b>(1)</b>
     token:
       jwt:
-        enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
         signatures:
           secret:
-            generator: <i class="conum" data-value="6"></i><b>(6)</b>
-              secret: pleaseChangeThisSecretForANewOne  <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+            generator: <i class="conum" data-value="2"></i><b>(2)</b>
+              secret: pleaseChangeThisSecretForANewOne  <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Name your microservice as you wish</td>
+<td>Set <code>micronaut.security.authentication</code> as <code>bearer</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Enable Micronaut’s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose <code>/login</code> endpoint</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Expose /oauth/access_token endpoint as defined by section 6 of the OAuth 2.0 spec - Refreshing an Access Token.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Enable JWT based authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>You can create a SecretSignatureConfiguration named <code>generator</code> via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
 </tr>
 </table>
@@ -241,7 +215,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut.configuration:micronaut-security-ldap"
+    implementation("io.micronaut.configuration:micronaut-security-ldap:2.0.0.BUILD-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -262,7 +236,6 @@ other build tools such as <code>Maven</code> or other programming languages such
   ..
     ldap:
       default: <i class="conum" data-value="1"></i><b>(1)</b>
-        enabled: true
         context:
           server: 'ldap://ldap.forumsys.com:389'  <i class="conum" data-value="2"></i><b>(2)</b>
           managerDn: 'cn=read-only-admin,dc=example,dc=com'  <i class="conum" data-value="3"></i><b>(3)</b>
@@ -330,7 +303,7 @@ testing and an automatic GraphQL schema generator.</p>
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code>...
-gormVersion=7.0.1.RELEASE
+gormVersion=7.1.0.M2
 ...</code></pre>
 </div>
 </div>
@@ -341,11 +314,13 @@ gormVersion=7.0.1.RELEASE
 ...
 ..
 .
-    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
-    implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
-    implementation "org.grails:grails-datastore-gorm-hibernate5"
-    runtime "com.h2database:h2"
-    runtime "org.apache.tomcat:tomcat-jdbc"
+    implementation("io.micronaut.configuration:micronaut-hibernate-validator")
+    implementation("io.micronaut.configuration:micronaut-hibernate-gorm:2.0.0.M1")
+    implementation "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
+
+    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
 }</code></pre>
 </div>
 </div>
@@ -396,14 +371,36 @@ mapped onto an underlying database table.</p>
 
 
 <div class="paragraph">
+<p>Create a interface <code>UserState</code> to model the user state.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+interface UserState {
+    String getUsername();
+
+    String getPassword();
+
+    boolean isEnabled();
+
+    boolean isAccountExpired();
+
+    boolean isAccountLocked();
+
+    boolean isPasswordExpired();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Create <code>User</code> domain class to store users within our application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
 
+import example.micronaut.UserState
 import grails.gorm.annotation.Entity
-import io.micronaut.security.authentication.providers.UserState
 import org.grails.datastore.gorm.GormEntity
 
 @Entity <i class="conum" data-value="1"></i><b>(1)</b>
@@ -551,7 +548,7 @@ class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-val
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.User
 import grails.gorm.services.Service
@@ -566,6 +563,8 @@ interface UserGormService {
     User findById(Serializable id)
 
     void delete(Serializable id)
+
+    int count()
 }</code></pre>
 </div>
 </div>
@@ -579,7 +578,7 @@ interface UserGormService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import grails.gorm.services.Service
@@ -602,7 +601,7 @@ interface RoleGormService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import example.micronaut.domain.User
@@ -656,9 +655,9 @@ interface UserRoleGormService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import example.micronaut.services.RegisterService
+
 import groovy.transform.CompileStatic
 import io.micronaut.runtime.Micronaut
 import javax.inject.Singleton
@@ -707,14 +706,13 @@ class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import example.micronaut.domain.Role
 import example.micronaut.domain.User
 import example.micronaut.domain.UserRole
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
-import io.micronaut.security.authentication.providers.PasswordEncoder
 import javax.inject.Singleton
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -776,7 +774,7 @@ class RegisterService {
 
 
 <div class="paragraph">
-<p>Micronaut ships with <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/DelegatingAuthenticationProvider.html">DelegatingAuthenticationProvider</a> which can be typically used in environments such as the one described in the next diagramm.</p>
+<p>We are going to setup a <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/AuthenticationProvider.html">AuthenticationProvider</a> a described in the next diagramm.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -784,10 +782,7 @@ class RegisterService {
 </div>
 </div>
 <div class="paragraph">
-<p><code>DelegatingAuthenticationProvider</code> is not enabled unless you provide implementations for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>, <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a> and <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>.</p>
-</div>
-<div class="paragraph">
-<p>Next, we provide an implementation for those interfaces.</p>
+<p>Next, we create interfaces and implementations for each of the pieces of the previous diagram.</p>
 </div>
 
 
@@ -801,20 +796,34 @@ class RegisterService {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+<p>Create an interface to retrieve a <code>UserState</code> given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/UserFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.NonNull
+
+import javax.validation.constraints.NotBlank
+
+interface UserFetcher {
+    UserState findByUsername(@NotBlank @NonNull String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/UserFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import edu.umd.cs.findbugs.annotations.NonNull
 import groovy.transform.CompileStatic
-import io.micronaut.security.authentication.providers.UserFetcher
-import io.micronaut.security.authentication.providers.UserState
-import io.reactivex.Flowable
-import org.reactivestreams.Publisher
-
 import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
 
 @CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
@@ -827,9 +836,8 @@ class UserFetcherService implements UserFetcher {
     }
 
     @Override
-    Publisher&lt;UserState&gt; findByUsername(String username) {
-        UserState user = userGormService.findByUsername(username) as UserState
-        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
+    UserState findByUsername(@NotBlank @NonNull String username) {
+        userGormService.findByUsername(username) as UserState
     }
 }</code></pre>
 </div>
@@ -858,16 +866,27 @@ class UserFetcherService implements UserFetcher {
 
 
 <div class="paragraph">
-<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+<p>Create an interface to retrieve roles given a username.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcher.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.security.authentication.providers.AuthoritiesFetcher
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+
+interface AuthoritiesFetcher {
+    List&lt;String&gt; findAuthoritiesByUsername(String username)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provide an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import javax.inject.Singleton
 
@@ -881,8 +900,8 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
     }
 
     @Override
-    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
-        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
+    List&lt;String&gt; findAuthoritiesByUsername(String username) {
+        userRoleGormService.findAllAuthoritiesByUsername(username)
     }
 }</code></pre>
 </div>
@@ -911,10 +930,26 @@ class AuthoritiesFetcherService implements AuthoritiesFetcher {
 
 
 <div class="paragraph">
-<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+<p>Create an interface to handle password encoding:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/PasswordEncoder.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import edu.umd.cs.findbugs.annotations.NonNull
+
+import javax.validation.constraints.NotBlank
+
+interface PasswordEncoder {
+    String encode(@NotBlank @NonNull String rawPassword)
+
+    boolean matches(@NotBlank @NonNull String rawPassword, @NotBlank @NonNull String encodedPassword)
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
+<p>To provide an implementation, first include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
 </div>
 <div class="listingblock">
 <div class="title">gradle.properties</div>
@@ -935,27 +970,31 @@ springSecurityCryptoVersion=5.2.1.RELEASE
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Then, write the implementation:</p>
+</div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/BCryptPasswordEncoderService.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.security.authentication.providers.PasswordEncoder
+import edu.umd.cs.findbugs.annotations.NonNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class BCryptPasswordEncoderService implements PasswordEncoder {
 
     org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder()
 
-    String encode(String rawPassword) {
-        return delegate.encode(rawPassword)
+    String encode(@NotBlank @NonNull String rawPassword) {
+        delegate.encode(rawPassword)
     }
 
     @Override
-    boolean matches(String rawPassword, String encodedPassword) {
-        return delegate.matches(rawPassword, encodedPassword)
+    boolean matches(@NotBlank @NonNull String rawPassword, @NotBlank @NonNull String encodedPassword) {
+        delegate.matches(rawPassword, encodedPassword)
     }
 }</code></pre>
 </div>
@@ -1028,7 +1067,6 @@ class LoginLdapSpec extends Specification {
         rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
-        rsp.body.get().refreshToken
     }
 
     void '/login with invalid credentials returns UNAUTHORIZED'() {
@@ -1066,35 +1104,8 @@ class LoginLdapSpec extends Specification {
         then:
         Flowable.fromPublisher(authentication).blockingFirst()
 
-        and:
+        and: 'access token contains an expiration date'
         Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
-    }
-
-    void 'refresh token does not contain expiration date'() {
-        when:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
-        HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
-
-        then:
-        rsp.status.code == 200
-        rsp.body.isPresent()
-
-        when:
-        String refreshToken = rsp.body.get().refreshToken
-
-        then:
-        refreshToken
-
-        when:
-        Publisher authentication = tokenValidator.validateToken(refreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
-
-        then:
-        Flowable.fromPublisher(authentication).blockingFirst()
-
-        and:
-        !Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 }</code></pre>
 </div>
@@ -1146,6 +1157,8 @@ class LoginLdapSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import io.micronaut.context.annotation.Property
+import io.micronaut.core.util.StringUtils
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
@@ -1164,6 +1177,7 @@ import spock.lang.Specification
 
 import javax.inject.Inject
 
+@Property(name = 'micronaut.security.ldap.default.enabled', value = StringUtils.FALSE)
 @MicronautTest
 class LoginControllerSpec extends Specification {
 
@@ -1175,6 +1189,9 @@ class LoginControllerSpec extends Specification {
     @Inject
     JwtTokenValidator tokenValidator
 
+    @Inject
+    UserGormService userGormService
+
     void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
@@ -1182,11 +1199,14 @@ class LoginControllerSpec extends Specification {
         client.toBlocking().exchange(request)
 
         then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
+        HttpClientResponseException e = thrown()
         e.status.code == 400
     }
 
-    void '/login with valid credentials for a database user returns 200 and access token and refresh token'() {
+    void '/login with valid credentials for a database user returns 200 and access token'() {
+        expect:
+        userGormService.count() &gt; 0
+
         when:
         HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
                 .accept(MediaType.APPLICATION_JSON_TYPE)
@@ -1194,15 +1214,14 @@ class LoginControllerSpec extends Specification {
         HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
 
         then:
+        noExceptionThrown()
         rsp.status.code == 200
         rsp.body.isPresent()
         rsp.body.get().accessToken
-        rsp.body.get().refreshToken
 
         when:
         String accessToken = rsp.body.get().accessToken
         Authentication authentication = Flowable.fromPublisher(tokenValidator.validateToken(accessToken)).blockingFirst()
-        println authentication.getAttributes()
 
         then:
         authentication.getAttributes()
@@ -1210,114 +1229,6 @@ class LoginControllerSpec extends Specification {
         authentication.getAttributes().containsKey('iss')
         authentication.getAttributes().containsKey('exp')
         authentication.getAttributes().containsKey('iat')
-    }
-}</code></pre>
-</div>
-</div>
-
-
-<h2 id="oauthTest">2.7 Oauth Testing</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/oauthTest.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Test <code>/oauth/access_token</code> endpoint. We verify it is possible to refresh an access token.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/OauthControllerSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.http.HttpMethod
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.MediaType
-import io.micronaut.http.client.HttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
-import io.micronaut.security.token.jwt.generator.claims.JwtClaims
-import io.micronaut.security.token.jwt.render.AccessRefreshToken
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import io.micronaut.security.token.jwt.validator.JwtTokenValidator
-import io.micronaut.test.annotation.MicronautTest
-import io.reactivex.Flowable
-import org.reactivestreams.Publisher
-import spock.lang.Shared
-import spock.lang.Specification
-
-import javax.inject.Inject
-
-@MicronautTest
-class OauthControllerSpec extends Specification {
-
-    @Inject
-    @Client('/')
-    HttpClient client
-
-    @Shared
-    @Inject
-    JwtTokenValidator tokenValidator
-
-    void '/oauth/access_token endpoint returns BAD request if required parameters not present'() {
-        when:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
-                .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-        client.toBlocking().exchange(request)
-
-        then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
-    }
-
-    void 'Users can generate a new token by requesting to /oauth/access_token with refresh token'() {
-        when:
-        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .body(new UsernamePasswordCredentials('euler', 'password'))
-        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
-
-        then:
-        rsp.status.code == 200
-        rsp.body.isPresent()
-
-        when:
-        String accessToken = rsp.body.get().accessToken
-        String refreshToken = rsp.body.get().refreshToken
-
-        then:
-        accessToken
-        refreshToken
-
-        when:
-        sleep(1_000)
-        request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new TokenRefreshRequest("refresh_token", refreshToken))
-        HttpResponse&lt;AccessRefreshToken&gt; tokenRsp = client.toBlocking().exchange(request, AccessRefreshToken)
-
-        then:
-        tokenRsp.status.code == 200
-        tokenRsp.body.isPresent()
-
-        and: 'a new access token was generated'
-        tokenRsp.body.get().accessToken
-        tokenRsp.body.get().accessToken != accessToken
-
-        when:
-        Publisher authentication = tokenValidator.validateToken(accessToken)
-
-        then:
-        Flowable.fromPublisher(authentication).blockingFirst()
-
-        and:
-        Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
     }
 }</code></pre>
 </div>

@@ -101,7 +101,7 @@ function addJsClass() {
 ...
 ..
 .
-    implementation "io.micronaut.configuration:micronaut-security-ldap"
+    implementation("io.micronaut.configuration:micronaut-security-ldap:2.0.0.BUILD-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -122,7 +122,6 @@ function addJsClass() {
   ..
     ldap:
       default: <i class="conum" data-value="1"></i><b>(1)</b>
-        enabled: true
         context:
           server: 'ldap://ldap.forumsys.com:389'  <i class="conum" data-value="2"></i><b>(2)</b>
           managerDn: 'cn=read-only-admin,dc=example,dc=com'  <i class="conum" data-value="3"></i><b>(3)</b>
