@@ -155,8 +155,8 @@ applications.</p>
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor("io.micronaut:micronaut-graal")
+    compileOnly("org.graalvm.nativeimage:svm")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -165,8 +165,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/gateway/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=gateway \
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:Name=gateway \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -197,8 +196,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">userecho/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -207,8 +205,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/userecho/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=userecho \
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:Name=userecho \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -253,17 +250,19 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
                |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
-               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
                |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
 ....
 
 # For Java 8
-$ sdk install java 20.0.0.r8-grl
+$ sdk install java 20.1.0.r8-grl
 
 # For Java 11
-$ sdk install java 20.0.0.r11-grl</code></pre>
+$ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -419,16 +418,19 @@ sherlock</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/gateway
 WORKDIR /home/app/gateway
-RUN gu install native-image
-RUN native-image --no-server -cp build/libs/*-all.jar
+
+RUN native-image --no-server -cp build/libs/gateway-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/gateway /app/gateway
-ENTRYPOINT ["/app/gateway","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/gateway/gateway /app/gateway
+ENTRYPOINT ["/app/gateway"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -454,16 +456,19 @@ echo "    $ docker run -p 8080:8080 gateway"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
+RUN gu install native-image
+
 COPY . /home/app/userecho
 WORKDIR /home/app/userecho
-RUN gu install native-image
-RUN native-image --no-server -cp build/libs/*-all.jar
+
+RUN native-image --no-server -cp build/libs/userecho-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/userecho /app/userecho
-ENTRYPOINT ["/app/userecho","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/userecho/userecho /app/userecho
+ENTRYPOINT ["/app/userecho"]</code></pre>
 </div>
 </div>
 <div class="paragraph">

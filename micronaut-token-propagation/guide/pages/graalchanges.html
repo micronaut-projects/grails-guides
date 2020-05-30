@@ -119,8 +119,8 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor("io.micronaut:micronaut-graal")
+    compileOnly("org.graalvm.nativeimage:svm")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -129,8 +129,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/gateway/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=gateway \
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:Name=gateway \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -161,8 +160,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">userecho/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -171,8 +169,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/userecho/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=userecho \
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:Name=userecho \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>

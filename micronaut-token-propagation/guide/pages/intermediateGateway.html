@@ -106,8 +106,8 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
-implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
+implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -120,11 +120,13 @@ implementation "io.micronaut:micronaut-security-jwt"</code></pre>
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.security.authentication.AuthenticationException;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -136,11 +138,17 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Override
     public Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
-        if ((authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
-                authenticationRequest.getSecret().equals("password")) {
-            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
-        }
-        return Flowable.just(new AuthenticationFailed());
+        return Flowable.create(emitter -&gt; {
+            if ((authenticationRequest.getIdentity().equals("sherlock") || authenticationRequest.getIdentity().equals("watson")) &amp;&amp;
+                    authenticationRequest.getSecret().equals("password")) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), Collections.emptyList()));
+            } else {
+                emitter.onError(new AuthenticationException(new AuthenticationFailed()));
+            }
+            emitter.onComplete();
+
+        }, BackpressureStrategy.ERROR);
+
     }
 }</code></pre>
 </div>
@@ -246,6 +254,8 @@ public interface UsernameFetcher {
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.client.annotation.Client;
@@ -256,6 +266,7 @@ import io.reactivex.Single;
 public interface UserEchoClient extends UsernameFetcher {
 
     @Override
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/user") <i class="conum" data-value="3"></i><b>(3)</b>
     Single&lt;String&gt; findUsername(@Header("Authorization") String authorization); <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
@@ -282,74 +293,63 @@ public interface UserEchoClient extends UsernameFetcher {
 </table>
 </div>
 <div class="paragraph">
-<p>Modify <code>application.yml</code></p>
+<p>Add this snippet to <code>application.yml</code> to configure the service url of the <code>echo</code> service</p>
 </div>
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-  application:
-    name: gateway
-  server:
-    port: 8080 <i class="conum" data-value="1"></i><b>(1)</b>
-  security:
-    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
-      oauth:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-    token:
-      jwt:
-        enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
-        signatures:
-          secret:
-            generator: <i class="conum" data-value="6"></i><b>(6)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="7"></i><b>(7)</b>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   http:
     services:
-      userecho: <i class="conum" data-value="8"></i><b>(8)</b>
+      userecho: <i class="conum" data-value="1"></i><b>(1)</b>
         urls:
-          - "http://localhost:8081" <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+          - "http://localhost:8081" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure a fix port where the app listens.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Enable Micronaut’s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose /login endpoint</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Expose /oauth/access_token endpoint as defined by section 6 of the OAuth 2.0 spec - Refreshing an Access Token.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Enable JWT based authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>You can create a SecretSignatureConfiguration named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>This is the same service ID we used in the <code>@Client</code> annotation.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Configure a URL where the <code>userecho</code> microservice resides.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Add this snippet to <code>application.yml</code> to configure security:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
+  security:
+    authentication: bearer <i class="conum" data-value="1"></i><b>(1)</b>
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="2"></i><b>(2)</b>
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"' <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set <code>authentication</code> to <code>bearer</code> to receive a JSON response from the login endpoint.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>You can create a SecretSignatureConfiguration named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
 </tr>
 </table>
 </div>

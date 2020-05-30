@@ -106,17 +106,13 @@ includes a feature called token propagation. We can tell our app to propagate th
 <div class="listingblock">
 <div class="title">gateway/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   security:
     token:
-    ...
-    ..
-    ..
       propagation:
         enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-        service-id-regex: "userecho" <i class="conum" data-value="2"></i><b>(2)</b>
-....
-..</code></pre>
+        service-id-regex: "userecho" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -193,8 +189,9 @@ public interface UsernameFetcher {
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
 import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Single;
 
@@ -202,6 +199,7 @@ import io.reactivex.Single;
 @Requires(notEnv = Environment.TEST)
 public interface UserEchoClient extends UsernameFetcher {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/user")
     Single&lt;String&gt; findUsername();
 }</code></pre>
