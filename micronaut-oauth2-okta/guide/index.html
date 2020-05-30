@@ -84,7 +84,7 @@
         <h1>Secure a Micronaut app with Okta</h1>
         <p>Learn how to create Micronaut app and secure it with an Authorization Server provided by Okta.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.M2</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -172,6 +172,9 @@
 </div>
 
 
+<div class="sect1">
+<h2 id="_create_an_app_with_the_command_line_interface">Create an App with the Command Line Interface</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
@@ -185,12 +188,27 @@
 <p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_an_app_with_micronaut_launch">Create an App with Micronaut Launch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create the app using <a href="https://micronaut.io/launch">Micronaut Launch</a></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/micronautlaunch.png" alt="micronautlaunch">
+</div>
+</div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
 </div>
 </div>
 
@@ -216,7 +234,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut:micronaut-views-thymeleaf"
+    implementation("io.micronaut:micronaut-views-thymeleaf")
 }</code></pre>
 </div>
 </div>
@@ -229,7 +247,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+    runtime("org.thymeleaf:thymeleaf:3.0.11.RELEASE")
 }</code></pre>
 </div>
 </div>
@@ -274,7 +292,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.M2</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.BUILD-SNAPSHOT</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -283,7 +301,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut.configuration:micronaut-security-oauth2"
+
+    implementation("io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -296,8 +315,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
-    implementation "io.micronaut:micronaut-security-jwt"
+    annotationProcessor("io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
+    implementation("io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -309,56 +328,43 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
   security:
+    authentication: idtoken <i class="conum" data-value="1"></i><b>(1)</b>
     oauth2:
-      enabled: true
       clients:
-        okta: <i class="conum" data-value="1"></i><b>(1)</b>
-          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="2"></i><b>(2)</b>
-          client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="3"></i><b>(3)</b>
+        okta: <i class="conum" data-value="2"></i><b>(2)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+          client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="4"></i><b>(4)</b>
           openid:
-            issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="4"></i><b>(4)</b>
-    token:
-      jwt:
-        cookie:
-          enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
-        signatures:
-          secret:
-            generator:
-              secret: pleaseChangeThisSecretForANewOne
+            issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="5"></i><b>(5)</b>
     endpoints:
       logout:
-        enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
-        get-allowed: true <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+        get-allowed: true <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/okta</code></td>
+<td>Set <code>micronaut.security.authentication</code> as <code>idtoken</code>. The idtoken provided by Cognito when the OAuth 2.0 Authorization code flow ends will be saved in a cookie. The id token is a signed JWT. For every request, Micronaut extracts the JWT from the Cookie and validates the JWT signature with the remote Json Web Key Set exposed by Cognito. JWKS is exposed by the <code>jws-uri</code> entry of Cognito <code>.well-known/openid-configuration</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Client Secret. See previous screenshot.</td>
+<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/okta</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Client ID. See previous screenshot.</td>
+<td>Client Secret. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+<td>Client ID. See previous screenshot.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout">Logout Controller</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Accept GET request to the <code>/logout</code> endpoint.</td>
 </tr>
 </table>
