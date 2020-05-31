@@ -161,7 +161,7 @@ public class HomeController {
     &lt;ul&gt;
         &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/github"&gt;Enter&lt;/a&gt;&lt;/li&gt;
         &lt;li th:if="${security}"&gt;&lt;a href="/repos"&gt;View Repos&lt;/a&gt;&lt;/li&gt;
-        &lt;li th:if="${security}"&gt;&lt;a href="/oauth/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:if="${security}"&gt;&lt;a href="/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
 &lt;/nav&gt;
 &lt;/body&gt;
