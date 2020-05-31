@@ -400,30 +400,27 @@ import javax.inject.Inject
 class BasicAuthSpec extends Specification {
 
     @Inject
-    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Inject
     @Client("/")
-    RxHttpClient client <i class="conum" data-value="3"></i><b>(3)</b>
+    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
 
     def "by default every endpoint is secured"() {
         when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/')) <i class="conum" data-value="4"></i><b>(4)</b>
+        client.toBlocking().exchange(HttpRequest.GET('/')) <i class="conum" data-value="3"></i><b>(3)</b>
 
         then: 'returns unauthorized'
-        HttpClientResponseException e = thrown() <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpClientResponseException e = thrown() <i class="conum" data-value="4"></i><b>(4)</b>
         e.status == HttpStatus.UNAUTHORIZED
     }
 
     def "Verify HTTP Basic Auth works"() {
         when: 'A secured URL is accessed with Basic Auth'
         HttpRequest request = HttpRequest.GET('/')
-                .basicAuth("sherlock", "password") <i class="conum" data-value="6"></i><b>(6)</b>
-        HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(request, String) <i class="conum" data-value="7"></i><b>(7)</b>
+                .basicAuth("sherlock", "password") <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(request, String) <i class="conum" data-value="6"></i><b>(6)</b>
 
         then: 'the endpoint can be accessed'
         rsp.status == HttpStatus.OK
-        rsp.body() == 'sherlock' <i class="conum" data-value="8"></i><b>(8)</b>
+        rsp.body() == 'sherlock' <i class="conum" data-value="7"></i><b>(7)</b>
     }
 }
 }</code></pre>
@@ -437,30 +434,26 @@ class BasicAuthSpec extends Specification {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>EmbeddedServer</code> bean.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Inject the <code>HttpClient</code> bean.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>If you attempt to access a secured endpoint without authentication, 401 is returned</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>By using <code>basicAuth</code> method, you populate the <code>Authorization</code> header with user-id:password pairs, encoded using Base64.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Micronaut&#8217;s <code>HttpClient</code> simplifies parsing HTTP response payload to Java objects. In this example, we parse the response to <code>String</code>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Use <code>.body()</code> to retrieve the parsed payload.</td>
 </tr>
 </table>
