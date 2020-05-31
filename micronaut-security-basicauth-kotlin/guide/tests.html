@@ -103,82 +103,53 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
-kotlinVersion=1.3.50
-spekVersion=2.0.8</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">complete/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    ...
-    ..
-    .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude group: 'org.junit.platform'
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test which verifies the user authentication flow via Basic Auth.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/BasicAuthSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.exceptions.HttpClientException
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
+import javax.inject.Inject
 
-class BasicAuthSpec : Spek({
-    describe("Verify HTTP Basic Auth works") {
+@MicronautTest
+class BasicAuthTest {
 
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client("/")
+    lateinit var client : RxHttpClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-        it("Accessing a secured URL without authenticating") {
-            assertFailsWith&lt;HttpClientException&gt; { <i class="conum" data-value="4"></i><b>(4)</b>
-                val request = HttpRequest.GET&lt;Any&gt;("/")
-                client.toBlocking().exchange(request, String::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
-            }
-        }
 
-        it("If a secured URL is accessed with Basic Auth, it can be accessed") {
-            val request = HttpRequest.GET&lt;Any&gt;("/").basicAuth("sherlock", "password")  <i class="conum" data-value="5"></i><b>(5)</b>
-            val rsp: HttpResponse&lt;String&gt; = client.toBlocking().exchange(request, String::class.java)  <i class="conum" data-value="6"></i><b>(6)</b>
+    //@Test
+    fun verifyHttpBasicAuthWorks() {
+        //when: 'Accessing a secured URL without authenticating'
+        val e = Executable { client.toBlocking().exchange&lt;Any, Any&gt;(HttpRequest.GET&lt;Any&gt;("/").accept(MediaType.TEXT_PLAIN)) } <i class="conum" data-value="3"></i><b>(3)</b>
 
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-            assertEquals(rsp.body()!!, "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
-        }
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+        // then: 'returns unauthorized'
+        val thrown = Assertions.assertThrows(HttpClientResponseException::class.java, e) <i class="conum" data-value="4"></i><b>(4)</b>
+        Assertions.assertEquals(thrown.status, HttpStatus.UNAUTHORIZED)
 
+        //when: 'A secured URL is accessed with Basic Auth'
+        val rsp = client.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/")
+                .accept(MediaType.TEXT_PLAIN)
+                .basicAuth("sherlock", "password"),  <i class="conum" data-value="5"></i><b>(5)</b>
+                String::class.java) <i class="conum" data-value="6"></i><b>(6)</b>
+        //then: 'the endpoint can be accessed'
+        Assertions.assertEquals(rsp.status, HttpStatus.OK)
+        Assertions.assertEquals(rsp.body.get(), "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
     }
-})
+}
 }</code></pre>
 </div>
 </div>
@@ -236,6 +207,8 @@ class BasicAuthSpec : Spek({
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.client.annotation.Client
@@ -243,6 +216,7 @@ import io.micronaut.http.client.annotation.Client
 @Client("/")
 interface AppClient {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/")
     fun home(@Header authorization: String): String
 }</code></pre>
@@ -252,41 +226,29 @@ interface AppClient {
 <p>Create a test which uses the previous <code>@Client</code></p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/BasicAuthClientSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthClientTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import javax.inject.Inject
 
-class BasicAuthClientSpec : Spek({
-    describe("Verify HTTP Basic Auth works") {
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class BasicAuthClientTest {
 
-        val embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        it("Accessing a secured URL using a @Client which supplies basic auth in Authorization header") {
-            val credsEncoded: String = Base64.getEncoder().encodeToString("sherlock:password".byteInputStream().readBytes())
+    @Inject
+    lateinit var appClient : AppClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-            var exceptionThrown = false
-            try {
-                val appClient: AppClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
-                val rsp: String = appClient.home("Basic $credsEncoded") <i class="conum" data-value="3"></i><b>(3)</b>
-                assertEquals(rsp, "sherlock")
-            } catch (e: HttpClientResponseException) {  <i class="conum" data-value="4"></i><b>(4)</b>
-                exceptionThrown = true
-            }
-            assertFalse(exceptionThrown)
-        }
-        afterGroup {
-            embeddedServer.close()
-        }
+    @Test
+    fun verifyBasicAuthWorks() {
+        val credsEncoded = Base64.getEncoder().encodeToString("sherlock:password".toByteArray())
+        val rsp = appClient.home("Basic $credsEncoded")
+        Assertions.assertEquals(rsp, "sherlock")
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">

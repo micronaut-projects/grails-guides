@@ -66,11 +66,9 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#dependency"><strong>2.1</strong><span>Security Dependency</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#configuration"><strong>2.2</strong><span>Configuration</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#authenticationProvider"><strong>2.2</strong><span>Authentication Provider</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#authenticationProvider"><strong>2.3</strong><span>Authentication Provider</span></a></div>
-            
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controllers</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.3</strong><span>Controllers</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#tests"><strong>3</strong><span>Tests</span></a></div>
             
@@ -90,7 +88,7 @@
         <h1>Micronaut Basic Auth</h1>
         <p>Learn how to secure a Micronaut app using 'Basic' HTTP Authentication Scheme.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.6</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -181,8 +179,11 @@
 </div>
 
 
+<div class="sect1">
+<h2 id="_create_an_app_with_the_command_line_interface">Create an App with the Command Line Interface</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
 <p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
@@ -191,8 +192,21 @@
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_an_app_with_micronaut_launch">Create an App with Micronaut Launch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create the app using <a href="https://micronaut.io/launch">Micronaut Launch</a></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/micronautlaunch.png" alt="micronautlaunch">
+</div>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -200,6 +214,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="imageblock">
 <div class="content">
 <img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -261,50 +277,14 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security"
+    kapt("io.micronaut:micronaut-security-annotations")
+    implementation("io.micronaut:micronaut-security")
 }</code></pre>
 </div>
 </div>
 
 
-<h2 id="configuration">2.2 Configuration</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth-kotlin/edit/master/src/main/docs/guide/writingTheApp/configuration.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Create the a new <code>application.yml</code> configuration file:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/application.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-  security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-    endpoints:
-      login:
-        enabled: true  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose <code>/login</code> endpoint</td>
-</tr>
-</table>
-</div>
-
-
-<h2 id="authenticationProvider">2.3 Authentication Provider</h2>
+<h2 id="authenticationProvider">2.2 Authentication Provider</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth-kotlin/edit/master/src/main/docs/guide/writingTheApp/authenticationProvider.adoc"'>
@@ -321,25 +301,30 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.security.authentication.AuthenticationFailed
+import io.micronaut.http.HttpRequest
 import io.micronaut.security.authentication.AuthenticationProvider
-import io.micronaut.security.authentication.AuthenticationRequest
 import io.micronaut.security.authentication.AuthenticationResponse
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.authentication.AuthenticationException
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
 import org.reactivestreams.Publisher
-import java.util.*
 import javax.inject.Singleton
 
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+@Singleton
+class AuthenticationProviderUserPassword : AuthenticationProvider {
+    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;): Publisher&lt;AuthenticationResponse&gt; {
+        return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
-                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onNext(UserDetails(authenticationRequest.identity as String, ArrayList()))
+            } else {
+                emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-        }
-        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
+            emitter.onComplete()
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>
@@ -358,7 +343,7 @@ class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="co
 </div>
 
 
-<h2 id="controller">2.4 Controllers</h2>
+<h2 id="controller">2.3 Controllers</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-basicauth-kotlin/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -380,14 +365,15 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import java.security.Principal
 
-@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+@Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller<i class="conum" data-value="2"></i><b>(2)</b>
 class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="3"></i><b>(3)</b>
-    @Get("/")  <i class="conum" data-value="4"></i><b>(4)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
     fun index(principal: Principal): String {  <i class="conum" data-value="5"></i><b>(5)</b>
         return principal.name
     }
@@ -430,82 +416,53 @@ class HomeController {
 
 
 <div class="paragraph">
-<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
-kotlinVersion=1.3.50
-spekVersion=2.0.8</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">complete/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    ...
-    ..
-    .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude group: 'org.junit.platform'
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test which verifies the user authentication flow via Basic Auth.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/BasicAuthSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.exceptions.HttpClientException
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
+import javax.inject.Inject
 
-class BasicAuthSpec : Spek({
-    describe("Verify HTTP Basic Auth works") {
+@MicronautTest
+class BasicAuthTest {
 
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Inject
+    @Client("/")
+    lateinit var client : RxHttpClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-        it("Accessing a secured URL without authenticating") {
-            assertFailsWith&lt;HttpClientException&gt; { <i class="conum" data-value="4"></i><b>(4)</b>
-                val request = HttpRequest.GET&lt;Any&gt;("/")
-                client.toBlocking().exchange(request, String::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
-            }
-        }
 
-        it("If a secured URL is accessed with Basic Auth, it can be accessed") {
-            val request = HttpRequest.GET&lt;Any&gt;("/").basicAuth("sherlock", "password")  <i class="conum" data-value="5"></i><b>(5)</b>
-            val rsp: HttpResponse&lt;String&gt; = client.toBlocking().exchange(request, String::class.java)  <i class="conum" data-value="6"></i><b>(6)</b>
+    //@Test
+    fun verifyHttpBasicAuthWorks() {
+        //when: 'Accessing a secured URL without authenticating'
+        val e = Executable { client.toBlocking().exchange&lt;Any, Any&gt;(HttpRequest.GET&lt;Any&gt;("/").accept(MediaType.TEXT_PLAIN)) } <i class="conum" data-value="3"></i><b>(3)</b>
 
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-            assertEquals(rsp.body()!!, "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
-        }
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+        // then: 'returns unauthorized'
+        val thrown = Assertions.assertThrows(HttpClientResponseException::class.java, e) <i class="conum" data-value="4"></i><b>(4)</b>
+        Assertions.assertEquals(thrown.status, HttpStatus.UNAUTHORIZED)
 
+        //when: 'A secured URL is accessed with Basic Auth'
+        val rsp = client.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/")
+                .accept(MediaType.TEXT_PLAIN)
+                .basicAuth("sherlock", "password"),  <i class="conum" data-value="5"></i><b>(5)</b>
+                String::class.java) <i class="conum" data-value="6"></i><b>(6)</b>
+        //then: 'the endpoint can be accessed'
+        Assertions.assertEquals(rsp.status, HttpStatus.OK)
+        Assertions.assertEquals(rsp.body.get(), "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
     }
-})
+}
 }</code></pre>
 </div>
 </div>
@@ -563,6 +520,8 @@ class BasicAuthSpec : Spek({
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.client.annotation.Client
@@ -570,6 +529,7 @@ import io.micronaut.http.client.annotation.Client
 @Client("/")
 interface AppClient {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/")
     fun home(@Header authorization: String): String
 }</code></pre>
@@ -579,41 +539,29 @@ interface AppClient {
 <p>Create a test which uses the previous <code>@Client</code></p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/BasicAuthClientSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/BasicAuthClientTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import javax.inject.Inject
 
-class BasicAuthClientSpec : Spek({
-    describe("Verify HTTP Basic Auth works") {
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class BasicAuthClientTest {
 
-        val embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        it("Accessing a secured URL using a @Client which supplies basic auth in Authorization header") {
-            val credsEncoded: String = Base64.getEncoder().encodeToString("sherlock:password".byteInputStream().readBytes())
+    @Inject
+    lateinit var appClient : AppClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-            var exceptionThrown = false
-            try {
-                val appClient: AppClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
-                val rsp: String = appClient.home("Basic $credsEncoded") <i class="conum" data-value="3"></i><b>(3)</b>
-                assertEquals(rsp, "sherlock")
-            } catch (e: HttpClientResponseException) {  <i class="conum" data-value="4"></i><b>(4)</b>
-                exceptionThrown = true
-            }
-            assertFalse(exceptionThrown)
-        }
-        afterGroup {
-            embeddedServer.close()
-        }
+    @Test
+    fun verifyBasicAuthWorks() {
+        val credsEncoded = Base64.getEncoder().encodeToString("sherlock:password".toByteArray())
+        val rsp = appClient.home("Basic $credsEncoded")
+        Assertions.assertEquals(rsp, "sherlock")
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
