@@ -132,14 +132,16 @@ class BasicAuthSpec extends Specification {
     @Client("/")
     RxHttpClient client <i class="conum" data-value="3"></i><b>(3)</b>
 
-    def "Verify HTTP Basic Auth works"() {
+    def "by default every endpoint is secured"() {
         when: 'Accessing a secured URL without authenticating'
         client.toBlocking().exchange(HttpRequest.GET('/')) <i class="conum" data-value="4"></i><b>(4)</b>
 
         then: 'returns unauthorized'
-        HttpClientResponseException e = thrown(HttpClientResponseException) <i class="conum" data-value="5"></i><b>(5)</b>
+        HttpClientResponseException e = thrown() <i class="conum" data-value="5"></i><b>(5)</b>
         e.status == HttpStatus.UNAUTHORIZED
+    }
 
+    def "Verify HTTP Basic Auth works"() {
         when: 'A secured URL is accessed with Basic Auth'
         HttpRequest request = HttpRequest.GET('/')
                 .basicAuth("sherlock", "password") <i class="conum" data-value="6"></i><b>(6)</b>
@@ -212,6 +214,8 @@ class BasicAuthSpec extends Specification {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.client.annotation.Client
@@ -220,6 +224,7 @@ import io.micronaut.http.client.annotation.Client
 @Client("/")
 interface AppClient {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/")
     String home(@Header String authorization)
 }</code></pre>

@@ -104,7 +104,8 @@ function addJsClass() {
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security"
+    compileOnly("io.micronaut:micronaut-security-annotations")
+    implementation("io.micronaut:micronaut-security")
 }</code></pre>
 </div>
 </div>
