@@ -84,7 +84,7 @@
         <h1>Secure a Micronaut app with Cognito</h1>
         <p>Learn how to create Micronaut app and secure it with an Authorization Server provided by Cognito.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -316,7 +316,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">gradle.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.M3</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.BUILD-SNAPSHOT</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -325,7 +325,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut.configuration:micronaut-security-oauth2"
+    implementation "io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -338,8 +338,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.M2"
-    implementation "io.micronaut:micronaut-security-jwt"
+    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
+    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
 }</code></pre>
 </div>
 </div>
@@ -351,58 +351,26 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
   security:
+    authentication: idtoken <i class="conum" data-value="1"></i><b>(1)</b>
     oauth2:
       clients:
-        cognito: <i class="conum" data-value="1"></i><b>(1)</b>
-          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="2"></i><b>(2)</b>
+        cognito: <i class="conum" data-value="2"></i><b>(2)</b>
           client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="3"></i><b>(3)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="4"></i><b>(4)</b>
           openid:
-            issuer: 'https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_POOL_ID}/' <i class="conum" data-value="4"></i><b>(4)</b>
-    token:
-      jwt:
-        cookie:
-          enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
-        signatures:
-          secret:
-            generator:
-              secret: pleaseChangeThisSecretForANewOne
+            issuer: 'https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_POOL_ID}/' <i class="conum" data-value="5"></i><b>(5)</b>
     endpoints:
       logout:
-        enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
-        get-allowed: true <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+        get-allowed: true <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/cognito</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Client Secret. See previous screenshot.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Client ID. See previous screenshot.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server. Note: we will use the pool id and region mentioned previously.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout">Logout Controller</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Accept GET request to the <code>/logout</code> endpoint.</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>&lt;1&gt;Set <code>micronaut.security.authentication</code> as idtoken. The idtoken provided by Cognito when the OAuth 2.0 Authorization code flow ends will be saved in a cookie. The id token is a signed JWT. For every request, Micronaut extracts the JWT from the Cookie and validates the JWT signature with the remote Json Web Key Set exposed by Cognito. JWKS is exposed by the <code>jws-uri</code> entry of Cognito <code>.well-known/openid-configuration</code>
+&lt;2&gt; The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/cognito</code>
+&lt;3&gt; Client ID. See previous screenshot.
+&lt;4&gt; Client Secret. See previous screenshot.
+&lt;5&gt; <code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server. Note: we will use the pool id and region mentioned previously.
+&lt;6&gt; Accept GET request to the <code>/logout</code> endpoint.</p>
 </div>
 <div class="paragraph">
 <p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code>, <code>COGNITO_REGION</code> and <code>COGNITO_POOL_ID</code> environment variables.</p>
