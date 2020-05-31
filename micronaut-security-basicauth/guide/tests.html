@@ -109,47 +109,54 @@ function addJsClass() {
 <p>Create a test which verifies the user authentication flow via Basic Auth.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/BasicAuthSpec.groovy</div>
+<div class="title">src/test/java/example/micronaut/BasicAuthTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
 
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.MediaType
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Specification
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
-import javax.inject.Inject
+import javax.inject.Inject;
+import org.junit.jupiter.api.function.Executable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-class BasicAuthSpec extends Specification {
+@MicronautTest
+public class BasicAuthTest {
+
+    @Inject
+    EmbeddedServer embeddedServer;
 
     @Inject
     @Client("/")
-    RxHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
+    RxHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
-    def "Verify HTTP Basic Auth works"() {
-        when: 'Accessing a secured URL without authenticating'
-        client.toBlocking().exchange(HttpRequest.GET('/').accept(MediaType.TEXT_PLAIN)) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Test
+    void verifyHttpBasicAuthWorks() {
+        //when: 'Accessing a secured URL without authenticating'
+        Executable e = () -&gt; client.toBlocking().exchange(HttpRequest.GET("/").accept(MediaType.TEXT_PLAIN)); <i class="conum" data-value="3"></i><b>(3)</b>
 
-        then: 'returns unauthorized'
-        HttpClientResponseException e = thrown() <i class="conum" data-value="4"></i><b>(4)</b>
-        e.status == HttpStatus.UNAUTHORIZED
+        // then: 'returns unauthorized'
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, e); <i class="conum" data-value="4"></i><b>(4)</b>
+        assertEquals(thrown.getStatus(), HttpStatus.UNAUTHORIZED);
 
-        when: 'A secured URL is accessed with Basic Auth'
-        HttpRequest request = HttpRequest.GET('/')
+        //when: 'A secured URL is accessed with Basic Auth'
+        HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(HttpRequest.GET("/")
                 .accept(MediaType.TEXT_PLAIN)
-                .basicAuth("sherlock", "password") <i class="conum" data-value="5"></i><b>(5)</b>
-        HttpResponse&lt;String&gt; rsp = client.toBlocking().exchange(request, String) <i class="conum" data-value="6"></i><b>(6)</b>
-
-        then: 'the endpoint can be accessed'
-        noExceptionThrown()
-        rsp.status == HttpStatus.OK
-        rsp.body() == 'sherlock' <i class="conum" data-value="7"></i><b>(7)</b>
+                .basicAuth("sherlock", "password"), <i class="conum" data-value="5"></i><b>(5)</b>
+                String.class); <i class="conum" data-value="6"></i><b>(6)</b>
+        //then: 'the endpoint can be accessed'
+        assertEquals(rsp.getStatus(),  HttpStatus.OK);
+        assertEquals(rsp.getBody().get(),  "sherlock"); <i class="conum" data-value="7"></i><b>(7)</b>
     }
 }</code></pre>
 </div>
@@ -204,22 +211,22 @@ class BasicAuthSpec extends Specification {
 <p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AppClient.groovy</div>
+<div class="title">src/test/java/example/micronaut/AppClient.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.http.MediaType
-import io.micronaut.http.annotation.Consumes
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
-import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
+import io.micronaut.http.client.annotation.Client;
 
 @Client("/")
-interface AppClient {
+public interface AppClient {
 
     @Consumes(MediaType.TEXT_PLAIN) <i class="conum" data-value="1"></i><b>(1)</b>
     @Get("/")
-    String home(@Header String authorization) <i class="conum" data-value="2"></i><b>(2)</b>
+    String home(@Header String authorization); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -239,29 +246,31 @@ interface AppClient {
 <p>Create a test which uses the previous <code>@Client</code></p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/BasicAuthClientSpec.groovy</div>
+<div class="title">src/test/java/example/micronaut/BasicAuthClientTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
 
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Specification
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject
+import javax.inject.Inject;
+import java.util.Base64;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-class BasicAuthClientSpec extends Specification {
+public class BasicAuthClientTest {
 
     @Inject
-    AppClient appClient <i class="conum" data-value="2"></i><b>(2)</b>
+    AppClient appClient; <i class="conum" data-value="2"></i><b>(2)</b>
 
-    def "Verify HTTP Basic Auth works"() {
-        when:
-        String credsEncoded = "sherlock:password".bytes.encodeBase64().toString()
-        String rsp = appClient.home("Basic ${credsEncoded}") <i class="conum" data-value="3"></i><b>(3)</b>
-
-        then:
-        rsp == 'sherlock'
+    @Test
+    void verifyBasicAuthWorks() {
+        String credsEncoded = Base64.getEncoder().encodeToString("sherlock:password".getBytes());
+        String rsp = appClient.home("Basic " +credsEncoded);
+        assertEquals(rsp, "sherlock");
     }
+
 }</code></pre>
 </div>
 </div>
