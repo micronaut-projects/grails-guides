@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.4.2 Authorities Fetcher null</title>
+    <title>2.4.4 Authentication Provider null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -73,7 +73,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>2.4.2 Authorities Fetcher</h1>
+                    <h1>2.4.4 Authentication Provider</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -82,65 +82,103 @@ function addJsClass() {
 
                 
 
-<h2 id="authoritiesFetcher">2.4.2 Authorities Fetcher</h2>
+<h2 id="authenticationProvider">2.4.4 Authentication Provider</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authoritiesFetcher.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authenticationProvider.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Create an interface to retrieve roles given a username.</p>
+<p>Create an authentication provider which uses the interfaces you wrote in the previous sections.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcher.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/DelegatingAuthenticationProvider.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-interface AuthoritiesFetcher {
-    List&lt;String&gt; findAuthoritiesByUsername(String username)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Provide an implementation:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/AuthoritiesFetcherService.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+import edu.umd.cs.findbugs.annotations.Nullable
+import io.micronaut.http.HttpRequest
+import io.micronaut.security.authentication.AuthenticationException
+import io.micronaut.security.authentication.AuthenticationFailed
+import io.micronaut.security.authentication.AuthenticationFailureReason
+import io.micronaut.security.authentication.AuthenticationProvider
+import io.micronaut.security.authentication.AuthenticationRequest
+import io.micronaut.security.authentication.AuthenticationResponse
+import io.micronaut.security.authentication.UserDetails
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
 
 import javax.inject.Singleton
 
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class AuthoritiesFetcherService implements AuthoritiesFetcher {
+@Singleton
+class DelegatingAuthenticationProvider implements AuthenticationProvider {
 
-    protected final UserRoleGormService userRoleGormService
+    protected final UserFetcher userFetcher
+    protected final PasswordEncoder passwordEncoder
+    protected final AuthoritiesFetcher authoritiesFetcher
 
-    AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
-        this.userRoleGormService = userRoleGormService
+    DelegatingAuthenticationProvider(UserFetcher userFetcher,
+                                     PasswordEncoder passwordEncoder,
+                                     AuthoritiesFetcher authoritiesFetcher) {
+        this.userFetcher = userFetcher
+        this.passwordEncoder = passwordEncoder
+        this.authoritiesFetcher = authoritiesFetcher
     }
 
     @Override
-    List&lt;String&gt; findAuthoritiesByUsername(String username) {
-        userRoleGormService.findAllAuthoritiesByUsername(username)
+    Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest,
+                                                   AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
+        Flowable.create({ emitter -&gt;
+            UserState user = fetchUserState(authenticationRequest)
+            Optional&lt;AuthenticationFailed&gt; authenticationFailed = validate(user, authenticationRequest)
+            if (authenticationFailed.isPresent()) {
+                emitter.onError(new AuthenticationException(authenticationFailed.get()))
+            } else {
+                emitter.onNext(createSuccessfulAuthenticationResponse(authenticationRequest, user))
+            }
+            emitter.onComplete()
+        }, BackpressureStrategy.ERROR)
+    }
+
+    protected Optional&lt;AuthenticationFailed&gt; validate(UserState user, AuthenticationRequest authenticationRequest) {
+
+        AuthenticationFailed authenticationFailed = null
+        if (user == null) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.USER_NOT_FOUND)
+
+        } else if (!user.isEnabled()) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.USER_DISABLED)
+
+        } else if (user.isAccountExpired()) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.ACCOUNT_EXPIRED)
+
+        } else if (user.isAccountLocked()) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.ACCOUNT_LOCKED)
+
+        } else if (user.isPasswordExpired()) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.PASSWORD_EXPIRED)
+
+        } else if (!passwordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
+            authenticationFailed = new AuthenticationFailed(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH)
+        }
+        Optional.ofNullable(authenticationFailed)
+    }
+
+    protected UserState fetchUserState(AuthenticationRequest authenticationRequest) {
+        final String username = authenticationRequest.getIdentity().toString()
+        userFetcher.findByUsername(username)
+    }
+
+    protected AuthenticationResponse createSuccessfulAuthenticationResponse(AuthenticationRequest authenticationRequest, UserState user) {
+        List&lt;String&gt; authorities = authoritiesFetcher.findAuthoritiesByUsername(user.getUsername())
+        new UserDetails(user.getUsername(), authorities)
     }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>UserRoleGormService</code> is injected via constructor injection.</td>
-</tr>
-</table>
 </div>
 
 
