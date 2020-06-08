@@ -597,6 +597,14 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="paragraph">
 <p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
 </div>
+<div class="paragraph">
+<p>To test the running application, issue a GET request to localhost:8080 with a basic authentication header in place.  One way to do this is with the popular curl command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>curl -v -u sherlock:password localhost:8080</pre>
+</div>
+</div>
 
 
 <h1 id="graal">6 Generating a Native Image with GraalVM</h1>
