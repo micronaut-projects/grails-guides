@@ -4,7 +4,7 @@ Hibernate Validator is a reference implementation of the validation API. Startin
 https://docs.micronaut.io/latest/guide/index.html#beanValidation[has built-in support for validation beans] that
 are annotated with `javax.validation` annotations.
 
-Add the next snippet to `build.gradle`
+`build.gradle` should contain the next snippet:
 
 [source,java]
 .build.gradle
