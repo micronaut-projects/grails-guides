@@ -151,7 +151,7 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 <div class="paragraph">
@@ -160,8 +160,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
-implementation("io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("io.micronaut.security:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
+implementation("io.micronaut.security:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -218,7 +218,7 @@ implementation("io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")</code
 ...
 ..
 .
-    implementation("io.micronaut.configuration:micronaut-security-ldap:2.0.0.BUILD-SNAPSHOT")
+    implementation("io.micronaut.security:micronaut-security-ldap:2.0.0.BUILD-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -317,11 +317,11 @@ gormVersion=7.1.0.M2
 ...
 ..
 .
-    implementation("io.micronaut.configuration:micronaut-hibernate-validator")
-    implementation("io.micronaut.configuration:micronaut-hibernate-gorm:2.0.0.M1")
+    //implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
+    implementation("io.micronaut.configuration:micronaut-hibernate-gorm")
     implementation "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.apache.tomcat:tomcat-jdbc")
 }</code></pre>
@@ -1029,6 +1029,7 @@ class BCryptPasswordEncoderService implements PasswordEncoder {
 
 import edu.umd.cs.findbugs.annotations.Nullable
 import io.micronaut.http.HttpRequest
+import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.security.authentication.AuthenticationException
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationFailureReason
@@ -1038,9 +1039,13 @@ import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import org.reactivestreams.Publisher
 
+import javax.inject.Named
 import javax.inject.Singleton
+import java.util.concurrent.ExecutorService
 
 @Singleton
 class DelegatingAuthenticationProvider implements AuthenticationProvider {
@@ -1048,13 +1053,16 @@ class DelegatingAuthenticationProvider implements AuthenticationProvider {
     protected final UserFetcher userFetcher
     protected final PasswordEncoder passwordEncoder
     protected final AuthoritiesFetcher authoritiesFetcher
+    protected final Scheduler scheduler
 
     DelegatingAuthenticationProvider(UserFetcher userFetcher,
                                      PasswordEncoder passwordEncoder,
-                                     AuthoritiesFetcher authoritiesFetcher) {
+                                     AuthoritiesFetcher authoritiesFetcher,
+                                     @Named(TaskExecutors.IO) ExecutorService executorService) { <i class="conum" data-value="1"></i><b>(1)</b>
         this.userFetcher = userFetcher
         this.passwordEncoder = passwordEncoder
         this.authoritiesFetcher = authoritiesFetcher
+        this.scheduler = Schedulers.from(executorService)
     }
 
     @Override
@@ -1070,6 +1078,7 @@ class DelegatingAuthenticationProvider implements AuthenticationProvider {
             }
             emitter.onComplete()
         }, BackpressureStrategy.ERROR)
+                .subscribeOn(scheduler) <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
     protected Optional&lt;AuthenticationFailed&gt; validate(UserState user, AuthenticationRequest authenticationRequest) {
@@ -1107,6 +1116,30 @@ class DelegatingAuthenticationProvider implements AuthenticationProvider {
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The configured I/O executor service is injected</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>RxJava’s subscribeOn method is used to schedule the operation on the I/O thread pool</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It is critical that any blocking I/O operations (such as fetching the user from the database in the previous code sample) are offloaded to a separate thread pool that does not block the Event loop.
+</td>
+</tr>
+</table>
 </div>
 
 
