@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3 Tests null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut JWT authentication via Cookies
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/tests.html"><strong>3</strong><span>Tests</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3 Tests</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#webdriverBinaries"><strong>3.1</strong><span>WebDriver Binaries</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="tests">3 Tests</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-cookie/edit/master/src/main/docs/guide/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
+</div>
+<div class="paragraph">
+<p>We need to modify <code>build.gradle</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+    testCompile "org.codehaus.groovy:groovy-all:2.5.0"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">micronaut-cli.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We use also, <a href="https://gebish.org">Geb</a>; a browser automation solution.</p>
+</div>
+<div class="paragraph">
+<p>To use Geb, add dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    testCompile "org.gebish:geb-spock:2.1"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
+    testCompile "org.seleniumhq.selenium:selenium-support:3.6.0"
+    testCompile "org.seleniumhq.selenium:selenium-api:3.6.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Geb Configuration file to setup different environments:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
+
+environments {
+
+    // run via “./gradlew -Dgeb.env=chrome test”
+    chrome {
+        driver = { new ChromeDriver() }
+    }
+
+    // run via “./gradlew -Dgeb.env=chromeHeadless test”
+    chromeHeadless {
+        driver = {
+            ChromeOptions o = new ChromeOptions()
+            o.addArguments('headless')
+            new ChromeDriver(o)
+        }
+    }
+
+    firefoxHeadless {
+        driver = {
+            FirefoxOptions o = new FirefoxOptions()
+            o.addArguments('-headless')
+            new FirefoxDriver(o)
+        }
+    }
+
+    // run via “./gradlew -Dgeb.env=firefox test”
+    firefox {
+        driver = { new FirefoxDriver() }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way.</p>
+</div>
+<div class="paragraph">
+<p>Create two pages:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class HomePage extends Page {
+
+    static url = '/'
+
+    static at = { title == 'Home' }
+
+    static content = {
+        loginLink { $('a', text: 'Login') }
+        logoutButton { $('input', type: 'submit', value: 'Logout') }
+        usernameElement(required: false) { $('h1 span', 0) }
+    }
+
+    String username() {
+        if ( usernameElement.empty ) {
+            return null
+        }
+        usernameElement.text()
+    }
+
+    void login() {
+        loginLink.click()
+    }
+
+    void logout() {
+        logoutButton.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginPage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class LoginPage extends Page {
+
+    static url = '/login/auth'
+
+    static at = { title.contains 'Login' }
+
+    static content = {
+        usernameInput { $('#username') }
+        passwordInput { $('#password') }
+        submitInput { $('input', type: 'submit') }
+        errorsLi(required: false) { $('li#errors') }
+    }
+
+    boolean hasErrors() {
+        !errorsLi.empty
+    }
+
+    void login(String username, String password) {
+        usernameInput = username
+        passwordInput = password
+        submitInput.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a tests which verifies the user authentication flow.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/AuthenticationSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">class AuthenticationSpec extends GebSpec {
+
+    @Shared
+    @AutoCleanup
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+
+    @IgnoreIf({ !sys['geb.env'] })
+    def "verify session based authentication works"() {
+        given:
+        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+
+        when:
+        to HomePage
+
+        then:
+        at HomePage
+
+        when:
+        HomePage homePage = browser.page HomePage
+
+        then: 'As we are not logged in, there is no username'
+        homePage.username() == null
+
+        when: 'click the login link'
+        homePage.login()
+
+        then:
+        at LoginPage
+
+        when: 'fill the login form, with invalid credentials'
+        LoginPage loginPage = browser.page LoginPage
+        loginPage.login('foo', 'foo')
+
+        then: 'the user is still in the login form'
+        at LoginPage
+
+        and: 'and error is displayed'
+        loginPage.hasErrors()
+
+        when: 'fill the form with valid credentials'
+        loginPage.login('sherlock', 'password')
+
+        then: 'we get redirected to the home page'
+        at HomePage
+
+        when:
+        homePage = browser.page HomePage
+
+        then: 'the username is populated'
+        homePage.username() == 'sherlock'
+
+        when: 'click the logout button'
+        homePage.logout()
+
+        then: 'we are in the home page'
+        at HomePage
+
+        when:
+        homePage = browser.page HomePage
+
+        then: 'but we are no longer logged in'
+        homePage.username() == null
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-cookie/edit/master/src/main/docs/guide/tests/webdriverBinaries.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
+a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
+...
+..
+        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
+}
+
+webdriverBinaries {
+    chromedriver '2.40'
+    geckodriver '0.21.0'
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env')
+    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
