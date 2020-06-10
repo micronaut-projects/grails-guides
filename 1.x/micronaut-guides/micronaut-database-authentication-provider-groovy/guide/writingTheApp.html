@@ -1,0 +1,1358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the Application null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        LDAP and Database authentication providers
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>4</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the Application</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#securityLdap"><strong>2.1</strong><span>Security LDAP</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#gorm"><strong>2.2</strong><span>GORM</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#domainClasses"><strong>2.2.1</strong><span>Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:20px"><a href="#user"><strong>2.2.1.1</strong><span>User</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:20px"><a href="#role"><strong>2.2.1.2</strong><span>Role</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:20px"><a href="#userrole"><strong>2.2.1.3</strong><span>UserRole</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#dataServices"><strong>2.2.2</strong><span>Data Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#securityApplication"><strong>2.3</strong><span>Register Service</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#delegatingAuthenticationProvider"><strong>2.4</strong><span>Delegating Authentication Provider</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#userFetcher"><strong>2.4.1</strong><span>User Fetcher</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#authoritiesFetcher"><strong>2.4.2</strong><span>Authorities Fetcher</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#passwordEncoder"><strong>2.4.3</strong><span>Password Encoder</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#ldapTest"><strong>2.5</strong><span>LDAP Authentication Provider test</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#loginTest"><strong>2.6</strong><span>Login Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#oauthTest"><strong>2.7</strong><span>Oauth Testing</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Groovy Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete --lang=groovy</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add <code>security-jwt</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-security-jwt"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Modify <code>application.yml</code> to enable security:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: security <i class="conum" data-value="1"></i><b>(1)</b>
+  security:
+    enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
+    endpoints:
+      login:
+        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+      oauth:
+        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="5"></i><b>(5)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="6"></i><b>(6)</b>
+              secret: pleaseChangeThisSecretForANewOne  <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Name your microservice as you wish</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable Micronaut’s security capabilities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Expose <code>/login</code> endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Expose /oauth/access_token endpoint as defined by section 6 of the OAuth 2.0 spec - Refreshing an Access Token.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Enable JWT based authentication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>You can create a SecretSignatureConfiguration named <code>generator</code> via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="securityLdap">2.1 Security LDAP</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityLdap.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut supports authentication with LDAP out of the box. To get started, add the <code>security-ldap</code> dependency to your application.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    implementation "io.micronaut.configuration:micronaut-security-ldap"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We are going to use an <a href="https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/">Online LDAP test server</a> for this guide.</p>
+</div>
+<div class="paragraph">
+<p>Create several configuration properties matching those of the test LDAP Server.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  ..
+  .
+  security:
+  ...
+  ..
+    ldap:
+      default: <i class="conum" data-value="1"></i><b>(1)</b>
+        enabled: true
+        context:
+          server: 'ldap://ldap.forumsys.com:389'  <i class="conum" data-value="2"></i><b>(2)</b>
+          managerDn: 'cn=read-only-admin,dc=example,dc=com'  <i class="conum" data-value="3"></i><b>(3)</b>
+          managerPassword: 'password'  <i class="conum" data-value="4"></i><b>(4)</b>
+        search:
+          base: "dc=example,dc=com"  <i class="conum" data-value="5"></i><b>(5)</b>
+        groups:
+          enabled: true  <i class="conum" data-value="6"></i><b>(6)</b>
+          base: "dc=example,dc=com" <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The LDAP authentication in Micronaut supports configuration of one or more LDAP servers to authenticate with. You need to name each one. In this tutorial, we use <code>default</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Each server has it&#8217;s own settings and can be enabled or disabled.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Sets the manager DN</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Sets the manager password.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Sets the base DN to search.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Enable group search.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Sets the base DN to search from.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="gorm">2.2 GORM</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://gorm.grails.org">GORM</a> <strong>is a powerful Groovy-based data access toolkit for the JVM</strong>. GORM is the data access
+toolkit used by <a href="http://grails.org">Grails</a> and provides a rich set of APIs for accessing relational and non-relational
+data including implementations for Hibernate (SQL), MongoDB, Neo4j, Cassandra, an in-memory ConcurrentHashMap for
+testing and an automatic GraphQL schema generator.</p>
+</div>
+<div class="paragraph">
+<p>Add a GORM dependency to the project:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>...
+gormVersion=7.0.1.RELEASE
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
+    implementation "org.grails:grails-datastore-gorm-hibernate5"
+    runtime "com.h2database:h2"
+    runtime "org.apache.tomcat:tomcat-jdbc"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the database configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">hibernate:
+  hbm2ddl:
+    auto: update
+dataSource:
+  driverClassName: org.h2.Driver
+  username: sa
+  password: ''
+  url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE</code></pre>
+</div>
+</div>
+
+
+<h2 id="domainClasses">2.2.1 Domain Classes</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>A domain class fulfills the M in the Model View Controller (MVC) pattern and represents a persistent entity that is
+mapped onto an underlying database table.</p>
+</div>
+</blockquote>
+</div>
+
+
+<h2 id="user">2.2.1.1 User</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/user.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create <code>User</code> domain class to store users within our application.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
+
+import grails.gorm.annotation.Entity
+import io.micronaut.security.authentication.providers.UserState
+import org.grails.datastore.gorm.GormEntity
+
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class User implements GormEntity&lt;User&gt;, UserState { <i class="conum" data-value="2"></i><b>(2)</b>
+    String email
+    String username
+    String password
+    boolean enabled = true
+    boolean accountExpired = false
+    boolean accountLocked = false
+    boolean passwordExpired = false
+
+    static constraints = {
+        email nullable: false, blank: false
+        username nullable: false, blank: false, unique: true
+        password nullable: false, blank: false, password: true
+    }
+
+    static mapping = {
+        password column: '`password`'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GORM entities should be annotated with <code>grails.persistence.Entity</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use of <code>GormEntity</code> to aid IDE support.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="role">2.2.1.2 Role</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/role.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create <code>Role</code> domain class to store authorities within our application.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
+
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
+
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Role implements GormEntity&lt;Role&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+    String authority
+
+    static constraints = {
+        authority nullable: false, unique: true
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GORM entities should be annotated with <code>grails.persistence.Entity</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use of <code>GormEntity</code> to aid IDE support.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="userrole">2.2.1.3 UserRole</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/domainClasses/userrole.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a <code>UserRole</code> which stores a many-to-many relationship between <code>User</code> and <code>Role</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.domain
+
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
+
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class UserRole implements GormEntity&lt;UserRole&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+    User user
+    Role role
+
+    static constraints = {
+        user nullable: false
+        role nullable: false
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GORM entities should be annotated with <code>grails.persistence.Entity</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use of <code>GormEntity</code> to aid IDE support.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="dataServices">2.2.2 Data Services</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/gorm/dataServices.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GORM Data Services take the work out of implemented service layer logic by adding the ability to automatically implement abstract classes or interfaces using GORM logic.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Create various GORM Data services:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import example.micronaut.domain.User
+import grails.gorm.services.Service
+
+@Service(User) <i class="conum" data-value="1"></i><b>(1)</b>
+interface UserGormService {
+
+    User save(String email, String username, String password)
+
+    User findByUsername(String username)
+
+    User findById(Serializable id)
+
+    void delete(Serializable id)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>@Service</code> to designate a <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#dataServices">GORM Data Services</a> which is registered as a <code>Singleton</code>.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import example.micronaut.domain.Role
+import grails.gorm.services.Service
+
+@Service(Role) <i class="conum" data-value="1"></i><b>(1)</b>
+interface RoleGormService {
+    Role save(String authority)
+    Role find(String authority)
+    void delete(Serializable id)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>@Service</code> to designate a <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#dataServices">GORM Data Services</a> which is registered as a <code>Singleton</code>.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.services.Query
+import grails.gorm.services.Service
+
+@Service(UserRole) <i class="conum" data-value="1"></i><b>(1)</b>
+interface UserRoleGormService {
+
+    UserRole save(User user, Role role)
+
+    UserRole find(User user, Role role)
+
+    void delete(Serializable id)
+
+    @Query("""select $r.authority
+    from ${UserRole ur}
+    inner join ${User u = ur.user}
+    inner join ${Role r = ur.role}
+    where $u.username = $username""") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;String&gt; findAllAuthoritiesByUsername(String username)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>@Service</code> to designate a <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#dataServices">GORM Data Services</a> which is registered as a <code>Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>GORM allows Statically-compiled JPA-QL Queries</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="securityApplication">2.3 Register Service</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/securityApplication.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to register a user when the app starts up.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example
+
+import example.micronaut.services.RegisterService
+import groovy.transform.CompileStatic
+import io.micronaut.runtime.Micronaut
+import javax.inject.Singleton
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.runtime.server.event.ServerStartupEvent
+
+@CompileStatic
+@Singleton
+class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+
+    protected final RegisterService registerService
+
+    Application(RegisterService registerService) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.registerService = registerService
+    }
+
+    @Override
+    void onApplicationEvent(ServerStartupEvent event) { <i class="conum" data-value="1"></i><b>(1)</b>
+        registerService.register("sherlock@micronaut.example", "sherlock", 'elementary', ['ROLE_DETECTIVE']) <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+    static void main(String[] args) {
+        Micronaut.run(Application.class)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Implements <code>ServerStartupEvent</code> which enables to execute a method when the application starts.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>RegisterService</code> is injected via constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Register a new user when the app starts.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create <code>RegisterService</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import example.micronaut.domain.Role
+import example.micronaut.domain.User
+import example.micronaut.domain.UserRole
+import grails.gorm.transactions.Transactional
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import javax.inject.Singleton
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
+
+@CompileStatic
+@Singleton
+class RegisterService {
+
+    protected final RoleGormService roleGormService
+    protected final UserGormService userGormService
+    protected final UserRoleGormService userRoleGormService
+    protected final PasswordEncoder passwordEncoder
+
+    RegisterService(RoleGormService roleGormService,
+                    UserGormService userGormService,
+                    PasswordEncoder passwordEncoder,
+                    UserRoleGormService userRoleGormService) {
+        this.roleGormService = roleGormService
+        this.userGormService = userGormService
+        this.userRoleGormService = userRoleGormService
+        this.passwordEncoder = passwordEncoder
+    }
+
+    @Transactional
+    void register(@Email String email, @NotBlank String username, @NotBlank String rawPassword, List&lt;String&gt; authorities) {
+
+        User user = userGormService.findByUsername(username)
+        if ( !user ) {
+            final String encodedPassword = passwordEncoder.encode(rawPassword)
+            user = userGormService.save(email, username, encodedPassword)
+        }
+
+        if ( user &amp;&amp; authorities ) {
+
+            for ( String authority : authorities ) {
+                Role role = roleGormService.find(authority)
+                if ( !role ) {
+                    role = roleGormService.save(authority)
+                }
+                UserRole userRole = userRoleGormService.find(user, role)
+                if ( !userRole ) {
+                    userRoleGormService.save(user, role)
+                }
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="delegatingAuthenticationProvider">2.4 Delegating Authentication Provider</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut ships with <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/DelegatingAuthenticationProvider.html">DelegatingAuthenticationProvider</a> which can be typically used in environments such as the one described in the next diagramm.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/delegating_authentication_provider.svg" alt="delegating authentication provider">
+</div>
+</div>
+<div class="paragraph">
+<p><code>DelegatingAuthenticationProvider</code> is not enabled unless you provide implementations for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>, <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a> and <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>.</p>
+</div>
+<div class="paragraph">
+<p>Next, we provide an implementation for those interfaces.</p>
+</div>
+
+
+<h2 id="userFetcher">2.4.1 User Fetcher</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/userFetcher.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/UserFetcher.html">UserFetcher</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/UserFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import groovy.transform.CompileStatic
+import io.micronaut.security.authentication.providers.UserFetcher
+import io.micronaut.security.authentication.providers.UserState
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+
+import javax.inject.Singleton
+
+@CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class UserFetcherService implements UserFetcher {
+
+    protected final UserGormService userGormService
+
+    UserFetcherService(UserGormService userGormService) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.userGormService = userGormService
+    }
+
+    @Override
+    Publisher&lt;UserState&gt; findByUsername(String username) {
+        UserState user = userGormService.findByUsername(username) as UserState
+        (user ? Flowable.just(user) : Flowable.empty()) as Publisher&lt;UserState&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>UserGormService</code> is injected via constructor injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="authoritiesFetcher">2.4.2 Authorities Fetcher</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/authoritiesFetcher.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/AuthoritiesFetcher.html">AuthoritiesFetcher</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/AuthoritiesFetcherService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import io.micronaut.security.authentication.providers.AuthoritiesFetcher
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+
+import javax.inject.Singleton
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class AuthoritiesFetcherService implements AuthoritiesFetcher {
+
+    protected final UserRoleGormService userRoleGormService
+
+    AuthoritiesFetcherService(UserRoleGormService userRoleGormService) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.userRoleGormService = userRoleGormService
+    }
+
+    @Override
+    Publisher&lt;List&lt;String&gt;&gt; findAuthoritiesByUsername(String username) {
+        Flowable.just(userRoleGormService.findAllAuthoritiesByUsername(username))
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>UserRoleGormService</code> is injected via constructor injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="passwordEncoder">2.4.3 Password Encoder</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/delegatingAuthenticationProvider/passwordEncoder.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We provide an implementation for <a href="http://docs.micronaut.io/snapshot/api/io/micronaut/security/authentication/providers/PasswordEncoder.html">PasswordEncoder</a>.</p>
+</div>
+<div class="paragraph">
+<p>First include a dependency to <a href="https://docs.spring.io/spring-security/site/docs/3.1.x/reference/crypto.html">Spring Security Crypto</a> to ease password encoding.</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>...
+springSecurityCryptoVersion=5.2.1.RELEASE
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/services/BCryptPasswordEncoderService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+
+import io.micronaut.security.authentication.providers.PasswordEncoder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import javax.inject.Singleton
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class BCryptPasswordEncoderService implements PasswordEncoder {
+
+    org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder()
+
+    String encode(String rawPassword) {
+        return delegate.encode(rawPassword)
+    }
+
+    @Override
+    boolean matches(String rawPassword, String encodedPassword) {
+        return delegate.matches(rawPassword, encodedPassword)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="ldapTest">2.5 LDAP Authentication Provider test</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/ldapTest.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a test which verifies an LDAP user can login.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginLdapSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.test.annotation.MicronautTest
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import spock.lang.Shared
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class LoginLdapSpec extends Specification {
+
+    @Inject
+    @Client('/')
+    HttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Shared
+    @Inject
+    JwtTokenValidator tokenValidator <i class="conum" data-value="3"></i><b>(3)</b>
+
+    void '/login with valid credentials returns 200 and access token and refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
+
+        then:
+        rsp.status.code == 200
+        rsp.body.isPresent()
+        rsp.body.get().accessToken
+        rsp.body.get().refreshToken
+    }
+
+    void '/login with invalid credentials returns UNAUTHORIZED'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('euler', 'bogus'))  <i class="conum" data-value="4"></i><b>(4)</b>
+        client.toBlocking().exchange(request)
+
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 401 <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+
+    void 'access token contains expiration date'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
+                HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
+
+        then:
+        rsp.status.code == 200
+        rsp.body.isPresent()
+
+        when:
+        String accessToken = rsp.body.get().accessToken
+
+        then:
+        accessToken
+
+        when:
+        Publisher authentication = tokenValidator.validateToken(accessToken) <i class="conum" data-value="6"></i><b>(6)</b>
+
+        then:
+        Flowable.fromPublisher(authentication).blockingFirst()
+
+        and:
+        Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
+    }
+
+    void 'refresh token does not contain expiration date'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('euler', 'password')) <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
+
+        then:
+        rsp.status.code == 200
+        rsp.body.isPresent()
+
+        when:
+        String refreshToken = rsp.body.get().refreshToken
+
+        then:
+        refreshToken
+
+        when:
+        Publisher authentication = tokenValidator.validateToken(refreshToken) <i class="conum" data-value="6"></i><b>(6)</b>
+
+        then:
+        Flowable.fromPublisher(authentication).blockingFirst()
+
+        and:
+        !Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject to <code>TokenValidator</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Creating HTTP Requests is easy thanks to Micronaut&#8217;s fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If you attempt to access a secured endpoint without authentication, 401 is returned</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use the <code>tokenValidator</code> bean previously injected.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="loginTest">2.6 Login Testing</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/loginTest.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Test <code>/login</code> endpoint. We verify both LDAP and DB authentication providers work.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/LoginControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.authentication.Authentication
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.test.annotation.MicronautTest
+import io.reactivex.Flowable
+import spock.lang.Shared
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class LoginControllerSpec extends Specification {
+
+    @Inject
+    @Client('/')
+    HttpClient client
+
+    @Shared
+    @Inject
+    JwtTokenValidator tokenValidator
+
+    void 'attempt to access /login without supplying credentials server responds BAD REQUEST'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+        client.toBlocking().exchange(request)
+
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 400
+    }
+
+    void '/login with valid credentials for a database user returns 200 and access token and refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('sherlock', 'elementary'))
+        HttpResponse&lt;AccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, AccessRefreshToken)
+
+        then:
+        rsp.status.code == 200
+        rsp.body.isPresent()
+        rsp.body.get().accessToken
+        rsp.body.get().refreshToken
+
+        when:
+        String accessToken = rsp.body.get().accessToken
+        Authentication authentication = Flowable.fromPublisher(tokenValidator.validateToken(accessToken)).blockingFirst()
+        println authentication.getAttributes()
+
+        then:
+        authentication.getAttributes()
+        authentication.getAttributes().containsKey('roles')
+        authentication.getAttributes().containsKey('iss')
+        authentication.getAttributes().containsKey('exp')
+        authentication.getAttributes().containsKey('iat')
+    }
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="oauthTest">2.7 Oauth Testing</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-database-authentication-provider-groovy/edit/master/src/main/docs/guide/writingTheApp/oauthTest.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Test <code>/oauth/access_token</code> endpoint. We verify it is possible to refresh an access token.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/OauthControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims
+import io.micronaut.security.token.jwt.render.AccessRefreshToken
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.security.token.jwt.validator.JwtTokenValidator
+import io.micronaut.test.annotation.MicronautTest
+import io.reactivex.Flowable
+import org.reactivestreams.Publisher
+import spock.lang.Shared
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class OauthControllerSpec extends Specification {
+
+    @Inject
+    @Client('/')
+    HttpClient client
+
+    @Shared
+    @Inject
+    JwtTokenValidator tokenValidator
+
+    void '/oauth/access_token endpoint returns BAD request if required parameters not present'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
+                .accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+        client.toBlocking().exchange(request)
+
+        then:
+        HttpClientResponseException e = thrown(HttpClientResponseException)
+        e.status.code == 400
+    }
+
+    void 'Users can generate a new token by requesting to /oauth/access_token with refresh token'() {
+        when:
+        HttpRequest request = HttpRequest.create(HttpMethod.POST, '/login')
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .body(new UsernamePasswordCredentials('euler', 'password'))
+        HttpResponse&lt;BearerAccessRefreshToken&gt; rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
+
+        then:
+        rsp.status.code == 200
+        rsp.body.isPresent()
+
+        when:
+        String accessToken = rsp.body.get().accessToken
+        String refreshToken = rsp.body.get().refreshToken
+
+        then:
+        accessToken
+        refreshToken
+
+        when:
+        sleep(1_000)
+        request = HttpRequest.create(HttpMethod.POST, '/oauth/access_token')
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new TokenRefreshRequest("refresh_token", refreshToken))
+        HttpResponse&lt;AccessRefreshToken&gt; tokenRsp = client.toBlocking().exchange(request, AccessRefreshToken)
+
+        then:
+        tokenRsp.status.code == 200
+        tokenRsp.body.isPresent()
+
+        and: 'a new access token was generated'
+        tokenRsp.body.get().accessToken
+        tokenRsp.body.get().accessToken != accessToken
+
+        when:
+        Publisher authentication = tokenValidator.validateToken(accessToken)
+
+        then:
+        Flowable.fromPublisher(authentication).blockingFirst()
+
+        and:
+        Flowable.fromPublisher(authentication).blockingFirst().getAttributes().get(JwtClaims.EXPIRATION_TIME)
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/testingTheApp.html"><strong>3</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
