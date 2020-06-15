@@ -102,9 +102,9 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut.configuration:micronaut-hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
-implementation "io.micronaut.configuration:micronaut-jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-runtime "com.h2database:h2" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+implementation("io.micronaut.sql:micronaut-hibernate-jpa")
+runtimeOnly("com.h2database:h2")</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -129,7 +129,8 @@ runtime "com.h2database:h2" <i class="conum" data-value="3"></i><b>(3)</b></code
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+datasources:
   default:
     url: ${JDBC_URL:`jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
     username: ${JDBC_USER:sa}
@@ -161,7 +162,8 @@ Also keep in mind that it is necessary to escape the <code>:</code> in the conne
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">jpa:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+jpa:
   default:
     packages-to-scan:
       - 'example.micronaut.domain' <i class="conum" data-value="1"></i><b>(1)</b>

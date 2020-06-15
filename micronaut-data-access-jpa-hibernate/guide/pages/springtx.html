@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.3 Application Configuration null</title>
+    <title>2.5.2 Spring Transaction Management null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>2.3 Application Configuration</h1>
+                    <h1>2.5.2 Spring Transaction Management</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,84 +85,75 @@ function addJsClass() {
 
                 
 
-<h2 id="appConfiguration">2.3 Application Configuration</h2>
+<h2 id="springtx">2.5.2 Spring Transaction Management</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/appConfiguration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional/springtx.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>Create an interface to encapsulate the application configuration settings:</p>
+<p>Also, if you wish to use Spring-based transaction management add the following dependency instead:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import javax.validation.constraints.NotNull;
-
-public interface ApplicationConfiguration {
-
-    @NotNull Integer getMax();
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa-spring")
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In Micronaut, like Spring Boot and Grails, you can create type safe configuration by creating classes that are annotated with <a href="https://docs.micronaut.io/snapshot/guide/index.html#configurationProperties">@ConfigurationProperties</a>.</p>
-</div>
-<div class="paragraph">
-<p>Create a <code>ApplicationConfigurationProperties</code>:</p>
+<p>and you will use <code>io.micronaut.spring.tx.annotation.Transactional</code> to annotate your transaction demarcations.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import io.micronaut.context.annotation.ConfigurationProperties;
-
-@ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
-public class ApplicationConfigurationProperties implements ApplicationConfiguration {
-
-    protected final Integer DEFAULT_MAX = 10;
-
-    @NonNull
-    private Integer max = DEFAULT_MAX;
-
-    @Override
-    @NonNull
-    public Integer getMax() {
-        return max;
-    }
-
-    public void setMax(@NonNull Integer max) {
-        if(max != null) {
-            this.max = max;
-        }
-    }
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import io.micronaut.spring.tx.annotation.Transactional;
+...
+..
+.
+@Singleton
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @Transactional
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public Genre saveWithException(@NotBlank String name) {
+...
+..
 }</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>@ConfigurationProperties` annotation takes a configuration prefix.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>You can override <code>max</code> if you add to your <code>src/main/resources/application.yml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/application.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
-application:
-  max: 50</code></pre>
 </div>
 </div>
 

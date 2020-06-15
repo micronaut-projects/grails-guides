@@ -115,6 +115,8 @@ public interface GenreRepository {
 
     Genre save(@NotBlank String name);
 
+    Genre saveWithException(@NotBlank String name);
+
     void deleteById(@NotNull Long id);
 
     List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args);
@@ -131,13 +133,11 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.transaction.annotation.TransactionalAdvice;
 import example.micronaut.domain.Genre;
-import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
-import io.micronaut.spring.tx.annotation.Transactional;
-
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -147,25 +147,24 @@ import java.util.Optional;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreRepositoryImpl implements GenreRepository {
-
-    @PersistenceContext
-    private EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
+    private final EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
     private final ApplicationConfiguration applicationConfiguration;
 
-    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager,
+    public GenreRepositoryImpl(EntityManager entityManager,
                                ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.entityManager = entityManager;
         this.applicationConfiguration = applicationConfiguration;
     }
 
     @Override
-    @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
-    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
+    @TransactionalAdvice  <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre save(@NotBlank String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
@@ -173,14 +172,14 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
     public void deleteById(@NotNull Long id) {
-        findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
+        findById(id).ifPresent(entityManager::remove);
     }
 
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
-    @Transactional(readOnly = true)
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
         if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
@@ -194,12 +193,19 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
     public int update(@NotNull Long id, @NotBlank String name) {
         return entityManager.createQuery("UPDATE Genre g SET name = :name where id = :id")
                 .setParameter("name", name)
                 .setParameter("id", id)
                 .executeUpdate();
+    }
+
+    @Override <i class="conum" data-value="4"></i><b>(4)</b>
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre saveWithException(@NotBlank String name) {
+        save(name);
+        throw new PersistenceException();
     }
 }</code></pre>
 </div>
@@ -216,17 +222,14 @@ public class GenreRepositoryImpl implements GenreRepository {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@Transactional</code>. As the method
+<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@TransactionalAdvice</code>. As the method
 only reads data from the database, configure it as <code>readOnly = true</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This method modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
+<td>This method modifies the database, define <code>@TransactionalAdvice</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>You should use Micronaut&#8217;s version of <code>@Transactional</code>. See  <a href="https://docs.micronaut.io/snapshot/guide/index.html#springAop">Bridging Spring AOP</a> section of the docs.</p>
 </div>
 
 

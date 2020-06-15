@@ -72,9 +72,15 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#repository"><strong>2.4</strong><span>Repository Access</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.5</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#transactional"><strong>2.5</strong><span>Micronaut Transactional Advice</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>2.6</strong><span>Tests</span></a></div>
+            <div class="toc-item" style="margin-left:20px"><a href="#javaxtransactional"><strong>2.5.1</strong><span>Java EE 7 javax.transaction.Transactional</span></a></div>
+            
+            <div class="toc-item" style="margin-left:20px"><a href="#springtx"><strong>2.5.2</strong><span>Spring Transaction Management</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.6</strong><span>Controller</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#tests"><strong>2.7</strong><span>Tests</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
             
@@ -92,7 +98,7 @@
         <h1>Access a database with JPA and Hibernate</h1>
         <p>Learn how to access a database with JPA and Hibernate using Micronaut.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez,Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -105,6 +111,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-data-access-jpa-hibernate/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, we are going to write a Micronaut application that exposes some REST endpoints and store data in a
 database using JPA and Hibernate.</p>
@@ -217,9 +235,9 @@ database using JPA and Hibernate.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut.configuration:micronaut-hibernate-jpa" <i class="conum" data-value="1"></i><b>(1)</b>
-implementation "io.micronaut.configuration:micronaut-jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-runtime "com.h2database:h2" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+implementation("io.micronaut.sql:micronaut-hibernate-jpa")
+runtimeOnly("com.h2database:h2")</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -244,7 +262,8 @@ runtime "com.h2database:h2" <i class="conum" data-value="3"></i><b>(3)</b></code
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">datasources:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+datasources:
   default:
     url: ${JDBC_URL:`jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`}
     username: ${JDBC_USER:sa}
@@ -276,7 +295,8 @@ Also keep in mind that it is necessary to escape the <code>:</code> in the conne
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">jpa:
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
+jpa:
   default:
     packages-to-scan:
       - 'example.micronaut.domain' <i class="conum" data-value="1"></i><b>(1)</b>
@@ -510,6 +530,7 @@ public interface ApplicationConfiguration {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -517,14 +538,16 @@ public class ApplicationConfigurationProperties implements ApplicationConfigurat
 
     protected final Integer DEFAULT_MAX = 10;
 
+    @NonNull
     private Integer max = DEFAULT_MAX;
 
     @Override
+    @NonNull
     public Integer getMax() {
         return max;
     }
 
-    public void setMax(Integer max) {
+    public void setMax(@NonNull Integer max) {
         if(max != null) {
             this.max = max;
         }
@@ -546,7 +569,8 @@ public class ApplicationConfigurationProperties implements ApplicationConfigurat
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">application:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+application:
   max: 50</code></pre>
 </div>
 </div>
@@ -582,6 +606,8 @@ public interface GenreRepository {
 
     Genre save(@NotBlank String name);
 
+    Genre saveWithException(@NotBlank String name);
+
     void deleteById(@NotNull Long id);
 
     List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args);
@@ -598,13 +624,11 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.transaction.annotation.TransactionalAdvice;
 import example.micronaut.domain.Genre;
-import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession;
-import io.micronaut.spring.tx.annotation.Transactional;
-
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -614,25 +638,24 @@ import java.util.Optional;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreRepositoryImpl implements GenreRepository {
-
-    @PersistenceContext
-    private EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
+    private final EntityManager entityManager;  <i class="conum" data-value="2"></i><b>(2)</b>
     private final ApplicationConfiguration applicationConfiguration;
 
-    public GenreRepositoryImpl(@CurrentSession EntityManager entityManager,
+    public GenreRepositoryImpl(EntityManager entityManager,
                                ApplicationConfiguration applicationConfiguration) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.entityManager = entityManager;
         this.applicationConfiguration = applicationConfiguration;
     }
 
     @Override
-    @Transactional(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
-    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
+    @TransactionalAdvice  <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre save(@NotBlank String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
@@ -640,14 +663,14 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
     public void deleteById(@NotNull Long id) {
-        findById(id).ifPresent(genre -&gt; entityManager.remove(genre));
+        findById(id).ifPresent(entityManager::remove);
     }
 
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
-    @Transactional(readOnly = true)
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
         if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
@@ -661,12 +684,19 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
     public int update(@NotNull Long id, @NotBlank String name) {
         return entityManager.createQuery("UPDATE Genre g SET name = :name where id = :id")
                 .setParameter("name", name)
                 .setParameter("id", id)
                 .executeUpdate();
+    }
+
+    @Override <i class="conum" data-value="4"></i><b>(4)</b>
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre saveWithException(@NotBlank String name) {
+        save(name);
+        throw new PersistenceException();
     }
 }</code></pre>
 </div>
@@ -683,21 +713,232 @@ public class GenreRepositoryImpl implements GenreRepository {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@Transactional</code>. As the method
+<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@TransactionalAdvice</code>. As the method
 only reads data from the database, configure it as <code>readOnly = true</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This method modifies the database, define <code>@Transactional</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
+<td>This method modifies the database, define <code>@TransactionalAdvice</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>You should use Micronaut&#8217;s version of <code>@Transactional</code>. See  <a href="https://docs.micronaut.io/snapshot/guide/index.html#springAop">Bridging Spring AOP</a> section of the docs.</p>
+
+
+<h2 id="transactional">2.5 Micronaut Transactional Advice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
 
 
-<h2 id="controller">2.5 Controller</h2>
+<div class="paragraph">
+<p>Since 2.0, by default Micronaut-based transaction management is enabled. Thus on any service you can use the <code>io.micronaut.transaction.annotation.TransactionalAdvice</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>In the previous service:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+...
+..
+.
+import io.micronaut.transaction.annotation.TransactionalAdvice;
+...
+..
+.
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    @TransactionalAdvice  <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre saveWithException(@NotBlank String name) {
+...
+..
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="javaxtransactional">2.5.1 Java EE 7 javax.transaction.Transactional</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional/javaxtransactional.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Another option is to use <a href="https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html">Java EE 7 javax.transaction.Transactional annotation</a> to mark your transaction demarcations.</p>
+</div>
+<div class="paragraph">
+<p>But to use it, you have to include the <code>micronaut-data-processor</code> dependency in your annotation processor configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, you will use <code>javax.transaction.Transactional</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import javax.transaction.Transactional;
+...
+..
+.
+@Singleton
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @Transactional
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    @Transactional
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @Transactional
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @Transactional
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public Genre saveWithException(@NotBlank String name) {
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="springtx">2.5.2 Spring Transaction Management</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional/springtx.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Also, if you wish to use Spring-based transaction management add the following dependency instead:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa-spring")
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and you will use <code>io.micronaut.spring.tx.annotation.Transactional</code> to annotate your transaction demarcations.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import io.micronaut.spring.tx.annotation.Transactional;
+...
+..
+.
+@Singleton
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @Transactional
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public Genre saveWithException(@NotBlank String name) {
+...
+..
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="controller">2.6 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -715,12 +956,13 @@ only reads data from the database, configure it as <code>readOnly = true</code>.
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -908,11 +1150,15 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+@ExecuteOn(TaskExecutors.IO)
 @Controller("/genres") <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreController {
 
@@ -929,7 +1175,7 @@ public class GenreController {
                 .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
-    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    @Put <i class="conum" data-value="5"></i><b>(5)</b>
     public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
@@ -943,13 +1189,25 @@ public class GenreController {
         return genreRepository.findAll(args);
     }
 
-    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post <i class="conum" data-value="9"></i><b>(9)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
         return HttpResponse
                 .created(genre)
                 .headers(headers -&gt; headers.location(location(genre.getId())));
+    }
+
+    @Post("/ex") <i class="conum" data-value="9"></i><b>(9)</b>
+    public HttpResponse&lt;Genre&gt; saveExceptions(@Body @Valid GenreSaveCommand cmd) {
+        try {
+            Genre genre = genreRepository.saveWithException(cmd.getName());
+            return HttpResponse
+                    .created(genre)
+                    .headers(headers -&gt; headers.location(location(genre.getId())));
+        } catch(PersistenceException e) {
+            return HttpResponse.noContent();
+        }
     }
 
     @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
@@ -1014,7 +1272,7 @@ public class GenreController {
 </div>
 
 
-<h2 id="tests">2.6 Tests</h2>
+<h2 id="tests">2.7 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -1113,6 +1371,16 @@ public class GenreControllerTest {
 
         request = HttpRequest.GET("/genres/list");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(2, genres.size());
+
+        request = HttpRequest.POST("/genres/ex", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+        request = HttpRequest.GET("/genres/list");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(2, genres.size());
 
@@ -1236,7 +1504,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">runtime 'org.postgresql:postgresql:42.2.4'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">

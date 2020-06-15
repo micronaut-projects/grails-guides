@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.6 Tests null</title>
+    <title>2.7 Tests null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>2.6 Tests</h1>
+                    <h1>2.7 Tests</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,7 +85,7 @@ function addJsClass() {
 
                 
 
-<h2 id="tests">2.6 Tests</h2>
+<h2 id="tests">2.7 Tests</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
@@ -184,6 +184,16 @@ public class GenreControllerTest {
 
         request = HttpRequest.GET("/genres/list");
         List&lt;Genre&gt; genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
+
+        assertEquals(2, genres.size());
+
+        request = HttpRequest.POST("/genres/ex", new GenreSaveCommand("Microservices")); <i class="conum" data-value="3"></i><b>(3)</b>
+        response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+        request = HttpRequest.GET("/genres/list");
+        genres = client.toBlocking().retrieve(request, Argument.of(List.class, Genre.class));
 
         assertEquals(2, genres.size());
 

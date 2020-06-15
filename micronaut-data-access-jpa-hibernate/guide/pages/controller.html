@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.5 Controller null</title>
+    <title>2.6 Controller null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>2.5 Controller</h1>
+                    <h1>2.6 Controller</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,7 +85,7 @@ function addJsClass() {
 
                 
 
-<h2 id="controller">2.5 Controller</h2>
+<h2 id="controller">2.6 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -103,12 +103,13 @@ function addJsClass() {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -296,11 +297,15 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+@ExecuteOn(TaskExecutors.IO)
 @Controller("/genres") <i class="conum" data-value="1"></i><b>(1)</b>
 public class GenreController {
 
@@ -317,7 +322,7 @@ public class GenreController {
                 .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
-    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
+    @Put <i class="conum" data-value="5"></i><b>(5)</b>
     public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
@@ -331,13 +336,25 @@ public class GenreController {
         return genreRepository.findAll(args);
     }
 
-    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post <i class="conum" data-value="9"></i><b>(9)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
         return HttpResponse
                 .created(genre)
                 .headers(headers -&gt; headers.location(location(genre.getId())));
+    }
+
+    @Post("/ex") <i class="conum" data-value="9"></i><b>(9)</b>
+    public HttpResponse&lt;Genre&gt; saveExceptions(@Body @Valid GenreSaveCommand cmd) {
+        try {
+            Genre genre = genreRepository.saveWithException(cmd.getName());
+            return HttpResponse
+                    .created(genre)
+                    .headers(headers -&gt; headers.location(location(genre.getId())));
+        } catch(PersistenceException e) {
+            return HttpResponse.noContent();
+        }
     }
 
     @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>

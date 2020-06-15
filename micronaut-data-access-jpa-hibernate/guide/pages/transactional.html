@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.5 Micronaut Transactional Advice null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Access a database with JPA and Hibernate
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/usingPostgresql.html"><strong>4</strong><span>Using Postgresql</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.5 Micronaut Transactional Advice</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#javaxtransactional"><strong>2.1</strong><span>Java EE 7 javax.transaction.Transactional</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#springtx"><strong>2.2</strong><span>Spring Transaction Management</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h2 id="transactional">2.5 Micronaut Transactional Advice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Since 2.0, by default Micronaut-based transaction management is enabled. Thus on any service you can use the <code>io.micronaut.transaction.annotation.TransactionalAdvice</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>In the previous service:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+...
+..
+.
+import io.micronaut.transaction.annotation.TransactionalAdvice;
+...
+..
+.
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    @TransactionalAdvice  <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    public Genre saveWithException(@NotBlank String name) {
+...
+..
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="javaxtransactional">2.5.1 Java EE 7 javax.transaction.Transactional</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional/javaxtransactional.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Another option is to use <a href="https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html">Java EE 7 javax.transaction.Transactional annotation</a> to mark your transaction demarcations.</p>
+</div>
+<div class="paragraph">
+<p>But to use it, you have to include the <code>micronaut-data-processor</code> dependency in your annotation processor configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, you will use <code>javax.transaction.Transactional</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import javax.transaction.Transactional;
+...
+..
+.
+@Singleton
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @Transactional
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    @Transactional
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @Transactional
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @Transactional
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public Genre saveWithException(@NotBlank String name) {
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="springtx">2.5.2 Spring Transaction Management</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-data-access-jpa-hibernate/edit/master/src/main/docs/guide/writingTheApp/transactional/springtx.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Also, if you wish to use Spring-based transaction management add the following dependency instead:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa-spring")
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and you will use <code>io.micronaut.spring.tx.annotation.Transactional</code> to annotate your transaction demarcations.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GenreRepositoryImpl.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import io.micronaut.spring.tx.annotation.Transactional;
+...
+..
+.
+@Singleton
+public class GenreRepositoryImpl implements GenreRepository {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+...
+..
+.
+    public Genre save(@NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public void deleteById(@NotNull Long id) {
+...
+..
+.
+    @Transactional(readOnly = true)
+    public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
+...
+..
+.
+    @Transactional
+    public int update(@NotNull Long id, @NotBlank String name) {
+...
+..
+.
+    @Transactional
+    public Genre saveWithException(@NotBlank String name) {
+...
+..
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
