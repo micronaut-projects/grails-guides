@@ -102,7 +102,7 @@
         <h1>RabbitMQ and Micronaut - Event driven applications</h1>
         <p>Use RabbitMQ to communicate your Micronaut apps.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez</p>
-        <p><strong>Micronaut Version:</strong> 1.3.1</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -267,7 +267,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     public List&lt;Book&gt; listAll() {
         return bookService.listAll();
     }
@@ -373,14 +373,13 @@ public class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
 
-import io.micronaut.context.annotation.Context;
-
 import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Context
+@Singleton
 public class BookService {
 
     private static final List&lt;Book&gt; bookStore = new ArrayList&lt;&gt;();
@@ -663,9 +662,8 @@ BUILD SUCCESSFUL in 10s
 <div class="listingblock">
 <div class="title">analytics/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-  application:
-    name: analytics
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   server:
     port: 8081 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -785,7 +783,7 @@ $ curl http://localhost:8081/analytics
     ...
     ..
     .
-    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
 }</code></pre>
 </div>
 </div>
@@ -817,7 +815,7 @@ username and password.</p>
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -862,8 +860,8 @@ appropriate routing key</td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
 
-import io.micronaut.configuration.rabbitmq.annotation.Binding;
-import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
+import io.micronaut.rabbitmq.annotation.Binding;
+import io.micronaut.rabbitmq.annotation.RabbitClient;
 
 @RabbitClient("micronaut") <i class="conum" data-value="1"></i><b>(1)</b>
 public interface AnalyticsClient {
@@ -992,7 +990,7 @@ public class AnalyticsFilter implements HttpServerFilter { <i class="conum" data
     ...
     ..
     .
-    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
 }</code></pre>
 </div>
 </div>
@@ -1009,7 +1007,7 @@ and binding:</p>
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -1051,8 +1049,8 @@ implement the consume at compile time. Create <code>AnalyticsListener.java</code
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.analytics;
 
-import io.micronaut.configuration.rabbitmq.annotation.Queue;
-import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
+import io.micronaut.rabbitmq.annotation.Queue;
+import io.micronaut.rabbitmq.annotation.RabbitListener;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 
@@ -1243,8 +1241,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1253,9 +1250,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/books/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=books \
-       -H:Class=example.micronaut.books.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-rabbitmq/complete/books/src/main/resources/META-INF/native-image/example.micronaut/books/native-image.properties[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1285,8 +1280,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">analytics/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1295,9 +1289,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/analytics/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=analytics \
-       -H:Class=example.micronaut.analytics.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-rabbitmq/complete/analytics/src/main/resources/META-INF/native-image/example.micronaut/analytics/native-image.properties[]</code></pre>
 </div>
 </div>
 </div>
@@ -1325,17 +1317,19 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
                |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
-               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
                |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
 ....
 
 # For Java 8
-$ sdk install java 20.0.0.r8-grl
+$ sdk install java 20.1.0.r8-grl
 
 # For Java 11
-$ sdk install java 20.0.0.r11-grl</code></pre>
+$ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1489,7 +1483,7 @@ $ sdk install java 20.0.0.r11-grl</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
 
 COPY . /home/app/books
@@ -1500,8 +1494,8 @@ RUN native-image --no-server -cp build/libs/books-*-all.jar
 FROM frolvlad/alpine-glibc
 RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/books /app/books
-ENTRYPOINT ["/app/books", "-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/books/books /app/books
+ENTRYPOINT ["/app/books"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1527,7 +1521,7 @@ echo "    $ docker run -p 8080:8080 books"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
 
 COPY . /home/app/analytics
@@ -1538,8 +1532,8 @@ RUN native-image --no-server -cp build/libs/analytics-*-all.jar
 FROM frolvlad/alpine-glibc
 RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/analytics /app/analytics
-ENTRYPOINT ["/app/analytics", "-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/analytics/analytics /app/analytics
+ENTRYPOINT ["/app/analytics"]</code></pre>
 </div>
 </div>
 <div class="paragraph">

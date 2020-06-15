@@ -158,8 +158,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -168,9 +167,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/books/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=books \
-       -H:Class=example.micronaut.books.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-rabbitmq/complete/books/src/main/resources/META-INF/native-image/example.micronaut/books/native-image.properties[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -200,8 +197,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">analytics/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
-    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -210,9 +206,7 @@ applications.</p>
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/analytics/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=analytics \
-       -H:Class=example.micronaut.analytics.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Unresolved directive in &lt;stdin&gt; - include::/home/travis/build/micronaut-guides/micronaut-rabbitmq/complete/analytics/src/main/resources/META-INF/native-image/example.micronaut/analytics/native-image.properties[]</code></pre>
 </div>
 </div>
 </div>
@@ -240,17 +234,19 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
                |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
-               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
                |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
 ....
 
 # For Java 8
-$ sdk install java 20.0.0.r8-grl
+$ sdk install java 20.1.0.r8-grl
 
 # For Java 11
-$ sdk install java 20.0.0.r11-grl</code></pre>
+$ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -404,7 +400,7 @@ $ sdk install java 20.0.0.r11-grl</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
 
 COPY . /home/app/books
@@ -415,8 +411,8 @@ RUN native-image --no-server -cp build/libs/books-*-all.jar
 FROM frolvlad/alpine-glibc
 RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/books /app/books
-ENTRYPOINT ["/app/books", "-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/books/books /app/books
+ENTRYPOINT ["/app/books"]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -442,7 +438,7 @@ echo "    $ docker run -p 8080:8080 books"</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
 
 COPY . /home/app/analytics
@@ -453,8 +449,8 @@ RUN native-image --no-server -cp build/libs/analytics-*-all.jar
 FROM frolvlad/alpine-glibc
 RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/analytics /app/analytics
-ENTRYPOINT ["/app/analytics", "-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/analytics/analytics /app/analytics
+ENTRYPOINT ["/app/analytics"]</code></pre>
 </div>
 </div>
 <div class="paragraph">

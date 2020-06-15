@@ -161,7 +161,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
 }</code></pre>
 </div>
 </div>
@@ -193,7 +193,7 @@ username and password.</p>
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -238,8 +238,8 @@ appropriate routing key</td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.books;
 
-import io.micronaut.configuration.rabbitmq.annotation.Binding;
-import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
+import io.micronaut.rabbitmq.annotation.Binding;
+import io.micronaut.rabbitmq.annotation.RabbitClient;
 
 @RabbitClient("micronaut") <i class="conum" data-value="1"></i><b>(1)</b>
 public interface AnalyticsClient {
@@ -368,7 +368,7 @@ public class AnalyticsFilter implements HttpServerFilter { <i class="conum" data
     ...
     ..
     .
-    implementation 'io.micronaut.configuration:micronaut-rabbitmq'
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
 }</code></pre>
 </div>
 </div>
@@ -385,7 +385,7 @@ and binding:</p>
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -427,8 +427,8 @@ implement the consume at compile time. Create <code>AnalyticsListener.java</code
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.analytics;
 
-import io.micronaut.configuration.rabbitmq.annotation.Queue;
-import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
+import io.micronaut.rabbitmq.annotation.Queue;
+import io.micronaut.rabbitmq.annotation.RabbitListener;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 
