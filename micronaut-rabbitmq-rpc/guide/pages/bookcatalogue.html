@@ -120,7 +120,7 @@ Micronaut HTTP client and Server.</p>
     .
     //implementation "io.micronaut:micronaut-http-client"
     //implementation "io.micronaut:micronaut-http-server-netty"
-    compile "io.micronaut.configuration:micronaut-rabbitmq"
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
 }</code></pre>
 </div>
 </div>
@@ -131,8 +131,9 @@ to <code>application.yml</code>. In case you want to change the configuration, a
 <div class="listingblock">
 <div class="title">bookcatalogue/src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">rabbitmq:
-    uri: amqp://localhost:5672</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+rabbitmq:
+  uri: amqp://localhost:5672</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -152,7 +153,7 @@ username and password.</p>
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -222,8 +223,8 @@ all the elements in the same file and share the file between all the projects.
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
-import io.micronaut.configuration.rabbitmq.annotation.Queue;
-import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
+import io.micronaut.rabbitmq.annotation.Queue;
+import io.micronaut.rabbitmq.annotation.RabbitListener;
 
 import java.util.Arrays;
 import java.util.List;
