@@ -181,7 +181,6 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
 
     @ReadOnly  <i class="conum" data-value="3"></i><b>(3)</b>
-    @Transactional
     public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
@@ -203,7 +202,6 @@ public class GenreRepositoryImpl implements GenreRepository {
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
     @ReadOnly <i class="conum" data-value="3"></i><b>(3)</b>
-    @Transactional
     public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
         if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
