@@ -141,6 +141,16 @@ other build tools such as <code>Maven</code> or other programming languages such
 
 
 <div class="paragraph">
+<p>In this sample application, we cache news headlines. Add <a href="https://micronaut-projects.github.io/micronaut-cache/latest/guide/index.html">Micronaut Caffeine Cache</a> dependency which
+which adds support for cache using <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">    implementation("io.micronaut.cache:micronaut-cache-caffeine")</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>In this sample application, we cache news headlines. Configure your caches in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
