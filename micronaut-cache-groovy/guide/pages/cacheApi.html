@@ -96,15 +96,16 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
+import groovy.transform.CompileStatic
 import io.micronaut.cache.annotation.CacheConfig
 import io.micronaut.cache.annotation.CacheInvalidate
 import io.micronaut.cache.annotation.CachePut
 import io.micronaut.cache.annotation.Cacheable
-
 import javax.inject.Singleton
 import java.time.Month
 import java.util.concurrent.TimeUnit
 
+@CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 @CacheConfig("headlines") <i class="conum" data-value="2"></i><b>(2)</b>
 class NewsService {
@@ -124,7 +125,9 @@ class NewsService {
     @CachePut(parameters = ["month"]) <i class="conum" data-value="5"></i><b>(5)</b>
     List&lt;String&gt; addHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
-            headlines[month] += [headline]
+            List&lt;String&gt; lines = headlines[month]
+            lines &lt;&lt; headline
+            headlines.put(month, lines)
         } else {
             headlines[month] = [headline]
         }
@@ -134,7 +137,9 @@ class NewsService {
     @CacheInvalidate(parameters = ["month"]) <i class="conum" data-value="6"></i><b>(6)</b>
     void removeHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
-            headlines[month] -= [headline]
+            List&lt;String&gt; lines = headlines[month]
+            lines -= headline
+            headlines.put(month, lines)
         }
     }
 }</code></pre>

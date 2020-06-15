@@ -84,7 +84,7 @@
         <h1>Micronaut Cache</h1>
         <p>Learn how to use Micronaut's caching annotations.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
     </header>
     
 
@@ -97,6 +97,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-cache-groovy/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, you are going to use Micronaut&#8217;s caching annotations to speed up your application.</p>
 </div>
@@ -182,7 +194,7 @@
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
@@ -197,7 +209,17 @@ other build tools such as <code>Maven</code> or other programming languages such
 
 
 <div class="paragraph">
-<p>In this sample application, we cache news headlines. Configure your caches in <code>application.yml</code>:</p>
+<p>In this sample application, we cache news headlines. Add <a href="https://micronaut-projects.github.io/micronaut-cache/latest/guide/index.html">Micronaut Caffeine Cache</a> dependency which
+which adds support for cache using <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">    implementation("io.micronaut.cache:micronaut-cache-caffeine")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure your caches in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -216,18 +238,6 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
-</td>
-</tr>
-</table>
-</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -235,7 +245,7 @@ By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Check the <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#io.micronaut.cache.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
+Check the <a href="https://micronaut-projects.github.io/micronaut-cache/snapshot/guide/configurationreference.html#io.micronaut.cache.caffeine.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
 </td>
 </tr>
 </table>
@@ -259,15 +269,16 @@ Check the <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#io.micron
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
+import groovy.transform.CompileStatic
 import io.micronaut.cache.annotation.CacheConfig
 import io.micronaut.cache.annotation.CacheInvalidate
 import io.micronaut.cache.annotation.CachePut
 import io.micronaut.cache.annotation.Cacheable
-
 import javax.inject.Singleton
 import java.time.Month
 import java.util.concurrent.TimeUnit
 
+@CompileStatic
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 @CacheConfig("headlines") <i class="conum" data-value="2"></i><b>(2)</b>
 class NewsService {
@@ -287,7 +298,9 @@ class NewsService {
     @CachePut(parameters = ["month"]) <i class="conum" data-value="5"></i><b>(5)</b>
     List&lt;String&gt; addHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
-            headlines[month] += [headline]
+            List&lt;String&gt; lines = headlines[month]
+            lines &lt;&lt; headline
+            headlines.put(month, lines)
         } else {
             headlines[month] = [headline]
         }
@@ -297,7 +310,9 @@ class NewsService {
     @CacheInvalidate(parameters = ["month"]) <i class="conum" data-value="6"></i><b>(6)</b>
     void removeHeadline(Month month, String headline) {
         if (headlines.containsKey(month)) {
-            headlines[month] -= [headline]
+            List&lt;String&gt; lines = headlines[month]
+            lines -= headline
+            headlines.put(month, lines)
         }
     }
 }</code></pre>
@@ -423,7 +438,7 @@ class NewsServiceSpec extends Specification {
     }
 
     @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
-    void novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache() {
+    void "november cache was updated by cache put and thus the value is retrieved from the cache"() {
         when:
         List&lt;String&gt; headlines = newsService.headlines(Month.NOVEMBER)
 
@@ -499,10 +514,12 @@ class NewsServiceSpec extends Specification {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import groovy.transform.CompileStatic
 import io.micronaut.core.annotation.Introspected
 
 import java.time.Month
 
+@CompileStatic
 @Introspected
 class News {
     Month month
@@ -515,11 +532,13 @@ class News {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 
 import java.time.Month
 
+@CompileStatic
 @Controller
 class NewsController {
 
@@ -572,7 +591,9 @@ class NewsControllerSpec extends Specification {
         String expected = "Micronaut AOP: Awesome flexibility without the complexity"
 
         when:
-        HttpRequest request = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.toString()).build())
+        HttpRequest request = HttpRequest.GET(UriBuilder.of("/")
+                .path(Month.OCTOBER.toString())
+                .build())
         News news = client.toBlocking().retrieve(request, News)
 
         then:
