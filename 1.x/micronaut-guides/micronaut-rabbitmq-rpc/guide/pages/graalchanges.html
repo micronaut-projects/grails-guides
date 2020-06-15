@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>5.1 Micronaut + GraalVM changes null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        RabbitMQ RPC and Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/rabbitmq.html"><strong>3</strong><span>RabbitMQ and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>5</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>5.1 Micronaut + GraalVM changes</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="graalchanges">5.1 Micronaut + GraalVM changes</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image. This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We are going to add Micronaut Graal’s annotation processor and <code>svm</code> to both application builds. It helps to handle generating the <code>reflection-config.json</code> metadata that is automatically picked up by the native-image tool.</p>
+</div>
+<div class="paragraph">
+<p>Also, to simplify building the image you need to create a <code>native-image.properties</code> file. The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application.</p>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookcatalogue_to_generate_a_graalvm_native_image">Changes to bookcatalogue to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookcatalogue/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookcatalogue</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookcatalogue/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookcatalogue \
+       -H:Class=example.micronaut.bookcatalogue.Application</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookinventory_to_generate_a_graalvm_native_image">Changes to bookinventory to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookinventory/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookinventory</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookinventory/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookinventory \
+       -H:Class=example.micronaut.bookinventory.Application</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookrecommendation_to_generate_a_graalvm_native_image">Changes to bookrecommendation to generate a GraalVM native image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modify <code>bookrecommendation/build.gradle</code>, add the annotation processor and <code>svm</code> dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    annotationProcessor "io.micronaut:micronaut-graal"
+    compileOnly "org.graalvm.nativeimage:svm"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside <code>src/main/resources/META-INF/native-image/example.micronaut/bookrecommendation</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/bookrecommendation/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=bookrecommendation \
+       -H:Class=example.micronaut.bookrecommendation.Application</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

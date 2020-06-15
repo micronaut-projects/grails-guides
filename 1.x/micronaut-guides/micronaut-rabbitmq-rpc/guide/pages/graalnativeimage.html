@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>5.2 Native Image generation null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        RabbitMQ RPC and Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/rabbitmq.html"><strong>3</strong><span>RabbitMQ and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>5</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>5.2 Native Image generation</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="graalnativeimage">5.2 Native Image generation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
+               |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
+....
+
+# For Java 8
+$ sdk install java 20.1.0.r8-grl
+
+# For Java 11
+$ sdk install java 20.1.0.r11-grl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookcatalogue">Generate GraalVM native image for bookcatalogue</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To generate the native image you need to generate the FAT JAR first.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoke native-image. It may take a minute to complete.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">userecho $  native-image --no-server -cp build/libs/bookcatalogue-0.1-all.jar
+[userecho:14552]    classlist:   8,403.72 ms
+[userecho:14552]        (cap):   2,196.75 ms
+[userecho:14552]        setup:   3,163.33 ms
+[userecho:14552]   (typeflow):  14,912.31 ms
+[userecho:14552]    (objects):  17,479.74 ms
+[userecho:14552]   (features):   2,182.07 ms
+[userecho:14552]     analysis:  36,708.00 ms
+[userecho:14552]     (clinit):   1,147.36 ms
+[userecho:14552]     universe:   2,441.84 ms
+[userecho:14552]      (parse):   1,114.89 ms
+[userecho:14552]     (inline):   2,769.22 ms
+[userecho:14552]    (compile):  13,846.04 ms
+[userecho:14552]      compile:  19,961.65 ms
+[userecho:14552]        image:   3,631.87 ms
+[userecho:14552]        write:   1,139.84 ms
+[userecho:14552]      [total]:  75,733.82 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookinventory">Generate GraalVM native image for bookinventory</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookinventory-0.1-all.jar
+[gateway:14380]    classlist:   4,769.83 ms
+[gateway:14380]        (cap):   2,178.91 ms
+[gateway:14380]        setup:   3,102.47 ms
+[gateway:14380]   (typeflow):  13,167.91 ms
+[gateway:14380]    (objects):  17,513.79 ms
+[gateway:14380]   (features):   2,323.89 ms
+[gateway:14380]     analysis:  35,342.33 ms
+[gateway:14380]     (clinit):   1,119.21 ms
+[gateway:14380]     universe:   2,471.35 ms
+[gateway:14380]      (parse):   2,535.37 ms
+[gateway:14380]     (inline):   2,379.36 ms
+[gateway:14380]    (compile):  14,645.46 ms
+[gateway:14380]      compile:  21,854.85 ms
+[gateway:14380]        image:   5,309.31 ms
+[gateway:14380]        write:   1,257.64 ms
+[gateway:14380]      [total]:  74,390.31 ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookinventory_2">Generate GraalVM native image for bookinventory</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookinventory-0.1-all.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_graalvm_native_image_for_bookrecommendation">Generate GraalVM native image for bookrecommendation</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">gateway $ native-image --no-server -cp build/libs/bookrecommendation-0.1-all.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>5.4 Native Image generation with Docker null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        RabbitMQ RPC and Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/rabbitmq.html"><strong>3</strong><span>RabbitMQ and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>5</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>5.4 Native Image generation with Docker</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="graaldocker">5.4 Native Image generation with Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-rabbitmq-rpc/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Alternatively, you can use Docker to construct the GraalVM Native Image.</p>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookcatalogue_to_generate_a_graalvm_native_image_with_docker">Changes to bookcatalogue to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookcatalogue/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
+COPY . /home/app/bookcatalogue
+WORKDIR /home/app/bookcatalogue
+
+RUN native-image --no-server -cp build/libs/bookcatalogue-*-all.jar
+
+FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookcatalogue /app/bookcatalogue
+ENTRYPOINT ["/app/bookcatalogue", "-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookcatalogue
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookcatalogue"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookinventory_to_generate_a_graalvm_native_image_with_docker">Changes to bookinventory to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookinventory/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
+COPY . /home/app/bookinventory
+WORKDIR /home/app/bookinventory
+
+RUN native-image --no-server -cp build/libs/bookinventory-*-all.jar
+
+FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookinventory /app/bookinventory
+ENTRYPOINT ["/app/bookinventory", "-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookinventory
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookinventory"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changes_to_bookrecommendation_to_generate_a_graalvm_native_image_with_docker">Changes to bookrecommendation to generate a GraalVM native image with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Replace <code>bookrecommendation/Dockerfile</code> with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+RUN gu install native-image
+
+COPY . /home/app/bookrecommendation
+WORKDIR /home/app/bookrecommendation
+
+RUN native-image --no-server -cp build/libs/bookrecommendation-*-all.jar
+
+FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
+EXPOSE 8080
+COPY --from=graalvm /home/app/bookrecommendation /app/bookrecommendation
+ENTRYPOINT ["/app/bookrecommendation", "-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a script `docker-build.sh to run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t bookrecommendation
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 bookrecommendation"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_native_images_with_docker">Running native images with docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use docker to run the images:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ docker run -p 8080:8080 bookcatalogue
+$ docker run -p 8081:8081 bookinventory
+$ docker run -p 8081:8081 bookrecommendation</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/runningTheApp.html">&lt;&lt; <strong>4</strong><span>Running the app</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
