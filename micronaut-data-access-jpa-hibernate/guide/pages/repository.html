@@ -95,7 +95,27 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Create an interface to define the operations to access the database:</p>
+<p>To mark the transaction demarcations, we use the <a href="https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html">Java EE 7 javax.transaction.Transactional annotation</a>.</p>
+</div>
+<div class="paragraph">
+<p>But to use it, you have to include the <code>micronaut-data-processor</code> dependency in your annotation processor configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">...
+..
+dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, create an interface to define the operations to access the database:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/GenreRepository.java</div>
@@ -133,12 +153,14 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.transaction.annotation.TransactionalAdvice;
+
 import example.micronaut.domain.Genre;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+import io.micronaut.transaction.annotation.ReadOnly;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -158,13 +180,14 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
 
-    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    @ReadOnly  <i class="conum" data-value="3"></i><b>(3)</b>
+    @Transactional
     public Optional&lt;Genre&gt; findById(@NotNull Long id) {
         return Optional.ofNullable(entityManager.find(Genre.class, id));
     }
 
     @Override
-    @TransactionalAdvice  <i class="conum" data-value="4"></i><b>(4)</b>
+    @Transactional  <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre save(@NotBlank String name) {
         Genre genre = new Genre(name);
         entityManager.persist(genre);
@@ -172,14 +195,15 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
     public void deleteById(@NotNull Long id) {
         findById(id).ifPresent(entityManager::remove);
     }
 
     private final static List&lt;String&gt; VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
 
-    @TransactionalAdvice(readOnly = true) <i class="conum" data-value="3"></i><b>(3)</b>
+    @ReadOnly <i class="conum" data-value="3"></i><b>(3)</b>
+    @Transactional
     public List&lt;Genre&gt; findAll(@NotNull SortingAndOrderArguments args) {
         String qlString = "SELECT g FROM Genre as g";
         if (args.getOrder().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
@@ -193,7 +217,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
     public int update(@NotNull Long id, @NotBlank String name) {
         return entityManager.createQuery("UPDATE Genre g SET name = :name where id = :id")
                 .setParameter("name", name)
@@ -202,7 +226,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override <i class="conum" data-value="4"></i><b>(4)</b>
-    @TransactionalAdvice <i class="conum" data-value="4"></i><b>(4)</b>
+    @Transactional <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre saveWithException(@NotBlank String name) {
         save(name);
         throw new PersistenceException();
@@ -222,12 +246,12 @@ public class GenreRepositoryImpl implements GenreRepository {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@TransactionalAdvice</code>. As the method
-only reads data from the database, configure it as <code>readOnly = true</code>.</td>
+<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@javax.transaction.Transactional</code>. As the method
+only reads data from the database, annotate it with <code>@ReadOnly</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This method modifies the database, define <code>@TransactionalAdvice</code> without setting <code>readOnly</code>, which, by default is <code>false</code>.</td>
+<td>This method modifies the database, define <code>@Transactional</code> but without the <code>@ReadOnly</code> annotation.</td>
 </tr>
 </table>
 </div>
