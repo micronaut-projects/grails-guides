@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Secure a Micronaut app with Google | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Secure a Micronaut app with Google. Learn how to create Micronaut app and secure it with Google and provide authentication with OpenID Connect' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-oauth2-oidc-google/guide/index.html">Secure a Micronaut app with Google</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-oauth2-oidc-google"><img src="https://travis-ci.org/micronaut-guides/micronaut-oauth2-oidc-google.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-oauth2-oidc-google&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-oauth2-oidc-google.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-oauth2-oidc-google.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-oauth2-oidc-google.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#views"><strong>2.1</strong><span>Views</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#oauth2"><strong>2.2</strong><span>OAuth 2.0</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#home"><strong>2.3</strong><span>Home</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#runningTheApp"><strong>2.4</strong><span>Running the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#hosteddomain"><strong>2.5</strong><span>Custom ID token claims validation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#learnmore"><strong>3</strong><span>Learn More</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>4</strong><span>Help with Micronaut</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Secure a Micronaut app with Google</h1>
+        <p>Learn how to create Micronaut app and secure it with Google and provide authentication with OpenID Connect</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide we are going to create a Micronaut app written in Java.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google.git" class="bare">https://github.com/micronaut-guides/micronaut-oauth2-oidc-google.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="views">2.1 Views</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp/views.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Although Micronaut is primarily designed around message encoding / decoding, there are occasions where it is convenient to render a view on the server side.</p>
+</div>
+<div class="paragraph">
+<p>To use the view rendering features, add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    implementation "io.micronaut:micronaut-views-thymeleaf"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine, add the thymeleaf dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="oauth2">2.2 OAuth 2.0</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Visit <a href="https://console.developers.google.com">https://console.developers.google.com</a> and create a new project:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/google-1.png" alt="google 1">
+</div>
+</div>
+<div class="paragraph">
+<p>You will also need to create OAuth 2.0 credentials for the project since Google does not do that automatically. From the sidebar, click the <code>Credentials</code> tab, the click <code>Create credentials</code> and choose <code>OAuth client ID</code> from the dropdown.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/google-2.png" alt="google 2">
+</div>
+</div>
+<div class="paragraph">
+<p>The Google Console will prompt for some information about your application such as the product name, a home page and a logo. On the next page, select <strong>Web Application</strong> type, and enter the redirect URL where the Micronaut app we will build next will wait for the callback.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/google-4.png" alt="google 4">
+</div>
+</div>
+<div class="paragraph">
+<p>You will then receive a client ID and secret.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/google-3.png" alt="google 3">
+</div>
+</div>
+<div class="paragraph">
+<p>To use OAuth 2.0 integration in your Micronaut App, add the next dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.7</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    implementation "io.micronaut.configuration:micronaut-security-oauth2"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add also JWT <a href="https://docs.micronaut.io/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    annotationProcessor "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security-jwt"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the following Oauth2 Configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+  application:
+    name: complete
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    oauth2:
+      enabled: true
+      clients:
+        google: <i class="conum" data-value="2"></i><b>(2)</b>
+          client-id: '${OAUTH_CLIENT_ID}'  <i class="conum" data-value="3"></i><b>(3)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="4"></i><b>(4)</b>
+          openid:
+            issuer: 'https://accounts.google.com' <i class="conum" data-value="5"></i><b>(5)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+        cookie:
+          enabled: true <i class="conum" data-value="7"></i><b>(7)</b>
+        signatures:
+          secret:
+            generator: <i class="conum" data-value="8"></i><b>(8)</b>
+              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b>
+    endpoints:
+      logout:
+        enabled: true <i class="conum" data-value="10"></i><b>(10)</b>
+        get-allowed: true <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable security</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/google</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Client Secret. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Client ID. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>ID Token is a JWT token. We need to enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named generator via configuration as illustrated above. The generator signature is used to sign the issued JWT claims.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout#logout">Logout Controller</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Accept GET request to the <code>/logout</code> endpoint.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code>, <code>OIDC_ISSUER_DOMAIN</code> and <code>OIDC_ISSUER_AUTHSERVERID</code> environment variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>export OAUTH_CLIENT_ID=XXXXXXXXXX
+export OAUTH_CLIENT_SECRET=YYYYYYYYYY</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check Google <a href="https://accounts.google.com/.well-known/openid-configuration">.well-known/openid-configuration documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>We want to use an <strong>Authorization Code</strong> grant type flow which it is described in the following diagram:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/diagramm.png" alt="diagramm">
+</div>
+</div>
+
+
+<h2 id="home">2.3 Home</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller to handle the requests to <code>/</code>. You are going to display the email of the authenticated person if any. Annotate the controller endpoint with <code>@View</code> since we are going to use a Thymeleaf template.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.views.View;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class HomeController {
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @View("home")
+    @Get
+    public Map&lt;String, Object&gt; index() {
+        return new HashMap&lt;&gt;();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>SecurityRule.IS_ANONYMOUS</code> expression will allow access without authentication.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/</code> requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a thymeleaf template:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/home.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;Home&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Micronaut - Google example&lt;/h1&gt;
+
+&lt;h2 th:if="${security}"&gt;username: &lt;span th:text="${security.attributes.get('email')}"&gt;&lt;/span&gt;&lt;/h2&gt;
+&lt;h2 th:unless="${security}"&gt;username: Anonymous&lt;/h2&gt;
+
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/google"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:if="${security}"&gt;&lt;a href="/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, note that we return an empty model in the controller. However, we are accessing <code>security</code> in the thymeleaf template.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a> injects into the model a <code>security</code> map with the authenticated user. See <a href="https://micronaut-projects.github.io/micronaut-views/latest/guide/index.html#views-security">User in a view</a> documentation.</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="runningTheApp">2.4 Running the Application</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To run the application use the <code>./gradlew run</code> command which will start the application on port 8080.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/video.gif" alt="video">
+</div>
+</div>
+
+
+<h2 id="hosteddomain">2.5 Custom ID token claims validation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/writingTheApp/hosteddomain.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Imagine you want to allow sign-in with Google but only to users' in your organization.</p>
+</div>
+<div class="paragraph">
+<p>Google OAuth consent screen settings allows you to do that:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/google-5.png" alt="google 5">
+</div>
+</div>
+<div class="paragraph">
+<p>However, we could also achieve this programmatically. Google id token contains a claim named <code>hd</code> which stands for <code>hosted domain</code>.</p>
+</div>
+<div class="paragraph">
+<p>We can create a configuration object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfiguration.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public interface ApplicationConfiguration {
+
+    String getHostedDomain();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Backed by a <code>@ConfigurationProperties</code> annotated class:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ApplicationConfigurationProperties.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
+
+@Requires(property = "app.hosted-domain")
+@ConfigurationProperties("app")
+public class ApplicationConfigurationProperties implements ApplicationConfiguration {
+
+    private String hostedDomain;
+
+    public void setHostedDomain(String hostedDomain) {
+        this.hostedDomain = hostedDomain;
+    }
+
+    @Override
+    public String getHostedDomain() {
+        return hostedDomain;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and then implement a <code>OpenIdClaimsValidator</code> bean. Micronaut validates the id token against every bean of type <code>OpenIdClaimsValidator</code>. If the id token <code>hd</code> claim does not match the value configured, it is considered invalid.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HostedDomainClaimValidator.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.security.oauth2.client.OpenIdProviderMetadata;
+import io.micronaut.security.oauth2.configuration.OauthClientConfiguration;
+import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
+import io.micronaut.security.oauth2.endpoint.token.response.validation.OpenIdClaimsValidator;
+
+import javax.inject.Singleton;
+
+@Requires(beans = ApplicationConfiguration.class)
+@Singleton
+public class HostedDomainClaimValidator implements OpenIdClaimsValidator {
+
+    public static final String HOSTED_DOMAIN_CLAIM = "hd";
+
+    private final String hostedDomain;
+
+    public HostedDomainClaimValidator(ApplicationConfiguration applicationConfiguration) {
+        this.hostedDomain = applicationConfiguration.getHostedDomain();
+    }
+
+    @Override
+    public boolean validate(OpenIdClaims claims, OauthClientConfiguration clientConfiguration, OpenIdProviderMetadata providerMetadata) {
+        Object hd = claims.get(HOSTED_DOMAIN_CLAIM);
+        return hd instanceof String &amp;&amp; ((String) hd).equalsIgnoreCase(hostedDomain);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add to <code>src/main/resources/application.yaml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">app:
+  hosted-domain: 'objectcomputing.com'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>if you start the app, you will only be able to sign in with a Google Account within OCI organization.</p>
+</div>
+
+
+<h1 id="learnmore">3 Learn More</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/learnmore.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/#oauth">Micronaut OAuth 2.0 documentation</a> to learn more.</p>
+</div>
+
+
+<h1 id="help">4 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-oidc-google/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
