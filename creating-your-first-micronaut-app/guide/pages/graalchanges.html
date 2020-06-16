@@ -120,7 +120,7 @@ that is automatically picked up by the <code>native-image</code> tool:</p>
 ...
 ..
 .
-    annotationProcessor "io.micronaut:micronaut-graal"
+    annotationProcessor("io.micronaut:micronaut-graal")
 }</code></pre>
 </div>
 </div>
@@ -145,7 +145,7 @@ program has faster startup time and lower runtime memory overhead compared to a 
 ...
 ..
 .
-    compileOnly "org.graalvm.nativeimage:svm"
+    compileOnly("org.graalvm.nativeimage:svm")
 }</code></pre>
 </div>
 </div>
@@ -159,16 +159,12 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=micronautguide \
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:Name=micronautguide \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
-</li>
 <li>
 <p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
 </li>
