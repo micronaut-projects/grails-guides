@@ -160,8 +160,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("io.micronaut.security:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
-implementation("io.micronaut.security:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("io.micronaut.security:micronaut-security-annotations")
+implementation("io.micronaut.security:micronaut-security-jwt")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -218,7 +218,7 @@ implementation("io.micronaut.security:micronaut-security-jwt:2.0.0.BUILD-SNAPSHO
 ...
 ..
 .
-    implementation("io.micronaut.security:micronaut-security-ldap:2.0.0.BUILD-SNAPSHOT")
+    implementation("io.micronaut.security:micronaut-security-ldap")
 }</code></pre>
 </div>
 </div>
@@ -306,7 +306,6 @@ testing and an automatic GraphQL schema generator.</p>
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code>...
-gormVersion=7.1.0.M2
 ...</code></pre>
 </div>
 </div>
@@ -317,11 +316,8 @@ gormVersion=7.1.0.M2
 ...
 ..
 .
-    //implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
-    implementation("io.micronaut.configuration:micronaut-hibernate-gorm")
-    implementation "org.grails:grails-datastore-gorm-hibernate5:$gormVersion"
-
-    runtimeOnly("ch.qos.logback:logback-classic")
+    implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
+    implementation("io.micronaut.groovy:micronaut-hibernate-gorm")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.apache.tomcat:tomcat-jdbc")
 }</code></pre>
