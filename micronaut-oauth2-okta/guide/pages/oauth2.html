@@ -119,19 +119,12 @@ function addJsClass() {
 <p>To use OAuth 2.0 integration, add the next dependency:</p>
 </div>
 <div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=2.0.0.BUILD-SNAPSHOT</code></pre>
-</div>
-</div>
-<div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-
-    implementation("io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT")
+    implementation("io.micronaut.security:micronaut-security-oauth2")
 }</code></pre>
 </div>
 </div>
@@ -144,8 +137,8 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor("io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT")
-    implementation("io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT")
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>
