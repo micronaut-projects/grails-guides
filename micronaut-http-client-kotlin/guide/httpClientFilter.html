@@ -210,42 +210,32 @@ class BintrayFilterCondition : Condition {
 <p>We verify the previous condition class with a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/BintrayFilterConditionSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/BintrayFilterConditionTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class BintrayFilterConditionSpec : Spek({
+class BintrayFilterConditionTest {
 
-    describe("BintrayFilter is loaded") {
-        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair("bintray.username", "john"), Pair("bintray.token", "XXX")), "test")
-        it("Verify BintrayFilter is loaded if bintray.username/bintray.token are set") {
-            assertNotNull(applicationContext.getBean(BintrayFilter::class.java))
-        }
-        afterGroup {
-            applicationContext.close()
-        }
+    @Test
+    fun verifyBintrayFilterIsLoadedIfBintrayUsernameTokenAreSet() {
+        val applicationContext = ApplicationContext.run(mapOf&lt;String, Any&gt;(Pair("bintray.username", "john"), Pair("bintray.token", "XXX")))
+        assertTrue(applicationContext.containsBean(BintrayFilter::class.java))
+        applicationContext.close()
     }
 
-    describe("BintrayFilter is not loaded") {
-        val applicationContext = ApplicationContext.run("test")
-        it("Verify BintrayFilter is NOT loaded if bintray.username and bintray.token are not set") {
-            assertFailsWith&lt;NoSuchBeanException&gt; {
-                applicationContext.getBean(BintrayFilter::class.java)
-            }
-        }
-        afterGroup {
-            applicationContext.close()
-        }
+    @Test
+    fun verifyBintrayFilterIsNotLoadedIfBintrayUsernameTokenAreSet() {
+        val applicationContext = ApplicationContext.run()
+        assertFalse(applicationContext.containsBean(BintrayFilter::class.java))
+        applicationContext.close()
     }
-})</code></pre>
+
+}</code></pre>
 </div>
 </div>
 <div class="sect3">
