@@ -84,6 +84,8 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#next"><strong>9</strong><span>Where To Go From Here?</span></a></div>
             
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>10</strong><span>Help with Micronaut</span></a></div>
+            
             <div style="clear:both" ></div>
         </div>
         
@@ -92,7 +94,7 @@
         <h1>@Configuration and @ConfigurationBuilder</h1>
         <p>Learn how to utilize @Configuration and @ConfigurationBuilder annotations to effectively configure declared properties.</p>
         <p><strong>Authors:</strong> Nirav Assar</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -105,6 +107,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-configuration-kotlin/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide you are going to learn how to effectively use the annotations <code>@ConfigurationProperties</code>, <code>@ConfigurationBuilder</code>, and
 <code>@EachProperty</code> to use configured properties in a Micronaut application. These annotations allow declared values to be injected
@@ -192,7 +206,7 @@ into a bean for easy usage in the application.</p>
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -268,32 +282,73 @@ class TeamConfiguration  {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
 import io.micronaut.context.ApplicationContext
-import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import java.util.*
 import java.util.function.Consumer
+import kotlin.collections.HashMap
 
-@MicronautTest
-class TeamConfigurationTest : BehaviorSpec({
-    given("an application context started with configuration") {
-        val names = listOf("Nirav Assar", "Lionel Messi")
-        val items = mapOf("team.name" to "evolution",
-                "team.color" to "green",
-                "team.player-names" to names)
+class TeamConfigurationTest {
+    //tag::teamConfigSpecNoBuilder[]
+    @Test
+    fun testTeamConfiguration() {
+        val names = Arrays.asList("Nirav Assar", "Lionel Messi")
+        val items: MutableMap&lt;String, Any&gt; = HashMap()
+        items["team.name"] = "evolution"
+        items["team.color"] = "green"
+        items["team.player-names"] = names
         val ctx = ApplicationContext.run(ApplicationContext::class.java, items) <i class="conum" data-value="1"></i><b>(1)</b>
-        `when`("TeamConfiguration is retrieved from the context") {
-            val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
-            then("configuration properties are populated") {
-                teamConfiguration.name shouldBe "evolution"
-                teamConfiguration.color shouldBe "green"
-                teamConfiguration.playerNames!!.size shouldBe names.size
-                names.forEach(Consumer { name: String? -&gt; teamConfiguration.playerNames!!.contains(name) shouldBe true })
-            }
-        }
+        val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
+        Assertions.assertEquals("evolution", teamConfiguration.name)
+        Assertions.assertEquals("green", teamConfiguration.color)
+        Assertions.assertEquals(names.size, teamConfiguration.playerNames!!.size)
+        names.forEach(Consumer { name: String? -&gt; Assertions.assertTrue(teamConfiguration.playerNames!!.contains(name!!)) })
         ctx.close()
     }
-})</code></pre>
+
+    //end::teamConfigSpecNoBuilder[]
+    @Test
+    fun testBuilderPatternPlainUsage() {
+        val teamAdmin = TeamAdmin.Builder().withManager("Nirav")
+                .withCoach("Tommy")
+                .withPresident("Mark").build()
+        Assertions.assertEquals("Nirav", teamAdmin.manager)
+        Assertions.assertEquals("Tommy", teamAdmin.coach)
+        Assertions.assertEquals("Mark", teamAdmin.president)
+    }
+
+    //tag::teamConfigSpecBuilder[]
+    @Test
+    fun testTeamConfigurationBuilder() {
+        val names = Arrays.asList("Nirav Assar", "Lionel Messi")
+        val items: MutableMap&lt;String, Any&gt; = HashMap()
+        items["team.name"] = "evolution"
+        items["team.color"] = "green"
+        items["team.team-admin.manager"] = "Jerry Jones" <i class="conum" data-value="1"></i><b>(1)</b>
+        items["team.team-admin.coach"] = "Tommy O'Neill"
+        items["team.team-admin.president"] = "Mark Scanell"
+        items["team.player-names"] = names
+        val ctx = ApplicationContext.run(ApplicationContext::class.java, items)
+        val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
+        val teamAdmin = teamConfiguration.builder.build() <i class="conum" data-value="2"></i><b>(2)</b>
+        Assertions.assertEquals("evolution", teamConfiguration.name)
+        Assertions.assertEquals("green", teamConfiguration.color)
+        Assertions.assertEquals("Nirav Assar", teamConfiguration.playerNames!![0])
+        Assertions.assertEquals("Lionel Messi", teamConfiguration.playerNames!![1])
+
+        // check the builder has values set
+        Assertions.assertEquals("Jerry Jones", teamConfiguration.builder.manager)
+        Assertions.assertEquals("Tommy O'Neill", teamConfiguration.builder.coach)
+        Assertions.assertEquals("Mark Scanell", teamConfiguration.builder.president)
+
+        // check the object can be built
+        Assertions.assertEquals("Jerry Jones", teamAdmin.manager) <i class="conum" data-value="3"></i><b>(3)</b>
+        Assertions.assertEquals("Tommy O'Neill", teamAdmin.coach)
+        Assertions.assertEquals("Mark Scanell", teamAdmin.president)
+        ctx.close()
+    } //end::teamConfigSpecBuilder[]
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -399,23 +454,20 @@ class TeamAdmin private constructor(
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut;
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class TeamAdminTest : BehaviorSpec({
-    given("A Team Admin class") {
-        `when`("A team admin is constructed with the Builder") {
-            val teamAdmin = TeamAdmin.Builder().withManager("Nirav")
-                    .withCoach("Tommy")
-                    .withPresident("Mark").build()
-            then("the team admin manager is populated") {
-                teamAdmin.manager shouldBe "Nirav"
-                teamAdmin.coach shouldBe "Tommy"
-                teamAdmin.president shouldBe "Mark"
-            }
-        }
+class TeamAdminTest {
+    @Test
+    fun  aTeamAdminIsConstructedWithTheBuilder() {
+        val teamAdmin = TeamAdmin.Builder().withManager("Nirav")
+                .withCoach("Tommy")
+                .withPresident("Mark").build()
+        assertEquals("Nirav", teamAdmin.manager)
+        assertEquals("Tommy", teamAdmin.coach)
+        assertEquals("Mark", teamAdmin.president)
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -473,15 +525,15 @@ In our case, we will call <code>builder.build()</code> in the JUnit test.
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
 import io.micronaut.context.ApplicationContext
-import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.util.function.Consumer
 
-@MicronautTest
-class TeamConfigurationBuilderTest : BehaviorSpec({
-    given("an application context started with configuration") {
+class TeamConfigurationBuilderTest {
+    @Test
+    fun anApplicationContextStartedWithConfiguration() {
         val names = listOf("Nirav Assar", "Lionel Messi")
         val items = mapOf("team.name" to "evolution",
                 "team.color" to "green",
@@ -490,26 +542,24 @@ class TeamConfigurationBuilderTest : BehaviorSpec({
                 "team.team-admin.president" to "Mark Scanell",
                 "team.player-names" to names)
         val ctx = ApplicationContext.run(ApplicationContext::class.java, items) <i class="conum" data-value="1"></i><b>(1)</b>
-        `when`("TeamConfiguration is retrieved from the context") {
-            val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
-            then("configuration properties are populated") {
-                teamConfiguration.name shouldBe "evolution"
-                teamConfiguration.color shouldBe "green"
-                teamConfiguration.playerNames!!.size shouldBe names.size
-                names.forEach(Consumer { name: String? -&gt; teamConfiguration.playerNames!!.contains(name) shouldBe true })
-                teamConfiguration.builder.manager shouldBe "Jerry Jones"
-                teamConfiguration.builder.coach shouldBe "Tommy O'Neill"
-                teamConfiguration.builder.president shouldBe "Mark Scanell"
+        //`when`("TeamConfiguration is retrieved from the context") {
+        val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
+        //then("configuration properties are populated") {
+         assertEquals("evolution", teamConfiguration.name)
+         assertEquals("green", teamConfiguration.color)
+         assertEquals(names.size, teamConfiguration.playerNames!!.size)
+         names.forEach(Consumer { name: String? -&gt; assertTrue(teamConfiguration.playerNames!!.contains(name)) })
+                assertEquals("Jerry Jones", teamConfiguration.builder.manager)
+                assertEquals("Tommy O'Neill", teamConfiguration.builder.coach)
+                assertEquals("Mark Scanell", teamConfiguration.builder.president)
 
                 val teamAdmin = teamConfiguration.builder.build() <i class="conum" data-value="2"></i><b>(2)</b>
-                teamAdmin.manager shouldBe "Jerry Jones" <i class="conum" data-value="3"></i><b>(3)</b>
-                teamAdmin.coach shouldBe "Tommy O'Neill"
-                teamAdmin.president shouldBe "Mark Scanell"
-            }
-        }
+                assertEquals("Jerry Jones", teamAdmin.manager)  <i class="conum" data-value="3"></i><b>(3)</b>
+                assertEquals("Tommy O'Neill", teamAdmin.coach)
+                assertEquals("Mark Scanell", teamAdmin.president)
         ctx.close()
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -617,38 +667,30 @@ inject a particular <code>StadiumConfiguration</code> instance bean by using the
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
-import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-@MicronautTest
-class StadiumConfigurationTest : BehaviorSpec({
-
-    given("an application context started with configuration") {
-        val items = mapOf("stadium.fenway.city" to "Boston", <i class="conum" data-value="1"></i><b>(1)</b>
-                "stadium.fenway.size" to  60000,
-                "stadium.wrigley.city" to  "Chicago", <i class="conum" data-value="1"></i><b>(1)</b>
-                "stadium.wrigley.size" to 45000
-        )
+class StadiumConfigurationTest {
+    @Test
+    fun testStadiumConfiguration() {
+        val items: MutableMap&lt;String, Any&gt; = HashMap()
+        items["stadium.fenway.city"] = "Boston" <i class="conum" data-value="1"></i><b>(1)</b>
+        items["stadium.fenway.size"] = 60000
+        items["stadium.wrigley.city"] = "Chicago" <i class="conum" data-value="1"></i><b>(1)</b>
+        items["stadium.wrigley.size"] = 45000
         val ctx = ApplicationContext.run(ApplicationContext::class.java, items)
-
-        `when`("StadiumConfiguration are retrieved with bean qualifier") {
-            val fenwayConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("fenway"))  <i class="conum" data-value="2"></i><b>(2)</b>
-            val wrigleyConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("wrigley")) <i class="conum" data-value="2"></i><b>(2)</b>
-
-            then("configuration properties are populated") {
-                fenwayConfiguration.name shouldBe "fenway"
-                fenwayConfiguration.size shouldBe 60000
-                wrigleyConfiguration.name shouldBe "wrigley"
-                wrigleyConfiguration.size shouldBe 45000
-            }
-        }
-
+        <i class="conum" data-value="2"></i><b>(2)</b>
+        val fenwayConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("fenway"))
+        val wrigleyConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("wrigley"))
+        Assertions.assertEquals("fenway", fenwayConfiguration.name)
+        Assertions.assertEquals(60000, fenwayConfiguration.size)
+        Assertions.assertEquals("wrigley", wrigleyConfiguration.name)
+        Assertions.assertEquals(45000, wrigleyConfiguration.size)
         ctx.close()
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -747,42 +789,39 @@ To test the app, run <code>./gradlew test</code>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.env.Environment
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import java.util.*
 import java.util.function.Consumer
+import javax.inject.Inject
 
 @MicronautTest
-class MyControllerTest : BehaviorSpec() {
-    init {
-        given("the math service") {
-            val embeddedServer = autoClose(ApplicationContext.run(EmbeddedServer::class.java, mapOf(), Environment.TEST))
+class MyControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client: HttpClient
 
-            val client = autoClose(embeddedServer.applicationContext.createBean(HttpClient::class.java, embeddedServer.url))
+    @Test
+    fun testMyTeam() {
+        val teamConfiguration = client.toBlocking()
+                .retrieve(HttpRequest.GET&lt;Any&gt;("/my/team"), TeamConfiguration::class.java)
+        Assertions.assertEquals("Steelers", teamConfiguration.name)
+        Assertions.assertEquals("Black", teamConfiguration.color)
+        val expectedPlayers = Arrays.asList("Mason Rudolph", "James Connor")
+        Assertions.assertEquals(expectedPlayers.size, teamConfiguration.playerNames!!.size)
+        expectedPlayers.forEach(Consumer { name: String? -&gt; Assertions.assertTrue(teamConfiguration.playerNames!!.contains(name!!)) })
+    }
 
-            `when`("fetching the teams config") {
-                val expectedPlayers = listOf("Mason Rudolph", "James Connor")
-                val teamConfiguration = client.toBlocking().retrieve(HttpRequest.GET&lt;Any&gt;("/my/team"), TeamConfiguration::class.java)
-                then("the config values from application.yml are used") {
-                    teamConfiguration.name shouldBe "Steelers"
-                    teamConfiguration.color shouldBe "Black"
-                    expectedPlayers.size shouldBe teamConfiguration.playerNames!!.size
-                    expectedPlayers.forEach(Consumer { name: String? -&gt; teamConfiguration.playerNames!!.contains(name) shouldBe true })
-                }
-            }
-            `when`("fetching the stadium config") {
-                val conf = client.toBlocking().retrieve(HttpRequest.GET&lt;Any&gt;("/my/stadium"), StadiumConfiguration::class.java)
-                then("the config values from application.yml are used") {
-                    conf.city shouldBe "Pittsburgh"
-                    conf.size shouldBe 35000
-                }
-            }
-        }
+    @Test
+    fun testMyStadium() {
+        val conf = client.toBlocking()
+                .retrieve(HttpRequest.GET&lt;Any&gt;("/my/stadium"), StadiumConfiguration::class.java)
+        Assertions.assertEquals("Pittsburgh", conf.city)
+        Assertions.assertEquals(35000, conf.size)
     }
 }</code></pre>
 </div>
@@ -799,14 +838,6 @@ class MyControllerTest : BehaviorSpec() {
 
 
 <div class="paragraph">
-<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
-of our Micronaut application.</p>
-</div>
-<div class="paragraph">
-<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
-applications.</p>
-</div>
-<div class="paragraph">
 <p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
 </div>
 <div class="paragraph">
@@ -820,7 +851,7 @@ that is automatically picked up by the <code>native-image</code> tool:</p>
 ...
 ..
 .
-    kapt "io.micronaut:micronaut-graal"
+    kapt("io.micronaut:micronaut-graal")
 }</code></pre>
 </div>
 </div>
@@ -845,7 +876,7 @@ program has faster startup time and lower runtime memory overhead compared to a 
 ...
 ..
 .
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+    compileOnly("org.graalvm.nativeimage:svm")
 }</code></pre>
 </div>
 </div>
@@ -859,16 +890,12 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=micronautguide \
-       -H:Class=example.micronaut.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:Name=micronautguide \
+       -H:Class=example.micronaut.ApplicationKt</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
-</li>
 <li>
 <p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
 </li>
@@ -876,40 +903,6 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
-================================================================================
-Available Java Versions
-================================================================================
- Vendor        | Use | Version      | Dist    | Status     | Identifier
---------------------------------------------------------------------------------
-....
- GraalVM       |     | 19.3.0.r11   | grl     | installed  | 19.3.0.r11-grl
-               |     | 19.3.0.r8    | grl     | installed  | 19.3.0.r8-grl
-               |     | 19.2.1       | grl     |            | 19.2.1-grl
-               |     | 19.1.1       | grl     |            | 19.1.1-grl
-               |     | 19.0.2       | grl     |            | 19.0.2-grl
-
-
-# For Java 8
-$ sdk install java 19.3.0.r8-grl
-
-# For Java 11
-$ sdk install java 19.3.0.r11-grl</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
-</div>
 </div>
 <div class="paragraph">
 <p>To generate the native image you need to generate the FAT JAR first.</p>
@@ -925,28 +918,27 @@ $ sdk install java 19.3.0.r11-grl</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:39362]    classlist:   3,884.97 ms
-[micronautguide:39362]        (cap):   5,919.80 ms
-[micronautguide:39362]        setup:   7,222.88 ms
-[micronautguide:39362]   (typeflow):  14,037.78 ms
-[micronautguide:39362]    (objects):  17,689.40 ms
-[micronautguide:39362]   (features):   1,751.37 ms
-[micronautguide:39362]     analysis:  35,421.99 ms
-[micronautguide:39362]     (clinit):     978.01 ms
-[micronautguide:39362]     universe:   2,114.65 ms
-[micronautguide:39362]      (parse):   2,327.75 ms
-[micronautguide:39362]     (inline):   2,153.46 ms
-[micronautguide:39362]    (compile):  13,066.94 ms
-[micronautguide:39362]      compile:  19,714.97 ms
-[micronautguide:39362]        image:   3,509.84 ms
-[micronautguide:39362]        write:   1,114.96 ms
-[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
+[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
+[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
+[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
+[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
+[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
+[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
+[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
+[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
+[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
+[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
+[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
+[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
+[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
+[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -979,89 +971,92 @@ $ sdk install java 19.3.0.r11-grl</code></pre>
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
-COPY . /home/app/micronautguide
-WORKDIR /home/app/micronautguide
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
+
+COPY . /home/app/complete
+WORKDIR /home/app/complete
+
 RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide /app/micronautguide
-ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/complete/complete /app/complete
+ENTRYPOINT ["/app/complete"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">docker-build.sh</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
-docker build . -t micronautguide
+docker build . -t complete
 echo
 echo
 echo "To run the docker container execute:"
-echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+echo "    $ docker run -p 8080:8080 complete"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
 
-$ ./docker-build.sh
-Sending build context to Docker daemon  64.67MB
-Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
- ---&gt; d625000893c9
-Step 2/9 : COPY . /home/app/micronautguide
- ---&gt; 4c0daf50c6f3
-Step 3/9 : WORKDIR /home/app/micronautguide
- ---&gt; Running in e07cf22b668a
-Removing intermediate container e07cf22b668a
- ---&gt; d3699ea8e284
-Step 4/9 : RUN gu install native-image
- ---&gt; Running in 71edf17b9a11
-Downloading: Component catalog from www.graalvm.org
-Processing Component: Native Image
-Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
-Refreshed alternative links in /usr/bin/
-Removing intermediate container 71edf17b9a11
- ---&gt; ee26c71bbd1e
-Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
- ---&gt; Running in d2cd451f33be
-[micronautguide:28]    classlist:   8,773.36 ms
-[micronautguide:28]        (cap):   1,044.04 ms
-[micronautguide:28]        setup:   2,748.03 ms
-[micronautguide:28]   (typeflow):  20,611.56 ms
-[micronautguide:28]    (objects):  20,377.15 ms
-[micronautguide:28]   (features):   2,168.30 ms
-[micronautguide:28]     analysis:  45,559.16 ms
-[micronautguide:28]     (clinit):   1,141.31 ms
-[micronautguide:28]     universe:   2,719.10 ms
-[micronautguide:28]      (parse):   2,808.15 ms
-[micronautguide:28]     (inline):   3,094.66 ms
-[micronautguide:28]    (compile):  25,648.31 ms
-[micronautguide:28]      compile:  34,018.50 ms
-[micronautguide:28]        image:   3,811.46 ms
-[micronautguide:28]        write:     643.59 ms
-[micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container d2cd451f33be
- ---&gt; 429a467e2fdd
-Step 6/9 : FROM frolvlad/alpine-glibc
- ---&gt; 38dd85a430e8
-Step 7/9 : EXPOSE 8080
+$ % ./docker-build.sh
+Sending build context to Docker daemon    127MB
+Step 1/10 : FROM oracle/graalvm-ce:20.1.0-java11 as graalvm
+ ---&gt; 2adef7aab8f9
+Step 2/10 : RUN gu install native-image
  ---&gt; Using cache
- ---&gt; 643f9d29e3f8
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---&gt; 0d41749e3ceb
-Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
- ---&gt; Running in 31b4c6c21e68
-Removing intermediate container 31b4c6c21e68
- ---&gt; 3ff1de337ef4
-Successfully built 3ff1de337ef4
-Successfully tagged micronautguide:latest
+ ---&gt; a52c98379916
+Step 3/10 : COPY . /home/app/complete
+ ---&gt; 7b5d8708feb7
+Step 4/10 : WORKDIR /home/app/complete
+ ---&gt; Running in 52615dd2ceed
+Removing intermediate container 52615dd2ceed
+ ---&gt; fe6e67e150b6
+Step 5/10 : RUN native-image --no-server -cp build/libs/complete-*-all.jar
+ ---&gt; Running in b0cca1a82c2c
+[micronautguide:24]    classlist:   4,224.09 ms,  0.96 GB
+[micronautguide:24]        (cap):     557.93 ms,  0.96 GB
+WARNING: Could not resolve io.netty.channel.epoll.EpollChannelOption for reflection configuration.
+WARNING: Could not resolve io.netty.channel.kqueue.KQueueChannelOption for reflection configuration.
+[micronautguide:24]        setup:   1,840.06 ms,  0.96 GB
+WARNING GR-10238: VarHandle for static field is currently not fully supported. Static field private static volatile java.lang.System$Logger jdk.internal.event.EventHelper.securityLogger is not properly marked for Unsafe access!
+[micronautguide:24]     (clinit):   1,383.94 ms,  3.42 GB
+[micronautguide:24]   (typeflow):  16,198.26 ms,  3.42 GB
+[micronautguide:24]    (objects):  20,293.44 ms,  3.42 GB
+[micronautguide:24]   (features):   2,859.27 ms,  3.42 GB
+[micronautguide:24]     analysis:  43,474.70 ms,  3.42 GB
+[micronautguide:24]     universe:   1,783.90 ms,  3.38 GB
+[micronautguide:24]      (parse):   4,345.14 ms,  3.68 GB
+[micronautguide:24]     (inline):   2,786.82 ms,  3.52 GB
+[micronautguide:24]    (compile):  18,459.86 ms,  4.32 GB
+[micronautguide:24]      compile:  28,292.51 ms,  4.32 GB
+[micronautguide:24]        image:   5,348.95 ms,  4.33 GB
+[micronautguide:24]        write:     804.47 ms,  4.33 GB
+[micronautguide:24]      [total]:  86,008.19 ms,  4.33 GB
+Removing intermediate container b0cca1a82c2c
+ ---&gt; 31e41f3f3306
+Step 6/10 : FROM frolvlad/alpine-glibc
+ ---&gt; 3a1c752f649f
+Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
+ ---&gt; Using cache
+ ---&gt; 536cd2f06071
+Step 8/10 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 1e011af81857
+Step 9/10 : COPY --from=graalvm /home/app/complete/micronautguide /app/complete
+ ---&gt; 921480edd9b7
+Step 10/10 : ENTRYPOINT ["/app/complete"]
+ ---&gt; Running in a61b95562776
+Removing intermediate container a61b95562776
+ ---&gt; 56c8fff02b03
+Successfully built 56c8fff02b03
+Successfully tagged complete:latest
 
 
 To run the docker container execute:
-    $ docker run -p 8080:8080 micronautguide</code></pre>
+    $ docker run -p 8080:8080 complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1069,8 +1064,9 @@ To run the docker container execute:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
-06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdelamo@Sergios-iMac-Pro complete %  docker run -p 8080:8080 complete
+/app/complete: /usr/lib/libstdc++.so.6: no version information available (required by /app/complete)
+05:06:22.567 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 40ms. Server Running: http://35bc084914f6:8080</code></pre>
 </div>
 </div>
 
@@ -1087,6 +1083,129 @@ To run the docker container execute:
 <div class="paragraph">
 <p>Visit <a href="https://docs.micronaut.io/latest/guide/index.html#config">Micronaut Application Configuration</a> to learn more.</p>
 </div>
+
+
+<h1 id="help">10 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-configuration-kotlin/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
 
 </article>
 </div>

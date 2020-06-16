@@ -56,6 +56,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/next.html"><strong>9</strong><span>Where To Go From Here?</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>10</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -111,15 +114,15 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
 import io.micronaut.context.ApplicationContext
-import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.util.function.Consumer
 
-@MicronautTest
-class TeamConfigurationBuilderTest : BehaviorSpec({
-    given("an application context started with configuration") {
+class TeamConfigurationBuilderTest {
+    @Test
+    fun anApplicationContextStartedWithConfiguration() {
         val names = listOf("Nirav Assar", "Lionel Messi")
         val items = mapOf("team.name" to "evolution",
                 "team.color" to "green",
@@ -128,26 +131,24 @@ class TeamConfigurationBuilderTest : BehaviorSpec({
                 "team.team-admin.president" to "Mark Scanell",
                 "team.player-names" to names)
         val ctx = ApplicationContext.run(ApplicationContext::class.java, items) <i class="conum" data-value="1"></i><b>(1)</b>
-        `when`("TeamConfiguration is retrieved from the context") {
-            val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
-            then("configuration properties are populated") {
-                teamConfiguration.name shouldBe "evolution"
-                teamConfiguration.color shouldBe "green"
-                teamConfiguration.playerNames!!.size shouldBe names.size
-                names.forEach(Consumer { name: String? -&gt; teamConfiguration.playerNames!!.contains(name) shouldBe true })
-                teamConfiguration.builder.manager shouldBe "Jerry Jones"
-                teamConfiguration.builder.coach shouldBe "Tommy O'Neill"
-                teamConfiguration.builder.president shouldBe "Mark Scanell"
+        //`when`("TeamConfiguration is retrieved from the context") {
+        val teamConfiguration = ctx.getBean(TeamConfiguration::class.java)
+        //then("configuration properties are populated") {
+         assertEquals("evolution", teamConfiguration.name)
+         assertEquals("green", teamConfiguration.color)
+         assertEquals(names.size, teamConfiguration.playerNames!!.size)
+         names.forEach(Consumer { name: String? -&gt; assertTrue(teamConfiguration.playerNames!!.contains(name)) })
+                assertEquals("Jerry Jones", teamConfiguration.builder.manager)
+                assertEquals("Tommy O'Neill", teamConfiguration.builder.coach)
+                assertEquals("Mark Scanell", teamConfiguration.builder.president)
 
                 val teamAdmin = teamConfiguration.builder.build() <i class="conum" data-value="2"></i><b>(2)</b>
-                teamAdmin.manager shouldBe "Jerry Jones" <i class="conum" data-value="3"></i><b>(3)</b>
-                teamAdmin.coach shouldBe "Tommy O'Neill"
-                teamAdmin.president shouldBe "Mark Scanell"
-            }
-        }
+                assertEquals("Jerry Jones", teamAdmin.manager)  <i class="conum" data-value="3"></i><b>(3)</b>
+                assertEquals("Tommy O'Neill", teamAdmin.coach)
+                assertEquals("Mark Scanell", teamAdmin.president)
         ctx.close()
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">

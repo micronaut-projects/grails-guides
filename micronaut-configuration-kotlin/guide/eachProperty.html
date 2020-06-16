@@ -56,6 +56,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/next.html"><strong>9</strong><span>Where To Go From Here?</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>10</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -189,38 +192,30 @@ inject a particular <code>StadiumConfiguration</code> instance bean by using the
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.BehaviorSpec
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
-import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-@MicronautTest
-class StadiumConfigurationTest : BehaviorSpec({
-
-    given("an application context started with configuration") {
-        val items = mapOf("stadium.fenway.city" to "Boston", <i class="conum" data-value="1"></i><b>(1)</b>
-                "stadium.fenway.size" to  60000,
-                "stadium.wrigley.city" to  "Chicago", <i class="conum" data-value="1"></i><b>(1)</b>
-                "stadium.wrigley.size" to 45000
-        )
+class StadiumConfigurationTest {
+    @Test
+    fun testStadiumConfiguration() {
+        val items: MutableMap&lt;String, Any&gt; = HashMap()
+        items["stadium.fenway.city"] = "Boston" <i class="conum" data-value="1"></i><b>(1)</b>
+        items["stadium.fenway.size"] = 60000
+        items["stadium.wrigley.city"] = "Chicago" <i class="conum" data-value="1"></i><b>(1)</b>
+        items["stadium.wrigley.size"] = 45000
         val ctx = ApplicationContext.run(ApplicationContext::class.java, items)
-
-        `when`("StadiumConfiguration are retrieved with bean qualifier") {
-            val fenwayConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("fenway"))  <i class="conum" data-value="2"></i><b>(2)</b>
-            val wrigleyConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("wrigley")) <i class="conum" data-value="2"></i><b>(2)</b>
-
-            then("configuration properties are populated") {
-                fenwayConfiguration.name shouldBe "fenway"
-                fenwayConfiguration.size shouldBe 60000
-                wrigleyConfiguration.name shouldBe "wrigley"
-                wrigleyConfiguration.size shouldBe 45000
-            }
-        }
-
+        <i class="conum" data-value="2"></i><b>(2)</b>
+        val fenwayConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("fenway"))
+        val wrigleyConfiguration = ctx.getBean(StadiumConfiguration::class.java, Qualifiers.byName("wrigley"))
+        Assertions.assertEquals("fenway", fenwayConfiguration.name)
+        Assertions.assertEquals(60000, fenwayConfiguration.size)
+        Assertions.assertEquals("wrigley", wrigleyConfiguration.name)
+        Assertions.assertEquals(45000, wrigleyConfiguration.size)
         ctx.close()
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
