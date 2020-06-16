@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.1 Creating Graal native image null</title>
+    <title>5.1 Creating GraalVM native image null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -41,7 +41,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/controller.html"><strong>4</strong><span>Controller</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>5</strong><span>Adding Graal support</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/graal.html"><strong>5</strong><span>Adding GraalVM support</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>6</strong><span>Next steps</span></a>
@@ -79,7 +79,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>5.1 Creating Graal native image</h1>
+                    <h1>5.1 Creating GraalVM native image</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -88,7 +88,7 @@ function addJsClass() {
 
                 
 
-<h2 id="creatingGraalImage">5.1 Creating Graal native image</h2>
+<h2 id="creatingGraalImage">5.1 Creating GraalVM native image</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal/creatingGraalImage.adoc"'>
@@ -98,7 +98,7 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>When we created the application we used the <code>graal-native-image</code> feature. This feature adds three important items:</p>
+<p>When we created the application we used the <code>graalvm</code> feature. This feature adds three important items:</p>
 </div>
 <div class="paragraph">
 <p>1.- <code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
@@ -106,15 +106,15 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "org.graalvm.nativeimage:svm"
-annotationProcessor "io.micronaut:micronaut-graal" <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("org.graalvm.nativeimage:svm")
+annotationProcessor("io.micronaut:micronaut-graal")  <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotation processor to generate the <code>reflect</code> information at compile time.</td>
+<td>Annotation processor to generate the <code>reflection</code> and <code>resources</code> information at compile time.</td>
 </tr>
 </table>
 </div>
@@ -128,8 +128,7 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 <div class="listingblock">
 <div class="title">native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=micronaut-graal-app \
+<pre class="highlightjs highlight"><code>Args = -H:Name=micronaut-graal-app \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -165,10 +164,10 @@ $ ./docker-build.sh</code></pre>
 <p>To build your native image without using Docker you need to install GraalVM SDK via the <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
 </div>
 <div class="listingblock">
-<div class="title">Installing GraalVM 20.0.0 with SDKman</div>
+<div class="title">Installing GraalVM 20.1.0 with SDKman</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.0.0.r8-grl
-$ sdk use java 20.0.0.r8-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.1.0.r8-grl
+$ sdk use java 20.1.0.r8-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -191,7 +190,7 @@ $ sdk use java 20.0.0.r8-grl</code></pre>
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.0.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.1.0.r8-grl
 $ ./gradlew assemble
 $ native-image --no-server -cp build/libs/complete-*-all.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>

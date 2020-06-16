@@ -68,9 +68,9 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>4</strong><span>Controller</span></a></div>
             
-            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>5</strong><span>Adding Graal support</span></a></div>
+            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>5</strong><span>Adding GraalVM support</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#creatingGraalImage"><strong>5.1</strong><span>Creating Graal native image</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#creatingGraalImage"><strong>5.1</strong><span>Creating GraalVM native image</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>6</strong><span>Next steps</span></a></div>
             
@@ -84,7 +84,7 @@
         <h1>Creating your first Micronaut Graal application</h1>
         <p>Learn how to create a Hello World Micronaut Graal application.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez, Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.3.1</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -97,8 +97,20 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-creating-first-graal-app/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>In this guide we are going to create a Micronaut application with <a href="https://www.graalvm.org/">Graal</a> support.</p>
+<p>In this guide we are going to create a Micronaut application with <a href="https://www.graalvm.org/">GraalVM</a> support.</p>
 </div>
 
 
@@ -177,11 +189,11 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.complete --features=graal-native-image</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.complete --features=graalvm</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command creates a Micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code> and with support for Graal.</p>
+<p>The previous command creates a Micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code> and with support for GraalVM.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -235,8 +247,8 @@ public class Conference {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotate the class with <a href="https://docs.micronaut.io/1.1.0.RC1/api/io/micronaut/core/annotation/Introspected.html"><code>@Introspected</code></a>
-to generate <code>BeanIntrospection</code> metadata at compilation time. This information is using the render the POJO as json using Jackson
+<td>Annotate the class with <a href="https://docs.micronaut.io/latest/api/io/micronaut/core/annotation/Introspected.html"><code>@Introspected</code></a>
+to generate <code>BeanIntrospection</code> metadata at compilation time. This information is used to the render the POJO as json using Jackson
 without using reflection.</td>
 </tr>
 </table>
@@ -346,7 +358,7 @@ public class ConferenceController {
 </div>
 
 
-<h1 id="graal">5 Adding Graal support</h1>
+<h1 id="graal">5 Adding GraalVM support</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal.adoc"'>
@@ -379,7 +391,7 @@ reflection which is only partially supported by GraalVM.
 </div>
 
 
-<h2 id="creatingGraalImage">5.1 Creating Graal native image</h2>
+<h2 id="creatingGraalImage">5.1 Creating GraalVM native image</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-creating-first-graal-app/edit/master/src/main/docs/guide/graal/creatingGraalImage.adoc"'>
@@ -389,7 +401,7 @@ reflection which is only partially supported by GraalVM.
 
 
 <div class="paragraph">
-<p>When we created the application we used the <code>graal-native-image</code> feature. This feature adds three important items:</p>
+<p>When we created the application we used the <code>graalvm</code> feature. This feature adds three important items:</p>
 </div>
 <div class="paragraph">
 <p>1.- <code>svm</code> and <code>graal</code> dependencies in <code>build.gradle</code>:</p>
@@ -397,15 +409,15 @@ reflection which is only partially supported by GraalVM.
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly "org.graalvm.nativeimage:svm"
-annotationProcessor "io.micronaut:micronaut-graal" <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">compileOnly("org.graalvm.nativeimage:svm")
+annotationProcessor("io.micronaut:micronaut-graal")  <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotation processor to generate the <code>reflect</code> information at compile time.</td>
+<td>Annotation processor to generate the <code>reflection</code> and <code>resources</code> information at compile time.</td>
 </tr>
 </table>
 </div>
@@ -419,8 +431,7 @@ Graal&#8217;s <code>native-image</code> configuration. This file can be used to 
 <div class="listingblock">
 <div class="title">native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code>Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=micronaut-graal-app \
+<pre class="highlightjs highlight"><code>Args = -H:Name=micronaut-graal-app \
        -H:Class=example.micronaut.Application</code></pre>
 </div>
 </div>
@@ -456,10 +467,10 @@ $ ./docker-build.sh</code></pre>
 <p>To build your native image without using Docker you need to install GraalVM SDK via the <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
 </div>
 <div class="listingblock">
-<div class="title">Installing GraalVM 20.0.0 with SDKman</div>
+<div class="title">Installing GraalVM 20.1.0 with SDKman</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.0.0.r8-grl
-$ sdk use java 20.0.0.r8-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.1.0.r8-grl
+$ sdk use java 20.1.0.r8-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -482,7 +493,7 @@ $ sdk use java 20.0.0.r8-grl</code></pre>
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.0.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.1.0.r8-grl
 $ ./gradlew assemble
 $ native-image --no-server -cp build/libs/complete-*-all.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -532,7 +543,7 @@ sys     0m0.004s</code></pre>
 
 
 <div class="paragraph">
-<p>Read more about <a href="https://docs.micronaut.io/latest/guide/index.html#graal">Graal Support</a> inside Micronaut.</p>
+<p>Read more about <a href="https://docs.micronaut.io/latest/guide/index.html#graal">GraalVM Support</a> inside Micronaut.</p>
 </div>
 
 
