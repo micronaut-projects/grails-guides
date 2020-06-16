@@ -68,7 +68,9 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#cacheApi"><strong>2.2</strong><span>Micronaut Cache Api</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.3</strong><span>Controller</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#test"><strong>2.3</strong><span>Test the Cache</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
             
@@ -86,7 +88,7 @@
         <h1>Micronaut Cache</h1>
         <p>Learn how to use Micronaut's caching annotations</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -99,6 +101,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-cache-kotlin/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, you are going to use Micronaut&#8217;s caching annotations to speed up your application.</p>
 </div>
@@ -184,7 +198,7 @@
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -207,7 +221,17 @@ other build tools such as <code>Maven</code> or other programming languages such
 
 
 <div class="paragraph">
-<p>In this sample application, we cache news headlines. Configure your caches in <code>application.yml</code>:</p>
+<p>In this sample application, we cache news headlines. Add <a href="https://micronaut-projects.github.io/micronaut-cache/latest/guide/index.html">Micronaut Caffeine Cache</a> dependency which
+which adds support for cache using <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">    implementation("io.micronaut.cache:micronaut-cache-caffeine")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure your caches in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -226,18 +250,6 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
-</td>
-</tr>
-</table>
-</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -245,7 +257,7 @@ By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Check the <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#io.micronaut.cache.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
+Check the <a href="https://micronaut-projects.github.io/micronaut-cache/snapshot/guide/configurationreference.html#io.micronaut.cache.caffeine.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
 </td>
 </tr>
 </table>
@@ -354,7 +366,136 @@ If you don&#8217;t annotate the class with <code>@CacheConfig</code>, specify th
 </div>
 
 
-<h2 id="controller">2.3 Controller</h2>
+<h2 id="test">2.3 Test the Cache</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache-kotlin/edit/master/src/main/docs/guide/writingTheApp/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We can verify that the cache works as expected:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/micronaut/example/micronaut/NewsServiceTest.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import java.time.Month
+import javax.inject.Inject
+
+@TestMethodOrder(OrderAnnotation::class) <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest <i class="conum" data-value="2"></i><b>(2)</b>
+internal class NewsServiceTest {
+    @Inject
+    lateinit var newsService : NewsService <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(1) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun firstInvocationOfNovemberDoesNotHitCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(2) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun secondInvocationOfNovemberHitsCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(3) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun firstInvocationOfOctoberDoesNotHitCache() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(4) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun secondInvocationOfOctoberHitsCache() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(5) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun addingAHeadlineToNovemberUpdatesCache() {
+        val headlines = newsService.addHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released")
+        Assertions.assertEquals(3, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(6) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(3, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(7) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun invalidateNovemberCacheWithCacheInvalidate() {
+        Assertions.assertDoesNotThrow { newsService.removeHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released") }
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(8) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun octoberCacheIsStillValid() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(9) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun novemberCacheWasInvalidated() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Used to configure the test method execution order for the annotated test class.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotation used to define a Micronaut test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject <code>NewsService</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Timeout annotation fails a test if its execution exceeds a given duration. It helps us verify that we are leaveraging the cache.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Used to configure the order in which the test method should executed relative to other tests in the class.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache-kotlin/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -395,6 +536,55 @@ class NewsController(val newsService: NewsService) {
     }
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/micronaut/example/micronaut/NewsControllerTest.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.uri.UriBuilder
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
+import java.time.Month
+import java.util.*
+import javax.inject.Inject
+
+@MicronautTest
+class NewsControllerTest {
+
+    @Inject
+    @field:Client("/")
+    lateinit var client: HttpClient
+
+    @Timeout(5) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Test
+    fun fetchingOctoberHeadlinesUsesCache() {
+        val request: HttpRequest&lt;Any&gt; = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.toString()).build())
+        var news: News = client.toBlocking().retrieve(request, News::class.java)
+        val expected = "Micronaut AOP: Awesome flexibility without the complexity"
+        Assertions.assertEquals(listOf(expected), news.headlines)
+        news = client.toBlocking().retrieve(request, News::class.java)
+        Assertions.assertEquals(listOf(expected), news.headlines)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We call the endpoint twice and verify with the <code>@Timeout</code> annotation that the cache is being used.</td>
+</tr>
+</table>
 </div>
 
 
@@ -453,7 +643,6 @@ that is automatically picked up by the <code>native-image</code> tool:</p>
 ...
 ..
 .
-    kapt "io.micronaut:micronaut-graal"
 }</code></pre>
 </div>
 </div>
@@ -478,7 +667,6 @@ program has faster startup time and lower runtime memory overhead compared to a 
 ...
 ..
 .
-    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
 }</code></pre>
 </div>
 </div>
@@ -492,16 +680,12 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <div class="listingblock">
 <div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
-       -H:Name=micronautguide \
-       -H:Class=example.micronaut.Application</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:Name=micronautguide \
+       -H:Class=example.micronaut.ApplicationKt</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>The <code>-H:IncludeResources</code> argument allows you to tweak which static resources to include. You can use regular expressions.</p>
-</li>
 <li>
 <p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
 </li>
@@ -524,28 +708,27 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/19.3.0.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:39362]    classlist:   3,884.97 ms
-[micronautguide:39362]        (cap):   5,919.80 ms
-[micronautguide:39362]        setup:   7,222.88 ms
-[micronautguide:39362]   (typeflow):  14,037.78 ms
-[micronautguide:39362]    (objects):  17,689.40 ms
-[micronautguide:39362]   (features):   1,751.37 ms
-[micronautguide:39362]     analysis:  35,421.99 ms
-[micronautguide:39362]     (clinit):     978.01 ms
-[micronautguide:39362]     universe:   2,114.65 ms
-[micronautguide:39362]      (parse):   2,327.75 ms
-[micronautguide:39362]     (inline):   2,153.46 ms
-[micronautguide:39362]    (compile):  13,066.94 ms
-[micronautguide:39362]      compile:  19,714.97 ms
-[micronautguide:39362]        image:   3,509.84 ms
-[micronautguide:39362]        write:   1,114.96 ms
-[micronautguide:39362]      [total]:  73,294.82 ms</code></pre>
+[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
+[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
+[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
+[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
+[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
+[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
+[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
+[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
+[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
+[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
+[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
+[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
+[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
+[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
+[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -587,89 +770,92 @@ The convention is to use the folder <code>src/main/resources/META-INF/native-ima
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
-COPY . /home/app/micronautguide
-WORKDIR /home/app/micronautguide
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
+
+COPY . /home/app/complete
+WORKDIR /home/app/complete
+
 RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide /app/micronautguide
-ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/complete/complete /app/complete
+ENTRYPOINT ["/app/complete"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">docker-build.sh</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
-docker build . -t micronautguide
+docker build . -t complete
 echo
 echo
 echo "To run the docker container execute:"
-echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+echo "    $ docker run -p 8080:8080 complete"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
 
-$ ./docker-build.sh
-Sending build context to Docker daemon  64.67MB
-Step 1/9 : FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
- ---&gt; d625000893c9
-Step 2/9 : COPY . /home/app/micronautguide
- ---&gt; 4c0daf50c6f3
-Step 3/9 : WORKDIR /home/app/micronautguide
- ---&gt; Running in e07cf22b668a
-Removing intermediate container e07cf22b668a
- ---&gt; d3699ea8e284
-Step 4/9 : RUN gu install native-image
- ---&gt; Running in 71edf17b9a11
-Downloading: Component catalog from www.graalvm.org
-Processing Component: Native Image
-Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 19.3.0)
-Refreshed alternative links in /usr/bin/
-Removing intermediate container 71edf17b9a11
- ---&gt; ee26c71bbd1e
-Step 5/9 : RUN native-image --no-server --static -cp build/libs/complete-*-all.jar
- ---&gt; Running in d2cd451f33be
-[micronautguide:28]    classlist:   8,773.36 ms
-[micronautguide:28]        (cap):   1,044.04 ms
-[micronautguide:28]        setup:   2,748.03 ms
-[micronautguide:28]   (typeflow):  20,611.56 ms
-[micronautguide:28]    (objects):  20,377.15 ms
-[micronautguide:28]   (features):   2,168.30 ms
-[micronautguide:28]     analysis:  45,559.16 ms
-[micronautguide:28]     (clinit):   1,141.31 ms
-[micronautguide:28]     universe:   2,719.10 ms
-[micronautguide:28]      (parse):   2,808.15 ms
-[micronautguide:28]     (inline):   3,094.66 ms
-[micronautguide:28]    (compile):  25,648.31 ms
-[micronautguide:28]      compile:  34,018.50 ms
-[micronautguide:28]        image:   3,811.46 ms
-[micronautguide:28]        write:     643.59 ms
-[micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container d2cd451f33be
- ---&gt; 429a467e2fdd
-Step 6/9 : FROM frolvlad/alpine-glibc
- ---&gt; 38dd85a430e8
-Step 7/9 : EXPOSE 8080
+$ % ./docker-build.sh
+Sending build context to Docker daemon    127MB
+Step 1/10 : FROM oracle/graalvm-ce:20.1.0-java11 as graalvm
+ ---&gt; 2adef7aab8f9
+Step 2/10 : RUN gu install native-image
  ---&gt; Using cache
- ---&gt; 643f9d29e3f8
-Step 8/9 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---&gt; 0d41749e3ceb
-Step 9/9 : ENTRYPOINT ["/app/micronautguide"]
- ---&gt; Running in 31b4c6c21e68
-Removing intermediate container 31b4c6c21e68
- ---&gt; 3ff1de337ef4
-Successfully built 3ff1de337ef4
-Successfully tagged micronautguide:latest
+ ---&gt; a52c98379916
+Step 3/10 : COPY . /home/app/complete
+ ---&gt; 7b5d8708feb7
+Step 4/10 : WORKDIR /home/app/complete
+ ---&gt; Running in 52615dd2ceed
+Removing intermediate container 52615dd2ceed
+ ---&gt; fe6e67e150b6
+Step 5/10 : RUN native-image --no-server -cp build/libs/complete-*-all.jar
+ ---&gt; Running in b0cca1a82c2c
+[micronautguide:24]    classlist:   4,224.09 ms,  0.96 GB
+[micronautguide:24]        (cap):     557.93 ms,  0.96 GB
+WARNING: Could not resolve io.netty.channel.epoll.EpollChannelOption for reflection configuration.
+WARNING: Could not resolve io.netty.channel.kqueue.KQueueChannelOption for reflection configuration.
+[micronautguide:24]        setup:   1,840.06 ms,  0.96 GB
+WARNING GR-10238: VarHandle for static field is currently not fully supported. Static field private static volatile java.lang.System$Logger jdk.internal.event.EventHelper.securityLogger is not properly marked for Unsafe access!
+[micronautguide:24]     (clinit):   1,383.94 ms,  3.42 GB
+[micronautguide:24]   (typeflow):  16,198.26 ms,  3.42 GB
+[micronautguide:24]    (objects):  20,293.44 ms,  3.42 GB
+[micronautguide:24]   (features):   2,859.27 ms,  3.42 GB
+[micronautguide:24]     analysis:  43,474.70 ms,  3.42 GB
+[micronautguide:24]     universe:   1,783.90 ms,  3.38 GB
+[micronautguide:24]      (parse):   4,345.14 ms,  3.68 GB
+[micronautguide:24]     (inline):   2,786.82 ms,  3.52 GB
+[micronautguide:24]    (compile):  18,459.86 ms,  4.32 GB
+[micronautguide:24]      compile:  28,292.51 ms,  4.32 GB
+[micronautguide:24]        image:   5,348.95 ms,  4.33 GB
+[micronautguide:24]        write:     804.47 ms,  4.33 GB
+[micronautguide:24]      [total]:  86,008.19 ms,  4.33 GB
+Removing intermediate container b0cca1a82c2c
+ ---&gt; 31e41f3f3306
+Step 6/10 : FROM frolvlad/alpine-glibc
+ ---&gt; 3a1c752f649f
+Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
+ ---&gt; Using cache
+ ---&gt; 536cd2f06071
+Step 8/10 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 1e011af81857
+Step 9/10 : COPY --from=graalvm /home/app/complete/micronautguide /app/complete
+ ---&gt; 921480edd9b7
+Step 10/10 : ENTRYPOINT ["/app/complete"]
+ ---&gt; Running in a61b95562776
+Removing intermediate container a61b95562776
+ ---&gt; 56c8fff02b03
+Successfully built 56c8fff02b03
+Successfully tagged complete:latest
 
 
 To run the docker container execute:
-    $ docker run -p 8080:8080 micronautguide</code></pre>
+    $ docker run -p 8080:8080 complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -677,8 +863,9 @@ To run the docker container execute:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
-06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdelamo@Sergios-iMac-Pro complete %  docker run -p 8080:8080 complete
+/app/complete: /usr/lib/libstdc++.so.6: no version information available (required by /app/complete)
+05:06:22.567 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 40ms. Server Running: http://35bc084914f6:8080</code></pre>
 </div>
 </div>
 

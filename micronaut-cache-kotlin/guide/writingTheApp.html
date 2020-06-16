@@ -91,7 +91,10 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#cacheApi"><strong>2.2</strong><span>Micronaut Cache Api</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>2.3</strong><span>Controller</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#test"><strong>2.3</strong><span>Test the Cache</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a>
                     </div>
                     
                 </div>
@@ -118,7 +121,7 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -141,7 +144,17 @@ other build tools such as <code>Maven</code> or other programming languages such
 
 
 <div class="paragraph">
-<p>In this sample application, we cache news headlines. Configure your caches in <code>application.yml</code>:</p>
+<p>In this sample application, we cache news headlines. Add <a href="https://micronaut-projects.github.io/micronaut-cache/latest/guide/index.html">Micronaut Caffeine Cache</a> dependency which
+which adds support for cache using <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">    implementation("io.micronaut.cache:micronaut-cache-caffeine")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure your caches in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
@@ -160,18 +173,6 @@ other build tools such as <code>Maven</code> or other programming languages such
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com/ben-manes/caffeine">Caffeine</a>.
-</td>
-</tr>
-</table>
-</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -179,7 +180,7 @@ By default Micronaut&#8217;s cache uses, by default, <a href="https://github.com
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Check the <a href="https://docs.micronaut.io/1.3.0.M1/guide/index.html#io.micronaut.cache.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
+Check the <a href="https://micronaut-projects.github.io/micronaut-cache/snapshot/guide/configurationreference.html#io.micronaut.cache.caffeine.DefaultCacheConfiguration">properties (<code>maximum-size</code>, <code>expire-after-write</code> and <code>expire-after-access</code>)</a> to configure the size and expiration of your caches. It is important to keep the caches' size under control.
 </td>
 </tr>
 </table>
@@ -288,7 +289,136 @@ If you don&#8217;t annotate the class with <code>@CacheConfig</code>, specify th
 </div>
 
 
-<h2 id="controller">2.3 Controller</h2>
+<h2 id="test">2.3 Test the Cache</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache-kotlin/edit/master/src/main/docs/guide/writingTheApp/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We can verify that the cache works as expected:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/micronaut/example/micronaut/NewsServiceTest.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import java.time.Month
+import javax.inject.Inject
+
+@TestMethodOrder(OrderAnnotation::class) <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest <i class="conum" data-value="2"></i><b>(2)</b>
+internal class NewsServiceTest {
+    @Inject
+    lateinit var newsService : NewsService <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(1) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun firstInvocationOfNovemberDoesNotHitCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(2) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun secondInvocationOfNovemberHitsCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(3) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun firstInvocationOfOctoberDoesNotHitCache() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(4) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun secondInvocationOfOctoberHitsCache() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(5) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun addingAHeadlineToNovemberUpdatesCache() {
+        val headlines = newsService.addHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released")
+        Assertions.assertEquals(3, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(6) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(3, headlines!!.size)
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(7) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun invalidateNovemberCacheWithCacheInvalidate() {
+        Assertions.assertDoesNotThrow { newsService.removeHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released") }
+    }
+
+    @Timeout(1) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(8) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun octoberCacheIsStillValid() {
+        val headlines = newsService.headlines(Month.OCTOBER)
+        Assertions.assertEquals(1, headlines!!.size)
+    }
+
+    @Timeout(4) <i class="conum" data-value="4"></i><b>(4)</b>
+    @Test
+    @Order(9) <i class="conum" data-value="5"></i><b>(5)</b>
+    fun novemberCacheWasInvalidated() {
+        val headlines = newsService.headlines(Month.NOVEMBER)
+        Assertions.assertEquals(2, headlines!!.size)
+    }
+}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Used to configure the test method execution order for the annotated test class.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotation used to define a Micronaut test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Inject <code>NewsService</code> bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Timeout annotation fails a test if its execution exceeds a given duration. It helps us verify that we are leaveraging the cache.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Used to configure the order in which the test method should executed relative to other tests in the class.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.4 Controller</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-cache-kotlin/edit/master/src/main/docs/guide/writingTheApp/controller.adoc"'>
@@ -329,6 +459,55 @@ class NewsController(val newsService: NewsService) {
     }
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Add a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/micronaut/example/micronaut/NewsControllerTest.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.uri.UriBuilder
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
+import java.time.Month
+import java.util.*
+import javax.inject.Inject
+
+@MicronautTest
+class NewsControllerTest {
+
+    @Inject
+    @field:Client("/")
+    lateinit var client: HttpClient
+
+    @Timeout(5) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Test
+    fun fetchingOctoberHeadlinesUsesCache() {
+        val request: HttpRequest&lt;Any&gt; = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.toString()).build())
+        var news: News = client.toBlocking().retrieve(request, News::class.java)
+        val expected = "Micronaut AOP: Awesome flexibility without the complexity"
+        Assertions.assertEquals(listOf(expected), news.headlines)
+        news = client.toBlocking().retrieve(request, News::class.java)
+        Assertions.assertEquals(listOf(expected), news.headlines)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We call the endpoint twice and verify with the <code>@Timeout</code> annotation that the cache is being used.</td>
+</tr>
+</table>
 </div>
 
 
