@@ -98,66 +98,35 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">kotlinVersion=1.3.50
-micronautVersion=1.2.6
-spekVersion=2.0.8</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">complete/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    ...
-    ..
-    .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude group: 'org.junit.platform'
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test which verifies that when you do a GET request to <code>/hello</code> you get <code>Hello World</code> as a response:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/HelloControllerSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/HelloControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.client.HttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object HelloControllerSpec : Spek({
-    describe("HelloController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: HttpClient = HttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class HelloControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client : RxHttpClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-        it("test /hello responds Hello World") {
-            var rsp: String = client.toBlocking().retrieve("/hello")
-            assertEquals("Hello World", rsp)
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testHello() {
+        val request: HttpRequest&lt;Any&gt; = HttpRequest.GET("/hello") <i class="conum" data-value="3"></i><b>(3)</b>
+        val body = client.toBlocking().retrieve(request)
+        Assertions.assertNotNull(body)
+        Assertions.assertEquals("Hello World", body)
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
