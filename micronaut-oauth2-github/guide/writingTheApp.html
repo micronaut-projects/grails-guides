@@ -150,7 +150,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <p>Although Micronaut is primarily designed around message encoding / decoding, there are occasions where it is convenient to render a view on the server side.</p>
 </div>
 <div class="paragraph">
-<p>To use the view rendering features, add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
+<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine within a Micronaut Application  add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -158,20 +158,7 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut:micronaut-views-thymeleaf"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine, add the thymeleaf dependency:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
-  ...
-  ..
-    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }</code></pre>
 </div>
 </div>
@@ -324,12 +311,13 @@ injects into the model a <code>security</code> map with the authenticated user. 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT"
+    implementation("io.micronaut.security:micronaut-security-oauth2")
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Add also JWT <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
+<p>Add the following Oauth2 Configuration:
+Add also JWT <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -337,8 +325,8 @@ injects into the model a <code>security</code> map with the authenticated user. 
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
-    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>

@@ -95,7 +95,7 @@ function addJsClass() {
 <p>Although Micronaut is primarily designed around message encoding / decoding, there are occasions where it is convenient to render a view on the server side.</p>
 </div>
 <div class="paragraph">
-<p>To use the view rendering features, add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
+<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine within a Micronaut Application  add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -103,20 +103,7 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut:micronaut-views-thymeleaf"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine, add the thymeleaf dependency:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
-  ...
-  ..
-    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }</code></pre>
 </div>
 </div>

@@ -100,12 +100,13 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    implementation "io.micronaut.configuration:micronaut-security-oauth2:2.0.0.BUILD-SNAPSHOT"
+    implementation("io.micronaut.security:micronaut-security-oauth2")
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Add also JWT <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
+<p>Add the following Oauth2 Configuration:
+Add also JWT <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -113,8 +114,8 @@ function addJsClass() {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
   ...
   ..
-    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
-    implementation "io.micronaut:micronaut-security-jwt:2.0.0.BUILD-SNAPSHOT"
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>
