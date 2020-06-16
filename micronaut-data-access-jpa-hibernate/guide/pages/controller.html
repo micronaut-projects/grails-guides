@@ -305,8 +305,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-@ExecuteOn(TaskExecutors.IO)
-@Controller("/genres") <i class="conum" data-value="1"></i><b>(1)</b>
+@ExecuteOn(TaskExecutors.IO)  <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/genres")
 public class GenreController {
 
     protected final GenreRepository genreRepository;
@@ -377,42 +377,46 @@ public class GenreController {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code>.</td>
+<td>It is critical that any blocking I/O operations (such as fetching the data from the database) are offloaded to a separate thread pool that does not block the Event loop.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Constructor injection.</td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path <code>/genres</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable.</td>
+<td>Constructor injection.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Returning <code>null</code> when the genre doesn&#8217;t exist makes Micronaut to response with 404 (not found).</td>
+<td>Maps a <code>GET</code> request to <code>/genres/{id}</code> which attempts to show a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
+<td>Returning <code>null</code> when the genre doesn&#8217;t exist makes Micronaut to response with 404 (not found).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
+<td>Maps a <code>PUT</code> request to <code>/genres</code> which attempts to update a genre.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>It is easy to add custom headers to the response.</td>
+<td>Add <code>@Valid</code> to any method parameter which requires validation. Use a POJO supplied as a JSON payload in the request to populate command.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates URL parameters being mapped to a single POJO.</td>
+<td>It is easy to add custom headers to the response.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
+<td>Maps a <code>GET</code> request to <code>/genres</code> which returns a list of genres. This mapping illustrates URL parameters being mapped to a single POJO.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Maps a <code>POST</code> request to <code>/genres</code> which attempts to save a genre.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>Maps a <code>DELETE</code> request to <code>/genres/{id}</code> which attempts to remove a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 </table>

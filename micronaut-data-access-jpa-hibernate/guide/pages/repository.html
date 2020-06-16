@@ -109,7 +109,7 @@ dependencies {
 ...
 ..
 .
-    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
 }</code></pre>
 </div>
@@ -244,12 +244,12 @@ public class GenreRepositoryImpl implements GenreRepository {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>All database access needs to be wrapped inside a transaction, we use Micronaut&#8217;s <code>@javax.transaction.Transactional</code>. As the method
+<td>All database access needs to be wrapped inside a transaction. As the method
 only reads data from the database, annotate it with <code>@ReadOnly</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This method modifies the database, define <code>@Transactional</code> but without the <code>@ReadOnly</code> annotation.</td>
+<td>This method modifies the database, thus it is annoated with <code>@Transactional</code>.</td>
 </tr>
 </table>
 </div>
