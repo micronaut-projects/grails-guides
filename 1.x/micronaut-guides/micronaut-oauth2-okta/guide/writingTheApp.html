@@ -1,0 +1,463 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2 Writing the App null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Secure a Micronaut app with Okta
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/learnmore.html"><strong>4</strong><span>Learn More</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2 Writing the App</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#views"><strong>2.1</strong><span>Views</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#oauth2"><strong>2.2</strong><span>OAuth 2.0</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#home"><strong>2.3</strong><span>Home</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="views">2.1 Views</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/views.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Although Micronaut is primarily designed around message encoding / decoding, there are occasions where it is convenient to render a view on the server side.</p>
+</div>
+<div class="paragraph">
+<p>To use the view rendering features, add the following dependency on your classpath. For example, in <code>build.gradle</code></p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    implementation "io.micronaut:micronaut-views-thymeleaf"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use <a href="https://www.thymeleaf.org/">Thymeleaf</a> Java template engine, add the thymeleaf dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+}</code></pre>
+</div>
+</div>
+
+
+<h2 id="oauth2">2.2 OAuth 2.0</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/oauth2.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Sign up at <a href="https://developer.okta.com">developer.okta.com</a> and create a Web app with the following characteristics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check <code>Authorization Code</code> grant type.</p>
+</li>
+<li>
+<p>Add <code><a href="http://localhost:8080/oauth/callback/okta" class="bare">http://localhost:8080/oauth/callback/okta</a></code> as a login redirect URIs.</p>
+</li>
+<li>
+<p>Add <code><a href="http://localhost:8080/logout" class="bare">http://localhost:8080/logout</a></code> as a Logout redirect URIs.</p>
+</li>
+<li>
+<p>Annotate the Client ID and Secret.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/okta-app.png" alt="okta app">
+</div>
+</div>
+<div class="paragraph">
+<p>To use OAuth 2.0 integration, add the next dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronautVersion=1.2.7</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    implementation "io.micronaut.configuration:micronaut-security-oauth2"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add also JWT <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+  ...
+  ..
+    annotationProcessor "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security-jwt"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the following Oauth2 Configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">micronaut:
+  security:
+    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
+    oauth2:
+      enabled: true
+      clients:
+        okta: <i class="conum" data-value="2"></i><b>(2)</b>
+          client-secret: '${OAUTH_CLIENT_SECRET}' <i class="conum" data-value="3"></i><b>(3)</b>
+          client-id: '${OAUTH_CLIENT_ID}' <i class="conum" data-value="4"></i><b>(4)</b>
+          openid:
+            issuer: '${OIDC_ISSUER_DOMAIN}/oauth2/${OIDC_ISSUER_AUTHSERVERID}' <i class="conum" data-value="5"></i><b>(5)</b>
+    token:
+      jwt:
+        enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
+        cookie:
+          enabled: true <i class="conum" data-value="7"></i><b>(7)</b>
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne
+    endpoints:
+      logout:
+        enabled: true <i class="conum" data-value="8"></i><b>(8)</b>
+        get-allowed: true <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable security</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The provider identifier should match the last part of the url you entered as a redirect url <code>/oauth/callback/okta</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Client Secret. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Client ID. See previous screenshot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>issuer</code> url. It allows micronaut to discover the configuration of the OpenID Connect server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>ID Token is a JWT token. We need to enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#jwt">Micronaut’s JWT support</a> to validate it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Once validated, we are going to save the ID Token in a Cookie. To read in subsequent requests, enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#cookieToken">Cookie Token Reader</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Enable <a href="https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html#logout">Logout Controller</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Accept GET request to the <code>/logout</code> endpoint.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous configuration uses several placeholders. You will need to setup <code>OAUTH_CLIENT_ID</code>, <code>OAUTH_CLIENT_SECRET</code>, <code>OIDC_ISSUER_DOMAIN</code> and <code>OIDC_ISSUER_AUTHSERVERID</code> environment variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>export OAUTH_CLIENT_ID=XXXXXXXXXX
+export OAUTH_CLIENT_SECRET=YYYYYYYYYY
+export OIDC_ISSUER_DOMAIN=https://dev-XXXXX.oktapreview.com
+export OIDC_ISSUER_AUTHSERVERID=default</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check OKTA <a href="https://developer.okta.com/docs/api/resources/oidc#well-knownopenid-configuration">.well-known/openid-configuration documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>We want to use an <strong>Authorization Code</strong> grant type flow which it is described in the following diagram:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/diagramm.png" alt="diagramm">
+</div>
+</div>
+
+
+<h2 id="home">2.3 Home</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-okta/edit/master/src/main/docs/guide/writingTheApp/home.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller to handle the requests to <code>/</code>. You are going to display the email of the authenticated person if any. Annotate the controller endpoint with <code>@View</code> since we are going to use a Thymeleaf template.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HomeController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.views.View;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller <i class="conum" data-value="1"></i><b>(1)</b>
+public class HomeController {
+
+    @Secured(SecurityRule.IS_ANONYMOUS) <i class="conum" data-value="2"></i><b>(2)</b>
+    @View("home") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    public Map&lt;String, Object&gt; index() {
+        return new HashMap&lt;&gt;();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate with <code>io.micronaut.security.Secured</code> to configure secured access. The <code>SecurityRule.IS_ANONYMOUS</code> expression will allow access without authentication.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/View.html">View</a> annotation to specify which template would you like to render the response against.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Get.html">@Get</a> annotation is used to map the <code>index</code> method to GET <code>/</code> requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a thymeleaf template:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/home.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;Home&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Micronaut - Okta example&lt;/h1&gt;
+
+&lt;h2 th:if="${security}"&gt;username: &lt;span th:text="${security.attributes.get('email')}"&gt;&lt;/span&gt;&lt;/h2&gt;
+&lt;h2 th:unless="${security}"&gt;username: Anonymous&lt;/h2&gt;
+
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li th:unless="${security}"&gt;&lt;a href="/oauth/login/okta"&gt;Enter&lt;/a&gt;&lt;/li&gt;
+        &lt;li th:if="${security}"&gt;&lt;a href="/oauth/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, note that we return an empty model in the controller. However, we are accessing <code>security</code> in the thymeleaf template.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/views/model/security/SecurityViewModelProcessor.html">SecurityViewModelProcessor</a>
+injects into the model a <code>security</code> map with the authenticated user.  See
+<a href="https://micronaut-projects.github.io/micronaut-views/latest/guide/index.html#views-security">User in a view</a> documentation.</p>
+</li>
+</ul>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
