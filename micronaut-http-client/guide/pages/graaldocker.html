@@ -118,30 +118,30 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
 
-COPY . /home/app/micronautguide
-WORKDIR /home/app/micronautguide
+COPY . /home/app/complete
+WORKDIR /home/app/complete
 
 RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
 FROM frolvlad/alpine-glibc
 RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide/micronautguide /micronautguide/micronautguide
-ENTRYPOINT ["/micronautguide/micronautguide", "-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/complete/complete /app/complete
+ENTRYPOINT ["/app/complete"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">docker-build.sh</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
-docker build . -t micronautguide
+docker build . -t complete
 echo
 echo
 echo "To run the docker container execute:"
-echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+echo "    $ docker run -p 8080:8080 complete"</code></pre>
 </div>
 </div>
 <div class="listingblock">

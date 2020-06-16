@@ -113,106 +113,75 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
- <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example.micronaut
----
-testFramework: spock
-sourceLanguage: java</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test which verifies both clients work as expected and the controller echoes the output of the Bintray API in a Reactive way.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/BintrayControllerSpec.groovy</div>
+<div class="title">src/test/java/example/micronaut/BintrayControllerTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.core.type.Argument
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxStreamingHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.test.annotation.MicronautTest
-import io.reactivex.Flowable
-import spock.lang.Shared
-import spock.lang.Specification
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.RxStreamingHttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.test.annotation.MicronautTest;
+import io.reactivex.Flowable;
+import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-class BintrayControllerSpec extends Specification {
+class BintrayControllerTest {
 
     @Inject
     @Client("/")
-    RxStreamingHttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
+    RxStreamingHttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Shared
-    List&lt;String&gt; expectedProfileNames = ['base', 'federation', 'function', 'function-aws', 'service']
+    private static final List&lt;String&gt; expectedProfileNames = Arrays.asList("base", "federation", "function", "function-aws", "service");
 
-    def "Verify bintray packages can be fetched with low level HttpClient"() {
-        when:
-        HttpRequest request = HttpRequest.GET('/bintray/packages-lowlevel')
+    @Test
+    public void verifyBintrayPackagesCanBeFetchedWithLowLevelHttpClient() {
+        //when:
+        HttpRequest request = HttpRequest.GET("/bintray/packages-lowlevel");
 
         HttpResponse&lt;List&lt;BintrayPackage&gt;&gt; rsp = client.toBlocking().exchange(request, <i class="conum" data-value="3"></i><b>(3)</b>
-                Argument.listOf(BintrayPackage)) <i class="conum" data-value="4"></i><b>(4)</b>
+                Argument.listOf(BintrayPackage.class)); <i class="conum" data-value="4"></i><b>(4)</b>
 
-        then: 'the endpoint can be accessed'
-        rsp.status == HttpStatus.OK  <i class="conum" data-value="5"></i><b>(5)</b>
-        rsp.body() <i class="conum" data-value="6"></i><b>(6)</b>
+        //then: 'the endpoint can be accessed'
+        assertEquals(HttpStatus.OK, rsp.getStatus());   <i class="conum" data-value="5"></i><b>(5)</b>
+        assertNotNull(rsp.body()); <i class="conum" data-value="6"></i><b>(6)</b>
 
-        when:
-        List&lt;BintrayPackage&gt; packages = rsp.body()
+        //when:
+        List&lt;BintrayPackage&gt; packages = rsp.body();
 
-        then:
+        //then:
         for (String name : expectedProfileNames) {
-            assert packages*.name.contains(name)
+            assertTrue(packages.stream().map(BintrayPackage::getName).anyMatch(name::equals));
         }
     }
 
-    def "Verify bintray packages can be fetched with compile-time autogenerated @Client"() {
-        when:
-        HttpRequest request = HttpRequest.GET('/bintray/packages')
+    @Test
+    public void verifyBintrayPackagesCanBeFetchedWithCompileTimeAutoGeneratedAtClient() {
+        //when:
+        HttpRequest request = HttpRequest.GET("/bintray/packages");
 
-        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage) <i class="conum" data-value="7"></i><b>(7)</b>
-        Iterable&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable()
+        Flowable&lt;BintrayPackage&gt; bintrayPackageStream = client.jsonStream(request, BintrayPackage.class); <i class="conum" data-value="7"></i><b>(7)</b>
+        Iterable&lt;BintrayPackage&gt; bintrayPackages = bintrayPackageStream.blockingIterable();
 
-        then:
+        //then:
         for (String name : expectedProfileNames) {
-            assert bintrayPackages*.name.contains(name)
+            assertTrue(StreamSupport.stream(bintrayPackages.spliterator(), false)
+                    .map(BintrayPackage::getName)
+                    .anyMatch(name::equals));
         }
     }
 }</code></pre>
