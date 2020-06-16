@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.6 Retrieve User Github repositories null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Secure a Micronaut app with Github
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/learnmore.html"><strong>4</strong><span>Learn More</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.6 Retrieve User Github repositories</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="github">2.6 Retrieve User Github repositories</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-oauth2-github/edit/master/src/main/docs/guide/writingTheApp/github.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>With the access token, we retrieved during the login we are going to contact the Github API to fetch the user&#8217;s repositories.</p>
+</div>
+<div class="paragraph">
+<p>First, create a POJO to represent a Github repository:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/GithubRepo.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
+public class GithubRepo {
+
+    private String name;
+
+    public GithubRepo() {
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a method to <code>GithubApiClient</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">....
+public interface GithubApiClient {
+....
+    @Get("/user/repos{?sort,direction}") <i class="conum" data-value="1"></i><b>(1)</b>
+    List&lt;GithubRepo&gt; repos(
+            @Pattern(regexp = "created|updated|pushed|full_name") @Nullable @QueryValue String sort, <i class="conum" data-value="2"></i><b>(2)</b>
+            @Pattern(regexp = "asc|desc") @Nullable @QueryValue String direction, <i class="conum" data-value="2"></i><b>(2)</b>
+            @Header(HttpHeaders.AUTHORIZATION) String authorization);
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specify two query values <code>sort</code> and <code>direction</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Annotate <code>sort</code> and <code>direction</code> as <code>@Nullable</code> since they are optional. You can restrict the allowed values with use of constraints.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a controller to expose <code>/repos</code> endpoint:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/ReposController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.http.HttpHeaderValues;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.oauth2.endpoint.token.response.OauthUserDetailsMapper;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.views.View;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller("/repos") <i class="conum" data-value="1"></i><b>(1)</b>
+public class ReposController {
+
+    public static final String CREATED = "created";
+    public static final String DESC = "desc";
+    public static final String REPOS = "repos";
+    private final GithubApiClient githubApiClient;
+
+    public ReposController(GithubApiClient githubApiClient) {
+        this.githubApiClient = githubApiClient;
+    }
+
+    @Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="2"></i><b>(2)</b>
+    @View("repos") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="4"></i><b>(4)</b>
+    Map&lt;String, Object&gt; index(Authentication authentication) {
+        List&lt;GithubRepo&gt; repos = githubApiClient.repos(CREATED, DESC, authorizationValue(authentication));  <i class="conum" data-value="5"></i><b>(5)</b>
+        Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+        model.put(REPOS, repos);
+        return model;
+    }
+
+    private String authorizationValue(Authentication authentication) {
+        String authorization = null;
+        Object claim = authentication.getAttributes().get(OauthUserDetailsMapper.ACCESS_TOKEN_KEY);  <i class="conum" data-value="6"></i><b>(6)</b>
+        if (claim instanceof String) {
+            authorization = HttpHeaderValues.AUTHORIZATION_PREFIX_BEARER + " " + claim.toString();
+        }
+        return authorization;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Qualify the <code>@Controller</code> annotation with <code>/repos</code> to designate the endpoint url.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We want this endpoint to be only accessible to authenticated users.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We specify the view name <code>repos</code> which is used to render the model.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Declare a GET endpoint.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Consume the Github API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use the previously obtained access token to get access against the Github API.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a thymeleaf template:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/views/repos.html</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;Home&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;&lt;a href="/"&gt;Home&lt;/a&gt; &amp;rarr; Repositories&lt;/h1&gt;
+&lt;nav&gt;
+    &lt;ul th:each="repo: ${repos}"&gt;
+        &lt;li th:text="${repo.name}"/&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
