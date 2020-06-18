@@ -101,8 +101,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-views-thymeleaf"
-    runtime "org.thymeleaf:thymeleaf:3.0.9.RELEASE"
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }</code></pre>
 </div>
 </div>
@@ -114,8 +113,10 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.server.types.files.SystemFile;
 import io.micronaut.views.View;
 
@@ -136,12 +137,13 @@ public class HomeController {
 
     @View("index") <i class="conum" data-value="3"></i><b>(3)</b>
     @Get
-    Map&lt;String, String&gt; index() {
+    public Map&lt;String, String&gt; index() {
         return new HashMap&lt;&gt;();
     }
 
+    @Produces(value = "application/vnd.ms-excel")
     @Get("/excel") <i class="conum" data-value="4"></i><b>(4)</b>
-    SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
+    public SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
         return bookExcelService.excelFileFromBooks(bookRepository.findAll());
     }
 }</code></pre>

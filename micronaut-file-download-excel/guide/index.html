@@ -88,7 +88,7 @@
         <h1>Download an Excel file in Micronaut App</h1>
         <p>Learn how to download an excel file with Micronaut and Spreadsheet Builder library.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -101,6 +101,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-file-download-excel/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, we are going to demonstrate Micronaut <a href="https://docs.micronaut.io/snapshot/guide/index.html#transfers">file transfer</a> capabilities by creating
 an app which downloads an excel file with a list of books.</p>
@@ -205,32 +217,44 @@ an app which downloads an excel file with a list of books.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.util.Objects;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
+
+@Introspected
 public class Book {
+    @NonNull
+    @NotBlank
     private String isbn;
+
+    @NonNull
+    @NotBlank
     private String name;
 
-    public Book() {}
-
-    public Book(String isbn, String name) {
-        this.isbn = isbn;
-        this.name =  name;
+    public Book() {
     }
 
+    public Book(@NonNull @NotBlank String isbn, @NonNull @NotBlank String name) {
+        this.isbn = isbn;
+        this.name = name;
+    }
+
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -238,15 +262,18 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn) &amp;&amp;
-                Objects.equals(name, book.name);
+
+        if (!isbn.equals(book.isbn)) return false;
+        return name.equals(book.name);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(isbn, name);
+        int result = isbn.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -259,10 +286,15 @@ public class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.context.annotation.DefaultImplementation;
+
 import java.util.List;
 
+@DefaultImplementation(BookRepositoryImpl.class)
 public interface BookRepository {
 
+    @NonNull
     List&lt;Book&gt; findAll();
 }</code></pre>
 </div>
@@ -275,6 +307,8 @@ public interface BookRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -282,6 +316,7 @@ import java.util.Arrays;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class BookRepositoryImpl implements BookRepository {
+    @NonNull
     @Override
     public List&lt;Book&gt; findAll() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
@@ -328,7 +363,7 @@ public class BookRepositoryImpl implements BookRepository {
     ...
     ..
     .
-    implementation "builders.dsl:spreadsheet-builder-poi:2.0.0"
+    implementation "builders.dsl:spreadsheet-builder-poi:2.1.0"
 }</code></pre>
 </div>
 </div>
@@ -352,8 +387,15 @@ public class BookRepositoryImpl implements BookRepository {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.context.annotation.DefaultImplementation;
 import io.micronaut.http.server.types.files.SystemFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+@DefaultImplementation(BookExcelServiceImpl.class)
 public interface BookExcelService {
     String SHEET_NAME = "Books";
     String HEADER_ISBN = "Isbn";
@@ -362,7 +404,8 @@ public interface BookExcelService {
     String HEADER_EXCEL_FILE_PREFIX = "books";
     String HEADER_EXCEL_FILENAME = HEADER_EXCEL_FILE_PREFIX + HEADER_EXCEL_FILE_SUFIX;
 
-    SystemFile excelFileFromBooks(List&lt;Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
+    @NonNull
+    SystemFile excelFileFromBooks(@NonNull @NotNull List&lt;@Valid Book&gt; bookList); <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
 </div>
 </div>
@@ -407,11 +450,17 @@ public class BookExcelStylesheet implements Stylesheet {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
 import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.http.server.types.files.SystemFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -422,8 +471,8 @@ public class BookExcelServiceImpl implements BookExcelService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BookExcelServiceImpl.class);
 
-    @Override
-    public SystemFile excelFileFromBooks(List&lt;Book&gt; bookList) {
+    @NonNull
+    public SystemFile excelFileFromBooks(@NonNull @NotNull List&lt;@Valid Book&gt; bookList) {
         try {
             File file = File.createTempFile(HEADER_EXCEL_FILE_PREFIX, HEADER_EXCEL_FILE_SUFIX);
             PoiSpreadsheetBuilder.create(file).build(w -&gt; {
@@ -448,7 +497,7 @@ public class BookExcelServiceImpl implements BookExcelService {
                 LOG.error("File not found exception raised when generating excel file");
             }
         }
-        return null;
+        throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "error generating excel file");
     }
 }</code></pre>
 </div>
@@ -482,8 +531,7 @@ public class BookExcelServiceImpl implements BookExcelService {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-views-thymeleaf"
-    runtime "org.thymeleaf:thymeleaf:3.0.9.RELEASE"
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }</code></pre>
 </div>
 </div>
@@ -495,8 +543,10 @@ public class BookExcelServiceImpl implements BookExcelService {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.server.types.files.SystemFile;
 import io.micronaut.views.View;
 
@@ -517,12 +567,13 @@ public class HomeController {
 
     @View("index") <i class="conum" data-value="3"></i><b>(3)</b>
     @Get
-    Map&lt;String, String&gt; index() {
+    public Map&lt;String, String&gt; index() {
         return new HashMap&lt;&gt;();
     }
 
+    @Produces(value = "application/vnd.ms-excel")
     @Get("/excel") <i class="conum" data-value="4"></i><b>(4)</b>
-    SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
+    public SystemFile excel() { <i class="conum" data-value="5"></i><b>(5)</b>
         return bookExcelService.excelFileFromBooks(bookRepository.findAll());
     }
 }</code></pre>
@@ -585,47 +636,7 @@ public class HomeController {
 easy is to test that the file downloads but also that the downloaded file contents match our expectations.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
- <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example.micronaut
----
-testFramework: spock
-sourceLanguage: java</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We use also, Geb; a browser automation solution.</p>
+<p>Micronaut is test framework agnostic. For this tutorial, we use <a href="http://spockframework.org/">Spock Framework</a>. Additionally, we use Geb; a browser automation solution.</p>
 </div>
 <div class="paragraph">
 <p>To use Geb, add dependencies:</p>
@@ -633,13 +644,11 @@ sourceLanguage: java</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testImplementation ("org.gebish:geb-spock:$gebVersion") {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testImplementation ("org.gebish:geb-spock:3.4") {
     exclude group: "org.codehaus.groovy", module: "groovy-all"
 }
-testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"</code></pre>
+testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
+testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -720,15 +729,12 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    id "com.github.erdi.webdriver-binaries" version "2.1"
+    id "com.github.erdi.webdriver-binaries" version "2.2"
 }
 
 webdriverBinaries {
     chromedriver {
-        version = chromeDriverVersion
-    }
-    geckodriver {
-        version = geckoDriverVersion
+        version = '83.0.4103.39'
     }
 }
 

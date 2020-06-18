@@ -99,32 +99,44 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import java.util.Objects;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
+
+@Introspected
 public class Book {
+    @NonNull
+    @NotBlank
     private String isbn;
+
+    @NonNull
+    @NotBlank
     private String name;
 
-    public Book() {}
-
-    public Book(String isbn, String name) {
-        this.isbn = isbn;
-        this.name =  name;
+    public Book() {
     }
 
+    public Book(@NonNull @NotBlank String isbn, @NonNull @NotBlank String name) {
+        this.isbn = isbn;
+        this.name = name;
+    }
+
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -132,15 +144,18 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn) &amp;&amp;
-                Objects.equals(name, book.name);
+
+        if (!isbn.equals(book.isbn)) return false;
+        return name.equals(book.name);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(isbn, name);
+        int result = isbn.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -153,10 +168,15 @@ public class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.context.annotation.DefaultImplementation;
+
 import java.util.List;
 
+@DefaultImplementation(BookRepositoryImpl.class)
 public interface BookRepository {
 
+    @NonNull
     List&lt;Book&gt; findAll();
 }</code></pre>
 </div>
@@ -169,6 +189,8 @@ public interface BookRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -176,6 +198,7 @@ import java.util.Arrays;
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 public class BookRepositoryImpl implements BookRepository {
+    @NonNull
     @Override
     public List&lt;Book&gt; findAll() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");

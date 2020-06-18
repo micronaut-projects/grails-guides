@@ -96,47 +96,7 @@ function addJsClass() {
 easy is to test that the file downloads but also that the downloaded file contents match our expectations.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
- <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example.micronaut
----
-testFramework: spock
-sourceLanguage: java</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We use also, Geb; a browser automation solution.</p>
+<p>Micronaut is test framework agnostic. For this tutorial, we use <a href="http://spockframework.org/">Spock Framework</a>. Additionally, we use Geb; a browser automation solution.</p>
 </div>
 <div class="paragraph">
 <p>To use Geb, add dependencies:</p>
@@ -144,13 +104,11 @@ sourceLanguage: java</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testImplementation ("org.gebish:geb-spock:$gebVersion") {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testImplementation ("org.gebish:geb-spock:3.4") {
     exclude group: "org.codehaus.groovy", module: "groovy-all"
 }
-testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"</code></pre>
+testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
+testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -231,15 +189,12 @@ a plugin that downloads and caches WebDriver binaries specific to the OS the bui
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
 ...
 ..
-    id "com.github.erdi.webdriver-binaries" version "2.1"
+    id "com.github.erdi.webdriver-binaries" version "2.2"
 }
 
 webdriverBinaries {
     chromedriver {
-        version = chromeDriverVersion
-    }
-    geckodriver {
-        version = geckoDriverVersion
+        version = '83.0.4103.39'
     }
 }
 
