@@ -100,12 +100,13 @@ function addJsClass() {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -343,6 +344,12 @@ class BookController {
     }
 
 
+    private Map&lt;String, Object&gt; createModelWithBlankValues() {
+        final Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
+        model.put("title", "");
+        model.put("pages", "");
+        return model;
+    }
 ..
 ...
 }</code></pre>
