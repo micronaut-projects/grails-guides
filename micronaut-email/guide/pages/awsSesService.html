@@ -101,347 +101,67 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation('software.amazon.awssdk:ses:2.13.39')</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Create a service which encapsulates AWS credentials provider. The bean will not be loaded if the
-environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) or system properties ( <code>aws.accesskeyid</code>, <code>aws.secretkey</code>) are not present.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/AwsCredentialsProviderCondition.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import io.micronaut.context.condition.Condition;
-import io.micronaut.context.condition.ConditionContext;
-import io.micronaut.core.util.StringUtils;
-
-public class AwsCredentialsProviderCondition implements Condition {
-
-    @Override
-    public boolean matches(ConditionContext context) {
-        return envOrSystemProperty("AWS_ACCESS_KEY_ID", "aws.accesskeyid") &amp;&amp;
-                envOrSystemProperty("AWS_SECRET_KEY", "aws.secretkey");
-    }
-
-    private boolean envOrSystemProperty(String env, String prop) {
-        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderConditionSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsCredentialsProviderConditionSpec extends Specification {
-
-    @RestoreSystemProperties
-    def "condition is true if system properties are present"() {
-        given:
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-
-        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
-
-        expect:
-        condition.matches(null)
-    }
-
-    def "condition is false if system properties are not present"() {
-        given:
-        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
-
-        expect:
-        !condition.matches(null)
-    }
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/AwsCredentialsProviderService.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.annotation.Value;
-import javax.inject.Singleton;
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(condition = AwsCredentialsProviderCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
-public class AwsCredentialsProviderService implements AWSCredentialsProvider {
-
-    protected final String accessKey;
-    protected final String secretKey;
-
-    public AwsCredentialsProviderService(@Value("${AWS_ACCESS_KEY_ID:none}") String accessKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
-                                  @Value("${AWS_SECRET_KEY:none}") String secretKeyEnv,
-                                  @Value("${aws.accesskeyid:none}") String accessKeyProp,
-                                  @Value("${aws.secretkey:none}") String secretKeyProp) {
-        this.accessKey = accessKeyEnv != null &amp;&amp; !accessKeyEnv.equals("none") ? accessKeyEnv : accessKeyProp;
-        this.secretKey = secretKeyEnv != null &amp;&amp; !secretKeyEnv.equals("none")  ? accessKeyEnv : secretKeyProp;
-    }
-
-    @Override
-    public AWSCredentials getCredentials() {
-        return new BasicAWSCredentials(accessKey, secretKey);
-    }
-
-    @Override
-    public void refresh() {
-
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded unless condition is met.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Values will be resolved from system properties.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderServiceSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsCredentialsProviderServiceSpec extends Specification {
-
-    def "AwsCredentialsProviderService is not loaded if system property is not present"() {
-        given:
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-
-        when:
-        embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-
-        then:
-        thrown(NoSuchBeanException)
-
-        cleanup:
-        embeddedServer.close()
-    }
-
-    @RestoreSystemProperties
-    def "AwsCredentialsProviderService is loaded if system properties are present"() {
-        given:
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-
-        when:
-        AwsCredentialsProviderService bean = embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-
-        then:
-        noExceptionThrown()
-        bean.secretKey == 'YYYY'
-        bean.accessKey == 'XXXX'
-
-        cleanup:
-        embeddedServer.close()
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a service which sends the email with AWS Simple Email Service. The bean will not be loaded if the
-environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) or system properties (<code>aws.region</code>, <code>aws.sourceemail</code>) are not present.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/java/example/micronaut/AwsSesMailCondition.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import io.micronaut.context.condition.Condition;
-import io.micronaut.context.condition.ConditionContext;
-import io.micronaut.core.util.StringUtils;
-
-public class AwsSesMailCondition implements Condition {
-
-    @Override
-    public boolean matches(ConditionContext context) {
-        return envOrSystemProperty("AWS_SOURCE_EMAIL", "aws.sourceemail") &amp;&amp;
-                envOrSystemProperty("AWS_REGION", "aws.region");
-    }
-
-    private boolean envOrSystemProperty(String env, String prop) {
-        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsSesMailConditionSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsSesMailConditionSpec extends Specification {
-
-    @RestoreSystemProperties
-    def "condition is true if system properties are present"() {
-        given:
-        System.setProperty("aws.region", "XXXX")
-        System.setProperty("aws.sourceemail", "me@micronaut.example")
-        AwsSesMailCondition condition = new AwsSesMailCondition()
-
-        expect:
-        condition.matches(null)
-    }
-
-    def "condition is false if system properties are not present"() {
-        given:
-        AwsSesMailCondition condition = new AwsSesMailCondition()
-
-        expect:
-        !condition.matches(null)
-    }
-}</code></pre>
-</div>
+<p>Create service which uses AWS Simple Email Service client to send the email</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/AwsSesMailService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import com.amazonaws.services.simpleemail.model.SendEmailResult;
-
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-import io.micronaut.context.annotation.Primary;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Secondary;
 import io.micronaut.context.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.model.Body;
+import software.amazon.awssdk.services.ses.model.Content;
+import software.amazon.awssdk.services.ses.model.Destination;
+import software.amazon.awssdk.services.ses.model.Message;
+import software.amazon.awssdk.services.ses.model.SendEmailRequest;
+import software.amazon.awssdk.services.ses.model.SendEmailResponse;
 
 import javax.inject.Singleton;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(beans = AwsCredentialsProviderService.class) <i class="conum" data-value="2"></i><b>(2)</b>
-@Requires(condition = AwsSesMailCondition.class)  <i class="conum" data-value="3"></i><b>(3)</b>
-@Primary <i class="conum" data-value="4"></i><b>(4)</b>
+@Requires(condition = AwsResourceAccessCondition.class)  <i class="conum" data-value="2"></i><b>(2)</b>
+@Secondary <i class="conum" data-value="3"></i><b>(3)</b>
 public class AwsSesMailService implements EmailService {
     private static final Logger LOG = LoggerFactory.getLogger(AwsSesMailService.class);
-
-    protected final String awsRegion;
-
     protected final String sourceEmail;
+    protected final SesClient ses;
 
-    protected final AwsCredentialsProviderService awsCredentialsProviderService;
+    public AwsSesMailService(@Nullable @Value("${AWS_REGION}") String awsRegionEnv, <i class="conum" data-value="4"></i><b>(4)</b>
+                             @Nullable @Value("${AWS_SOURCE_EMAIL}") String sourceEmailEnv,
+                             @Nullable @Value("${aws.region}") String awsRegionProp,
+                             @Nullable @Value("${aws.sourceemail}") String sourceEmailProp) {
 
-    public AwsSesMailService(@Value("${AWS_REGION:none}") String awsRegionEnv, <i class="conum" data-value="5"></i><b>(5)</b>
-                      @Value("${AWS_SOURCE_EMAIL:none}") String sourceEmailEnv,
-                      @Value("${aws.region:none}") String awsRegionProp,
-                      @Value("${aws.sourceemail:none}") String sourceEmailProp,
-                      AwsCredentialsProviderService awsCredentialsProviderService
-                      ) {
-        this.awsRegion = awsRegionEnv != null &amp;&amp; !awsRegionEnv.equals("none") ? awsRegionEnv : awsRegionProp;
-        this.sourceEmail = sourceEmailEnv != null &amp;&amp; !sourceEmailEnv.equals("none") ? sourceEmailEnv : sourceEmailProp;
-        this.awsCredentialsProviderService = awsCredentialsProviderService;
-    }
-
-    private Body bodyOfEmail(Email email) {
-        if (email.getHtmlBody() != null &amp;&amp; !email.getHtmlBody().isEmpty()) {
-            Content htmlBody = new Content().withData(email.getHtmlBody());
-            return new Body().withHtml(htmlBody);
-        }
-        if (email.getTextBody() != null &amp;&amp; !email.getTextBody().isEmpty()) {
-            Content textBody = new Content().withData(email.getTextBody());
-            return new Body().withHtml(textBody);
-        }
-        return new Body();
+        this.sourceEmail = sourceEmailEnv != null ? sourceEmailEnv : sourceEmailProp;
+        String awsRegion = awsRegionEnv != null ? awsRegionEnv : awsRegionProp;
+        this.ses = SesClient.builder().region(Region.of(awsRegion)).build();
     }
 
     @Override
-    public void send(Email email) {
-
-        if ( awsCredentialsProviderService == null ) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("AWS Credentials provider not configured");
-            }
-            return;
-        }
-
-        Destination destination = new Destination().withToAddresses(email.getRecipient());
-        if ( email.getCc() !=null) {
-            destination = destination.withCcAddresses(email.getCc());
-        }
-        if ( email.getBcc() != null ) {
-            destination = destination.withBccAddresses(email.getBcc());
-        }
-        Content subject = new Content().withData(email.getSubject());
-        Body body = bodyOfEmail(email);
-        Message message = new Message().withSubject(subject).withBody(body);
-
-        SendEmailRequest request = new SendEmailRequest()
-                .withSource(sourceEmail)
-                .withDestination(destination)
-                .withMessage(message);
-
-        if ( email.getReplyTo() != null ) {
-            request = request.withReplyToAddresses();
-        }
-
-        try {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
-            }
-
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(awsCredentialsProviderService)
-                    .withRegion(awsRegion)
-                    .build();
-
-            SendEmailResult sendEmailResult = client.sendEmail(request);
-
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Email sent! {}", sendEmailResult.toString());
-            }
-        } catch (Exception ex) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("The email was not sent.");
-                LOG.warn("Error message: {}", ex.getMessage());
-            }
+    public void send(@NonNull @NotNull @Valid Email email) {
+        SendEmailRequest sendEmailRequest = SendEmailRequest.builder()
+                .destination(Destination.builder().toAddresses(email.getRecipient()).build())
+                .source(sourceEmail)
+                .message(Message.builder().subject(Content.builder().data(email.getSubject()).build())
+                        .body(Body.builder().text(Content.builder().data(email.getTextBody()).build()).build()).build())
+                .build();
+        SendEmailResponse response =ses.sendEmail(sendEmailRequest);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Sent email with id: {}", response.messageId());
         }
     }
 }</code></pre>
@@ -455,72 +175,155 @@ public class AwsSesMailService implements EmailService {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded, if bean is not present.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Bean will not loaded unless condition is met.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>@Primary</code> is a qualifier that indicates that a bean is the primary bean that should be selected in the case of multiple possible interface implementations.</td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>In case of multiple possible interface implementations of <code>EmailService</code>, <code>@Secondary</code> reduces the priority.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Values will be resolved from system properties.</td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Values for region and source email are resolved from environment variables or system properties.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Add a test:</p>
+<p>We annotated the previous class with <code>@Requires(condition = AwsResourceAccessCondition.class)</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>AwsResourceAccessCondition</code> ensures the bean is not loaded unless certain conditions are fulfilled.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html"><em>Configure IAM Roles for Amazon EC2</em></a></p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>If your application creates an AWS client using the create method, the client searches for credentials using the default credentials provider chain, in the following order:</p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="ulist">
+<ul>
+<li>
+<p>In the Java system properties: <code>aws.accessKeyId</code> and <code>aws.secretAccessKey</code>.</p>
+</li>
+<li>
+<p>In system environment variables: <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>.</p>
+</li>
+<li>
+<p>In the default credentials file (the location of this file varies by platform).</p>
+</li>
+<li>
+<p>n the Amazon ECS environment variable: <code>AWS_CONTAINER_CREDENTIALS_RELATIVE_URI</code>.</p>
+</li>
+<li>
+<p>In the instance profile credentials, which exist within the instance metadata associated with the IAM role for the EC2 instance.</p>
+</li>
+</ul>
+</div>
+</blockquote>
+</div>
+</blockquote>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsSesMailServiceSpec.groovy</div>
+<div class="title">src/main/java/example/micronaut/AwsResourceAccessCondition.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
+import io.micronaut.context.condition.Condition;
+import io.micronaut.context.condition.ConditionContext;
+import io.micronaut.context.env.Environment;
+import io.micronaut.core.util.StringUtils;
 
-class AwsSesMailServiceSpec extends Specification {
+/**
+ * @see &lt;a href="https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html"&gt;Configure IAM Roles for Amazon EC2&lt;/a&gt;
+ */
+public class AwsResourceAccessCondition implements Condition {
 
-    def "AwsSesMailService is not loaded if system property is not present"() {
-        given:
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    @Override
+    public boolean matches(ConditionContext context) {
 
-        when:
-        embeddedServer.applicationContext.getBean(AwsSesMailService)
+        if (StringUtils.isNotEmpty(System.getProperty("aws.accessKeyId")) &amp;&amp;  StringUtils.isNotEmpty(System.getProperty("aws.secretAccessKey"))) { <i class="conum" data-value="1"></i><b>(1)</b>
+            return true;
+        }
 
-        then:
-        thrown(NoSuchBeanException)
+        if (StringUtils.isNotEmpty(System.getenv("AWS_ACCESS_KEY_ID")) &amp;&amp;  StringUtils.isNotEmpty(System.getenv("AWS_SECRET_ACCESS_KEY"))) { <i class="conum" data-value="2"></i><b>(2)</b>
+            return true;
+        }
 
-        cleanup:
-        embeddedServer.close()
+        if (StringUtils.isNotEmpty(System.getenv("AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"))) { <i class="conum" data-value="3"></i><b>(3)</b>
+            return true;
+        }
+
+        return context != null &amp;&amp; context.getBean(Environment.class).getActiveNames().contains(Environment.AMAZON_EC2); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test to verify the service is loaded:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/java/example/micronaut/AwsSesMailServiceTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.ApplicationContext;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+class AwsSesMailServiceTest {
+
+    @Test
+    public void awsSesMailServiceIsNotLoadedIfSystemPropertyIsNotPresent() {
+        ApplicationContext ctx = ApplicationContext.run();
+        assertFalse(ctx.containsBean(AwsSesMailService.class));
+        ctx.close();
     }
 
-    @RestoreSystemProperties
-    def "AwsSesMailService is loaded if system properties are present"() {
-        given:
-        System.setProperty("aws.region", "XXXX")
-        System.setProperty("aws.sourceemail", "me@micronaut.example")
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    @Test
+    public void awsSesMailServiceIsLoadedIfSystemPropertiesArePresent() {
+        String accesskeyid = System.getProperty("aws.accessKeyId");
+        String awssecretkey = System.getProperty("aws.secretAccessKey");
+        String awsregion = System.getProperty("aws.region");
+        String sourceemail = System.getProperty("aws.sourceemail");
 
-        when:
-        embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-        AwsSesMailService bean = embeddedServer.applicationContext.getBean(AwsSesMailService)
+        System.setProperty("aws.accessKeyId", "XXXX");
+        System.setProperty("aws.secretAccessKey", "YKYY");
+        System.setProperty("aws.region", "XXXX");
+        System.setProperty("aws.sourceemail", "me@micronaut.example");
 
-        then:
-        noExceptionThrown()
-        bean.sourceEmail == 'me@micronaut.example'
-        bean.awsRegion == 'XXXX'
+        ApplicationContext ctx = ApplicationContext.run();
+        AwsSesMailService bean = ctx.getBean(AwsSesMailService.class);
+        assertEquals("me@micronaut.example", bean.sourceEmail);
+        ctx.close();
 
-        cleanup:
-        embeddedServer.close()
+        if (awsregion == null) {
+            System.clearProperty("aws.region");
+        } else {
+            System.setProperty("aws.region", awsregion);
+        }
+        if (sourceemail == null) {
+            System.clearProperty("aws.sourceemail");
+        } else {
+            System.setProperty("aws.sourceemail", sourceemail);
+        }
+        if (accesskeyid == null) {
+            System.clearProperty("aws.accessKeyId");
+        } else {
+            System.setProperty("aws.accessKeyId", accesskeyid);
+        }
+        if (awssecretkey == null) {
+            System.clearProperty("aws.secretAccessKey");
+        } else {
+            System.setProperty("aws.secretAccessKey", awssecretkey);
+        }
     }
 }</code></pre>
 </div>

@@ -107,7 +107,6 @@ import javax.validation.Valid;
 
 @Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
 public class MailController {
-    private static final Logger LOG = LoggerFactory.getLogger(MailController.class);
 
     private final EmailService emailService;
 
@@ -116,7 +115,7 @@ public class MailController {
     }
 
     @Post("/send") <i class="conum" data-value="3"></i><b>(3)</b>
-    public HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
+    public HttpResponse&lt;?&gt; send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
         emailService.send(cmd);
         return HttpResponse.ok();  <i class="conum" data-value="5"></i><b>(5)</b>
     }
@@ -153,7 +152,8 @@ public class MailController {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">class EmailCmd implements Email {
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Introspected
+public class EmailCmd implements Email {
 
     @NotNull
     @NotBlank

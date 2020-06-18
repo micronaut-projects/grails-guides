@@ -89,71 +89,36 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
- <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example
----
-testFramework: spock
-sourceLanguage: groovy</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>In our acceptance test, beans <code>SendGridEmailService</code> or <code>AwsSesMailService</code> will not be loaded since system properties are not present.</p>
 </div>
 <div class="paragraph">
 <p>Instead, we setup a Mock which we can verify interactions against.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/MockEmailService.groovy</div>
+<div class="title">src/test/java/example/micronaut/MockEmailService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.annotation.Primary
-import io.micronaut.context.annotation.Requires
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
 
-import javax.inject.Singleton
+import javax.inject.Singleton;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Primary
-@Requires(property = 'spec.name', value = 'mailcontroller')
+@Requires(property = "spec.name", value = "mailcontroller")
 @Singleton
-class MockEmailService implements EmailService {
+public class MockEmailService implements EmailService {
 
-    List&lt;Email&gt; emails = []
+    public List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
 
     @Override
-    void send(Email email) {
-        emails &lt;&lt; email
+    public void send(@NonNull @NotNull @Valid Email email) {
+        emails.add(email);
     }
 }</code></pre>
 </div>
@@ -162,61 +127,52 @@ class MockEmailService implements EmailService {
 <p>Create the next test:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/MailControllerSpec.groovy</div>
+<div class="title">src/test/java/example/micronaut/MailControllerTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.annotation.Property
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Shared
-import spock.lang.Specification
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject
+import javax.inject.Inject;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
-class MailControllerSpec extends Specification {
+@Property(name = "spec.name", value = "mailcontroller") <i class="conum" data-value="2"></i><b>(2)</b>
+class MailControllerTest {
 
-    @Shared
     @Inject
-    ApplicationContext applicationContext <i class="conum" data-value="3"></i><b>(3)</b>
+    ApplicationContext applicationContext; <i class="conum" data-value="3"></i><b>(3)</b>
 
-    @Shared
     @Inject
     @Client("/")
-    RxHttpClient client <i class="conum" data-value="4"></i><b>(4)</b>
+    RxHttpClient client; <i class="conum" data-value="4"></i><b>(4)</b>
 
-    def "/mail/send interacts once email service"() {
-        given:
-        EmailCmd cmd = new EmailCmd(subject: 'Test',
-                recipient: 'delamos@grails.example',
-                textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="5"></i><b>(5)</b>
-
-        when:
-        Collection&lt;Class&gt; emailServices = applicationContext.getBeansOfType(EmailService)
-
-        then:
-        !emailServices.any { it == SendGridEmailService.class}
-        !emailServices.any { it == AwsSesMailService.class}
-
-        when:
-        EmailService emailService = applicationContext.getBean(EmailService)
-
-        then:
-        emailService instanceof MockEmailService
-
-        when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
-
-        then:
-        rsp.status.code == 200
-        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="6"></i><b>(6)</b>
+    @Test
+    public void mailsendInteractsOnceEmailService() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setSubject("Test");
+        cmd.setRecipient("delamos@grails.example");
+        cmd.setTextBody("Hola hola");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="5"></i><b>(5)</b>
+        Collection&lt;EmailService&gt; emailServices = applicationContext.getBeansOfType(EmailService.class);
+        assertEquals(1, emailServices.size());
+        EmailService emailService = applicationContext.getBean(EmailService.class);
+        assertTrue(emailService instanceof MockEmailService);
+        int oldEmailsSize = ((MockEmailService) emailService).emails.size();
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request);
+        assertEquals(HttpStatus.OK, rsp.getStatus());
+        assertEquals(oldEmailsSize + 1 , ((MockEmailService) emailService).emails.size()); <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>

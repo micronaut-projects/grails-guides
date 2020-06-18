@@ -100,121 +100,107 @@ function addJsClass() {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Create the next test:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/java/example/micronaut/MailControllerValidationSpec.groovy</div>
+<div class="title">src/test/java/example/micronaut/MailControllerValidationTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.annotation.Property
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Shared
-import spock.lang.Specification
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import javax.inject.Inject
+import javax.inject.Inject;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
-class MailControllerValidationSpec extends Specification {
+@Property(name = "spec.name", value = "mailcontroller") <i class="conum" data-value="2"></i><b>(2)</b>
+class MailControllerValidationTest {
 
-    @Shared
     @Inject
-    ApplicationContext applicationContext
+    ApplicationContext applicationContext;
 
-    @Shared
     @Inject
     @Client("/")
-    RxHttpClient client
+    RxHttpClient client;
 
-    def "/mail/send cannot be invoked without subject"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                recipient: 'delamos@micronaut.example',
-                textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Test
+    public void mailSendCannotBeInvokedWithoubSubject() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setRecipient("delamos@micronaut.example");
+        cmd.setTextBody("Hola hola");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="3"></i><b>(3)</b>
 
-        when:
-        client.toBlocking().exchange(request)
-
-        then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        Executable e = () -&gt; client.toBlocking().exchange(request);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, e);
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    def "/mail/send cannot be invoked without recipient"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Test
+    public void mailSendCannotBeInvokedWithoutRecipient() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setSubject("Hola");
+        cmd.setTextBody("Hola hola");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="3"></i><b>(3)</b>
 
-        when:
-        client.toBlocking().exchange(request)
-
-        then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        Executable e = () -&gt; client.toBlocking().exchange(request);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, e);
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    def "/mail/send cannot be invoked without either textBody or htmlBody"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',)
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+    @Test
+    public void mailSendCannotBeInvokedWithoutEitherTextBodyOrHtmlBody() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setSubject("Hola");
+        cmd.setRecipient("delamos@micronaut.example");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="3"></i><b>(3)</b>
 
-        when:
-        client.toBlocking().exchange(request)
-
-        then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        Executable e = () -&gt; client.toBlocking().exchange(request);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, e);
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    def "/mail/send can be invoked without textBody and not htmlBody"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',
-                textBody: 'Hello')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
-
-        then:
-        rsp.status().code == 200
+    @Test
+    public void mailSendCanBeInvokedWithoutTextBodyAndNotHtmlBody() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setSubject("Hola");
+        cmd.setRecipient("delamos@micronaut.example");
+        cmd.setTextBody("Hello");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request);
+        assertEquals(HttpStatus.OK, rsp.getStatus());
     }
 
-    def "/mail/send can be invoked without htmlBody and not textBody"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',
-                htmlBody: '&lt;h1&gt;Hello&lt;/h1&gt;')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
-
-        when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
-
-        then:
-        rsp.status().code == 200
+    @Test
+    public void mailSendCanBeInvokedWithoutHtmlBodyAndNotTextBody() {
+        EmailCmd cmd = new EmailCmd();
+        cmd.setSubject("Hola");
+        cmd.setRecipient("delamos@micronaut.example");
+        cmd.setHtmlBody("&lt;h1&gt;Hello&lt;/h1&gt;");
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd); <i class="conum" data-value="3"></i><b>(3)</b>
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request);
+        assertEquals(HttpStatus.OK, rsp.getStatus());
     }
 }</code></pre>
 </div>
@@ -297,10 +283,9 @@ public class EmailConstraintsFactory {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Introspected
-@EmailConstraints
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@EmailConstraints
+@Introspected
 public class EmailCmd implements Email {
-
     @NotNull
     @NotBlank
     private String recipient;
