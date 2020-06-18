@@ -76,9 +76,7 @@
             
             <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>3.2</strong><span>Native Image generation</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graalreflectjson"><strong>3.3</strong><span>Provide Reflection Config</span></a></div>
-            
-            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>3.4</strong><span>Native Image generation with Docker</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>3.3</strong><span>Native Image generation with Docker</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>4</strong><span>Next Steps</span></a></div>
             
@@ -958,202 +956,16 @@ $ sdk install java 20.1.0.r11-grl</code></pre>
 07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
 </div>
 </div>
-
-
-<h2 id="graalreflectjson">3.3 Provide Reflection Config</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/graal/graalreflectjson.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
 <div class="paragraph">
 <p>After you run the native image, execute a curl request:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' localhost:8080/foo
-{"message":"Internal Server Error: Velocity could not be initialized!"}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">curl -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' localhost:8080/foo</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We expected to retrieve the <code>Not Found</code> HTML page however we get an exception:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./micronautguide
-13:19:04.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 18ms. Server Running: http://localhost:8080
-13:19:08.712 [pool-2-thread-2] ERROR org.apache.velocity - The specified class for ResourceManager (org.apache.velocity.runtime.resource.ResourceManagerImpl) does not exist or is not accessible to the current classloader.
-13:19:08.712 [pool-2-thread-2] ERROR org.apache.velocity - Could not auto-initialize Velocity
-org.apache.velocity.exception.VelocityException: The specified class for ResourceManager (org.apache.velocity.runtime.resource.ResourceManagerImpl) does not exist or is not accessible to the current classloader.
-	....</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We need to provide a reflection configuration file for <a href="https://velocity.apache.org">Velocity</a>.</p>
-</div>
-<div class="paragraph">
-<p>Fortunately, GraalVM native image module provides a tracing agent to simplify GraalVM Native Image configuration.</p>
-</div>
-<div class="paragraph">
-<p>Create folder to save the configuration files</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ mkdir config-files</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Stop the native image and run the app with the tracing agent.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ java -jar  -agentlib:native-image-agent=config-output-dir=config-files build/libs/complete-0.1-all.jar
-$ 13:24:58.938 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 1185ms. Server Running: http://localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once the app starts, run the curl request again.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> % curl -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' localhost:8080/foo
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;title&gt;Not Found&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;NOT FOUND&lt;/h1&gt;
-
-&lt;p&gt;&lt;b&gt;The page you were looking for appears to have been moved, deleted or does not exist.&lt;/b&gt;&lt;/p&gt;
-
-&lt;p&gt;This is most likely due to:&lt;/p&gt;
-
-&lt;ul&gt;
-    &lt;li&gt;An outdated link on another site&lt;/li&gt;
-    &lt;li&gt;A typo in the address / URL&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;
-&lt;/html&gt;%</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Stop the app and inspect the folder <code>config-files</code>. Several files have been created:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">jni-config.json
-proxy-config.json
-reflect-config.json
-resource-config.json</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Copy entries from the file <code>reflect-config.json</code>, which match the package <code>org.apache.velocity</code>, to a new file named <code>src/main/graal/reflect.json</code>.</p>
-</div>
-<div class="paragraph">
-<p>The file will look like:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/graal/reflect.json</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json" data-lang="json">[
-{
-  "name":"org.apache.velocity.runtime.ParserPoolImpl",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Break",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Define",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Evaluate",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Foreach",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Include",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Macro",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Parse",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.directive.Stop",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.resource.ResourceCacheImpl",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.resource.ResourceManagerImpl",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.util.introspection.ConversionHandlerImpl",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-},
-{
-  "name":"org.apache.velocity.util.introspection.UberspectImpl",
-  "methods":[{"name":"&lt;init&gt;","parameterTypes":[] }]
-}
-]</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<code>src/main/graal/reflect.json</code> will be automatically picked up by Micronaut Graal annotation processor.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Generate the native image again:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew clean
-$ ./gradlew assemble
-$ native-image --no-server -cp build/libs/complete-0.1-all.jar</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Run the native image:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./micronautguide
-13:38:43.134 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 19ms. Server Running: http://localhost:8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now, the curl request is successful:</p>
+<p>You should get successful response.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1169,9 +981,21 @@ $ native-image --no-server -cp build/libs/complete-0.1-all.jar</code></pre>
 ....</code></pre>
 </div>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Prior to Micronaut 2.0 you had to <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-error-handling/guide/index.html#graalreflectjson">provide reflection information for GraalVM to work with Apache Velocity</a>.
+</td>
+</tr>
+</table>
+</div>
 
 
-<h2 id="graaldocker">3.4 Native Image generation with Docker</h2>
+<h2 id="graaldocker">3.3 Native Image generation with Docker</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-error-handling/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
