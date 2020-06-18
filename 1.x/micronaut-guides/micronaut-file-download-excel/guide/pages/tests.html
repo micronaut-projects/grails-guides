@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.5 Tests null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Download an Excel file in Micronaut App
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.5 Tests</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="tests">2.5 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-file-download-excel/edit/master/src/main/docs/guide/writingTheApp/tests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Often, file transfers remain untested in many applications. In this section, you will see how
+easy is to test that the file downloads but also that the downloaded file contents match our expectations.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut is test framework agnostic. You can use <a href="https://junit.org">JUnit</a>, <a href="http://spockframework.org">Spock Framework</a>,
+ <a href="https://spekframework.org">Spek</a> or <a href="https://github.com/kotlintest/kotlintest">Kotlin Test</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
+</div>
+<div class="paragraph">
+<p>We need to modify <code>build.gradle</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add the Groovy plugin with <code>id: "groovy"</code> and then add the necessary dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
+</div>
+<div class="listingblock">
+<div class="title">micronaut-cli.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
+defaultPackage: example.micronaut
+---
+testFramework: spock
+sourceLanguage: java</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We use also, Geb; a browser automation solution.</p>
+</div>
+<div class="paragraph">
+<p>To use Geb, add dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">testImplementation ("org.gebish:geb-spock:$gebVersion") {
+    exclude group: "org.codehaus.groovy", module: "groovy-all"
+}
+testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Geb Configuration file. We configure some chrome options to control the download path.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+
+ChromeOptions options = new ChromeOptions()
+if ( System.getProperty('download.folder') ) {
+    options.setExperimentalOption("prefs", [
+            "profile.default_content_settings.popups":  0, <i class="conum" data-value="1"></i><b>(1)</b>
+            "download.default_directory": System.getProperty('download.folder') <i class="conum" data-value="2"></i><b>(2)</b>
+    ])
+}
+
+environments {
+    chrome {
+        driver = { new ChromeDriver(options) }
+    }
+    chromeHeadless {
+        driver = {
+            options.addArguments('headless')
+            new ChromeDriver(options)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Disable confirmation popups</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the download folder</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Geb uses the Page concept pattern - The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way. Create a Geb Page to encapsulate the Excel link:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/HomePage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class HomePage extends Page {
+
+    static at = { title == 'Micronaut' }
+
+    static url = '/'
+
+    static content = {
+        excelLink { $('a', text: 'Excel', 0) }
+    }
+
+    void downloadExcel() {
+        excelLink.click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
+a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
+...
+..
+    id "com.github.erdi.webdriver-binaries" version "2.1"
+}
+
+webdriverBinaries {
+    chromedriver {
+        version = chromeDriverVersion
+    }
+    geckodriver {
+        version = geckoDriverVersion
+    }
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env') <i class="conum" data-value="1"></i><b>(1)</b>
+    systemProperty "download.folder", System.getProperty('download.folder') <i class="conum" data-value="2"></i><b>(2)</b>
+    beforeTest { descriptor -&gt; logger.quiet " -- $descriptor" }
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat 'full'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Pass system property <code>geb.env</code> to the tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Pass system property <code>download.folder</code> to the tests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a test which verifies the Excel file is downloaded and the content matches our expectations.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/groovy/example/micronaut/DownloadExcelSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import builders.dsl.spreadsheet.query.api.SpreadsheetCriteria
+import builders.dsl.spreadsheet.query.api.SpreadsheetCriteriaResult
+import builders.dsl.spreadsheet.query.poi.PoiSpreadsheetCriteria
+import geb.spock.GebSpec
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.IgnoreIf
+import spock.util.concurrent.PollingConditions
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class DownloadExcelSpec extends GebSpec {
+
+    @Inject
+    EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @IgnoreIf({ !sys['download.folder'] || sys['geb.env'] != 'chrome' })
+    def "books can be downloaded as an excel file"() {
+        given:
+        PollingConditions conditions = new PollingConditions(timeout: 5)
+        browser.baseUrl = "http://localhost:${embeddedServer.port}" <i class="conum" data-value="3"></i><b>(3)</b>
+
+        when:
+        browser.to HomePage
+
+        then:
+        browser.at HomePage
+
+        when: 'clicking excel button'
+        String expectedPath = System.getProperty('download.folder') + "/" + BookExcelService.HEADER_EXCEL_FILENAME
+        File outputFile = new File(expectedPath)
+        browser.page(HomePage).downloadExcel()
+
+        then: 'an excel file is downloaded'
+        conditions.eventually { outputFile.exists() }
+
+        when: 'if we search for a row with a particular value (Building Microservices)'
+        SpreadsheetCriteria query = PoiSpreadsheetCriteria.FACTORY.forFile(outputFile)
+        SpreadsheetCriteriaResult result = query.query( { workbookCriterion -&gt;
+                workbookCriterion.sheet(BookExcelService.SHEET_NAME, { sheetCriterion -&gt;
+                        sheetCriterion.row({ rowCriterion -&gt;
+                                rowCriterion.cell({ cellCriterion -&gt;
+                                        cellCriterion.value('Building Microservices')
+                                })
+                        })
+                    })
+        })
+        then: 'a row is found'
+        result.cells.size() == 1
+
+        cleanup:
+        outputFile?.delete()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronatTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the Embedded Server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port. We use this port to set <a href="http://www.gebish.org/manual/current/#base-url">Geb base url</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To run the tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew -Dgeb.env=chrome -Ddownload.folder=/Users/sdelamo/Downloads test
+$ open build/reports/tests/test/index.html</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
