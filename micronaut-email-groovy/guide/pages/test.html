@@ -102,20 +102,23 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.NonNull
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
 
 import javax.inject.Singleton
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
 
 @Primary
-@Requires(property = 'spec.name', value = 'mailcontroller')
+@Requires(property = "spec.name", value = "mailcontroller")
 @Singleton
 class MockEmailService implements EmailService {
 
-    List&lt;Email&gt; emails = []
+    public List&lt;Email&gt; emails = new ArrayList&lt;&gt;()
 
     @Override
-    void send(Email email) {
+    void send(@NonNull @NotNull @Valid Email email) {
         emails &lt;&lt; email
     }
 }</code></pre>
@@ -133,53 +136,47 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
+@Property(name = "spec.name", value = "mailcontroller") <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerSpec extends Specification {
 
-    @Shared
     @Inject
     ApplicationContext applicationContext <i class="conum" data-value="3"></i><b>(3)</b>
 
-    @Shared
     @Inject
     @Client("/")
     RxHttpClient client <i class="conum" data-value="4"></i><b>(4)</b>
 
-    def "/mail/send interacts once email service"() {
+    void "mail send interacts once email service"() {
         given:
-        EmailCmd cmd = new EmailCmd(subject: 'Test',
-                                    recipient: 'delamos@grails.example',
-                                    textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="5"></i><b>(5)</b>
+        EmailCmd cmd = new EmailCmd(subject: "Test", recipient: "delamos@grails.example", textBody: "Hola hola")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="5"></i><b>(5)</b>
 
         when:
-        Collection&lt;Class&gt; emailServices = applicationContext.getBeansOfType(EmailService)
+        Collection&lt;EmailService&gt; emailServices = applicationContext.getBeansOfType(EmailService.class)
 
         then:
-        !emailServices.any { it == SendGridEmailService.class}
-        !emailServices.any { it == AwsSesMailService.class}
+        1 == emailServices.size()
 
         when:
-        EmailService emailService = applicationContext.getBean(EmailService)
+        EmailService emailService = applicationContext.getBean(EmailService.class)
 
         then:
         emailService instanceof MockEmailService
 
         when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
-
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request)
         then:
-        rsp.status.code == 200
-        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpStatus.OK == rsp.getStatus()
+        old(((MockEmailService) emailService).emails.size()) + 1 == ((MockEmailService) emailService).emails.size() <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>

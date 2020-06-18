@@ -92,7 +92,7 @@
         <h1>Send Emails from Micronaut</h1>
         <p>Learn how to send emails with AWS SES and SendGrid from a Micronaut app and leverage @Requires annotation to load beans conditionally.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.6</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -191,14 +191,14 @@
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import groovy.transform.CompileStatic
-import io.micronaut.runtime.Micronaut
+import groovy.transform.CompileStatic;
+import io.micronaut.runtime.Micronaut;
 
 @CompileStatic
 class Application {
 
     static void main(String[] args) {
-        Micronaut.run(Application.class)
+        Micronaut.run(Application.class);
     }
 }</code></pre>
 </div>
@@ -224,7 +224,7 @@ class Application {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
@@ -247,7 +247,6 @@ other build tools such as <code>Maven</code> or other programming languages such
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -255,20 +254,18 @@ import io.micronaut.http.annotation.Post
 
 import javax.validation.Valid
 
-@Slf4j
 @CompileStatic
-@Controller('/mail') <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/mail") <i class="conum" data-value="1"></i><b>(1)</b>
 class MailController {
 
-    EmailService emailService
+    private final EmailService emailService
 
-    MailController(EmailService  emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
+    MailController(EmailService emailService) { <i class="conum" data-value="2"></i><b>(2)</b>
         this.emailService = emailService
     }
 
-    @Post('/send') <i class="conum" data-value="3"></i><b>(3)</b>
-    HttpResponse send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
-        log.info '{}', cmd.toString()
+    @Post("/send") <i class="conum" data-value="3"></i><b>(3)</b>
+    HttpResponse&lt;?&gt; send(@Body @Valid EmailCmd cmd) { <i class="conum" data-value="4"></i><b>(4)</b>
         emailService.send(cmd)
         HttpResponse.ok()  <i class="conum" data-value="5"></i><b>(5)</b>
     }
@@ -319,6 +316,7 @@ class EmailCmd implements Email {
 
     List&lt;String&gt; cc = []
     List&lt;String&gt; bcc = []
+
     String htmlBody
     String textBody
     String replyTo
@@ -345,22 +343,21 @@ class EmailCmd implements Email {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import groovy.transform.CompileStatic
+import edu.umd.cs.findbugs.annotations.NonNull
 
-@CompileStatic
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
+
 interface EmailService {
-    void send(Email email)
+    void send(@NonNull @NotNull @Valid Email email)
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">src/groovy/main/example/micronaut/Email.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
 
-import groovy.transform.CompileStatic
-
-@CompileStatic
 interface Email {
     String getRecipient()
     List&lt;String&gt; getCc()
@@ -396,330 +393,67 @@ interface Email {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'com.amazonaws:aws-java-sdk-ses:1.11.285'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation('software.amazon.awssdk:ses:2.13.39')</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Create a service which encapsulates AWS credentials provider. The bean will not be loaded if the
-environment variables (<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_KEY</code>) or system properties ( <code>aws.accesskeyid</code>, <code>aws.secretkey</code>) are not present.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/AwsCredentialsProviderCondition.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.context.condition.Condition
-import io.micronaut.context.condition.ConditionContext
-
-class AwsCredentialsProviderCondition implements Condition {
-    @Override
-    boolean matches(ConditionContext context) {
-        (System.getProperty("aws.accesskeyid") || System.getenv("AWS_ACCESS_KEY_ID")) &amp;&amp;
-                (System.getProperty("aws.secretkey") ||  System.getenv("AWS_SECRET_KEY"))
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderConditionSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsCredentialsProviderConditionSpec extends Specification {
-
-    @RestoreSystemProperties
-    def "condition is true if system properties are present"() {
-        given:
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-
-        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
-
-        expect:
-        condition.matches(null)
-    }
-
-    def "condition is false if system properties are not present"() {
-        given:
-        AwsCredentialsProviderCondition condition = new AwsCredentialsProviderCondition()
-
-        expect:
-        !condition.matches(null)
-    }
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/AwsCredentialsProviderService.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import com.amazonaws.auth.AWSCredentials
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import groovy.transform.CompileStatic
-import io.micronaut.context.annotation.Requires
-import io.micronaut.context.annotation.Value
-import javax.inject.Singleton
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(condition = AwsCredentialsProviderCondition) <i class="conum" data-value="2"></i><b>(2)</b>
-@CompileStatic
-class AwsCredentialsProviderService implements AWSCredentialsProvider {
-
-    String accessKey
-    String secretKey
-
-    AwsCredentialsProviderService(@Value('${AWS_ACCESS_KEY_ID:none}') String accessKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
-                                  @Value('${AWS_SECRET_KEY:none}') String secretKeyEnv,
-                                  @Value('${aws.accesskeyid:none}') String accessKeyProp,
-                                  @Value('${aws.secretkey:none}') String secretKeyProp) {
-        this.accessKey = accessKeyEnv != null &amp;&amp; !accessKeyEnv.equals("none") ? accessKeyEnv : accessKeyProp;
-        this.secretKey = secretKeyEnv != null &amp;&amp; !secretKeyEnv.equals("none")  ? accessKeyEnv : secretKeyProp;
-    }
-
-    @Override
-    AWSCredentials getCredentials() {
-        return new BasicAWSCredentials(accessKey, secretKey)
-    }
-
-    @Override
-    void refresh() {
-
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>javax.inject.Singleton</code> to designate a class a a singleton</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded unless condition is met.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Values will be resolved from system properties.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsCredentialsProviderServiceSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsCredentialsProviderServiceSpec extends Specification {
-
-    def "AwsCredentialsProviderService is not loaded if system property is not present"() {
-        given:
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-
-        when:
-        embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-
-        then:
-        thrown(NoSuchBeanException)
-
-        cleanup:
-        embeddedServer.close()
-    }
-
-    @RestoreSystemProperties
-    def "AwsCredentialsProviderService is loaded if system property is not present"() {
-        given:
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-
-        when:
-        AwsCredentialsProviderService bean = embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-
-        then:
-        noExceptionThrown()
-        bean.secretKey == 'YYYY'
-        bean.accessKey == 'XXXX'
-
-        cleanup:
-        embeddedServer.close()
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a service which sends the email with AWS Simple Email Service. The bean will not be loaded if the
-environment variables (<code>AWS_REGION</code>, <code>AWS_SOURCE_EMAIL</code>) or system properties (<code>aws.region</code>, <code>aws.sourceemail</code>) are not present.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/AwsSesMailCondition.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import groovy.transform.CompileStatic
-import io.micronaut.context.condition.Condition
-import io.micronaut.context.condition.ConditionContext
-
-@CompileStatic
-class AwsSesMailCondition implements Condition {
-
-    @Override
-    boolean matches(ConditionContext context) {
-        (System.getProperty("aws.sourceemail") || System.getenv("AWS_SOURCE_EMAIL")) &amp;&amp;
-                (System.getProperty("aws.region") ||  System.getenv("AWS_REGION"))
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Add a test:</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/groovy/example/micronaut/AwsSesMailConditionSpec.groovy</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
-class AwsSesMailConditionSpec extends Specification {
-
-    @RestoreSystemProperties
-    def "condition is true if system properties are present"() {
-        given:
-        System.setProperty("aws.region", "XXXX")
-        System.setProperty("aws.sourceemail", "me@micronaut.example")
-        AwsSesMailCondition condition = new AwsSesMailCondition()
-
-        expect:
-        condition.matches(null)
-    }
-
-    def "condition is false if system properties are not present"() {
-        given:
-        AwsSesMailCondition condition = new AwsSesMailCondition()
-
-        expect:
-        !condition.matches(null)
-    }
-}</code></pre>
-</div>
+<p>Create service which uses AWS Simple Email Service client to send the email</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/example/micronaut/AwsSesMailService.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-import com.amazonaws.services.simpleemail.model.SendEmailResult
+
+import edu.umd.cs.findbugs.annotations.NonNull
+import edu.umd.cs.findbugs.annotations.Nullable
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder
-import com.amazonaws.services.simpleemail.model.Body
-import com.amazonaws.services.simpleemail.model.Content
-import com.amazonaws.services.simpleemail.model.Destination
-import com.amazonaws.services.simpleemail.model.Message
-import com.amazonaws.services.simpleemail.model.SendEmailRequest
-import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
+import io.micronaut.context.annotation.Secondary
 import io.micronaut.context.annotation.Value
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.ses.SesClient
+import software.amazon.awssdk.services.ses.model.Body
+import software.amazon.awssdk.services.ses.model.Content
+import software.amazon.awssdk.services.ses.model.Destination
+import software.amazon.awssdk.services.ses.model.Message
+import software.amazon.awssdk.services.ses.model.SendEmailRequest
+import software.amazon.awssdk.services.ses.model.SendEmailResponse
+
 import javax.inject.Singleton
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
 
-
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(beans = AwsCredentialsProviderService) <i class="conum" data-value="2"></i><b>(2)</b>
-@Requires(condition = AwsSesMailCondition)  <i class="conum" data-value="3"></i><b>(3)</b>
-@Primary <i class="conum" data-value="4"></i><b>(4)</b>
-@Slf4j
 @CompileStatic
-class AwsSesMailService implements EmailService {
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(condition = AwsResourceAccessCondition.class)  <i class="conum" data-value="2"></i><b>(2)</b>
+@Secondary <i class="conum" data-value="3"></i><b>(3)</b>
+public class AwsSesMailService implements EmailService {
+    private static final Logger LOG = LoggerFactory.getLogger(AwsSesMailService.class)
+    protected final String sourceEmail
+    protected final SesClient ses
 
-    String awsRegion
+    public AwsSesMailService(@Nullable @Value('${AWS_REGION}') String awsRegionEnv, <i class="conum" data-value="4"></i><b>(4)</b>
+                             @Nullable @Value('${AWS_SOURCE_EMAIL}') String sourceEmailEnv,
+                             @Nullable @Value('${aws.region}') String awsRegionProp,
+                             @Nullable @Value('${aws.sourceemail}') String sourceEmailProp) {
 
-    String sourceEmail
-
-    AwsCredentialsProviderService awsCredentialsProviderService
-
-    AwsSesMailService(@Value('${AWS_REGION:none}') String awsRegionEnv, <i class="conum" data-value="5"></i><b>(5)</b>
-                      @Value('${AWS_SOURCE_EMAIL:none}') String sourceEmailEnv,
-                      @Value('${aws.region:none}') String awsRegionProp,
-                      @Value('${aws.sourceemail:none}') String sourceEmailProp,
-                      AwsCredentialsProviderService awsCredentialsProviderService
-    ) {
-        this.awsRegion = awsRegionEnv != null &amp;&amp; !awsRegionEnv.equals("none") ? awsRegionEnv : awsRegionProp
-        this.sourceEmail = sourceEmailEnv != null &amp;&amp; !sourceEmailEnv.equals("none") ? sourceEmailEnv : sourceEmailProp
-        this.awsCredentialsProviderService = awsCredentialsProviderService
-    }
-
-    private Body bodyOfEmail(Email email) {
-        if (email.htmlBody) {
-            Content htmlBody = new Content().withData(email.htmlBody)
-            return new Body().withHtml(htmlBody)
-        }
-        if (email.textBody) {
-            Content textBody = new Content().withData(email.textBody)
-            return new Body().withHtml(textBody)
-        }
-        new Body()
+        this.sourceEmail = sourceEmailEnv != null ? sourceEmailEnv : sourceEmailProp
+        String awsRegion = awsRegionEnv != null ? awsRegionEnv : awsRegionProp
+        this.ses = SesClient.builder().region(Region.of(awsRegion)).build()
     }
 
     @Override
-    void send(Email email) {
-
-        if ( !awsCredentialsProviderService ) {
-            log.warn("AWS Credentials provider not configured")
-            return
-        }
-
-        Destination destination = new Destination().withToAddresses(email.recipient)
-        if ( email.getCc() ) {
-            destination = destination.withCcAddresses(email.getCc())
-        }
-        if ( email.getBcc() ) {
-            destination = destination.withBccAddresses(email.getBcc())
-        }
-        Content subject = new Content().withData(email.getSubject())
-        Body body = bodyOfEmail(email)
-        Message message = new Message().withSubject(subject).withBody(body)
-
-        SendEmailRequest request = new SendEmailRequest()
-                .withSource(sourceEmail)
-                .withDestination(destination)
-                .withMessage(message)
-
-        if ( email.getReplyTo() ) {
-            request = request.withReplyToAddresses()
-        }
-
-        try {
-            log.info("Attempting to send an email through Amazon SES by using the AWS SDK for Java...")
-
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(awsCredentialsProviderService)
-                    .withRegion(awsRegion)
-                    .build()
-
-            SendEmailResult sendEmailResult = client.sendEmail(request)
-            log.info("Email sent! {}", sendEmailResult.toString())
-
-        } catch (Exception ex) {
-            log.warn("The email was not sent.")
-            log.warn("Error message: {}", ex.message)
+    void send(@NonNull @NotNull @Valid Email email) {
+        SendEmailRequest sendEmailRequest = SendEmailRequest.builder()
+                .destination(Destination.builder().toAddresses(email.recipient).build())
+                .source(sourceEmail)
+                .message(Message.builder().subject(Content.builder().data(email.subject).build())
+                        .body(Body.builder().text(Content.builder().data(email.textBody).build()).build()).build()).build() as SendEmailRequest
+        SendEmailResponse response =ses.sendEmail(sendEmailRequest)
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Sent email with id: {}", response.messageId())
         }
     }
 }</code></pre>
@@ -733,72 +467,140 @@ class AwsSesMailService implements EmailService {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bean will not loaded, if bean is not present.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Bean will not loaded unless condition is met.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>@Primary</code> is a qualifier that indicates that a bean is the primary bean that should be selected in the case of multiple possible interface implementations.</td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>In case of multiple possible interface implementations of <code>EmailService</code>, <code>@Secondary</code> reduces the priority.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Values will be resolved from system properties.</td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Values for region and source email are resolved from environment variables or system properties.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Add a test:</p>
+<p>We annotated the previous class with <code>@Requires(condition = AwsResourceAccessCondition.class)</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>AwsResourceAccessCondition</code> ensures the bean is not loaded unless certain conditions are fulfilled.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html"><em>Configure IAM Roles for Amazon EC2</em></a></p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>If your application creates an AWS client using the create method, the client searches for credentials using the default credentials provider chain, in the following order:</p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="ulist">
+<ul>
+<li>
+<p>In the Java system properties: <code>aws.accessKeyId</code> and <code>aws.secretAccessKey</code>.</p>
+</li>
+<li>
+<p>In system environment variables: <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>.</p>
+</li>
+<li>
+<p>In the default credentials file (the location of this file varies by platform).</p>
+</li>
+<li>
+<p>n the Amazon ECS environment variable: <code>AWS_CONTAINER_CREDENTIALS_RELATIVE_URI</code>.</p>
+</li>
+<li>
+<p>In the instance profile credentials, which exist within the instance metadata associated with the IAM role for the EC2 instance.</p>
+</li>
+</ul>
+</div>
+</blockquote>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="title">src/main/groovy/example/micronaut/AwsResourceAccessCondition.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+import io.micronaut.context.condition.Condition
+import io.micronaut.context.condition.ConditionContext
+import io.micronaut.context.env.Environment
+import io.micronaut.core.util.StringUtils
+
+/**
+ * @see &lt;a href="https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html"&gt;Configure IAM Roles for Amazon EC2&lt;/a&gt;
+ */
+@CompileStatic
+class AwsResourceAccessCondition implements Condition {
+
+    @Override
+    boolean matches(ConditionContext context) {
+
+        if (StringUtils.isNotEmpty(System.getProperty("aws.accessKeyId")) &amp;&amp;  StringUtils.isNotEmpty(System.getProperty("aws.secretAccessKey"))) { <i class="conum" data-value="1"></i><b>(1)</b>
+            return true
+        }
+
+        if (StringUtils.isNotEmpty(System.getenv("AWS_ACCESS_KEY_ID")) &amp;&amp;  StringUtils.isNotEmpty(System.getenv("AWS_SECRET_ACCESS_KEY"))) { <i class="conum" data-value="2"></i><b>(2)</b>
+            return true
+        }
+
+        if (StringUtils.isNotEmpty(System.getenv("AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"))) { <i class="conum" data-value="3"></i><b>(3)</b>
+            return true
+        }
+
+        context != null &amp;&amp; context.getBean(Environment.class).getActiveNames().contains(Environment.AMAZON_EC2) <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a test to verify the service is loaded:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/test/groovy/example/micronaut/AwsSesMailServiceSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut;
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 class AwsSesMailServiceSpec extends Specification {
 
-    def "AwsSesMailService is not loaded if system property is not present"() {
+    void "aws ses mail service is not loaded if system property is not present"() {
         given:
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+        ApplicationContext ctx = ApplicationContext.run()
 
-        when:
-        embeddedServer.applicationContext.getBean(AwsSesMailService)
-
-        then:
-        thrown(NoSuchBeanException)
+        expect:
+        !ctx.containsBean(AwsSesMailService.class)
 
         cleanup:
-        embeddedServer.close()
+        ctx.close();
     }
 
     @RestoreSystemProperties
-    def "AwsSesMailService is loaded if system property is not present"() {
+    void "aws ses mail service is loaded if system properties are present"() {
         given:
+        System.setProperty("aws.accessKeyId", "XXXX")
+        System.setProperty("aws.secretAccessKey", "YKYY")
         System.setProperty("aws.region", "XXXX")
         System.setProperty("aws.sourceemail", "me@micronaut.example")
-        System.setProperty("aws.accesskeyid", "XXXX")
-        System.setProperty("aws.secretkey", "YYYY")
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+        ApplicationContext ctx = ApplicationContext.run()
 
         when:
-        embeddedServer.applicationContext.getBean(AwsCredentialsProviderService)
-        AwsSesMailService bean = embeddedServer.applicationContext.getBean(AwsSesMailService)
+        AwsSesMailService bean = ctx.getBean(AwsSesMailService.class)
 
         then:
-        noExceptionThrown()
-        bean.sourceEmail == 'me@micronaut.example'
-        bean.awsRegion == 'XXXX'
+        "me@micronaut.example" == bean.sourceEmail
 
         cleanup:
-        embeddedServer.close()
+        ctx.close()
     }
 }</code></pre>
 </div>
@@ -830,7 +632,7 @@ class AwsSesMailServiceSpec extends Specification {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'com.sendgrid:sendgrid-java:4.1.2'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation('com.sendgrid:sendgrid-java:4.6.0')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -842,15 +644,21 @@ system properties (<code>sendgrid.apikey</code>, <code>sendgrid.fromemail</code>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-import io.micronaut.context.condition.Condition
-import io.micronaut.context.condition.ConditionContext
+import groovy.transform.CompileStatic;
+import io.micronaut.context.condition.Condition;
+import io.micronaut.context.condition.ConditionContext;
+import io.micronaut.core.util.StringUtils;
 
+@CompileStatic
 class SendGridEmailCondition implements Condition {
-
     @Override
     boolean matches(ConditionContext context) {
-        (System.getProperty("sendgrid.apikey") || System.getenv("SENDGRID_APIKEY")) &amp;&amp;
-                (System.getProperty("sendgrid.fromemail") ||  System.getenv("SENDGRID_FROM_EMAIL"))
+        return envOrSystemProperty("SENDGRID_APIKEY", "sendgrid.apikey") &amp;&amp;
+                envOrSystemProperty("SENDGRID_FROM_EMAIL", "sendgrid.fromemail");
+    }
+
+    private static boolean envOrSystemProperty(String env, String prop) {
+        return StringUtils.isNotEmpty(System.getProperty(prop)) || StringUtils.isNotEmpty(System.getenv(env));
     }
 }</code></pre>
 </div>
@@ -869,7 +677,7 @@ import spock.util.environment.RestoreSystemProperties
 class SendGridEmailConditionSpec extends Specification {
 
     @RestoreSystemProperties
-    def "condition is true if system properties are present"() {
+    void "condition is true if system properites are present"() {
         given:
         System.setProperty("sendgrid.apikey", "XXXX")
         System.setProperty("sendgrid.fromemail", "me@micronaut.example")
@@ -879,7 +687,7 @@ class SendGridEmailConditionSpec extends Specification {
         condition.matches(null)
     }
 
-    def "condition is false if system properties are not present"() {
+    void "condition is false if system properties are not present"() {
         given:
         SendGridEmailCondition condition = new SendGridEmailCondition()
 
@@ -893,76 +701,82 @@ class SendGridEmailConditionSpec extends Specification {
 <div class="title">src/main/groovy/example/micronaut/SendGridEmailService.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-import com.sendgrid.Personalization
-import com.sendgrid.Content
-import com.sendgrid.Mail
+
 import com.sendgrid.SendGrid
 import com.sendgrid.Request
 import com.sendgrid.Response
 import com.sendgrid.Method
+import com.sendgrid.helpers.mail.Mail
+import com.sendgrid.helpers.mail.objects.Content
+import com.sendgrid.helpers.mail.objects.Personalization
+import edu.umd.cs.findbugs.annotations.NonNull
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
-import javax.inject.Singleton
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-@Requires(condition = SendGridEmailCondition) <i class="conum" data-value="2"></i><b>(2)</b>
-@Slf4j
+import javax.inject.Singleton
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
+
 @CompileStatic
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(condition = SendGridEmailCondition.class) <i class="conum" data-value="2"></i><b>(2)</b>
 class SendGridEmailService implements EmailService {
 
-    String apiKey
+    private static final Logger LOG = LoggerFactory.getLogger(SendGridEmailService.class)
 
-    String fromEmail
+    protected final String apiKey
+
+    protected final String fromEmail
 
     SendGridEmailService(@Value('${SENDGRID_APIKEY:none}') String apiKeyEnv, <i class="conum" data-value="3"></i><b>(3)</b>
                          @Value('${SENDGRID_FROM_EMAIL:none}') String fromEmailEnv,
                          @Value('${sendgrid.apikey:none}') String apiKeyProp,
                          @Value('${sendgrid.fromemail:none}') String fromEmailProp) {
-        this.apiKey = apiKeyEnv != null &amp;&amp; !apiKeyEnv.equals("none") ? apiKeyEnv : apiKeyProp;
-        this.fromEmail = fromEmailEnv != null &amp;&amp; !fromEmailEnv.equals("none")  ? fromEmailEnv: fromEmailProp;
+        this.apiKey = apiKeyEnv != null &amp;&amp; !apiKeyEnv.equals("none") ? apiKeyEnv : apiKeyProp
+        this.fromEmail = fromEmailEnv != null &amp;&amp; !fromEmailEnv.equals("none")  ? fromEmailEnv: fromEmailProp
     }
 
-
-    protected Content contentOfEmail(Email email) {
-        if ( email.textBody ) {
+    protected static Content contentOfEmail(Email email) {
+        if ( email.textBody !=null ) {
             return new Content("text/plain", email.textBody)
         }
-        if ( email.htmlBody ) {
+        if ( email.htmlBody !=null ) {
             return new Content("text/html", email.htmlBody)
         }
         return null
     }
 
     @Override
-    void send(Email email) {
+    public void send(@NonNull @NotNull @Valid Email email) {
 
         Personalization personalization = new Personalization()
-        personalization.subject = email.subject
+        personalization.setSubject(email.subject)
 
-        com.sendgrid.Email to = new com.sendgrid.Email(email.recipient)
+        com.sendgrid.helpers.mail.objects.Email to = new com.sendgrid.helpers.mail.objects.Email(email.recipient)
         personalization.addTo(to)
 
-        if ( email.getCc() ) {
-            for ( String cc : email.getCc() ) {
-                com.sendgrid.Email ccEmail = new com.sendgrid.Email()
-                ccEmail.email = cc
+        if ( email.cc != null ) {
+            for ( String cc : email.cc ) {
+                com.sendgrid.helpers.mail.objects.Email ccEmail = new com.sendgrid.helpers.mail.objects.Email()
+                ccEmail.setEmail(cc)
                 personalization.addCc(ccEmail)
             }
         }
 
-        if ( email.getBcc() ) {
-            for ( String bcc : email.getBcc() ) {
-                com.sendgrid.Email bccEmail = new com.sendgrid.Email()
-                bccEmail.email = bcc
+        if ( email.bcc  != null ) {
+            for ( String bcc : email.bcc ) {
+                com.sendgrid.helpers.mail.objects.Email bccEmail = new com.sendgrid.helpers.mail.objects.Email()
+                bccEmail.setEmail(bcc)
                 personalization.addBcc(bccEmail)
             }
         }
 
         Mail mail = new Mail()
-        com.sendgrid.Email from = new com.sendgrid.Email()
-        from.email = fromEmail
+        com.sendgrid.helpers.mail.objects.Email from = new com.sendgrid.helpers.mail.objects.Email()
+        from.setEmail(fromEmail)
         mail.from = from
         mail.addPersonalization(personalization)
         Content content = contentOfEmail(email)
@@ -971,22 +785,25 @@ class SendGridEmailService implements EmailService {
         SendGrid sg = new SendGrid(apiKey)
         Request request = new Request()
         try {
-            request.with {
-                method = Method.POST
-                endpoint = "mail/send"
-                body = mail.build()
-            }
+            request.setMethod(Method.POST)
+            request.setEndpoint("mail/send")
+            request.setBody(mail.build())
+
             Response response = sg.api(request)
-            log.info("Status Code: {}", String.valueOf(response.getStatusCode()))
-            log.info("Body: {}", response.getBody())
-            if ( log.infoEnabled ) {
-                response.getHeaders().each { String k, String v -&gt;
-                    log.info("Response Header {} =&gt; {}", k, v)
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Status Code: {}", String.valueOf(response.getStatusCode()))
+                LOG.info("Body: {}", response.getBody())
+                for ( String k : response.getHeaders().keySet()) {
+                    String v = response.getHeaders().get(k)
+                    LOG.info("Response Header {} =&gt; {}", k, v)
                 }
             }
 
+
         } catch (IOException ex) {
-            log.error(ex.getMessage())
+            if (LOG.isErrorEnabled()) {
+                LOG.error(ex.getMessage())
+            }
         }
     }
 }</code></pre>
@@ -1017,44 +834,37 @@ class SendGridEmailService implements EmailService {
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.exceptions.NoSuchBeanException
-import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 class SendGridEmailServiceSpec extends Specification {
 
-    def "SendGridEmailService is not loaded if system property is not present"() {
+    void "send grid email service is not loaded if system property is not present"() {
         given:
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+        ApplicationContext ctx = ApplicationContext.run()
 
-        when:
-        embeddedServer.applicationContext.getBean(SendGridEmailService)
-
-        then:
-        thrown(NoSuchBeanException)
+        expect:
+        !ctx.containsBean(SendGridEmailService.class)
 
         cleanup:
-        embeddedServer.close()
+        ctx.close()
     }
 
     @RestoreSystemProperties
-    def "SendGridEmailService is loaded if system property is not present"() {
+    void "send grid email service is loaded if system properties are present"() {
         given:
         System.setProperty("sendgrid.apikey", "XXXX")
         System.setProperty("sendgrid.fromemail", "me@micronaut.example")
-        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+        ApplicationContext ctx = ApplicationContext.run()
+        SendGridEmailService bean = ctx.getBean(SendGridEmailService.class)
 
-        when:
-        SendGridEmailService bean = embeddedServer.applicationContext.getBean(SendGridEmailService)
-
-        then:
-        noExceptionThrown()
-        bean.apiKey == 'XXXX'
-        bean.fromEmail == 'me@micronaut.example'
+        expect:
+        "XXXX" == bean.apiKey
+        "me@micronaut.example" == bean.fromEmail
 
         cleanup:
-        embeddedServer.close()
+        ctx.close()
+
     }
 }</code></pre>
 </div>
@@ -1093,9 +903,9 @@ class SendGridEmailServiceSpec extends Specification {
     &lt;root level="info"&gt;
         &lt;appender-ref ref="STDOUT" /&gt;
     &lt;/root&gt;
-
+&lt;!--tag::logger[]--&gt;
     &lt;logger name="example.micronaut" level="TRACE"/&gt;
-
+&lt;!--end::logger[]--&gt;
 &lt;/configuration&gt;</code></pre>
 </div>
 </div>
@@ -1146,20 +956,23 @@ $ ./gradlew run</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.NonNull
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
 
 import javax.inject.Singleton
+import javax.validation.Valid
+import javax.validation.constraints.NotNull
 
 @Primary
-@Requires(property = 'spec.name', value = 'mailcontroller')
+@Requires(property = "spec.name", value = "mailcontroller")
 @Singleton
 class MockEmailService implements EmailService {
 
-    List&lt;Email&gt; emails = []
+    public List&lt;Email&gt; emails = new ArrayList&lt;&gt;()
 
     @Override
-    void send(Email email) {
+    void send(@NonNull @NotNull @Valid Email email) {
         emails &lt;&lt; email
     }
 }</code></pre>
@@ -1177,53 +990,47 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
+@Property(name = "spec.name", value = "mailcontroller") <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerSpec extends Specification {
 
-    @Shared
     @Inject
     ApplicationContext applicationContext <i class="conum" data-value="3"></i><b>(3)</b>
 
-    @Shared
     @Inject
     @Client("/")
     RxHttpClient client <i class="conum" data-value="4"></i><b>(4)</b>
 
-    def "/mail/send interacts once email service"() {
+    void "mail send interacts once email service"() {
         given:
-        EmailCmd cmd = new EmailCmd(subject: 'Test',
-                                    recipient: 'delamos@grails.example',
-                                    textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="5"></i><b>(5)</b>
+        EmailCmd cmd = new EmailCmd(subject: "Test", recipient: "delamos@grails.example", textBody: "Hola hola")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="5"></i><b>(5)</b>
 
         when:
-        Collection&lt;Class&gt; emailServices = applicationContext.getBeansOfType(EmailService)
+        Collection&lt;EmailService&gt; emailServices = applicationContext.getBeansOfType(EmailService.class)
 
         then:
-        !emailServices.any { it == SendGridEmailService.class}
-        !emailServices.any { it == AwsSesMailService.class}
+        1 == emailServices.size()
 
         when:
-        EmailService emailService = applicationContext.getBean(EmailService)
+        EmailService emailService = applicationContext.getBean(EmailService.class)
 
         then:
         emailService instanceof MockEmailService
 
         when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
-
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request)
         then:
-        rsp.status.code == 200
-        ((MockEmailService)emailService).emails.size() == old(((MockEmailService)emailService).emails.size()) + 1 <i class="conum" data-value="6"></i><b>(6)</b>
+        HttpStatus.OK == rsp.getStatus()
+        old(((MockEmailService) emailService).emails.size()) + 1 == ((MockEmailService) emailService).emails.size() <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -1279,12 +1086,12 @@ class MailControllerSpec extends Specification {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1299,101 +1106,85 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Shared
 import spock.lang.Specification
-
 import javax.inject.Inject
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
-@Property(name = 'spec.name', value = 'mailcontroller') <i class="conum" data-value="2"></i><b>(2)</b>
+@Property(name = "spec.name", value = "mailcontroller") <i class="conum" data-value="2"></i><b>(2)</b>
 class MailControllerValidationSpec extends Specification {
 
-    @Shared
     @Inject
-    ApplicationContext applicationContext
+    ApplicationContext applicationContext;
 
-    @Shared
     @Inject
     @Client("/")
-    RxHttpClient client
+    RxHttpClient client;
 
-    def "/mail/send cannot be invoked without subject"() {
+    void "mail send cannot be invoked without subject"() {
         given:
-        EmailCmd cmd = new EmailCmd(
-                recipient: 'delamos@micronaut.example',
-                textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+        EmailCmd cmd = new EmailCmd(recipient: "delamos@micronaut.example", textBody: "Hola hola")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
 
         then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        HttpClientResponseException e = thrown()
+        HttpStatus.BAD_REQUEST == e.status
     }
 
-    def "/mail/send cannot be invoked without recipient"() {
+    void "mail send cannot be invoked without recipient"() {
         given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                textBody: 'Hola hola')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+        EmailCmd cmd = new EmailCmd(subject: "Hola", textBody: "Hola hola")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
 
         then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        HttpClientResponseException e = thrown()
+        HttpStatus.BAD_REQUEST == e.status
     }
 
-    def "/mail/send cannot be invoked without either textBody or htmlBody"() {
-        given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',)
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+    void "mail send cannot be invoked without either text body or html body"() {
+        EmailCmd cmd = new EmailCmd(subject: "Hola", recipient: "delamos@micronaut.example")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
         client.toBlocking().exchange(request)
 
         then:
-        HttpClientResponseException e = thrown(HttpClientResponseException)
-        e.status.code == 400
+        HttpClientResponseException e = thrown()
+        HttpStatus.BAD_REQUEST == e.status
     }
 
-    def "/mail/send can be invoked without textBody and not htmlBody"() {
+    void "mail send can be invoked without text body and not html body"() {
         given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',
-                textBody: 'Hello')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+        EmailCmd cmd = new EmailCmd(subject: "Hola", recipient: "delamos@micronaut.example", textBody: "Hello")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request)
 
         then:
-        rsp.status().code == 200
+        HttpStatus.OK == rsp.getStatus()
     }
 
-    def "/mail/send can be invoked without htmlBody and not textBody"() {
+    void "mail send can be invoked with html body and not text body"() {
         given:
-        EmailCmd cmd = new EmailCmd(
-                subject: 'Hola',
-                recipient: 'delamos@micronaut.example',
-                htmlBody: '&lt;h1&gt;Hello&lt;/h1&gt;')
-        HttpRequest request = HttpRequest.POST('/mail/send', cmd) <i class="conum" data-value="3"></i><b>(3)</b>
+        EmailCmd cmd = new EmailCmd(subject: "Hola", recipient: "delamos@micronaut.example", htmlBody: "&lt;h1&gt;Hello&lt;/h1&gt;")
+        HttpRequest&lt;EmailCmd&gt; request = HttpRequest.POST("/mail/send", cmd) <i class="conum" data-value="3"></i><b>(3)</b>
 
         when:
-        HttpResponse rsp = client.toBlocking().exchange(request)
+        HttpResponse&lt;?&gt; rsp = client.toBlocking().exchange(request)
 
         then:
-        rsp.status().code == 200
+        HttpStatus.OK == rsp.getStatus()
     }
 }</code></pre>
 </div>
@@ -1418,11 +1209,9 @@ class MailControllerValidationSpec extends Specification {
 <p>In order to satisfy the test, create an email constraints annotation</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/EmailConstraints.java</div>
+<div class="title">src/main/java/example/micronaut/EmailConstraints.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
-
-import groovy.transform.CompileStatic;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -1432,16 +1221,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = {})
-@Target({ElementType.TYPE})
+@Target(value = {ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@CompileStatic
-@interface EmailConstraints {
+public @interface EmailConstraints {
 
     String message() default "{email.invalid}";
 
     Class&lt;?&gt;[] groups() default {};
 
     Class&lt;? extends Payload&gt;[] payload() default {};
+
 }</code></pre>
 </div>
 </div>
@@ -1453,19 +1242,30 @@ import java.lang.annotation.Target;
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
-
+import edu.umd.cs.findbugs.annotations.NonNull
+import edu.umd.cs.findbugs.annotations.Nullable
+import groovy.transform.CompileStatic
 import io.micronaut.context.annotation.Factory
+import io.micronaut.core.annotation.AnnotationValue
+import io.micronaut.core.util.StringUtils
 import io.micronaut.validation.validator.constraints.ConstraintValidator
+import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
 
 import javax.inject.Singleton
 
 @Factory
+@CompileStatic
 class EmailConstraintsFactory {
 
     @Singleton
     ConstraintValidator&lt;EmailConstraints, EmailCmd&gt; emailBodyValidator() {
-        return { value, annotationMetadata, context -&gt;
-            value &amp;&amp; (value.textBody || value.htmlBody)
+        return new ConstraintValidator&lt;EmailConstraints, EmailCmd&gt;() {
+            @Override
+            boolean isValid(@Nullable EmailCmd value,
+                            @NonNull AnnotationValue&lt;EmailConstraints&gt; annotationMetadata,
+                            @NonNull ConstraintValidatorContext context) {
+                StringUtils.isNotEmpty(value?.textBody) || StringUtils.isNotEmpty(value?.htmlBody)
+            }
         }
     }
 }</code></pre>
@@ -1478,9 +1278,7 @@ class EmailConstraintsFactory {
 <div class="listingblock">
 <div class="title">src/main/java/example/micronaut/EmailCmd.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@Introspected
-@EmailConstraints
-class EmailCmd implements Email {
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@EmailConstraints
 
     @NotNull
     @NotBlank
@@ -1492,6 +1290,7 @@ class EmailCmd implements Email {
 
     List&lt;String&gt; cc = []
     List&lt;String&gt; bcc = []
+
     String htmlBody
     String textBody
     String replyTo
