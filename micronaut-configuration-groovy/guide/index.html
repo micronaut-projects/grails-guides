@@ -92,7 +92,7 @@
         <h1>@Configuration and @ConfigurationBuilder</h1>
         <p>Learn how to utilize @Configuration and @ConfigurationBuilder annotations to effectively configure declared properties</p>
         <p><strong>Authors:</strong> Nirav Assar</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -192,7 +192,7 @@ into a bean for easy usage in the application.</p>
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
@@ -224,7 +224,7 @@ and players.</p>
 the configuration in the <code>application.yml</code> will call the setter in the bean. The bean will be subsequently available for injection in the application!</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamConfiguration.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/TeamConfiguration.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@ConfigurationProperties("team")
 class TeamConfiguration {
@@ -249,7 +249,7 @@ class TeamConfiguration {
 <p>Let&#8217;s validate that the bean is available in the application context and is created with the values declared in the <code>application.xml</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/micronaut/configuration/groovy/TeamConfigurationSpec.groovy</div>
+<div class="title">src/test/groovy/example/micronaut/TeamConfigurationSpec.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    void "test team configuration"() {
         given:
@@ -327,9 +327,9 @@ We can add a coach, manager and president to the team.</p>
 <p>The <code>TeamAdmin</code> object abides by the Builder pattern.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamAdmin.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/TeamAdmin.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
 
@@ -418,7 +418,7 @@ In our case, we will call <code>builder.build()</code> in the spock test.
 </table>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamConfiguration.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/TeamConfiguration.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@ConfigurationProperties("team")
 class TeamConfiguration {
@@ -458,7 +458,7 @@ class TeamConfiguration {
 <p>We can validate <code>@ConfigurationBuilder</code> is applied properly with the following spock test. The test format is similar to previous tests.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/micronaut/configuration/groovy/TeamConfigurationSpec.groovy</div>
+<div class="title">src/test/groovy/example/micronaut/TeamConfigurationSpec.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    void "test team configuration admin configuration builder "() {
         given:
@@ -552,9 +552,9 @@ attributes.</p>
 property will be parameterized as the name.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/StadiumConfiguration.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/StadiumConfiguration.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 
 import io.micronaut.context.annotation.EachProperty
@@ -600,10 +600,11 @@ class StadiumConfiguration {
 inject a particular <code>StadiumConfiguration</code> instance bean by using the <code>@Named</code> parameter with qualifier name.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/micronaut/configuration/groovy/StadiumConfigurationSpec.groovy</div>
+<div class="title">src/test/groovy/example/micronaut/StadiumConfigurationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import example.micronaut.StadiumConfiguration
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
 import spock.lang.Specification
@@ -679,16 +680,14 @@ create a controller where the beans are constructor injected. The <code>StadiumC
 instances, so for injection we need to use the <code>@Named</code> annotation with a qualifier name to specify the bean.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/MyController.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/MyController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 
-import javax.annotation.Nullable
 import javax.inject.Named
 
 @CompileStatic

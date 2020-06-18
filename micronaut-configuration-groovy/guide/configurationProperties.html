@@ -129,7 +129,7 @@ and players.</p>
 the configuration in the <code>application.yml</code> will call the setter in the bean. The bean will be subsequently available for injection in the application!</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/TeamConfiguration.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/TeamConfiguration.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">@ConfigurationProperties("team")
 class TeamConfiguration {
@@ -154,7 +154,7 @@ class TeamConfiguration {
 <p>Let&#8217;s validate that the bean is available in the application context and is created with the values declared in the <code>application.xml</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/micronaut/configuration/groovy/TeamConfigurationSpec.groovy</div>
+<div class="title">src/test/groovy/example/micronaut/TeamConfigurationSpec.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">    void "test team configuration"() {
         given:

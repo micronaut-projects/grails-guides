@@ -140,9 +140,9 @@ attributes.</p>
 property will be parameterized as the name.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/StadiumConfiguration.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/StadiumConfiguration.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 
 import io.micronaut.context.annotation.EachProperty
@@ -188,10 +188,11 @@ class StadiumConfiguration {
 inject a particular <code>StadiumConfiguration</code> instance bean by using the <code>@Named</code> parameter with qualifier name.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/groovy/micronaut/configuration/groovy/StadiumConfigurationSpec.groovy</div>
+<div class="title">src/test/groovy/example/micronaut/StadiumConfigurationSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import example.micronaut.StadiumConfiguration
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
 import spock.lang.Specification

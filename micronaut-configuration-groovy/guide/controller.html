@@ -109,16 +109,14 @@ create a controller where the beans are constructor injected. The <code>StadiumC
 instances, so for injection we need to use the <code>@Named</code> annotation with a qualifier name to specify the bean.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/micronaut/configuration/groovy/MyController.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/MyController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package micronaut.configuration.groovy
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 
-import javax.annotation.Nullable
 import javax.inject.Named
 
 @CompileStatic
