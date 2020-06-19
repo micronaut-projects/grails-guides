@@ -109,8 +109,8 @@ import javax.inject.Singleton
 class MockBookFetcher implements BookFetcher {
 
     @Override
-    Single&lt;List&lt;String&gt;&gt; fetchBooks() {
-        Single.just(Arrays.asList(
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks() {
+        Single.just([
             "The Empty Hearse",
             "The Hounds of Baskerville",
             "The Woman",
@@ -120,7 +120,7 @@ class MockBookFetcher implements BookFetcher {
             "The Geek Interpreter",
             "The Great Game",
             "The Blind Banker",
-            "A Study in Pink")
+            "A Study in Pink"].collect { new Book(it) }
         )
     }
 }</code></pre>
@@ -144,11 +144,11 @@ class HomePageSpec extends GebSpec {
 
     @AutoCleanup
     @Shared
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:]) <i class="conum" data-value="1"></i><b>(1)</b>
 
     def "verify tenant can be selected works"() {
         given:
-        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+        browser.baseUrl = "http://localhost:${embeddedServer.port}" <i class="conum" data-value="2"></i><b>(2)</b>
 
         when:
         go "/"
@@ -176,11 +176,11 @@ class HomePageSpec extends GebSpec {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+<td>Start an <code>EmbeddedServer</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>EmbeddedServer</code>.</td>
+<td>Point the browser base url to the embedded server url.</td>
 </tr>
 </table>
 </div>

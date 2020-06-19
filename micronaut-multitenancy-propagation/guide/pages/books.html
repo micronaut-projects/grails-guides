@@ -139,14 +139,10 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.configuration:micronaut-hibernate-gorm") {
-    exclude group: 'org.grails', module: 'grails-datastore-gorm-hibernate5'
-}
-implementation "org.grails:grails-datastore-gorm-hibernate5:7.0.1.RELEASE"
-runtime "com.h2database:h2:1.4.192"
-runtime "org.apache.tomcat:tomcat-jdbc:8.5.0"
-runtime "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.5.0"
-runtime "org.slf4j:slf4j-api:1.7.10"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
+implementation("io.micronaut.groovy:micronaut-hibernate-gorm")
+runtimeOnly("com.h2database:h2")
+runtimeOnly("org.apache.tomcat:tomcat-jdbc")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -306,12 +302,27 @@ interface BookService {
 <p>Create a controller to expose the <code>/books</code> endpoint.</p>
 </div>
 <div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/BookResponse.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class BookResponse {
+    String title
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">books/src/main/groovy/example/micronaut/BookController.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
 
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 class BookController {
@@ -323,8 +334,8 @@ class BookController {
     }
 
     @Get
-    List&lt;String&gt; index() {
-        bookService.findAll()*.title
+    List&lt;BookResponse&gt; index() {
+        bookService.findAll().collect { it -&gt; new BookResponse(title: it.title) }
     }
 }</code></pre>
 </div>
@@ -430,6 +441,7 @@ class Bootstrap implements ApplicationEventListener&lt;StartupEvent&gt; { <i cla
 
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
@@ -442,24 +454,30 @@ class BookControllerSpec extends Specification {
 
     @Inject
     @Client("/")
-    RxHttpClient client;
+    RxHttpClient client
 
     void "test hello world response"() {
         when:
-        HttpRequest request = HttpRequest.GET('/books').header("tenantId", "sherlock")
-        List&lt;String&gt; rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+        HttpRequest request = booksRequest("sherlock")
+        List&lt;BookResponse&gt; rsp  = client.toBlocking().retrieve(request, Argument.listOf(BookResponse))
 
         then:
         rsp
-        rsp == ['Sherlock diary']
+        rsp.size() == 1
+        rsp.first().title == 'Sherlock diary'
 
         when:
-        request = HttpRequest.GET('/books').header("tenantId", "watson")
-        rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+        request = booksRequest("watson")
+        rsp  = client.toBlocking().retrieve(request, Argument.listOf(BookResponse))
 
         then:
-        rsp
-        rsp == ['Watson diary']
+        rsp.size() == 1
+        rsp.first().title == 'Watson diary'
+    }
+
+    private static HttpRequest booksRequest(String tenantId) {
+        HttpRequest.GET('/books')
+                .header("tenantId", tenantId)
     }
 }</code></pre>
 </div>

@@ -157,8 +157,11 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.gateway</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.gateway --test spock</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>In the previous command, we are generating a Micronaut app and telling the CLI to use <a href="https://spockframework.org">Spock</a> as the test framework.</p>
 </div>
 
 
@@ -180,7 +183,7 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-multitenancy"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut:micronaut-multitenancy")</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -241,6 +244,7 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import io.micronaut.http.filter.ServerFilterPhase;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -276,7 +280,7 @@ public class HomePageFilter extends OncePerRequestHttpServerFilter {
 
     @Override
     public int getOrder() {
-        return LOWEST_PRECEDENCE - 100;
+        return ServerFilterPhase.SECURITY.order();
     }
 }</code></pre>
 </div>
@@ -308,6 +312,34 @@ public class HomePageFilter extends OncePerRequestHttpServerFilter {
 <p>Create an interface to encapsulate the communication with the <code>books</code> microservice which we will create shortly.</p>
 </div>
 <div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/Book.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
+public class Book {
+    private String title;
+
+    public Book() {
+    }
+
+    public Book(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">gateway/src/main/java/example/micronaut/BookFetcher.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
@@ -318,7 +350,7 @@ import java.util.List;
 
 public interface BookFetcher {
 
-    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks();
 }</code></pre>
 </div>
 </div>
@@ -344,7 +376,7 @@ public interface BookClient extends BookFetcher {
 
     @Override
     @Get("/books") <i class="conum" data-value="3"></i><b>(3)</b>
-    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks();
 }</code></pre>
 </div>
 </div>
@@ -407,20 +439,11 @@ public interface BookClient extends BookFetcher {
 <div class="listingblock">
 <div class="title">gateway/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-views-handlebars"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.views:micronaut-views-handlebars")</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Micronaut includes <a href="https://docs.micronaut.io/snapshot/api/io/micronaut/views/handlebars/HandlebarsViewsRenderer.html">HandlebarsViewsRenderer</a> which uses the <a href="http://jknack.github.io/handlebars.java/">Handlebars.java</a> project.</p>
-</div>
-<div class="paragraph">
-<p>In addition to the <code>views</code> dependency, add the following dependency to <code>build.gradle</code></p>
-</div>
-<div class="listingblock">
-<div class="title">gateway/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">runtime "com.github.jknack:handlebars:4.1.0"</code></pre>
-</div>
+<p>The previous dependency includes <a href="https://micronaut-projects.github.io/micronaut-views/latest/api/index.html">HandlebarsViewsRenderer</a> which uses the <a href="http://jknack.github.io/handlebars.java/">Handlebars.java</a> project.</p>
 </div>
 <div class="paragraph">
 <p>Create a view which we will use in the <code>HomeController</code>.</p>
@@ -460,8 +483,9 @@ import io.reactivex.Single;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@Controller("/") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller <i class="conum" data-value="1"></i><b>(1)</b>
 public class HomeController {
 
     private final BookFetcher bookFetcher;
@@ -476,7 +500,7 @@ public class HomeController {
         return bookFetcher.fetchBooks().map(books -&gt; {
             Map&lt;String, Object&gt; model = new HashMap&lt;&gt;();
             model.put("pagetitle", "Home");
-            model.put("books", books);
+            model.put("books", books.stream().map(Book::getTitle).collect(Collectors.toList()));
             return HttpResponse.ok(model);
         });
     }
@@ -648,8 +672,8 @@ import javax.inject.Singleton
 class MockBookFetcher implements BookFetcher {
 
     @Override
-    Single&lt;List&lt;String&gt;&gt; fetchBooks() {
-        Single.just(Arrays.asList(
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks() {
+        Single.just([
             "The Empty Hearse",
             "The Hounds of Baskerville",
             "The Woman",
@@ -659,7 +683,7 @@ class MockBookFetcher implements BookFetcher {
             "The Geek Interpreter",
             "The Great Game",
             "The Blind Banker",
-            "A Study in Pink")
+            "A Study in Pink"].collect { new Book(it) }
         )
     }
 }</code></pre>
@@ -683,11 +707,11 @@ class HomePageSpec extends GebSpec {
 
     @AutoCleanup
     @Shared
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:])
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [:]) <i class="conum" data-value="1"></i><b>(1)</b>
 
     def "verify tenant can be selected works"() {
         given:
-        browser.baseUrl = "http://localhost:${embeddedServer.port}"
+        browser.baseUrl = "http://localhost:${embeddedServer.port}" <i class="conum" data-value="2"></i><b>(2)</b>
 
         when:
         go "/"
@@ -715,11 +739,11 @@ class HomePageSpec extends GebSpec {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+<td>Start an <code>EmbeddedServer</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Inject the <code>EmbeddedServer</code>.</td>
+<td>Point the browser base url to the embedded server url.</td>
 </tr>
 </table>
 </div>
@@ -759,14 +783,10 @@ class HomePageSpec extends GebSpec {
 <div class="listingblock">
 <div class="title">books/build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.configuration:micronaut-hibernate-gorm") {
-    exclude group: 'org.grails', module: 'grails-datastore-gorm-hibernate5'
-}
-implementation "org.grails:grails-datastore-gorm-hibernate5:7.0.1.RELEASE"
-runtime "com.h2database:h2:1.4.192"
-runtime "org.apache.tomcat:tomcat-jdbc:8.5.0"
-runtime "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.5.0"
-runtime "org.slf4j:slf4j-api:1.7.10"</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
+implementation("io.micronaut.groovy:micronaut-hibernate-gorm")
+runtimeOnly("com.h2database:h2")
+runtimeOnly("org.apache.tomcat:tomcat-jdbc")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -926,12 +946,27 @@ interface BookService {
 <p>Create a controller to expose the <code>/books</code> endpoint.</p>
 </div>
 <div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/BookResponse.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class BookResponse {
+    String title
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">books/src/main/groovy/example/micronaut/BookController.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
 
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 class BookController {
@@ -943,8 +978,8 @@ class BookController {
     }
 
     @Get
-    List&lt;String&gt; index() {
-        bookService.findAll()*.title
+    List&lt;BookResponse&gt; index() {
+        bookService.findAll().collect { it -&gt; new BookResponse(title: it.title) }
     }
 }</code></pre>
 </div>
@@ -1050,6 +1085,7 @@ class Bootstrap implements ApplicationEventListener&lt;StartupEvent&gt; { <i cla
 
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
@@ -1062,24 +1098,30 @@ class BookControllerSpec extends Specification {
 
     @Inject
     @Client("/")
-    RxHttpClient client;
+    RxHttpClient client
 
     void "test hello world response"() {
         when:
-        HttpRequest request = HttpRequest.GET('/books').header("tenantId", "sherlock")
-        List&lt;String&gt; rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+        HttpRequest request = booksRequest("sherlock")
+        List&lt;BookResponse&gt; rsp  = client.toBlocking().retrieve(request, Argument.listOf(BookResponse))
 
         then:
         rsp
-        rsp == ['Sherlock diary']
+        rsp.size() == 1
+        rsp.first().title == 'Sherlock diary'
 
         when:
-        request = HttpRequest.GET('/books').header("tenantId", "watson")
-        rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+        request = booksRequest("watson")
+        rsp  = client.toBlocking().retrieve(request, Argument.listOf(BookResponse))
 
         then:
-        rsp
-        rsp == ['Watson diary']
+        rsp.size() == 1
+        rsp.first().title == 'Watson diary'
+    }
+
+    private static HttpRequest booksRequest(String tenantId) {
+        HttpRequest.GET('/books')
+                .header("tenantId", tenantId)
     }
 }</code></pre>
 </div>

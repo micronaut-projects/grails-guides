@@ -95,6 +95,34 @@ function addJsClass() {
 <p>Create an interface to encapsulate the communication with the <code>books</code> microservice which we will create shortly.</p>
 </div>
 <div class="listingblock">
+<div class="title">gateway/src/main/java/example/micronaut/Book.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
+public class Book {
+    private String title;
+
+    public Book() {
+    }
+
+    public Book(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">gateway/src/main/java/example/micronaut/BookFetcher.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
@@ -105,7 +133,7 @@ import java.util.List;
 
 public interface BookFetcher {
 
-    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks();
 }</code></pre>
 </div>
 </div>
@@ -131,7 +159,7 @@ public interface BookClient extends BookFetcher {
 
     @Override
     @Get("/books") <i class="conum" data-value="3"></i><b>(3)</b>
-    Single&lt;List&lt;String&gt;&gt; fetchBooks();
+    Single&lt;List&lt;Book&gt;&gt; fetchBooks();
 }</code></pre>
 </div>
 </div>
