@@ -1,0 +1,500 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.2 Books Microservice null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Multitenancy Propagation
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>4</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>5</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the App</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.2 Books Microservice</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#gorm"><strong>2.1</strong><span>GORM</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#domain"><strong>2.2</strong><span>Domain</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#dataservice"><strong>2.3</strong><span>Data Service</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#controller"><strong>2.4</strong><span>Controller</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#bootstrap"><strong>2.5</strong><span>Application Startup event</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#booktests"><strong>2.6</strong><span>Tests</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h2 id="books">2.2 Books Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">mn create-app example.micronaut.books --lang groovy</code></pre>
+</div>
+</div>
+
+
+<h2 id="gorm">2.2.1 GORM</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/gorm.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://gorm.grails.org">GORM</a> is a powerful Groovy-based data access toolkit for the JVM. To use it in Micronaut add the following dependencies to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.configuration:micronaut-hibernate-gorm") {
+    exclude group: 'org.grails', module: 'grails-datastore-gorm-hibernate5'
+}
+implementation "org.grails:grails-datastore-gorm-hibernate5:7.0.1.RELEASE"
+runtime "com.h2database:h2:1.4.192"
+runtime "org.apache.tomcat:tomcat-jdbc:8.5.0"
+runtime "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.5.0"
+runtime "org.slf4j:slf4j-api:1.7.10"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure multiple data sources as described in the <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#multipleDataSources">GORM Multiple Data Sources</a> documentation.</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">hibernate:
+  hbm2ddl:
+    auto: 'update'
+dataSources:
+  sherlock:
+    url: 'jdbc:h2:mem:sherlockDb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
+    username: 'sa'
+    password: ''
+    driverClassName: 'org.h2.Driver'
+  watson:
+    url: 'jdbc:h2:mem:watsonDb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
+    username: 'sa'
+    password: ''
+    driverClassName: 'org.h2.Driver'</code></pre>
+</div>
+</div>
+
+
+<h2 id="domain">2.2.2 Domain</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/domain.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>GORM supports several <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#_multi_tenancy_modes">tenancy modes</a>. In this tutorial we use <code>DATABASE</code> where a separate database with a separate connection pool is used to store each tenants data.</p>
+</div>
+<div class="paragraph">
+<p>Add the following configuration to <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">grails:
+  gorm:
+    multiTenancy:
+      mode: 'DATABASE' <i class="conum" data-value="1"></i><b>(1)</b>
+      tenantResolverClass: 'io.micronaut.multitenancy.gorm.HttpHeaderTenantResolver' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>DATABASE</code> mode.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use <code>HttpHeaderTenantResolver</code> which resolves the tenant ID from an HTTP header. Remember we configured the <code>gateway</code> microservice to propagate the tenant ID in an HTTP Header.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a GORM Entity to persist books:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/Book.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import grails.gorm.MultiTenant
+import grails.gorm.annotation.Entity
+import org.grails.datastore.gorm.GormEntity
+
+@Entity <i class="conum" data-value="1"></i><b>(1)</b>
+class Book implements GormEntity&lt;Book&gt;, <i class="conum" data-value="2"></i><b>(2)</b>
+                MultiTenant { <i class="conum" data-value="3"></i><b>(3)</b>
+    String title
+
+    static constraints = {
+        title nullable: false, blank: false
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GORM entities are annotated with <code>grails.persistence.Entity</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use of <code>GormEntity</code> is merely to aid IDE support outside of Grails. When used inside a Grails context, some IDEs will use the grails-app/domain location as a hint to enable code completion.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Implement the <code>MultiTenant</code> trait in the GORM entities you want to be regarded as multi tenant.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="dataservice">2.2.3 Data Service</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/dataservice.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://gorm.grails.org/latest/hibernate/manual/index.html#dataServices">GORM Data Services</a> take the work out of implemented service layer logic by adding the ability to automatically implement abstract classes or interfaces using GORM logic.</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/BookService.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import grails.gorm.multitenancy.CurrentTenant
+import grails.gorm.services.Service
+
+@CurrentTenant <i class="conum" data-value="1"></i><b>(1)</b>
+@Service(Book) <i class="conum" data-value="2"></i><b>(2)</b>
+interface BookService {
+    Book save(String title)
+    List&lt;Book&gt; findAll()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Resolve the current tenant for the context of a class or method</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@Service</code> annotation is an AST transformation that will automatically implement the service for you.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="controller">2.2.4 Controller</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/controller.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a controller to expose the <code>/books</code> endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/BookController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+class BookController {
+
+    private final BookService bookService
+
+    BookController(BookService bookService) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.bookService = bookService
+    }
+
+    @Get
+    List&lt;String&gt; index() {
+        bookService.findAll()*.title
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate with <code>io.micronaut.http.annotation.Controller</code> to designate a class as a Micronaut’s controller.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor dependency injection.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="bootstrap">2.2.5 Application Startup event</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/bootstrap.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To listen to an event, register a bean that implements <code>ApplicationEventListener</code> where the generic type is the type of event the listener should be executed for.</p>
+</div>
+<div class="paragraph">
+<p>We want to listen for the <code>StartupEvent</code> to save some elements in the databases when the app starts:</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/main/groovy/example/micronaut/Bootstrap.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import grails.gorm.multitenancy.Tenants
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.context.event.StartupEvent
+
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+class Bootstrap implements ApplicationEventListener&lt;StartupEvent&gt; { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Inject <i class="conum" data-value="3"></i><b>(3)</b>
+    BookService bookService
+
+    @Override
+    void onApplicationEvent(StartupEvent event) {
+
+        Tenants.withId("sherlock") { <i class="conum" data-value="4"></i><b>(4)</b>
+            bookService.save('Sherlock diary')
+        }
+        Tenants.withId("watson") { <i class="conum" data-value="4"></i><b>(4)</b>
+            bookService.save('Watson diary')
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut’s application context, annotate your class with <code>javax.inject.Singleton</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Listen to <code>StartupEvent</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Field injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>You can specify the tenant ID with the <code>Tenants.withId</code> method.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="booktests">2.2.6 Tests</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-multitenancy-propagation/edit/master/src/main/docs/guide/writingTheApp/books/booktests.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a tests which verifies the behaviour. We received the books belonging to the tenant which we send via an HTTP header.</p>
+</div>
+<div class="listingblock">
+<div class="title">books/src/test/groovy/example/micronaut/BookControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class BookControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    RxHttpClient client;
+
+    void "test hello world response"() {
+        when:
+        HttpRequest request = HttpRequest.GET('/books').header("tenantId", "sherlock")
+        List&lt;String&gt; rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+
+        then:
+        rsp
+        rsp == ['Sherlock diary']
+
+        when:
+        request = HttpRequest.GET('/books').header("tenantId", "watson")
+        rsp  = client.toBlocking().retrieve(request, Argument.listOf(String))
+
+        then:
+        rsp
+        rsp == ['Watson diary']
+    }
+}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the App</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing.
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
