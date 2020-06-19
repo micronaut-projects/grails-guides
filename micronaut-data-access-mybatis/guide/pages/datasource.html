@@ -99,9 +99,9 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'org.mybatis:mybatis:3.4.6' <i class="conum" data-value="1"></i><b>(1)</b>
-implementation "io.micronaut.configuration:micronaut-jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("org.mybatis:mybatis:3.4.6") <i class="conum" data-value="1"></i><b>(1)</b>
+implementation("io.micronaut.sql:micronaut-jdbc-hikari") <i class="conum" data-value="2"></i><b>(2)</b>
+runtimeOnly("com.h2database:h2") <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -157,6 +157,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
+import javax.inject.Singleton;
 import javax.sql.DataSource;
 
 @Factory <i class="conum" data-value="1"></i><b>(1)</b>
@@ -168,8 +169,8 @@ public class MybatisFactory {
         this.dataSource = dataSource; <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
-    @Bean <i class="conum" data-value="3"></i><b>(3)</b>
-    SqlSessionFactory sqlSessionFactory() {
+    @Singleton <i class="conum" data-value="3"></i><b>(3)</b>
+    public SqlSessionFactory sqlSessionFactory() {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
 
         Environment environment = new Environment("dev", transactionFactory, dataSource); <i class="conum" data-value="4"></i><b>(4)</b>

@@ -100,12 +100,13 @@ function addJsClass() {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -116,6 +117,7 @@ are annotated with <code>javax.validation</code> annotations.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
@@ -124,20 +126,22 @@ import javax.validation.constraints.NotBlank;
 public class GenreSaveCommand {
 
     @NotBlank
+    @NonNull
     private String name;
 
     public GenreSaveCommand() {
     }
 
-    public GenreSaveCommand(String name) {
+    public GenreSaveCommand(@NonNull @NotBlank String name) {
         this.name = name;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 }</code></pre>
@@ -148,6 +152,7 @@ public class GenreSaveCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
@@ -157,32 +162,36 @@ import javax.validation.constraints.NotNull;
 public class GenreUpdateCommand {
 
     @NotNull
+    @NonNull
     private Long id;
 
     @NotBlank
+    @NonNull
     private String name;
 
     public GenreUpdateCommand() {
     }
 
-    public GenreUpdateCommand(Long id, String name) {
+    public GenreUpdateCommand(@NonNull @NotNull Long id, @NonNull @NotBlank String name) {
         this.id = id;
         this.name = name;
     }
 
+    @NonNull
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@NonNull Long id) {
         this.id = id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 }</code></pre>
@@ -196,10 +205,10 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.uri.UriBuilder;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -229,10 +238,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;Integer&gt; getOffset() {
-        if (offset == null) {
-            return Optional.empty();
-        }
-        return Optional.of(offset);
+        return Optional.ofNullable(offset);
     }
 
     public void setOffset(@Nullable Integer offset) {
@@ -240,10 +246,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;Integer&gt; getMax() {
-        if (max == null) {
-            return Optional.empty();
-        }
-        return Optional.of(max);
+        return Optional.ofNullable(max);
     }
 
     public void setMax(@Nullable Integer max) {
@@ -251,10 +254,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;String&gt; getSort() {
-        if (sort == null) {
-            return Optional.empty();
-        }
-        return Optional.of(sort);
+        return Optional.ofNullable(sort);
     }
 
     public void setSort(@Nullable String sort) {
@@ -262,10 +262,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;String&gt; getOrder() {
-        if (order == null) {
-            return Optional.empty();
-        }
-        return Optional.of(order);
+        return Optional.ofNullable(order);
     }
 
     public void setOrder(@Nullable String order) {
@@ -335,11 +332,14 @@ public class ListingArguments {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import javax.validation.constraints.NotNull;
 
 public interface ApplicationConfiguration {
 
-    @NotNull Integer getMax();
+    @NonNull
+    Integer getMax();
 }</code></pre>
 </div>
 </div>
@@ -348,24 +348,28 @@ public interface ApplicationConfiguration {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationProperties;
+
+import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
     protected final Integer DEFAULT_MAX = 10;
 
+    @NonNull
+    @NotNull
     private Integer max = DEFAULT_MAX;
 
     @Override
+    @NonNull
     public Integer getMax() {
         return max;
     }
 
-    public void setMax(Integer max) {
-        if (max != null) {
-            this.max = max;
-        }
+    public void setMax(@NonNull Integer max) {
+        this.max = max;
     }
 }</code></pre>
 </div>
@@ -411,10 +415,9 @@ public class GenreController {
                 .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
-    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
-    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
-        int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
-
+    @Put <i class="conum" data-value="5"></i><b>(5)</b>
+    public HttpResponse&lt;?&gt; update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
+        genreRepository.update(command.getId(), command.getName());
         return HttpResponse
                 .noContent()
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
@@ -425,7 +428,7 @@ public class GenreController {
         return genreRepository.findAll(args);
     }
 
-    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post <i class="conum" data-value="9"></i><b>(9)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
@@ -435,7 +438,7 @@ public class GenreController {
     }
 
     @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
-    public HttpResponse delete(Long id) {
+    public HttpResponse&lt;?&gt; delete(Long id) {
         genreRepository.deleteById(id);
         return HttpResponse.noContent();
     }

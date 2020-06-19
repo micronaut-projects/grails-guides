@@ -90,7 +90,7 @@
         <h1>Access a database with MyBatis</h1>
         <p>Learn how to access a database with MyBatis using Micronaut.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez, Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -103,6 +103,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-data-access-mybatis/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, we are going to write a Micronaut application that exposes some REST endpoints and store data in a
 database using MyBatis.</p>
@@ -206,9 +218,9 @@ database using MyBatis.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'org.mybatis:mybatis:3.4.6' <i class="conum" data-value="1"></i><b>(1)</b>
-implementation "io.micronaut.configuration:micronaut-jdbc-hikari" <i class="conum" data-value="2"></i><b>(2)</b>
-runtime "com.h2database:h2:1.4.196" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("org.mybatis:mybatis:3.4.6") <i class="conum" data-value="1"></i><b>(1)</b>
+implementation("io.micronaut.sql:micronaut-jdbc-hikari") <i class="conum" data-value="2"></i><b>(2)</b>
+runtimeOnly("com.h2database:h2") <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -264,6 +276,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
+import javax.inject.Singleton;
 import javax.sql.DataSource;
 
 @Factory <i class="conum" data-value="1"></i><b>(1)</b>
@@ -275,8 +288,8 @@ public class MybatisFactory {
         this.dataSource = dataSource; <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
-    @Bean <i class="conum" data-value="3"></i><b>(3)</b>
-    SqlSessionFactory sqlSessionFactory() {
+    @Singleton <i class="conum" data-value="3"></i><b>(3)</b>
+    public SqlSessionFactory sqlSessionFactory() {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
 
         Environment environment = new Environment("dev", transactionFactory, dataSource); <i class="conum" data-value="4"></i><b>(4)</b>
@@ -338,6 +351,8 @@ public class MybatisFactory {
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotNull;
@@ -347,42 +362,48 @@ import java.util.Set;
 @Introspected
 public class Genre {
 
-    public Genre() {
-    }
-
-    public Genre(@NotNull String name) {
-        this.name = name;
-    }
-
+    @Nullable
     private Long id;
 
     @NotNull
+    @NonNull
     private String name;
 
+    public Genre() {
+    }
+
+    public Genre(@NonNull @NotNull String name) {
+        this.name = name;
+    }
+
+    @NonNull
     @JsonIgnore
     private Set&lt;Book&gt; books = new HashSet&lt;&gt;();
 
+    @Nullable
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
+    @NonNull
     public Set&lt;Book&gt; getBooks() {
         return books;
     }
 
-    public void setBooks(Set&lt;Book&gt; books) {
+    public void setBooks(@NonNull Set&lt;Book&gt; books) {
         this.books = books;
     }
 
@@ -600,6 +621,7 @@ public class GenreMapperImpl implements GenreMapper {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import example.micronaut.ListingArguments;
 import example.micronaut.domain.Genre;
 
@@ -610,15 +632,18 @@ import java.util.Optional;
 
 public interface GenreRepository {
 
-    Optional&lt;Genre&gt; findById(@NotNull Long id);
+    @NonNull
+    Optional&lt;Genre&gt; findById(@NonNull @NotNull Long id);
 
-    Genre save(@NotBlank String name);
+    @NonNull
+    Genre save(@NonNull @NotBlank String name);
 
-    void deleteById(@NotNull Long id);
+    void deleteById(@NonNull @NotNull Long id);
 
-    List&lt;Genre&gt; findAll(@NotNull ListingArguments args);
+    @NonNull
+    List&lt;Genre&gt; findAll(@NonNull @NotNull ListingArguments args);
 
-    int update(@NotNull Long id, @NotBlank String name);
+    int update(@NonNull @NotNull Long id, @NonNull @NotBlank String name);
 }</code></pre>
 </div>
 </div>
@@ -630,6 +655,7 @@ public interface GenreRepository {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import example.micronaut.ListingArguments;
 import example.micronaut.domain.Genre;
 
@@ -649,23 +675,26 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public Optional&lt;Genre&gt; findById(@NotNull Long id) {
+    @NonNull
+    public Optional&lt;Genre&gt; findById(@NonNull @NotNull Long id) {
         return Optional.ofNullable(genreMapper.findById(id));
     }
 
     @Override
-    public Genre save(@NotBlank String name) {
+    @NonNull
+    public Genre save(@NonNull @NotBlank String name) {
         Genre genre = new Genre(name);
         genreMapper.save(genre);
         return genre;
     }
 
     @Override
-    public void deleteById(@NotNull Long id) {
+    public void deleteById(@NonNull @NotNull Long id) {
         findById(id).ifPresent(genre -&gt; genreMapper.deleteById(id));
     }
 
-    public List&lt;Genre&gt; findAll(@NotNull ListingArguments args) {
+    @NonNull
+    public List&lt;Genre&gt; findAll(@NonNull @NotNull ListingArguments args) {
 
         if (args.getMax().isPresent() &amp;&amp; args.getSort().isPresent() &amp;&amp; args.getOffset().isPresent() &amp;&amp; args.getSort().isPresent()) {
             return genreMapper.findAllByOffsetAndMaxAndSortAndOrder(args.getOffset().get(),
@@ -685,7 +714,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public int update(@NotNull Long id, @NotBlank String name) {
+    public int update(@NonNull @NotNull Long id, @NonNull @NotBlank String name) {
         genreMapper.update(id, name);
         return -1;
     }
@@ -712,12 +741,13 @@ public class GenreRepositoryImpl implements GenreRepository {
 are annotated with <code>javax.validation</code> annotations.</p>
 </div>
 <div class="paragraph">
-<p>Add the next snippet to <code>build.gradle</code></p>
+<p><code>build.gradle</code> should contain the next snippet:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation 'io.micronaut:micronaut-validation'</code></pre>
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">annotationProcessor("io.micronaut:micronaut-validation")
+implementation("io.micronaut:micronaut-validation")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -728,6 +758,7 @@ are annotated with <code>javax.validation</code> annotations.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
@@ -736,20 +767,22 @@ import javax.validation.constraints.NotBlank;
 public class GenreSaveCommand {
 
     @NotBlank
+    @NonNull
     private String name;
 
     public GenreSaveCommand() {
     }
 
-    public GenreSaveCommand(String name) {
+    public GenreSaveCommand(@NonNull @NotBlank String name) {
         this.name = name;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 }</code></pre>
@@ -760,6 +793,7 @@ public class GenreSaveCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.genre;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
@@ -769,32 +803,36 @@ import javax.validation.constraints.NotNull;
 public class GenreUpdateCommand {
 
     @NotNull
+    @NonNull
     private Long id;
 
     @NotBlank
+    @NonNull
     private String name;
 
     public GenreUpdateCommand() {
     }
 
-    public GenreUpdateCommand(Long id, String name) {
+    public GenreUpdateCommand(@NonNull @NotNull Long id, @NonNull @NotBlank String name) {
         this.id = id;
         this.name = name;
     }
 
+    @NonNull
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@NonNull Long id) {
         this.id = id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 }</code></pre>
@@ -808,10 +846,10 @@ public class GenreUpdateCommand {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.uri.UriBuilder;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -841,10 +879,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;Integer&gt; getOffset() {
-        if (offset == null) {
-            return Optional.empty();
-        }
-        return Optional.of(offset);
+        return Optional.ofNullable(offset);
     }
 
     public void setOffset(@Nullable Integer offset) {
@@ -852,10 +887,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;Integer&gt; getMax() {
-        if (max == null) {
-            return Optional.empty();
-        }
-        return Optional.of(max);
+        return Optional.ofNullable(max);
     }
 
     public void setMax(@Nullable Integer max) {
@@ -863,10 +895,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;String&gt; getSort() {
-        if (sort == null) {
-            return Optional.empty();
-        }
-        return Optional.of(sort);
+        return Optional.ofNullable(sort);
     }
 
     public void setSort(@Nullable String sort) {
@@ -874,10 +903,7 @@ public class ListingArguments {
     }
 
     public Optional&lt;String&gt; getOrder() {
-        if (order == null) {
-            return Optional.empty();
-        }
-        return Optional.of(order);
+        return Optional.ofNullable(order);
     }
 
     public void setOrder(@Nullable String order) {
@@ -947,11 +973,14 @@ public class ListingArguments {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import javax.validation.constraints.NotNull;
 
 public interface ApplicationConfiguration {
 
-    @NotNull Integer getMax();
+    @NonNull
+    Integer getMax();
 }</code></pre>
 </div>
 </div>
@@ -960,24 +989,28 @@ public interface ApplicationConfiguration {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationProperties;
+
+import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties("application") <i class="conum" data-value="1"></i><b>(1)</b>
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
     protected final Integer DEFAULT_MAX = 10;
 
+    @NonNull
+    @NotNull
     private Integer max = DEFAULT_MAX;
 
     @Override
+    @NonNull
     public Integer getMax() {
         return max;
     }
 
-    public void setMax(Integer max) {
-        if (max != null) {
-            this.max = max;
-        }
+    public void setMax(@NonNull Integer max) {
+        this.max = max;
     }
 }</code></pre>
 </div>
@@ -1023,10 +1056,9 @@ public class GenreController {
                 .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
     }
 
-    @Put("/") <i class="conum" data-value="5"></i><b>(5)</b>
-    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
-        int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
-
+    @Put <i class="conum" data-value="5"></i><b>(5)</b>
+    public HttpResponse&lt;?&gt; update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
+        genreRepository.update(command.getId(), command.getName());
         return HttpResponse
                 .noContent()
                 .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
@@ -1037,7 +1069,7 @@ public class GenreController {
         return genreRepository.findAll(args);
     }
 
-    @Post("/") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post <i class="conum" data-value="9"></i><b>(9)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
@@ -1047,7 +1079,7 @@ public class GenreController {
     }
 
     @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
-    public HttpResponse delete(Long id) {
+    public HttpResponse&lt;?&gt; delete(Long id) {
         genreRepository.deleteById(id);
         return HttpResponse.noContent();
     }
@@ -1128,7 +1160,7 @@ Flyway</a>.</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation 'io.micronaut.configuration:micronaut-flyway'</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation("io.micronaut.flyway:micronaut-flyway")</code></pre>
 </div>
 </div>
 <div class="paragraph">
