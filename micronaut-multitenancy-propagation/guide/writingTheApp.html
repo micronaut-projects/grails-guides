@@ -690,12 +690,115 @@ class MockBookFetcher implements BookFetcher {
 </div>
 </div>
 <div class="paragraph">
-<p>Create a tests which verifies the flow using Geb.</p>
+<p>Create a tests which verifies the flow using <a href="https://gebish.org">Geb</a>.</p>
+</div>
+<div class="paragraph">
+<p>Add dependencies for Geb:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+...
+..
+    testImplementation "org.gebish:geb-spock:3.4"
+    testCompile "org.seleniumhq.selenium:htmlunit-driver:2.35.1"
+    testRuntime 'net.sourceforge.htmlunit:htmlunit:2.35.0'
+    testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add a <a href="https://gebish.org/manual/current/#configuration">Geb configuration script</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/resources/GebConfig.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
+// default to use htmlunit
+driver = {
+    HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver()
+    htmlUnitDriver.javascriptEnabled = true
+    htmlUnitDriver
+}
+
+environments {
+
+
+    htmlUnit {
+        driver = {
+            HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver()
+            htmlUnitDriver.javascriptEnabled = true
+            htmlUnitDriver
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create two Geb Pages:</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/groovy/example/micronaut/HomePage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class HomePage extends Page {
+
+    static url = "/"
+
+    static at = { title == "Home" }
+
+    static content = {
+        li(required: false) { $('li') }
+    }
+
+    List&lt;String&gt; books() {
+        li.collect { it.text() }
+    }
+
+    int numberOfBooks() {
+        if (li.empty) {
+           return 0
+        }
+        li.size()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">gateway/src/test/groovy/example/micronaut/TenantPage.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
+
+import geb.Page
+
+class TenantPage extends Page {
+
+    static url = "/tenant"
+
+    static at = { title == "Tenants" }
+
+    static content = {
+        link { $('a', text: it) }
+    }
+
+    void select(String text) {
+        link(text).click()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write a test which verifies that when the user visits the home page without a tenant is redirected to the tenant selection page. After tenant selection, the home page loads a set of books.</p>
 </div>
 <div class="listingblock">
 <div class="title">gateway/src/test/groovy/example/micronaut/HomePageSpec.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import geb.spock.GebSpec
 import io.micronaut.context.ApplicationContext
@@ -714,7 +817,7 @@ class HomePageSpec extends GebSpec {
         browser.baseUrl = "http://localhost:${embeddedServer.port}" <i class="conum" data-value="2"></i><b>(2)</b>
 
         when:
-        go "/"
+        via HomePage
 
         then:
         at TenantPage
