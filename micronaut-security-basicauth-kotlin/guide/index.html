@@ -88,7 +88,7 @@
         <h1>Micronaut Basic Auth</h1>
         <p>Learn how to secure a Micronaut app using 'Basic' HTTP Authentication Scheme.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.BUILD-SNAPSHOT</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -101,6 +101,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-security-basicauth-kotlin/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p><a href="https://tools.ietf.org/html/rfc7617">RFC7617</a> defines the "Basic" Hypertext Transfer Protocol (HTTP) authentication scheme, which transmits credentials as user-id/password pairs, encoded using Base64.</p>
 </div>
@@ -277,8 +289,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    kapt("io.micronaut:micronaut-security-annotations")
-    implementation("io.micronaut:micronaut-security")
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security")
 }</code></pre>
 </div>
 </div>
@@ -320,10 +332,10 @@ class AuthenticationProviderUserPassword : AuthenticationProvider {
         return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
                 emitter.onNext(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onComplete()
             } else {
                 emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-            emitter.onComplete()
         }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
@@ -430,7 +442,8 @@ import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import javax.inject.Inject
@@ -449,8 +462,8 @@ class BasicAuthTest {
         val e = Executable { client.toBlocking().exchange&lt;Any, Any&gt;(HttpRequest.GET&lt;Any&gt;("/").accept(MediaType.TEXT_PLAIN)) } <i class="conum" data-value="3"></i><b>(3)</b>
 
         // then: 'returns unauthorized'
-        val thrown = Assertions.assertThrows(HttpClientResponseException::class.java, e) <i class="conum" data-value="4"></i><b>(4)</b>
-        Assertions.assertEquals(thrown.status, HttpStatus.UNAUTHORIZED)
+        val thrown = assertThrows(HttpClientResponseException::class.java, e) <i class="conum" data-value="4"></i><b>(4)</b>
+        assertEquals(thrown.status, HttpStatus.UNAUTHORIZED)
 
         //when: 'A secured URL is accessed with Basic Auth'
         val rsp = client.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/")
@@ -458,8 +471,8 @@ class BasicAuthTest {
                 .basicAuth("sherlock", "password"),  <i class="conum" data-value="5"></i><b>(5)</b>
                 String::class.java) <i class="conum" data-value="6"></i><b>(6)</b>
         //then: 'the endpoint can be accessed'
-        Assertions.assertEquals(rsp.status, HttpStatus.OK)
-        Assertions.assertEquals(rsp.body.get(), "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
+        assertEquals(rsp.status, HttpStatus.OK)
+        assertEquals(rsp.body.get(), "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
     }
 }
 }</code></pre>
@@ -543,9 +556,9 @@ interface AppClient {
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.test.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Base64
 import javax.inject.Inject
 
 @MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
@@ -558,7 +571,7 @@ class BasicAuthClientTest {
     fun verifyBasicAuthWorks() {
         val credsEncoded = Base64.getEncoder().encodeToString("sherlock:password".toByteArray())
         val rsp = appClient.home("Basic $credsEncoded")
-        Assertions.assertEquals(rsp, "sherlock")
+        assertEquals(rsp, "sherlock")
     }
 }</code></pre>
 </div>

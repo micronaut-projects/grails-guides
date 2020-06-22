@@ -206,8 +206,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    kapt("io.micronaut:micronaut-security-annotations")
-    implementation("io.micronaut:micronaut-security")
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security")
 }</code></pre>
 </div>
 </div>
@@ -249,10 +249,10 @@ class AuthenticationProviderUserPassword : AuthenticationProvider {
         return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
                 emitter.onNext(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onComplete()
             } else {
                 emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-            emitter.onComplete()
         }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
