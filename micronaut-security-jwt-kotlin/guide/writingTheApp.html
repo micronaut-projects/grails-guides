@@ -121,7 +121,7 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -191,7 +191,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-jwt"
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>
@@ -212,48 +213,31 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">src/main/resources/application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-      oauth:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    authentication: bearer
     token:
       jwt:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
         signatures:
           secret:
-            generator: <i class="conum" data-value="5"></i><b>(5)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enable Micronaut&#8217;s security capabilities</td>
+<td>Set <code>authentication</code> to <code>bearer</code> to receive a JSON response from the login endpoint.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose <code>/login</code> endpoint</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Expose <code>/oauth/access_token</code> endpoint as defined by <a href="https://tools.ietf.org/html/rfc6749#section-6">section 6 of the OAuth 2.0 spec</a> - Refreshing an Access Token.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Enable JWT based authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>You can create a <a href="http://docs.micronaut.io/latest/api/io/micronaut/security/token/jwt/signature/secret/SecretSignatureConfiguration.html">SecretSignatureConfiguration</a> named <code>generator</code> via configuration as illustrated above. The <code>generator</code> signature is used to sign the issued JWT claims.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Change this by your own secret and keep it safe (do not store this in your VCS)</td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Change this by your own secret and keep it safe (do not store this in your VCS).</td>
 </tr>
 </table>
 </div>
@@ -272,29 +256,31 @@ other build tools such as <code>Maven</code> or other programming languages such
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/services/AuthenticationProviderUserPassword.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.security.authentication.AuthenticationFailed
-import io.micronaut.security.authentication.AuthenticationProvider
-import io.micronaut.security.authentication.AuthenticationRequest
-import io.micronaut.security.authentication.AuthenticationResponse
-import io.micronaut.security.authentication.UserDetails
+import io.micronaut.http.HttpRequest
+import io.micronaut.security.authentication.*
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
 import org.reactivestreams.Publisher
 import java.util.*
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+class AuthenticationProviderUserPassword : AuthenticationProvider {
+    <i class="conum" data-value="2"></i><b>(2)</b>
+    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;): Publisher&lt;AuthenticationResponse&gt; {
+        return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
-                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onNext(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onComplete()
+            } else {
+                emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-        }
-        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>
@@ -326,9 +312,9 @@ class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="co
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/controllers/HomeController.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/HomeController.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller

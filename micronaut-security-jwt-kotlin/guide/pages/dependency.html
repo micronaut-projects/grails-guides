@@ -104,7 +104,8 @@ function addJsClass() {
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-jwt"
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>

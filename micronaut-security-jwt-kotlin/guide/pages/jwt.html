@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.2 Use Micronaut's HTTP Client and JWT null</title>
+    <title>3.1 Use Micronaut's HTTP Client and JWT null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -76,7 +76,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3.2 Use Micronaut's HTTP Client and JWT</h1>
+                    <h1>3.1 Use Micronaut's HTTP Client and JWT</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -85,7 +85,7 @@ function addJsClass() {
 
                 
 
-<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+<h2 id="jwt">3.1 Use Micronaut's HTTP Client and JWT</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-kotlin/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
@@ -105,13 +105,19 @@ function addJsClass() {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 
 @Client("/")
 interface AppClient {
+    @Post("/login")
+    fun login(@Body credentials : UsernamePasswordCredentials): BearerAccessRefreshToken
 
+
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/")
     fun home(@Header authorization: String): String
 }</code></pre>
@@ -121,108 +127,54 @@ interface AppClient {
 <p>Create a test which uses the previous <code>@Client</code></p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtTest.kotlin</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+@MicronautTest
+class DeclarativeHttpClientWithJwtTest {
 
-class DeclarativeHttpClientWithJwtSpec : Spek({
-    describe("Verify JWT authentication works with declarative @Client") {
+    @Inject
+    lateinit var appClient : AppClient <i class="conum" data-value="1"></i><b>(1)</b>
 
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Test
+    fun verifyJwtAuthenticationWorksWithDeclarativeClient() {
 
-        var appClient: AppClient? = null
-        it("AppClient Bean can be retrieved from Application context") {
-            var exceptionThrown = false
-            try {
-                appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
+        val creds: UsernamePasswordCredentials = UsernamePasswordCredentials("sherlock", "password")
+        val loginRsp : BearerAccessRefreshToken  = appClient.login(creds) <i class="conum" data-value="2"></i><b>(2)</b>
 
-            } catch (e: HttpClientResponseException) {
-                exceptionThrown = true
-            }
-            assertFalse(exceptionThrown)
-        }
-        it("Accessing a secured URL without authenticating returns unauthorized") {
-            var exceptionThrown = false
-            try {
-                val request = HttpRequest.GET&lt;Any&gt;("/")
-                client.toBlocking().exchange(request, String::class.java)
-            } catch (e: HttpClientResponseException) {
-                exceptionThrown = true
-            }
-            assertTrue(exceptionThrown)
-        }
-        var accessToken: String? = null
-        it("User can login") {
-            val creds = UsernamePasswordCredentials("sherlock", "password")
-            val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
+        assertNotNull(loginRsp)
+        assertNotNull(loginRsp.accessToken)
+        assertTrue(JWTParser.parse(loginRsp.accessToken) is SignedJWT)
 
-            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
-                    BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
+        val msg = appClient.home("Bearer ${loginRsp.accessToken}") <i class="conum" data-value="3"></i><b>(3)</b>
 
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-            assertNotNull(rsp.body()!!.accessToken)
-
-            accessToken = rsp.body()!!.accessToken <i class="conum" data-value="6"></i><b>(6)</b>
-        }
-        it("Access / endpoint with appClient") {
-            var msg: String = appClient!!.home("Bearer ${accessToken!!}") <i class="conum" data-value="7"></i><b>(7)</b>
-            assertTrue(msg == "sherlock")
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+        assertEquals("sherlock", msg)
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject <code>AppClient</code> bean from application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Retrieve <code>AppClient</code> bean from application context.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
 </tr>
 </table>

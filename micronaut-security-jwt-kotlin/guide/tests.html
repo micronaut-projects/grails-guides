@@ -85,10 +85,7 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#oauth"><strong>3.1</strong><span>Token Refresh</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#jwt"><strong>3.2</strong><span>Use Micronaut's HTTP Client and JWT</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#jwt"><strong>3.1</strong><span>Use Micronaut's HTTP Client and JWT</span></a>
                     </div>
                     
                 </div>
@@ -106,224 +103,104 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
-kotlinVersion=1.3.50
-spekVersion=2.0.8</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">complete/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    ...
-    ..
-    .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude group: 'org.junit.platform'
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a test to verify a user is able to login and access a secured endpoint.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/JwtAuthenticationSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/JwtAuthenticationTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import com.nimbusds.jwt.JWTParser
 import com.nimbusds.jwt.SignedJWT
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
+import javax.inject.Inject
 
-class BasicAuthSpec : Spek({
-    describe("Verify JWT authentication works") {
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class JwtAuthenticationTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client : HttpClient <i class="conum" data-value="2"></i><b>(2)</b>
 
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
-        it("Accessing a secured URL without authenticating") {
-            var exceptionThrown = false
-            try {
-                val request = HttpRequest.GET&lt;Any&gt;("/")
-                client.toBlocking().exchange(request, String::class.java)
-            } catch (e: HttpClientResponseException) {  <i class="conum" data-value="3"></i><b>(3)</b>
-                exceptionThrown = true
-            }
-            assertTrue(exceptionThrown)
-        }
-        it("the endpoint can be access with JWT obtained when Login endpoint is called with valid credentials") {
-            val creds = UsernamePasswordCredentials("sherlock", "password")
-            val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
-
-            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
-                    BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
-
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-            assertNotNull(rsp.body()!!.accessToken)
-            assertTrue(JWTParser.parse(rsp.body()!!.accessToken) is SignedJWT)
-            assertNotNull(rsp.body()!!.refreshToken)
-            assertNotNull(JWTParser.parse(rsp.body()!!.refreshToken) is SignedJWT)
-
-            val accessToken: String = rsp.body()!!.accessToken
-            val requestWithAuthorization = HttpRequest.GET&lt;Any&gt;("/").header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken") <i class="conum" data-value="6"></i><b>(6)</b>
-            val response: HttpResponse&lt;String&gt; = client.toBlocking().exchange(requestWithAuthorization, String::class.java)
-
-            assertEquals(response.status()!!, HttpStatus.OK)
-            assertTrue(response.body()!! == "sherlock") <i class="conum" data-value="7"></i><b>(7)</b>
-        }
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
-
+    @Test
+    fun accessingASecuredUrlWithoutAuthenticatingReturnsUnauthorized() {
+        val e = Executable { client.toBlocking().exchange&lt;Any, Any&gt;(HttpRequest.GET&lt;Any&gt;("/").accept(MediaType.TEXT_PLAIN)) } <i class="conum" data-value="3"></i><b>(3)</b>
+        val thrown = assertThrows(HttpClientResponseException::class.java, e)
+        assertEquals(thrown.status, HttpStatus.UNAUTHORIZED)
     }
-})</code></pre>
+
+    @Test
+    fun uponSuccessfulAuthenticationAJsonWebTokenIsIssuedToTheUser() {
+        val creds = UsernamePasswordCredentials("sherlock", "password")
+        val request : HttpRequest&lt;Any&gt;  = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
+        val rsp : HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request, BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
+        assertEquals(HttpStatus.OK, rsp.status)
+
+        val bearerAccessRefreshToken : BearerAccessRefreshToken = rsp.body()!!  <i class="conum" data-value="6"></i><b>(6)</b>
+
+        assertEquals("sherlock", bearerAccessRefreshToken.username)
+        assertNotNull(bearerAccessRefreshToken.accessToken)
+        assertTrue(JWTParser.parse(bearerAccessRefreshToken.accessToken) is SignedJWT)
+
+        val accessToken : String = bearerAccessRefreshToken.accessToken
+        val response: HttpResponse&lt;String&gt; = client.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/").accept(MediaType.TEXT_PLAIN).bearerAuth(accessToken), String::class.java) <i class="conum" data-value="7"></i><b>(7)</b>
+
+        assertEquals(HttpStatus.OK, rsp.status)
+        assertEquals("sherlock", response.body()!!) <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+<td>Inject the <code>EmbeddedServer</code> interfact.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Once you turn on security, every endpoint is secured by default.</td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
+<td>Once you turn on security, every endpoint is secured by default.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+<td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Micronaut supports <a href="https://tools.ietf.org/html/rfc6750">RFC 6750 Bearer Token</a> specification out-of-the-box. We supply the JWT token in the <code>Authorization</code> HTTP Header.</td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Micronaut supports <a href="https://tools.ietf.org/html/rfc6750">RFC 6750 Bearer Token</a> specification out-of-the-box. We supply the JWT token in the <code>Authorization</code> HTTP Header.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>Use .body() to retrieve the parsed payload.</td>
 </tr>
 </table>
 </div>
 
 
-<h2 id="oauth">3.1 Token Refresh</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-kotlin/edit/master/src/main/docs/guide/tests/oauth.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Create a new test to verify that token refreshing works as expected.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/OauthAccessTokenSpec.kt</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
-
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.endpoints.TokenRefreshRequest
-import io.micronaut.security.token.jwt.render.AccessRefreshToken
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import java.lang.Thread.sleep
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
-
-class OauthAccessTokenSpec : Spek({
-    describe("Verify JWT access token refresh works") {
-
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url)
-
-        it("you can refresh JWT access token with /oauth/access_token endpoint") {
-            val creds = UsernamePasswordCredentials("sherlock", "password")
-            val request = HttpRequest.POST("/login", creds)
-
-            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
-                    BearerAccessRefreshToken::class.java)
-
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-
-            val refreshToken: String = rsp.body()!!.refreshToken
-            val accessToken: String = rsp.body()!!.accessToken
-            sleep(1_000) // sleep for one second to give time for the issued at `iat` Claim to change
-            val refreshTokenRequest: HttpRequest&lt;TokenRefreshRequest&gt; = HttpRequest.POST("/oauth/access_token",
-                    TokenRefreshRequest("refresh_token", refreshToken)) <i class="conum" data-value="1"></i><b>(1)</b>
-            val response: HttpResponse&lt;AccessRefreshToken&gt; = client.toBlocking().exchange(refreshTokenRequest, AccessRefreshToken::class.java)
-
-            assertEquals(response.status()!!, HttpStatus.OK)
-            assertNotNull(response.body()!!.accessToken)
-            assertTrue(response.body()!!.accessToken != accessToken) <i class="conum" data-value="2"></i><b>(2)</b>
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
-    }
-})
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Make a POST request to <code>/oauth/access_token</code> with the refresh token in the JSON payload to get a new access token</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>A different access token is retrieved.</td>
-</tr>
-</table>
-</div>
-
-
-<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+<h2 id="jwt">3.1 Use Micronaut's HTTP Client and JWT</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-kotlin/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
@@ -343,13 +220,19 @@ class OauthAccessTokenSpec : Spek({
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 
 @Client("/")
 interface AppClient {
+    @Post("/login")
+    fun login(@Body credentials : UsernamePasswordCredentials): BearerAccessRefreshToken
 
+
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/")
     fun home(@Header authorization: String): String
 }</code></pre>
@@ -359,108 +242,54 @@ interface AppClient {
 <p>Create a test which uses the previous <code>@Client</code></p>
 </div>
 <div class="listingblock">
-<div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtSpec.kt</div>
+<div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtTest.kotlin</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.context.ApplicationContext
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.runtime.server.EmbeddedServer
+import com.nimbusds.jwt.JWTParser
+import com.nimbusds.jwt.SignedJWT
 import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+@MicronautTest
+class DeclarativeHttpClientWithJwtTest {
 
-class DeclarativeHttpClientWithJwtSpec : Spek({
-    describe("Verify JWT authentication works with declarative @Client") {
+    @Inject
+    lateinit var appClient : AppClient <i class="conum" data-value="1"></i><b>(1)</b>
 
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
-        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Test
+    fun verifyJwtAuthenticationWorksWithDeclarativeClient() {
 
-        var appClient: AppClient? = null
-        it("AppClient Bean can be retrieved from Application context") {
-            var exceptionThrown = false
-            try {
-                appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
+        val creds: UsernamePasswordCredentials = UsernamePasswordCredentials("sherlock", "password")
+        val loginRsp : BearerAccessRefreshToken  = appClient.login(creds) <i class="conum" data-value="2"></i><b>(2)</b>
 
-            } catch (e: HttpClientResponseException) {
-                exceptionThrown = true
-            }
-            assertFalse(exceptionThrown)
-        }
-        it("Accessing a secured URL without authenticating returns unauthorized") {
-            var exceptionThrown = false
-            try {
-                val request = HttpRequest.GET&lt;Any&gt;("/")
-                client.toBlocking().exchange(request, String::class.java)
-            } catch (e: HttpClientResponseException) {
-                exceptionThrown = true
-            }
-            assertTrue(exceptionThrown)
-        }
-        var accessToken: String? = null
-        it("User can login") {
-            val creds = UsernamePasswordCredentials("sherlock", "password")
-            val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
+        assertNotNull(loginRsp)
+        assertNotNull(loginRsp.accessToken)
+        assertTrue(JWTParser.parse(loginRsp.accessToken) is SignedJWT)
 
-            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
-                    BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
+        val msg = appClient.home("Bearer ${loginRsp.accessToken}") <i class="conum" data-value="3"></i><b>(3)</b>
 
-            assertEquals(rsp.status()!!, HttpStatus.OK)
-            assertNotNull(rsp.body()!!.accessToken)
-
-            accessToken = rsp.body()!!.accessToken <i class="conum" data-value="6"></i><b>(6)</b>
-        }
-        it("Access / endpoint with appClient") {
-            var msg: String = appClient!!.home("Bearer ${accessToken!!}") <i class="conum" data-value="7"></i><b>(7)</b>
-            assertTrue(msg == "sherlock")
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+        assertEquals("sherlock", msg)
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+<td>Inject <code>AppClient</code> bean from application context.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Retrieve <code>AppClient</code> bean from application context.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Micronaut makes it easy to parse JSON into Java objects.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Use .body() to retrieve the parsed payload.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
 </tr>
 </table>
