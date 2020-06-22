@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -95,29 +98,31 @@ function addJsClass() {
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/services/AuthenticationProviderUserPassword.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
-import io.micronaut.security.authentication.AuthenticationFailed
-import io.micronaut.security.authentication.AuthenticationProvider
-import io.micronaut.security.authentication.AuthenticationRequest
-import io.micronaut.security.authentication.AuthenticationResponse
-import io.micronaut.security.authentication.UserDetails
+import io.micronaut.http.HttpRequest
+import io.micronaut.security.authentication.*
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
 import org.reactivestreams.Publisher
 import java.util.*
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
-class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-    override fun authenticate(authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+class AuthenticationProviderUserPassword : AuthenticationProvider {
+    <i class="conum" data-value="2"></i><b>(2)</b>
+    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;): Publisher&lt;AuthenticationResponse&gt; {
+        return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
-                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onNext(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                emitter.onComplete()
+            } else {
+                emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-        }
-        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>

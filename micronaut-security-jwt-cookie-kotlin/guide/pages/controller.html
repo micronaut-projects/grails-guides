@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -95,9 +98,9 @@ function addJsClass() {
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/controllers/HomeController.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/HomeController.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -152,9 +155,9 @@ class HomeController {
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/controllers/LoginAuthController.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/LoginAuthController.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
