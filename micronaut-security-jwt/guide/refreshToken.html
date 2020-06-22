@@ -159,7 +159,6 @@ import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 import javax.inject.Inject
-import java.text.ParseException
 
 @MicronautTest
 class LoginIncludesRefreshTokenSpec extends Specification {
@@ -415,13 +414,13 @@ public interface RefreshTokenRepository extends CrudRepository&lt;RefreshTokenEn
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
 
-import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
 import io.micronaut.security.token.refresh.RefreshTokenPersistence;
 import io.micronaut.security.errors.OauthErrorResponseException;
 import io.micronaut.security.errors.IssuingAnAccessTokenErrorCode;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
@@ -451,15 +450,21 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
 
     @Override
     public Publisher&lt;UserDetails&gt; getUserDetails(String refreshToken) {
-        Optional&lt;RefreshTokenEntity&gt; tokenOpt = refreshTokenRepository.findByRefreshToken(refreshToken);
-        if (tokenOpt.isPresent()) {
-            RefreshTokenEntity token = tokenOpt.get();
-            if (token.getRevoked()) {
-                return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token revoked", null)); <i class="conum" data-value="5"></i><b>(5)</b>
+        return Flowable.create(emitter -&gt; {
+            Optional&lt;RefreshTokenEntity&gt; tokenOpt = refreshTokenRepository.findByRefreshToken(refreshToken);
+            if (tokenOpt.isPresent()) {
+                RefreshTokenEntity token = tokenOpt.get();
+                if (token.getRevoked()) {
+                    emitter.onError(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token revoked", null)); <i class="conum" data-value="5"></i><b>(5)</b>
+                } else {
+                    emitter.onNext(new UserDetails(token.getUsername(), new ArrayList&lt;&gt;())); <i class="conum" data-value="6"></i><b>(6)</b>
+                    emitter.onComplete();
+                }
+            } else {
+                emitter.onError(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token not found", null)); <i class="conum" data-value="7"></i><b>(7)</b>
             }
-             return Flowable.just(new UserDetails(token.getUsername(), new ArrayList&lt;&gt;())); <i class="conum" data-value="6"></i><b>(6)</b>
-        }
-        return Publishers.just(new OauthErrorResponseException(IssuingAnAccessTokenErrorCode.INVALID_GRANT, "refresh token not found", null)); <i class="conum" data-value="7"></i><b>(7)</b>
+        }, BackpressureStrategy.ERROR);
+
     }
 }</code></pre>
 </div>
@@ -685,7 +690,6 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.BlockingHttpClient
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
@@ -778,7 +782,6 @@ class RefreshTokenRevokedSpec extends Specification {
 <div class="title">src/test/groovy/example/micronaut/OauthAccessTokenSpec.groovy</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
-
 
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
