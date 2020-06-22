@@ -98,9 +98,9 @@ function addJsClass() {
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/HomeController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.MediaType
@@ -108,16 +108,17 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 
 import java.security.Principal
 
 @CompileStatic
-@Secured("isAuthenticated()") <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/") <i class="conum" data-value="2"></i><b>(2)</b>
+@Secured(SecurityRule.IS_AUTHENTICATED) <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller <i class="conum" data-value="2"></i><b>(2)</b>
 class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN)
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     String index(Principal principal) { <i class="conum" data-value="4"></i><b>(4)</b>
         principal.name
     }
