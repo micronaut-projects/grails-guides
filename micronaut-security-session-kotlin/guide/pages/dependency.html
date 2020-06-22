@@ -104,7 +104,8 @@ function addJsClass() {
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-session"
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-session")
 }</code></pre>
 </div>
 </div>

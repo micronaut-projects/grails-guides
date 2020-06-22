@@ -90,7 +90,7 @@
         <h1>Micronaut Session based authentication</h1>
         <p>Learn how to secure a Micronaut app using Session based authentication.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.M3</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
     </header>
     
 
@@ -103,6 +103,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-security-session-kotlin/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide you are going to write a Micronaut app with session based authentication.</p>
 </div>
@@ -186,18 +198,17 @@
 </div>
 
 
+<div class="sect1">
+<h2 id="_create_an_app_with_the_command_line_interface">Create an App with the Command Line Interface</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Create a Kotlin Micronaut app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
 </div>
 <div class="paragraph">
-<p><code>mn create-app example.micronaut.complete --lang=kotlin</code></p>
+<p><code>mn create-app example.micronaut.complete --lang=kotlin --test=spock</code></p>
 </div>
 <div class="paragraph">
-<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
-</div>
-<div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
-other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
+<p>The previous command creates a Micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code> which uses Kotlin as its main programming language and spock as a Test Framework.</p>
 </div>
 <div class="paragraph">
 <p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
@@ -205,6 +216,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="imageblock">
 <div class="content">
 <img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -266,7 +279,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-session"
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-session")
 }</code></pre>
 </div>
 </div>
@@ -289,32 +303,24 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
   security:
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-      logout:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-    session:
-      login-success-target-url: / <i class="conum" data-value="3"></i><b>(3)</b>
-      login-failure-target-url: /login/authFailed <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+    authentication: session <i class="conum" data-value="1"></i><b>(1)</b>
+    redirect:
+      login-success: / <i class="conum" data-value="2"></i><b>(2)</b>
+      login-failure: /login/authFailed <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Expose <code>/login</code> endpoint</td>
+<td>Set <code>micronaut.security.authentication</code> to <code>session</code>. It sets the necessary beans for login and logout using session based authentication.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Expose <code>/logout</code> endpoint</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>After the user logs in, redirect them to the Home page.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>If the login fails, redirect them to /login/authFailed</td>
 </tr>
 </table>
@@ -334,31 +340,31 @@ other build tools such as <code>Maven</code> or other programming languages such
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/services/AuthenticationProviderUserPassword.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/AuthenticationProviderUserPassword.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.HttpRequest
-import io.micronaut.security.authentication.AuthenticationFailed
-import io.micronaut.security.authentication.AuthenticationProvider
-import io.micronaut.security.authentication.AuthenticationRequest
-import io.micronaut.security.authentication.AuthenticationResponse
-import io.micronaut.security.authentication.UserDetails
+import io.micronaut.security.authentication.*
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
 import org.reactivestreams.Publisher
 import java.util.*
 import javax.inject.Singleton
 
 @Singleton <i class="conum" data-value="1"></i><b>(1)</b>
 class AuthenticationProviderUserPassword : AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
-
-    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;?): Publisher&lt;AuthenticationResponse&gt; {
-        if (authenticationRequest != null &amp;&amp; authenticationRequest.identity != null &amp;&amp; authenticationRequest.secret != null) {
+    override fun authenticate(httpRequest: HttpRequest&lt;*&gt;?, authenticationRequest: AuthenticationRequest&lt;*, *&gt;): Publisher&lt;AuthenticationResponse&gt; {
+        return Flowable.create({ emitter: FlowableEmitter&lt;AuthenticationResponse&gt; -&gt;
             if (authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password") {
-                return Flowable.just&lt;AuthenticationResponse&gt;(UserDetails(authenticationRequest.identity as String, ArrayList()))
+                val userDetails = UserDetails(authenticationRequest.identity as String, ArrayList())
+                emitter.onNext(userDetails)
+                emitter.onComplete()
+            } else {
+                emitter.onError(AuthenticationException(AuthenticationFailed()))
             }
-        }
-        return Flowable.just&lt;AuthenticationResponse&gt;(AuthenticationFailed())
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>
@@ -411,8 +417,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-views-velocity"
-    implementation "org.apache.velocity:velocity-engine-core:2.0"
+    implementation("io.micronaut.views:micronaut-views-velocity")
 }</code></pre>
 </div>
 </div>
@@ -496,9 +501,9 @@ going to produce HTML in our controllers.</p>
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/controllers/HomeController.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/HomeController.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -555,9 +560,9 @@ class HomeController {
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/kotlin/example/micronaut/controllers/LoginAuthController.kt</div>
+<div class="title">src/main/kotlin/example/micronaut/LoginAuthController.kt</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -622,40 +627,7 @@ class LoginAuthController {
 
 
 <div class="paragraph">
-<p>Micronaut is test framework agnostic. You can use <a href="https://spekframework.org">Spek</a>, <a href="https://junit.org">JUnit</a> or <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>In this Guide, we test the app with <a href="http://spockframework.org">Spock Framework</a>.</p>
-</div>
-<div class="paragraph">
-<p>We need to modify <code>build.gradle</code> to install spock.</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut.test:micronaut-test-spock"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Edit <code>micronaut-cli.yml</code> to set Spock as the test framework:</p>
-</div>
-<div class="listingblock">
-<div class="title">micronaut-cli.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">profile: service
-defaultPackage: example.micronaut
----
-testFramework: spock
-sourceLanguage: kotlin</code></pre>
-</div>
+<p>We created the application with Spock as a test framework.</p>
 </div>
 <div class="paragraph">
 <p>We use also, <a href="https://gebish.org">Geb</a>; a browser automation solution.</p>
@@ -670,12 +642,7 @@ sourceLanguage: kotlin</code></pre>
 ...
 ..
 .
-    testImplementation "org.gebish:geb-spock:3.2"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.141.59"
-    testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
-    testImplementation "org.seleniumhq.selenium:selenium-api:3.141.59"
-    testImplementation "org.gebish:geb-spock:3.2"
+    testImplementation "org.gebish:geb-spock:3.4"
     testImplementation "org.seleniumhq.selenium:htmlunit-driver:2.35.1"
     testRuntime 'net.sourceforge.htmlunit:htmlunit:2.35.0'
     testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
