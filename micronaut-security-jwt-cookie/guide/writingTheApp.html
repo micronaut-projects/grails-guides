@@ -174,8 +174,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    annotationProcessor("io.micronaut:micronaut-security-annotations")
-    implementation("io.micronaut:micronaut-security-jwt")
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>
@@ -272,10 +272,10 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
             if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
                     authenticationRequest.getSecret().equals("password") ) {
                 emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
+                emitter.onComplete();
             } else {
                 emitter.onError(new AuthenticationException(new AuthenticationFailed()));
             }
-            emitter.onComplete();
         }, BackpressureStrategy.ERROR);
 
     }
@@ -330,8 +330,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-views-velocity"
-    implementation "org.apache.velocity:velocity-engine-core:2.0"
+    implementation "io.micronaut.views:micronaut-views-velocity"
 }</code></pre>
 </div>
 </div>
@@ -441,8 +440,8 @@ public class HomeController {
     @View("home") <i class="conum" data-value="4"></i><b>(4)</b>
     Map&lt;String, Object&gt; index(@Nullable Principal principal) {  <i class="conum" data-value="5"></i><b>(5)</b>
         Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();
-        data.put("loggedIn", principal!=null);
-        if (principal!=null) {
+        data.put("loggedIn", principal != null);
+        if (principal != null) {
             data.put("username", principal.getName());
         }
         return data;
