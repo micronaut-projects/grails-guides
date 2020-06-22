@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -121,7 +124,7 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=groovy</code> flag, it generates a Groovy Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Kotlin</code>.</p>
 </div>
 
@@ -145,7 +148,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-security-jwt"
+    compileOnly("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
 }</code></pre>
 </div>
 </div>
@@ -166,26 +170,16 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-      logout:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    authentication: bearer
     token:
       jwt:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-        bearer:
-          enabled: false <i class="conum" data-value="5"></i><b>(5)</b>
-        cookie:
-          enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
-          loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="7"></i><b>(7)</b>
         signatures:
           secret:
-            generator:  <i class="conum" data-value="8"></i><b>(8)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -243,16 +237,20 @@ other build tools such as <code>Maven</code> or other programming languages such
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/AuthenticationProviderUserPassword.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/AuthenticationProviderUserPassword.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.Nullable
 import groovy.transform.CompileStatic
+import io.micronaut.http.HttpRequest
+import io.micronaut.security.authentication.AuthenticationException
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
 import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
@@ -263,13 +261,15 @@ import javax.inject.Singleton
 class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if (authenticationRequest.identity == "sherlock" &amp;&amp;
-            authenticationRequest.secret == "password") {
-            UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, [])
-            return Flowable.just(userDetails) as Publisher&lt;AuthenticationResponse&gt;
-        }
-        Flowable.just(new AuthenticationFailed()) as Publisher&lt;AuthenticationResponse&gt;
+    Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
+        Flowable.create(emitter -&gt; {
+            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), []))
+                emitter.onComplete()
+            } else {
+                emitter.onError(new AuthenticationException(new AuthenticationFailed()))
+            }
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>
@@ -322,8 +322,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-views"
-    implementation "org.apache.velocity:velocity-engine-core:2.0"
+    implementation("io.micronaut.views:micronaut-views-velocity")
 }</code></pre>
 </div>
 </div>
@@ -407,9 +406,9 @@ going to produce HTML in our controllers.</p>
 <p>Create a file named <code>HomeController</code> which resolves the base URL <code>/</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/controllers/HomeController.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/HomeController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller
@@ -468,9 +467,9 @@ class HomeController {
 <p>Next, create <code>LoginAuthController</code> which renders the login form.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/controllers/LoginAuthController.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/LoginAuthController.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.controllers
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut
 
 import groovy.transform.CompileStatic
 import io.micronaut.http.annotation.Controller

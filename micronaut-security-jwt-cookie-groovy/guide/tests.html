@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -79,14 +82,6 @@ function addJsClass() {
                 </div>
 
                 
-                <div id="table-of-content">
-                    <h2>Table of Contents</h2>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#webdriverBinaries"><strong>3.1</strong><span>WebDriver Binaries</span></a>
-                    </div>
-                    
-                </div>
-                
 
                 
 
@@ -112,11 +107,11 @@ function addJsClass() {
 ...
 ..
 .
-    testImplementation "org.gebish:geb-spock:$gebVersion"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
+    testImplementation "org.gebish:geb-spock:3.4"
+    testImplementation "org.seleniumhq.selenium:htmlunit-driver:2.35.1"
+    testRuntime 'net.sourceforge.htmlunit:htmlunit:2.35.0'
+    testImplementation "org.seleniumhq.selenium:selenium-support:3.141.59"
+    testImplementation "org.seleniumhq.selenium:selenium-api:3.141.59"
 }</code></pre>
 </div>
 </div>
@@ -124,39 +119,25 @@ function addJsClass() {
 <p>Create a Geb Configuration file to setup different environments:</p>
 </div>
 <div class="listingblock">
+<div class="title">src/test/resources/GebConfig.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.firefox.FirefoxOptions
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
+// default is to use htmlunit
+driver = {
+    HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver()
+    htmlUnitDriver.javascriptEnabled = true
+    htmlUnitDriver
+}
 
 environments {
 
-    // run via “./gradlew -Dgeb.env=chrome test”
-    chrome {
-        driver = { new ChromeDriver() }
-    }
-
-    // run via “./gradlew -Dgeb.env=chromeHeadless test”
-    chromeHeadless {
+    htmlUnit {
         driver = {
-            ChromeOptions o = new ChromeOptions()
-            o.addArguments('headless')
-            new ChromeDriver(o)
+            HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver()
+            htmlUnitDriver.javascriptEnabled = true
+            htmlUnitDriver
         }
-    }
-
-    firefoxHeadless {
-        driver = {
-            FirefoxOptions o = new FirefoxOptions()
-            o.addArguments('-headless')
-            new FirefoxDriver(o)
-        }
-    }
-
-    // run via “./gradlew -Dgeb.env=firefox test”
-    firefox {
-        driver = { new FirefoxDriver() }
     }
 }</code></pre>
 </div>
@@ -318,46 +299,6 @@ class AuthenticationSpec extends GebSpec {
 <td>Inject the <code>EmbeddedServer</code> bean.</td>
 </tr>
 </table>
-</div>
-
-
-<h2 id="webdriverBinaries">3.1 WebDriver Binaries</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-cookie-groovy/edit/master/src/main/docs/guide/tests/webdriverBinaries.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Install <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">webdriver-binaries</a> Gradle plugin;
-a plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">plugins {
-...
-..
-    id "com.github.erdi.webdriver-binaries" version "2.1"
-}
-
-webdriverBinaries {
-    chromedriver {
-        version = chromeDriverVersion
-    }
-    geckodriver {
-        version = geckoDriverVersion
-    }
-}
-
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
-}</code></pre>
-</div>
 </div>
 
 

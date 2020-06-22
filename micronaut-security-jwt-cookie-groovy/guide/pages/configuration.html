@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -97,26 +100,16 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   security:
-    enabled: true <i class="conum" data-value="1"></i><b>(1)</b>
-    endpoints:
-      login:
-        enabled: true <i class="conum" data-value="2"></i><b>(2)</b>
-      logout:
-        enabled: true <i class="conum" data-value="3"></i><b>(3)</b>
+    authentication: bearer
     token:
       jwt:
-        enabled: true <i class="conum" data-value="4"></i><b>(4)</b>
-        bearer:
-          enabled: false <i class="conum" data-value="5"></i><b>(5)</b>
-        cookie:
-          enabled: true <i class="conum" data-value="6"></i><b>(6)</b>
-          loginFailureTargetUrl: /login/authFailed <i class="conum" data-value="7"></i><b>(7)</b>
         signatures:
           secret:
-            generator:  <i class="conum" data-value="8"></i><b>(8)</b>
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'</code></pre>
 </div>
 </div>
 <div class="colist arabic">

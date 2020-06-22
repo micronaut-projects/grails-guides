@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -95,16 +98,20 @@ function addJsClass() {
 <p>To keep this guide simple, create a naive <code>AuthenticationProvider</code> to simulate user&#8217;s authentication.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/example/micronaut/services/AuthenticationProviderUserPassword.groovy</div>
+<div class="title">src/main/groovy/example/micronaut/AuthenticationProviderUserPassword.groovy</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.services
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut
 
+import edu.umd.cs.findbugs.annotations.Nullable
 import groovy.transform.CompileStatic
+import io.micronaut.http.HttpRequest
+import io.micronaut.security.authentication.AuthenticationException
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
 import io.micronaut.security.authentication.AuthenticationRequest
 import io.micronaut.security.authentication.AuthenticationResponse
 import io.micronaut.security.authentication.UserDetails
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
@@ -115,13 +122,15 @@ import javax.inject.Singleton
 class AuthenticationProviderUserPassword implements AuthenticationProvider { <i class="conum" data-value="2"></i><b>(2)</b>
 
     @Override
-    Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {
-        if (authenticationRequest.identity == "sherlock" &amp;&amp;
-            authenticationRequest.secret == "password") {
-            UserDetails userDetails = new UserDetails((String) authenticationRequest.identity, [])
-            return Flowable.just(userDetails) as Publisher&lt;AuthenticationResponse&gt;
-        }
-        Flowable.just(new AuthenticationFailed()) as Publisher&lt;AuthenticationResponse&gt;
+    Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
+        Flowable.create(emitter -&gt; {
+            if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), []))
+                emitter.onComplete()
+            } else {
+                emitter.onError(new AuthenticationException(new AuthenticationFailed()))
+            }
+        }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
 </div>

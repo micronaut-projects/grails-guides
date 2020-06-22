@@ -44,6 +44,9 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
                         </div>
                         
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
                     </div>
                 </div>
             </li>
@@ -116,8 +119,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-views"
-    implementation "org.apache.velocity:velocity-engine-core:2.0"
+    implementation("io.micronaut.views:micronaut-views-velocity")
 }</code></pre>
 </div>
 </div>
