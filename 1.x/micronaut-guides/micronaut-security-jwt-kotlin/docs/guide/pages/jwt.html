@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.2 Use Micronaut's HTTP Client and JWT null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut JWT Authentication
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/tests.html"><strong>3</strong><span>Tests</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>5</strong><span>Running the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.2 Use Micronaut's HTTP Client and JWT</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="jwt">3.2 Use Micronaut's HTTP Client and JWT</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-security-jwt-kotlin/edit/master/src/main/docs/guide/tests/jwt.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you want to access a secured endpoint, you can also use Micronaut&#8217;s HTTP Client and supply the JWT token in the Authorization header.</p>
+</div>
+<div class="paragraph">
+<p>First create a <code>@Client</code> with a method <code>home</code> which accepts an <code>Authorization</code> HTTP Header.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/AppClient.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.client.annotation.Client
+
+@Client("/")
+interface AppClient {
+
+    @Get("/")
+    fun home(@Header authorization: String): String
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a test which uses the previous <code>@Client</code></p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/DeclarativeHttpClientWithJwtSpec.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+
+import io.micronaut.context.ApplicationContext
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.authentication.UsernamePasswordCredentials
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
+
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+
+class DeclarativeHttpClientWithJwtSpec : Spek({
+    describe("Verify JWT authentication works with declarative @Client") {
+
+        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java) <i class="conum" data-value="1"></i><b>(1)</b>
+        var client: RxHttpClient = RxHttpClient.create(embeddedServer.url) <i class="conum" data-value="2"></i><b>(2)</b>
+
+        var appClient: AppClient? = null
+        it("AppClient Bean can be retrieved from Application context") {
+            var exceptionThrown = false
+            try {
+                appClient = embeddedServer.applicationContext.getBean(AppClient::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
+
+            } catch (e: HttpClientResponseException) {
+                exceptionThrown = true
+            }
+            assertFalse(exceptionThrown)
+        }
+        it("Accessing a secured URL without authenticating returns unauthorized") {
+            var exceptionThrown = false
+            try {
+                val request = HttpRequest.GET&lt;Any&gt;("/")
+                client.toBlocking().exchange(request, String::class.java)
+            } catch (e: HttpClientResponseException) {
+                exceptionThrown = true
+            }
+            assertTrue(exceptionThrown)
+        }
+        var accessToken: String? = null
+        it("User can login") {
+            val creds = UsernamePasswordCredentials("sherlock", "password")
+            val request = HttpRequest.POST("/login", creds) <i class="conum" data-value="4"></i><b>(4)</b>
+
+            val rsp: HttpResponse&lt;BearerAccessRefreshToken&gt; = client.toBlocking().exchange(request,
+                    BearerAccessRefreshToken::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
+
+            assertEquals(rsp.status()!!, HttpStatus.OK)
+            assertNotNull(rsp.body()!!.accessToken)
+
+            accessToken = rsp.body()!!.accessToken <i class="conum" data-value="6"></i><b>(6)</b>
+        }
+        it("Access / endpoint with appClient") {
+            var msg: String = appClient!!.home("Bearer ${accessToken!!}") <i class="conum" data-value="7"></i><b>(7)</b>
+            assertTrue(msg == "sherlock")
+        }
+
+        afterGroup {
+            client.close()
+            embeddedServer.close()
+        }
+    }
+})</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To run the application from a unit test you can use the <a href="http://docs.micronaut.io/api/io/micronaut/runtime/server/EmbeddedServer.html">EmbeddedServer</a> interface</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register a <code>RxClient</code> bean in the application context and point it to the embedded server URL. The <code>EmbeddedServer</code> interface provides the URL of the server under test which runs on a random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Retrieve <code>AppClient</code> bean from application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>To login, do a POST request to <code>/login</code> with your credentials as a JSON payload in the body of the request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Micronaut makes it easy to parse JSON into Java objects.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use .body() to retrieve the parsed payload.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Supply the JWT to the HTTP <code>Authorization</code> header value to the <code>@Client</code> method.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the Application</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/testingTheApp.html"><strong>4</strong><span>Testing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
