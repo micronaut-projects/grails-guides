@@ -219,10 +219,10 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
             if ( authenticationRequest.getIdentity().equals("sherlock") &amp;&amp;
                     authenticationRequest.getSecret().equals("password") ) {
                 emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;()));
+                emitter.onComplete();
             } else {
                 emitter.onError(new AuthenticationException(new AuthenticationFailed()));
             }
-            emitter.onComplete();
         }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
