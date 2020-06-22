@@ -751,7 +751,6 @@ class AuthenticationSpec extends GebSpec {
     @Inject
     EmbeddedServer embeddedServer <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @IgnoreIf({ !sys['geb.env'] })
     def "verify session based authentication works"() {
         given:
         browser.baseUrl = "http://localhost:${embeddedServer.port}"
