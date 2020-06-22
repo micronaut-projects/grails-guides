@@ -124,11 +124,12 @@ class AuthenticationProviderUserPassword implements AuthenticationProvider { <i 
     Publisher&lt;AuthenticationResponse&gt; authenticate(@Nullable HttpRequest&lt;?&gt; httpRequest, AuthenticationRequest&lt;?, ?&gt; authenticationRequest) {
         Flowable.create({ emitter -&gt;
             if ( authenticationRequest.identity == "sherlock" &amp;&amp; authenticationRequest.secret == "password" ) {
-                emitter.onNext(new UserDetails((String) authenticationRequest.identity, []))  as Flowable&lt;AuthenticationResponse&gt;
+                emitter.onNext(new UserDetails((String) authenticationRequest.identity, []))
+                emitter.onComplete()
             } else {
                 emitter.onError(new AuthenticationException(new AuthenticationFailed()))
             }
-            emitter.onComplete()
+
         }, BackpressureStrategy.ERROR)
     }
 }</code></pre>
