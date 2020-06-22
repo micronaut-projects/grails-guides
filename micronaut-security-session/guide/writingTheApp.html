@@ -177,8 +177,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 ...
 ..
 .
-    annotationProcessor "io.micronaut:micronaut-security-annotations:2.0.0.BUILD-SNAPSHOT"
-    implementation "io.micronaut:micronaut-security-session:2.0.0.BUILD-SNAPSHOT"
+    annotationProcessor "io.micronaut.security:micronaut-security-annotations"
+    implementation "io.micronaut.security:micronaut-security-session"
 }</code></pre>
 </div>
 </div>
@@ -199,9 +199,8 @@ other build tools such as <code>Maven</code> or other programming languages such
 <div class="listingblock">
 <div class="title">src/main/resources/application.yaml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
-  application:
-    name: complete
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">---
+micronaut:
   security:
     authentication: session <i class="conum" data-value="1"></i><b>(1)</b>
     redirect:
@@ -269,10 +268,11 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
                     authenticationRequest.getSecret().equals("password")) {
                 UserDetails userDetails = new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList&lt;&gt;());
                 emitter.onNext(userDetails);
+                emitter.onComplete();
             } else {
                 emitter.onError(new AuthenticationException(new AuthenticationFailed()));
             }
-            emitter.onComplete();
+
         }, BackpressureStrategy.ERROR);
     }
 }</code></pre>
@@ -326,8 +326,7 @@ going to produce HTML in our controllers.</p>
 ...
 ..
 .
-    implementation "io.micronaut:micronaut-views-velocity"
-    runtime "org.apache.velocity:velocity-engine-core:2.0"
+    implementation "io.micronaut.views:micronaut-views-velocity"
 }</code></pre>
 </div>
 </div>
