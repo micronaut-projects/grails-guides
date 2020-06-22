@@ -106,8 +106,8 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor("io.micronaut:micronaut-security-annotations")
-implementation("io.micronaut:micronaut-security-jwt")</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+implementation("io.micronaut.security:micronaut-security-jwt")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -195,9 +195,9 @@ micronaut:
     token:
       jwt:
         signatures:
-          secret: <i class="conum" data-value="1"></i><b>(1)</b>
-            validation:
-              secret: pleaseChangeThisSecretForANewOne <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+          secret:
+            validation: <i class="conum" data-value="2"></i><b>(2)</b>
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"' <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
