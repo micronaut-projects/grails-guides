@@ -103,17 +103,19 @@ Available Java Versions
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 ....
- GraalVM       |     | 20.0.0.r11   | grl     | installed  | 20.0.0.r11-grl
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
                |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
-               |     | 19.3.1.r11   | grl     |            | 19.3.1.r11-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
                |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
 ....
 
 # For Java 8
-$ sdk install java 20.0.0.r8-grl
+$ sdk install java 20.1.0.r8-grl
 
 # For Java 11
-$ sdk install java 20.0.0.r11-grl</code></pre>
+$ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -138,28 +140,27 @@ $ sdk install java 20.0.0.r11-grl</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/20.0.0.r8-grl/bin/java</code></pre>
+/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:39362]    classlist:   3,884.97 ms,  1.69 GB
-[micronautguide:39362]        (cap):   5,919.80 ms,  1.69 GB
-[micronautguide:39362]        setup:   7,222.88 ms,  1.69 GB
-[micronautguide:39362]   (typeflow):  14,037.78 ms,  4.05 GB
-[micronautguide:39362]    (objects):  17,689.40 ms,  4.05 GB
-[micronautguide:39362]   (features):   1,751.37 ms,  4.05 GB
-[micronautguide:39362]     analysis:  35,421.99 ms,  4.05 GB
-[micronautguide:39362]     (clinit):     978.01 ms,  4.09 GB
-[micronautguide:39362]     universe:   2,114.65 ms,  4.09 GB
-[micronautguide:39362]      (parse):   2,327.75 ms,  4.09 GB
-[micronautguide:39362]     (inline):   2,153.46 ms,  5.81 GB
-[micronautguide:39362]    (compile):  13,066.94 ms,  7.08 GB
-[micronautguide:39362]      compile:  19,714.97 ms,  7.15 GB
-[micronautguide:39362]        image:   3,509.84 ms,  7.15 GB
-[micronautguide:39362]        write:   1,114.96 ms,  7.15 GB
-[micronautguide:39362]      [total]:  73,294.82 ms,  7.15 GB</code></pre>
+[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
+[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
+[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
+[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
+[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
+[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
+[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
+[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
+[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
+[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
+[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
+[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
+[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
+[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
+[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
 </div>
 </div>
 <div class="paragraph">

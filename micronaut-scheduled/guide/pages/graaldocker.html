@@ -97,104 +97,92 @@ function addJsClass() {
 <div class="listingblock">
 <div class="title">Dockerfile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
-COPY . /home/app/micronautguide
-WORKDIR /home/app/micronautguide
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
 RUN gu install native-image
+
+COPY . /home/app/complete
+WORKDIR /home/app/complete
+
 RUN native-image --no-server -cp build/libs/complete-*-all.jar
 
 FROM frolvlad/alpine-glibc
+RUN apk update &amp;&amp; apk add libstdc++
 EXPOSE 8080
-COPY --from=graalvm /home/app/micronautguide /app/micronautguide
-ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+COPY --from=graalvm /home/app/complete/complete /app/complete
+ENTRYPOINT ["/app/complete"]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">docker-build.sh</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
-docker build . -t micronautguide
+docker build . -t complete
 echo
 echo
 echo "To run the docker container execute:"
-echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+echo "    $ docker run -p 8080:8080 complete"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
 
-$ ./docker-build.sh
-Sending build context to Docker daemon  64.67MB
-Step 1/10 : FROM oracle/graalvm-ce:20.0.0-java8 as graalvm
- ---&gt; 1515e8e21105
+$ % ./docker-build.sh
+Sending build context to Docker daemon    127MB
+Step 1/10 : FROM oracle/graalvm-ce:20.1.0-java11 as graalvm
+ ---&gt; 2adef7aab8f9
 Step 2/10 : RUN gu install native-image
- ---&gt; Running in 805c70f45a9d
-Downloading: Component catalog from www.graalvm.org
-Processing Component: Native Image
-Downloading: Component native-image: Native Image  from github.com
-Installing new component: Native Image (org.graalvm.native-image, version 20.0.0)
-Refreshed alternative links in /usr/bin/
-Removing intermediate container 805c70f45a9d
- ---&gt; b098407fe3b2
-Step 3/10 : COPY . /home/app/micronautguide
- ---&gt; a4ac50285c3e
-Step 4/10 : WORKDIR /home/app/micronautguide
- ---&gt; Running in 5bcaea479a47
-Removing intermediate container 5bcaea479a47
- ---&gt; 7683d318359a
-Step 5/10 : RUN native-image --no-server -cp build/libs/micronautguide-*-all.jar
- ---&gt; Running in f287939a526a
-[micronautguide:28]    classlist:   8,773.36 ms
-[micronautguide:28]        (cap):   1,044.04 ms
-[micronautguide:28]        setup:   2,748.03 ms
-[micronautguide:28]   (typeflow):  20,611.56 ms
-[micronautguide:28]    (objects):  20,377.15 ms
-[micronautguide:28]   (features):   2,168.30 ms
-[micronautguide:28]     analysis:  45,559.16 ms
-[micronautguide:28]     (clinit):   1,141.31 ms
-[micronautguide:28]     universe:   2,719.10 ms
-[micronautguide:28]      (parse):   2,808.15 ms
-[micronautguide:28]     (inline):   3,094.66 ms
-[micronautguide:28]    (compile):  25,648.31 ms
-[micronautguide:28]      compile:  34,018.50 ms
-[micronautguide:28]        image:   3,811.46 ms
-[micronautguide:28]        write:     643.59 ms
-[micronautguide:28]      [total]:  99,095.08 ms
-Removing intermediate container f287939a526a
- ---&gt; 20a8c370d984
+ ---&gt; Using cache
+ ---&gt; a52c98379916
+Step 3/10 : COPY . /home/app/complete
+ ---&gt; 7b5d8708feb7
+Step 4/10 : WORKDIR /home/app/complete
+ ---&gt; Running in 52615dd2ceed
+Removing intermediate container 52615dd2ceed
+ ---&gt; fe6e67e150b6
+Step 5/10 : RUN native-image --no-server -cp build/libs/complete-*-all.jar
+ ---&gt; Running in b0cca1a82c2c
+[micronautguide:24]    classlist:   4,224.09 ms,  0.96 GB
+[micronautguide:24]        (cap):     557.93 ms,  0.96 GB
+WARNING: Could not resolve io.netty.channel.epoll.EpollChannelOption for reflection configuration.
+WARNING: Could not resolve io.netty.channel.kqueue.KQueueChannelOption for reflection configuration.
+[micronautguide:24]        setup:   1,840.06 ms,  0.96 GB
+WARNING GR-10238: VarHandle for static field is currently not fully supported. Static field private static volatile java.lang.System$Logger jdk.internal.event.EventHelper.securityLogger is not properly marked for Unsafe access!
+[micronautguide:24]     (clinit):   1,383.94 ms,  3.42 GB
+[micronautguide:24]   (typeflow):  16,198.26 ms,  3.42 GB
+[micronautguide:24]    (objects):  20,293.44 ms,  3.42 GB
+[micronautguide:24]   (features):   2,859.27 ms,  3.42 GB
+[micronautguide:24]     analysis:  43,474.70 ms,  3.42 GB
+[micronautguide:24]     universe:   1,783.90 ms,  3.38 GB
+[micronautguide:24]      (parse):   4,345.14 ms,  3.68 GB
+[micronautguide:24]     (inline):   2,786.82 ms,  3.52 GB
+[micronautguide:24]    (compile):  18,459.86 ms,  4.32 GB
+[micronautguide:24]      compile:  28,292.51 ms,  4.32 GB
+[micronautguide:24]        image:   5,348.95 ms,  4.33 GB
+[micronautguide:24]        write:     804.47 ms,  4.33 GB
+[micronautguide:24]      [total]:  86,008.19 ms,  4.33 GB
+Removing intermediate container b0cca1a82c2c
+ ---&gt; 31e41f3f3306
 Step 6/10 : FROM frolvlad/alpine-glibc
- ---&gt; 38dd85a430e8
+ ---&gt; 3a1c752f649f
 Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
- ---&gt; Running in 2a3b22d15e04
-fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/main/x86_64/APKINDEX.tar.gz
-fetch http://dl-cdn.alpinelinux.org/alpine/v3.10/community/x86_64/APKINDEX.tar.gz
-v3.10.4-15-g5600c80ab9 [http://dl-cdn.alpinelinux.org/alpine/v3.10/main]
-v3.10.4-7-g6ee081a8fb [http://dl-cdn.alpinelinux.org/alpine/v3.10/community]
-OK: 10349 distinct packages available
-(1/1) Installing libstdc++ (8.3.0-r0)
-Executing glibc-bin-2.30-r0.trigger
-/usr/glibc-compat/sbin/ldconfig: /usr/glibc-compat/lib/ld-linux-x86-64.so.2 is not a symbolic link
-
-OK: 18 MiB in 18 packages
-Removing intermediate container 2a3b22d15e04
- ---&gt; 913d6350ff6d
+ ---&gt; Using cache
+ ---&gt; 536cd2f06071
 Step 8/10 : EXPOSE 8080
- ---&gt; Running in 7f3cdddebf26
-Removing intermediate container 7f3cdddebf26
- ---&gt; 5b82cacacbfb
-Step 9/10 : COPY --from=graalvm /home/app/micronautguide/micronautguide /app/micronautguide
- ---&gt; 5506ff660b65
-Step 10/10 : ENTRYPOINT ["/app/micronautguide"]
- ---&gt; Running in ef23d1eee195
-Removing intermediate container ef23d1eee195
- ---&gt; fb30459595cb
-Successfully built fb30459595cb
-Successfully tagged micronautguide:latest
+ ---&gt; Using cache
+ ---&gt; 1e011af81857
+Step 9/10 : COPY --from=graalvm /home/app/complete/micronautguide /app/complete
+ ---&gt; 921480edd9b7
+Step 10/10 : ENTRYPOINT ["/app/complete"]
+ ---&gt; Running in a61b95562776
+Removing intermediate container a61b95562776
+ ---&gt; 56c8fff02b03
+Successfully built 56c8fff02b03
+Successfully tagged complete:latest
 
 
 To run the docker container execute:
-    $ docker run -p 8080:8080 micronautguide</code></pre>
+    $ docker run -p 8080:8080 complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -202,8 +190,9 @@ To run the docker container execute:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> docker run -p 8080:8080 micronautguide
-06:58:26.977 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 27ms. Server Running: http://f8143044b1ee:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdelamo@Sergios-iMac-Pro complete %  docker run -p 8080:8080 complete
+/app/complete: /usr/lib/libstdc++.so.6: no version information available (required by /app/complete)
+05:06:22.567 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 40ms. Server Running: http://35bc084914f6:8080</code></pre>
 </div>
 </div>
 
