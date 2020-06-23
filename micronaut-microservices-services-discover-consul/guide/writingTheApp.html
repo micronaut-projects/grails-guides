@@ -213,7 +213,6 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.reactivex.Flowable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -221,8 +220,8 @@ import java.util.List;
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 public class BooksController {
 
-    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
-    List&lt;Book&gt; index() {
+    @Get <i class="conum" data-value="2"></i><b>(2)</b>
+    public List&lt;Book&gt; index() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
         Book releaseIt = new Book("1680502395", "Release It!");
         Book cidelivery = new Book("0321601912", "Continuous Delivery:");
@@ -251,36 +250,43 @@ public class BooksController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
 
 @Introspected
 public class Book {
+    @NonNull
+    @NotBlank
     private String isbn;
+    @NonNull
+    @NotBlank
+
     private String name;
 
-    public Book() {
-    }
+    public Book() {}
 
-    public Book(String isbn, String name) {
+    public Book(@NonNull @NotBlank String isbn, @NonNull @NotBlank String name) {
         this.isbn = isbn;
         this.name = name;
     }
 
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -288,14 +294,18 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn) &amp;&amp;
-                Objects.equals(name, book.name);
+
+        if (!isbn.equals(book.isbn)) return false;
+        return name.equals(book.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, name);
+        int result = isbn.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -321,17 +331,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest
 public class BooksControllerTest {
 
     @Inject
     @Client("/")
-    HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
+    HttpClient client;
 
     @Test
     public void testRetrieveBooks() {
-        HttpRequest request = HttpRequest.GET("/books"); <i class="conum" data-value="3"></i><b>(3)</b>
-        List books = client.toBlocking().retrieve(request, Argument.listOf(Book.class)); <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.GET("/books");
+        List books = client.toBlocking().retrieve(request, Argument.listOf(Book.class));
         assertEquals(3, books.size());
         assertTrue(books.contains(new Book("1491950358", "Building Microservices")));
         assertTrue(books.contains(new Book("1680502395", "Release It!")));
@@ -444,15 +454,6 @@ BUILD SUCCESSFUL in 9s
 default package: <code>example.micronaut.bookinventory</code>.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a Controller:</p>
 </div>
 <div class="listingblock">
@@ -473,7 +474,7 @@ public class BooksController {
 
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="2"></i><b>(2)</b>
     @Get("/stock/{isbn}") <i class="conum" data-value="3"></i><b>(3)</b>
-    public Boolean stock(@NotBlank String isbn) {
+    public Boolean stock(@NotBlank String isbn) { <i class="conum" data-value="1"></i><b>(1)</b>
         return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null);
     }
 
@@ -513,37 +514,46 @@ public class BooksController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Introspected
 public class BookInventory {
 
+    @NonNull
+    @NotBlank
     private String isbn;
+
+    @NonNull
+    @NotNull
     private Integer stock;
 
-    public BookInventory() {
-    }
+    public BookInventory() {}
 
-    public BookInventory(String isbn, Integer stock) {
+    public BookInventory(@NonNull @NotBlank String isbn, @NonNull @NotNull Integer stock) {
         this.isbn = isbn;
         this.stock = stock;
     }
 
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public Integer getStock() {
         return stock;
     }
 
-    public void setStock(Integer stock) {
+    public void setStock(@NonNull Integer stock) {
         this.stock = stock;
     }
 
@@ -551,14 +561,18 @@ public class BookInventory {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         BookInventory that = (BookInventory) o;
-        return Objects.equals(isbn, that.isbn) &amp;&amp;
-                Objects.equals(stock, that.stock);
+
+        if (!isbn.equals(that.isbn)) return false;
+        return stock.equals(that.stock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, stock);
+        int result = isbn.hashCode();
+        result = 31 * result + stock.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -596,7 +610,7 @@ public class BooksControllerTest {
     @Test
     public void testBooksController() {
         HttpResponse&lt;Boolean&gt; rsp = rxHttpClient.toBlocking().exchange(HttpRequest.GET("/books/stock/1491950358"), Boolean.class);
-        assertEquals(HttpStatus.OK, rsp.status());
+        assertEquals(rsp.status(), HttpStatus.OK);
         assertTrue(rsp.body());
     }
 
@@ -606,7 +620,11 @@ public class BooksControllerTest {
             rxHttpClient.toBlocking().exchange(HttpRequest.GET("/books/stock/XXXXX"), Boolean.class);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getResponse().getStatus());
+        assertEquals(
+                HttpStatus.NOT_FOUND,
+                thrown.getResponse().getStatus()
+        );
+
     }
 }</code></pre>
 </div>
@@ -713,9 +731,11 @@ public interface BookCatalogueOperations {
 
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.retry.annotation.Recoverable;
 import io.reactivex.Flowable;
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations.class)
 interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
@@ -739,36 +759,44 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Introspected
 public class Book {
+    @NonNull
+    @NotBlank
     private String isbn;
+
+    @NonNull
+    @NotBlank
     private String name;
 
-    public Book() {
-    }
+    public Book() {}
 
-    public Book(String isbn, String name) {
+    public Book(@NonNull @NotBlank String isbn, @NonNull @NotBlank String name) {
         this.isbn = isbn;
         this.name = name;
     }
 
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -776,14 +804,18 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn) &amp;&amp;
-                Objects.equals(name, book.name);
+
+        if (!isbn.equals(book.isbn)) return false;
+        return name.equals(book.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, name);
+        int result = isbn.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -796,12 +828,12 @@ public class Book {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.reactivex.Maybe;
-
 import javax.validation.constraints.NotBlank;
 
 public interface BookInventoryOperations {
-    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn);
+    Maybe&lt;Boolean&gt; stock(@NonNull @NotBlank String isbn);
 }</code></pre>
 </div>
 </div>
@@ -810,17 +842,22 @@ public interface BookInventoryOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
-
+import io.micronaut.retry.annotation.Recoverable;
 import javax.validation.constraints.NotBlank;
 
 @Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations.class)
 interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
-    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn);
+    Maybe&lt;Boolean&gt; stock(@NonNull @NotBlank String isbn);
 }</code></pre>
 </div>
 </div>
@@ -844,20 +881,19 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.reactivex.Flowable;
 
-@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+@Controller("/books")
 public class BookController {
 
     private final BookCatalogueOperations bookCatalogueOperations;
     private final BookInventoryOperations bookInventoryOperations;
 
     public BookController(BookCatalogueOperations bookCatalogueOperations,
-                          BookInventoryOperations bookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
+                          BookInventoryOperations bookInventoryOperations) {
         this.bookCatalogueOperations = bookCatalogueOperations;
         this.bookInventoryOperations = bookInventoryOperations;
     }
 
-
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get
     public Flowable&lt;BookRecommendation&gt; index() {
         return bookCatalogueOperations.findAll()
                 .flatMapMaybe(b -&gt; bookInventoryOperations.stock(b.getIsbn())
@@ -892,26 +928,29 @@ public class BookController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
 
 @Introspected
 public class BookRecommendation {
+    @NonNull
+    @NotBlank
     private String name;
 
-    public BookRecommendation() {
-    }
+    public BookRecommendation() {}
 
-    public BookRecommendation(String name) {
+    public BookRecommendation(@NonNull @NotBlank String name) {
         this.name = name;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -919,13 +958,15 @@ public class BookRecommendation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         BookRecommendation that = (BookRecommendation) o;
-        return Objects.equals(name, that.name);
+
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return name.hashCode();
     }
 }</code></pre>
 </div>
@@ -944,6 +985,7 @@ public class BookRecommendation {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.retry.annotation.Fallback;
@@ -952,20 +994,20 @@ import io.reactivex.Maybe;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
 
-@Requires(env = Environment.TEST) <i class="conum" data-value="1"></i><b>(1)</b>
+@Requires(env = Environment.TEST)
 @Fallback
 @Singleton
 public class BookInventoryClientStub implements BookInventoryOperations {
 
     @Override
-    public Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
-        if (isbn.equals("1491950358")) { <i class="conum" data-value="2"></i><b>(2)</b>
+    public Maybe&lt;Boolean&gt; stock(@NonNull @NotBlank String isbn) {
+        if (isbn.equals("1491950358")) {
             return Maybe.just(Boolean.TRUE);
 
-        } else if (isbn.equals("1680502395")) { <i class="conum" data-value="3"></i><b>(3)</b>
+        } else if (isbn.equals("1680502395")) {
             return Maybe.just(Boolean.FALSE);
         }
-        return Maybe.empty(); <i class="conum" data-value="4"></i><b>(4)</b>
+        return Maybe.empty();
     }
 }</code></pre>
 </div>
@@ -1043,10 +1085,10 @@ public class BookControllerTest {
     RxStreamingHttpClient client;
 
     @Test
-    public void testRetrieveBooks() throws Exception {
+    public void testRetrieveBooks() {
         Flowable&lt;BookRecommendation&gt; books = client.jsonStream(HttpRequest.GET("/books"), BookRecommendation.class);
-        assertEquals(1, books.toList().blockingGet().size());
-        assertEquals("Building Microservices", books.toList().blockingGet().get(0).getName());
+        assertEquals(books.toList().blockingGet().size(), 1);
+        assertEquals(books.toList().blockingGet().get(0).getName(), "Building Microservices");
     }
 }</code></pre>
 </div>
