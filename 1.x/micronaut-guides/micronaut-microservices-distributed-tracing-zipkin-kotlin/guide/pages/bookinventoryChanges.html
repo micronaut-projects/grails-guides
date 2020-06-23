@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3.4 Book Inventory null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Microservices distributed tracing with Zipkin and Micronaut
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/zipkin.html"><strong>3</strong><span>Zipkin and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the App</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.4 Book Inventory</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="bookinventoryChanges">3.4 Book Inventory</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-kotlin/edit/master/src/main/docs/guide/zipkin/bookinventoryChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>tracing</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    implementation "io.micronaut:micronaut-tracing"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, to send tracing spans to Zipkin the minimal configuration requires you add the following dependencies to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    runtime 'io.zipkin.brave:brave-instrumentation-http'
+    runtime 'io.zipkin.reporter2:zipkin-reporter'
+    implementation 'io.opentracing.brave:brave-opentracing'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookinventory</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Trace 100% of requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In production, you will probably want to trace a smaller percentage of the requests. However, in order to keep this tutorial easy, we set it to trace 100%.</p>
+</div>
+<div class="paragraph">
+<p>Disable distributed tracing in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    enabled: false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Annotate <code>BooksController</code> method with <code>@ContinueSpan</code> and the method parameter with <code>@SpanTag</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BooksController.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory
+
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.SpanTag
+import java.util.*
+import javax.validation.constraints.NotBlank
+
+@Controller("/books")
+open class BooksController {
+
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/stock/{isbn}")
+    @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
+    open fun stock(@SpanTag("stock.isbn") @NotBlank isbn: String): Boolean? { <i class="conum" data-value="2"></i><b>(2)</b>
+        return bookInventoryByIsbn(isbn).map { (_, stock) -&gt; stock &gt; 0 }.orElse(null)
+    }
+
+    private fun bookInventoryByIsbn(isbn: String): Optional&lt;BookInventory&gt; {
+        if (isbn == "1491950358") {
+            return Optional.of(BookInventory(isbn, 4))
+
+        } else if (isbn == "1680502395") {
+            return Optional.of(BookInventory(isbn, 0))
+        }
+        return Optional.empty()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@ContinueSpan</code> annotation will continue an existing span, wrapping the method call or reactive type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code></td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/writingTheApp.html">&lt;&lt; <strong>2</strong><span>Writing the App</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>4</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
