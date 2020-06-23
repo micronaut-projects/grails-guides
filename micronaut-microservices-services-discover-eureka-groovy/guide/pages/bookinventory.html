@@ -105,15 +105,6 @@ function addJsClass() {
 default package: <code>example.micronaut.bookinventory</code>.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a Controller:</p>
 </div>
 <div class="listingblock">
@@ -142,6 +133,7 @@ class BooksController {
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
         if (isbn == "1491950358") {
             return Optional.of(new BookInventory(isbn, 4))
+
         } else if (isbn == "1680502395") {
             return Optional.of(new BookInventory(isbn, 0))
         }
@@ -177,10 +169,12 @@ class BooksController {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
 @TupleConstructor
 @EqualsAndHashCode
+@Introspected
 class BookInventory {
     String isbn
     Integer stock
@@ -210,7 +204,7 @@ class BooksControllerSpec extends Specification {
 
     @Inject
     @Client("/")
-    HttpClient client;
+    HttpClient client
 
     void "for a book with inventory true is returned"() {
         when:

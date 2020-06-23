@@ -126,9 +126,11 @@ interface BookCatalogueOperations {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations.class)
 interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
@@ -155,10 +157,12 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
 @TupleConstructor
 @EqualsAndHashCode
+@Introspected
 class Book {
     String isbn
     String name
@@ -186,15 +190,20 @@ interface BookInventoryOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 @Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations.class)
 interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
 }</code></pre>
@@ -273,10 +282,12 @@ class BookController {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @TupleConstructor
 @CompileStatic
 @EqualsAndHashCode
+@Introspected
 class BookRecommendation {
     String name
 }</code></pre>
