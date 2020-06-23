@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>2.2 Inventory Microservice null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Consul and Micronaut - Microservices service discovery
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/consul.html"><strong>4</strong><span>Consul and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>2.2 Inventory Microservice</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+
+                
+
+<h2 id="bookinventory">2.2 Inventory Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul-groovy/edit/master/src/main/docs/guide/writingTheApp/bookinventory.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookinventory</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app --lang groovy example.micronaut.bookinventory.bookinventory</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookinventory</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookinventory</code>.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut already includes bean validation capabilities out of the box:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/groovy/example/micronaut/bookinventory/BooksController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+
+import javax.validation.constraints.NotBlank
+
+@CompileStatic
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+class BooksController {
+
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/stock/{isbn}") <i class="conum" data-value="3"></i><b>(3)</b>
+    Boolean stock(@NotBlank String isbn) {
+        bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
+    }
+
+    private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
+        if (isbn == "1491950358") {
+            return Optional.of(new BookInventory(isbn, 4))
+
+        } else if (isbn == "1680502395") {
+            return Optional.of(new BookInventory(isbn, 0))
+        }
+        Optional.empty()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>By default a Micronaut&#8217;s response uses <code>application/json</code> as <code>Content-Type</code>. We are returning a String not a JSON object. Because of that, we set it to <code>text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>@Get</code> annotation is used to map the index method to <code>/books/stock/{isbn}</code> requests that use an HTTP GET.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller uses a POGO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/groovy/example/micronaut/bookinventory/BookInventory.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+
+@CompileStatic
+@TupleConstructor
+@EqualsAndHashCode
+class BookInventory {
+    String isbn
+    Integer stock
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/test/groovy/example/micronaut/bookinventory/BooksControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class BooksControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client
+
+    void "for a book with inventory true is returned"() {
+        when:
+        Boolean hasStock = client.toBlocking().retrieve(HttpRequest.GET("/books/stock/1491950358"), Boolean)
+
+        then:
+        noExceptionThrown()
+        hasStock
+    }
+
+    void "for a book without inventory false is returned"() {
+        when:
+        Boolean hasStock = client.toBlocking().retrieve(HttpRequest.GET("/books/stock/1680502395"), Boolean)
+
+        then:
+        noExceptionThrown()
+        hasStock == Boolean.FALSE
+    }
+
+    void "for an invalid ISBN 404 is returned"() {
+        when:
+        client.toBlocking().retrieve(HttpRequest.GET("/books/stock/XXXXX"))
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.response.status == HttpStatus.NOT_FOUND
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: bookinventory <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8082 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the application name. The app name will be used later in the tutorial.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the app to listen at port 8082</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a file named <code>application-test.yml</code> which is used in the test environment:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the micronaut microservice at a random port when running the tests.</td>
+</tr>
+</table>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>1</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
