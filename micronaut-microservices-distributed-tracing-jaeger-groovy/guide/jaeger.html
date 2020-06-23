@@ -176,7 +176,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -190,7 +190,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
@@ -250,7 +250,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -264,7 +264,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
@@ -318,7 +318,6 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.SpanTag
-
 import javax.validation.constraints.NotBlank
 
 @CompileStatic
@@ -328,7 +327,7 @@ class BooksController {
     @Produces(MediaType.TEXT_PLAIN)
     @Get("/stock/{isbn}")
     @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
-    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) { <i class="conum" data-value="2"></i><b>(2)</b>
+    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) {  <i class="conum" data-value="2"></i><b>(2)</b>
         bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
     }
 
@@ -353,7 +352,7 @@ class BooksController {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need
-either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`</code></td>
+either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code></td>
 </tr>
 </table>
 </div>
@@ -378,7 +377,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -392,7 +391,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
