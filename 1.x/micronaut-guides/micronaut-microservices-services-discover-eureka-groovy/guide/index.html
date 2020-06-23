@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Eureka and Micronaut - Microservices service discovery | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Eureka and Micronaut - Microservices service discovery. Use Netflix Eureka service discovery to expose your Micronaut apps.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-microservices-services-discover-eureka-groovy/guide/index.html">Eureka and Micronaut - Microservices service discovery</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy"><img src="https://travis-ci.org/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookcatalogue"><strong>2.1</strong><span>Catalogue Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookinventory"><strong>2.2</strong><span>Inventory Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookrecommendation"><strong>2.3</strong><span>Recommendation Microservice</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>3</strong><span>Running the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#eureka"><strong>4</strong><span>Eureka and Micronaut</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#eurekaserver"><strong>4.1</strong><span>Eureka Server</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#micronautandeureka"><strong>4.2</strong><span>Integrate Eureka</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookcatalogueChanges"><strong>4.3</strong><span>Book Catalogue</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookinventoryChanges"><strong>4.4</strong><span>Book Inventory</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookrecommendationChanges"><strong>4.5</strong><span>Book Recommendation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#runningTheAppAfterEureka"><strong>4.6</strong><span>Running the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>6</strong><span>Help with Micronaut</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Eureka and Micronaut - Microservices service discovery</h1>
+        <p>Use Netflix Eureka service discovery to expose your Micronaut apps.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.2.8</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we are going to create three microservices and register them with <a href="https://github.com/Netflix/eureka">Netflix Eureka</a> service discovery.
+You will discover how Micronaut eases Eureka integration.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.git" class="bare">https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Lets describe the microservices:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order.  I uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Initially we are going to hardcode the addresses where the different services are in the <code>bookcatalogue</code> service.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/hardcoded.svg" alt="hardcoded">
+</div>
+</div>
+<div class="paragraph">
+<p>As shown in the previous image, the <code>bookcatalogue</code> hardcodes references to its collaborators.</p>
+</div>
+<div class="paragraph">
+<p>In the second part of this tutorial we are going to use a discovery service.</p>
+</div>
+<div class="paragraph">
+<p>The services register when they start up:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-registration.svg" alt="discovery service registration">
+</div>
+</div>
+<div class="paragraph">
+<p>When a service wants to do a request to other service, it uses the discovery service to retrieve the address.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/discovery-service-flow.svg" alt="discovery service flow">
+</div>
+</div>
+
+
+<h2 id="bookcatalogue">2.1 Catalogue Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/writingTheApp/bookcatalogue.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app --lang groovy example.micronaut.bookcatalogue.bookcatalogue</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookcatalogue</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookcatalogue</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/groovy/example/micronaut/bookcatalogue/BooksController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookcatalogue
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+
+@CompileStatic
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+class BooksController {
+
+    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;Book&gt; index() {
+        [
+                new Book("1491950358", "Building Microservices"),
+                new Book("1680502395", "Release It!"),
+                new Book("0321601912", "Continuous Delivery:"),
+        ]
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller responds a <code>Flowable&lt;Book&gt;</code>. Create the <code>Book</code> POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/groovy/example/micronaut/bookcatalogue/Book.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookcatalogue
+
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+
+@TupleConstructor
+@EqualsAndHashCode
+@CompileStatic
+class Book {
+    String isbn
+    String name
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/test/groovy/example/micronaut/bookcatalogue/BooksControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookcatalogue
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+class BooksControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client <i class="conum" data-value="2"></i><b>(2)</b>
+
+    void "it is possible to retrieve books"() {
+        when:
+        HttpRequest request = HttpRequest.GET("/books") <i class="conum" data-value="3"></i><b>(3)</b>
+        List books = client.toBlocking().retrieve(request, Argument.listOf(Book)) <i class="conum" data-value="4"></i><b>(4)</b>
+
+        then:
+        books.size() == 3
+        books.contains(new Book("1491950358", "Building Microservices"))
+        books.contains(new Book("1680502395", "Release It!"))
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@MicronautTest</code> to let Micronaut starts the embedded server and inject the beans. More info: <a href="https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html">https://micronaut-projects.github.io/micronaut-test/latest/guide/index.html</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>HttpClient</code> bean in the application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>It is easy to create HTTP requests with a fluid API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Parse easily JSON into Groovy objects.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Edit <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: bookcatalogue <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8081 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the application name. The app name will be use by the discovery service.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the app to listen at port 8081</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a file named <code>application-test.yml</code> which is used in the test environment:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the micronaut microservice at a random port when running the tests.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="bookinventory">2.2 Inventory Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/writingTheApp/bookinventory.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookinventory</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app --lang groovy example.micronaut.bookinventory.bookinventory</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookinventory</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookinventory</code>.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut already includes bean validation capabilities out of the box:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a Controller:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/groovy/example/micronaut/bookinventory/BooksController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+
+import javax.validation.constraints.NotBlank
+
+@CompileStatic
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+class BooksController {
+
+    @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get("/stock/{isbn}") <i class="conum" data-value="3"></i><b>(3)</b>
+    Boolean stock(@NotBlank String isbn) {
+        bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
+    }
+
+    private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
+        if (isbn == "1491950358") {
+            return Optional.of(new BookInventory(isbn, 4))
+        } else if (isbn == "1680502395") {
+            return Optional.of(new BookInventory(isbn, 0))
+        }
+        Optional.empty()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>By default a Micronaut&#8217;s response uses <code>application/json</code> as <code>Content-Type</code>. We are returning a String not a JSON object. Because of that, we set it to <code>text/plain</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>@Get</code> annotation is used to map the index method to <code>/books/stock/{isbn}</code> requests that use an HTTP GET.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller uses a POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/groovy/example/micronaut/bookinventory/BookInventory.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+
+@CompileStatic
+@TupleConstructor
+@EqualsAndHashCode
+class BookInventory {
+    String isbn
+    Integer stock
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/test/groovy/example/micronaut/bookinventory/BooksControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookinventory
+
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class BooksControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client;
+
+    void "for a book with inventory true is returned"() {
+        when:
+        Boolean hasStock = client.toBlocking().retrieve(HttpRequest.GET("/books/stock/1491950358"), Boolean)
+
+        then:
+        noExceptionThrown()
+        hasStock
+    }
+
+    void "for a book without inventory false is returned"() {
+        when:
+        Boolean hasStock = client.toBlocking().retrieve(HttpRequest.GET("/books/stock/1680502395"), Boolean)
+
+        then:
+        noExceptionThrown()
+        hasStock == Boolean.FALSE
+    }
+
+    void "for an invalid ISBN 404 is returned"() {
+        when:
+        client.toBlocking().retrieve(HttpRequest.GET("/books/stock/XXXXX"))
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.response.status == HttpStatus.NOT_FOUND
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: bookinventory <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8082 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the application name. The app name will be used later in the tutorial.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the app to listen at port 8082</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a file named <code>application-test.yml</code> which is used in the test environment:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the micronaut microservice at a random port when running the tests.</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="bookrecommendation">2.3 Recommendation Microservice</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/writingTheApp/bookrecommendation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create the <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app --lang groovy example.micronaut.bookrecommendation.bookrecommendation</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a folder named <code>bookrecommendation</code> and a Micronaut app inside it with
+default package: <code>example.micronaut.bookrecommendation</code>.</p>
+</div>
+<div class="paragraph">
+<p>Create an interface to map operations with <code>bookcatalogue</code> and a Micronaut Declarative HTTP Client to consume it.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookCatalogueOperations.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.reactivex.Flowable
+
+interface BookCatalogueOperations {
+    Flowable&lt;Book&gt; findAll()
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookCatalogueClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Flowable
+
+@Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookCatalogueClient extends BookCatalogueOperations {
+
+    @Get("/books")
+    Flowable&lt;Book&gt; findAll()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The client returns a POJO. Create it in the <code>bookrecommendation</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/Book.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+
+@CompileStatic
+@TupleConstructor
+@EqualsAndHashCode
+class Book {
+    String isbn
+    String name
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create an interface to map operations with <code>bookinventory</code> and a Micronaut Declarative HTTP Client to consume it.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookInventoryOperations.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.reactivex.Maybe
+import javax.validation.constraints.NotBlank
+
+interface BookInventoryOperations {
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookInventoryClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Maybe
+
+import javax.validation.constraints.NotBlank
+
+@Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookInventoryClient extends BookInventoryOperations {
+
+    @Get("/books/stock/{isbn}")
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>@Client</code> to use <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">declarative HTTP Clients</a></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a Controller which injects both clients.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.reactivex.Flowable
+
+@CompileStatic
+@Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+class BookController {
+
+    private final BookCatalogueOperations bookCatalogueOperations
+    private final BookInventoryOperations bookInventoryOperations
+
+    BookController(BookCatalogueOperations bookCatalogueOperations,
+                   BookInventoryOperations bookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
+        this.bookCatalogueOperations = bookCatalogueOperations
+        this.bookInventoryOperations = bookInventoryOperations
+    }
+
+    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    Flowable&lt;BookRecommendation&gt; index() {
+        return bookCatalogueOperations.findAll()
+            .flatMapMaybe { b -&gt;
+                bookInventoryOperations.stock(b.isbn)
+                    .filter { hasStock -&gt; hasStock == Boolean.TRUE }
+                    .map { rsp -&gt; b }
+            }.map { book -&gt; new BookRecommendation(book.name) }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <a href="http://docs.micronaut.io/latest/api/io/micronaut/http/annotation/Controller.html">@Controller</a> annotation mapped to the path <code>/books</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>@Get</code> annotation is used to map the index method to <code>/books</code> requests that use an HTTP GET.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The previous controller returns a <code>Flowable&lt;BookRecommendation&gt;</code>. Create the <code>BookRecommendation</code> POJO:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookRecommendation.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+
+@TupleConstructor
+@CompileStatic
+@EqualsAndHashCode
+class BookRecommendation {
+    String name
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>BookCatalogueClient</code> and <code>BookInventoryClient</code> will fail to consume the <code>bookcatalogue</code> and <code>bookinventory</code> during the tests phase.</p>
+</div>
+<div class="paragraph">
+<p>Using the <a href="https://docs.micronaut.io/latest/guide/index.html#clientFallback">@Fallback</a> annotation you can declare a fallback implementation of a client that will be picked up and used once all possible retries have been exhausted</p>
+</div>
+<div class="paragraph">
+<p>Create <code>@Fallback</code> alternatives in the <code>test</code> classpath.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/test/groovy/example/micronaut/bookrecommendation/BookInventoryClientStub.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.context.annotation.Requires
+import io.micronaut.context.env.Environment
+import io.micronaut.retry.annotation.Fallback
+import io.reactivex.Maybe
+
+import javax.inject.Singleton
+import javax.validation.constraints.NotBlank
+
+@Requires(env = Environment.TEST)
+@Fallback
+@Singleton
+class BookInventoryClientStub implements BookInventoryOperations {
+
+    @Override
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn) {
+        if (isbn == "1491950358") {
+            return Maybe.just(Boolean.TRUE)
+
+        } else if (isbn == "1680502395") {
+            return Maybe.just(Boolean.FALSE)
+        }
+        Maybe.empty()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/test/groovy/example/micronaut/bookrecommendation/BookCatalogueClientStub.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.context.annotation.Requires
+import io.micronaut.context.env.Environment
+import io.micronaut.retry.annotation.Fallback
+import io.reactivex.Flowable
+
+import javax.inject.Singleton
+
+@Requires(env = Environment.TEST)
+@Fallback
+@Singleton
+class BookCatalogueClientStub implements BookCatalogueOperations {
+
+    @Override
+    Flowable&lt;Book&gt; findAll() {
+        Book buildingMicroservices = new Book("1491950358", "Building Microservices")
+        Book releaseIt = new Book("1680502395", "Release It!")
+        Flowable.just(buildingMicroservices, releaseIt)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write a test:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/test/groovy/example/micronaut/bookrecommendation/BookControllerSpec.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import spock.lang.Specification
+
+import javax.inject.Inject
+
+@MicronautTest
+class BookControllerSpec extends Specification {
+
+    @Inject
+    @Client("/")
+    HttpClient client
+
+    void "retrieve books"() {
+        when:
+        HttpResponse response = client.toBlocking().exchange(HttpRequest.GET("/books"), Argument.listOf(BookRecommendation))
+
+        then:
+        response.status() == HttpStatus.OK
+        response.body().size() == 1
+        response.body().get(0).name == "Building Microservices"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit <code>application.yml</code></p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  application:
+    name: bookrecommendation <i class="conum" data-value="1"></i><b>(1)</b>
+  server:
+    port: 8080 <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the application name. The app name will be used later in the tutorial.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the app to listen at port 8080</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a file named <code>application-test.yml</code> which is used in the test environment:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">micronaut:
+  server:
+    port: -1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the micronaut microservice at a random port when running the tests.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="runningTheApp">3 Running the app</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew run
+...
+
+&gt; Task :bookcatalogue:run
+14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew run
+...
+
+&gt; Task :bookinventory:run
+14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 506ms. Server Running: http://localhost:8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
+...
+
+&gt; Task :bookrecommendation:run
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a cURL command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+
+
+<h1 id="eureka">4 Eureka and Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://github.com/Netflix/eureka">Netflix Eureka</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Eureka is a REST (Representational State Transfer) based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers.</p>
+</div>
+</blockquote>
+</div>
+
+
+<h2 id="eurekaserver">4.1 Eureka Server</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/eurekaserver.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://cloud.spring.io/spring-cloud-netflix/">Spring-Cloud-Netflix</a> provides a very neat way to bootstrap Eureka.
+To bring up Eureka server using Spring-Cloud-Netflix:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://github.com/spring-cloud-samples/eureka">sample Eureka server application</a>.</p>
+</li>
+<li>
+<p>Run this project as a Spring Boot app (e.g. import into IDE and run
+main method, or use <code>mvn spring-boot:run</code> or <code>gradle bootRun</code> or <code>./gradlew bootRun</code>). It will start up on port
+8761 and serve the Eureka API from <code>/eureka</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This <a href="#solution">tutorial solution</a> contains a folder named <code>eureka</code> with the cloned sample Eureka server application.</p>
+</div>
+
+
+<h2 id="micronautandeureka">4.2 Integrate Eureka</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/micronautandeureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="bookcatalogueChanges">4.3 Book Catalogue</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookcatalogueChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookcatalogue</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Previous configuration registers a Micronaut app with Eureka with minimal configuration. Discover a more complete list of Configuration options at <a href="https://docs.micronaut.io/latest/api/io/micronaut/discovery/eureka/EurekaConfiguration.html">EurekaConfiguration</a>.</p>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="bookinventoryChanges">4.4 Book Inventory</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookinventoryChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, append to <code>bookinventory</code>.<code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="bookrecommendationChanges">4.5 Book Recommendation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookrecommendationChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, append to <code>bookrecommendation</code>.<code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Modify <code>BookInventoryClient</code> and <code>BookCatalogueClient</code> to use the service id instead of a harcoded ip.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookCatalogueClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Flowable
+
+@Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookCatalogueClient extends BookCatalogueOperations {
+
+    @Get("/books")
+    Flowable&lt;Book&gt; findAll()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the configuration value <code>micronaut.application.name</code> used in <code>bookcatalogue</code> as service <code>id</code>.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookInventoryClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Maybe
+
+import javax.validation.constraints.NotBlank
+
+@Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookInventoryClient extends BookInventoryOperations {
+
+    @Get("/books/stock/{isbn}")
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the configuration value <code>micronaut.application.name</code> used in <code>bookinventory</code> as service <code>id</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="runningTheAppAfterEureka">4.6 Running the App</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/runningTheAppAfterEureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew run
+...
+&gt; Task :bookcatalogue:run
+14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew run
+...
+&gt; Task :bookinventory:run
+14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 506ms. Server Running: http://localhost:8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
+...
+&gt; Task :bookrecommendation:run
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open <a href="http://localhost:8761">http://localhost:8761</a> in your browser.</p>
+</div>
+<div class="paragraph">
+<p>You will see the services registered in Eureka:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/eurekaui.png" alt="eurekaui">
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a cURL command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+
+
+<h1 id="nextSteps">5 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://docs.micronaut.io/latest/guide/index.html#serviceDiscoveryEureka">Eureka Support</a> inside Micronaut.</p>
+</div>
+
+
+<h1 id="help">6 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>

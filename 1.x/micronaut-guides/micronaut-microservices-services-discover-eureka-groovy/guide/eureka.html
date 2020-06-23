@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4 Eureka and Micronaut null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Eureka and Micronaut - Microservices service discovery
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Getting Started</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the App</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/runningTheApp.html"><strong>3</strong><span>Running the app</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/eureka.html"><strong>4</strong><span>Eureka and Micronaut</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>6</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4 Eureka and Micronaut</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#eurekaserver"><strong>4.1</strong><span>Eureka Server</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#micronautandeureka"><strong>4.2</strong><span>Integrate Eureka</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookcatalogueChanges"><strong>4.3</strong><span>Book Catalogue</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookinventoryChanges"><strong>4.4</strong><span>Book Inventory</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookrecommendationChanges"><strong>4.5</strong><span>Book Recommendation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#runningTheAppAfterEureka"><strong>4.6</strong><span>Running the App</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="eureka">4 Eureka and Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://github.com/Netflix/eureka">Netflix Eureka</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Eureka is a REST (Representational State Transfer) based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers.</p>
+</div>
+</blockquote>
+</div>
+
+
+<h2 id="eurekaserver">4.1 Eureka Server</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/eurekaserver.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="http://cloud.spring.io/spring-cloud-netflix/">Spring-Cloud-Netflix</a> provides a very neat way to bootstrap Eureka.
+To bring up Eureka server using Spring-Cloud-Netflix:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://github.com/spring-cloud-samples/eureka">sample Eureka server application</a>.</p>
+</li>
+<li>
+<p>Run this project as a Spring Boot app (e.g. import into IDE and run
+main method, or use <code>mvn spring-boot:run</code> or <code>gradle bootRun</code> or <code>./gradlew bootRun</code>). It will start up on port
+8761 and serve the Eureka API from <code>/eureka</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This <a href="#solution">tutorial solution</a> contains a folder named <code>eureka</code> with the cloned sample Eureka server application.</p>
+</div>
+
+
+<h2 id="micronautandeureka">4.2 Integrate Eureka</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/micronautandeureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="bookcatalogueChanges">4.3 Book Catalogue</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookcatalogueChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookcatalogue</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Previous configuration registers a Micronaut app with Eureka with minimal configuration. Discover a more complete list of Configuration options at <a href="https://docs.micronaut.io/latest/api/io/micronaut/discovery/eureka/EurekaConfiguration.html">EurekaConfiguration</a>.</p>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="bookinventoryChanges">4.4 Book Inventory</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookinventoryChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, append to <code>bookinventory</code>.<code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="bookrecommendationChanges">4.5 Book Recommendation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/bookrecommendationChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>discovery-client</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    ...
+    ..
+    .
+    runtime "io.micronaut:micronaut-discovery-client"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, append to <code>bookrecommendation</code>.<code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Modify <code>BookInventoryClient</code> and <code>BookCatalogueClient</code> to use the service id instead of a harcoded ip.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookCatalogueClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Flowable
+
+@Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookCatalogueClient extends BookCatalogueOperations {
+
+    @Get("/books")
+    Flowable&lt;Book&gt; findAll()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the configuration value <code>micronaut.application.name</code> used in <code>bookcatalogue</code> as service <code>id</code>.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/groovy/example/micronaut/bookrecommendation/BookInventoryClient.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
+
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Maybe
+
+import javax.validation.constraints.NotBlank
+
+@Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+interface BookInventoryClient extends BookInventoryOperations {
+
+    @Get("/books/stock/{isbn}")
+    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the configuration value <code>micronaut.application.name</code> used in <code>bookinventory</code> as service <code>id</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Disable Eureka registration in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">eureka:
+  client:
+    registration:
+      enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="runningTheAppAfterEureka">4.6 Running the App</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-eureka-groovy/edit/master/src/main/docs/guide/eureka/runningTheAppAfterEureka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew run
+...
+&gt; Task :bookcatalogue:run
+14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew run
+...
+&gt; Task :bookinventory:run
+14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 506ms. Server Running: http://localhost:8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
+...
+&gt; Task :bookrecommendation:run
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open <a href="http://localhost:8761">http://localhost:8761</a> in your browser.</p>
+</div>
+<div class="paragraph">
+<p>You will see the services registered in Eureka:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/eurekaui.png" alt="eurekaui">
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a cURL command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/runningTheApp.html">&lt;&lt; <strong>3</strong><span>Running the app</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/nextSteps.html"><strong>5</strong><span>Next Steps</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
