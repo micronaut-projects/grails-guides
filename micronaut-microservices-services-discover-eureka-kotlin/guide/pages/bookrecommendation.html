@@ -126,10 +126,12 @@ interface BookCatalogueOperations {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations::class)
 interface BookCatalogueClient : BookCatalogueOperations {
 
     @Get("/books")
@@ -178,16 +180,21 @@ interface BookInventoryOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 
 @Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations::class)
 interface BookInventoryClient : BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     override fun stock(@NotBlank isbn: String): Maybe&lt;Boolean&gt;
 }</code></pre>
@@ -215,9 +222,9 @@ import io.reactivex.Flowable
 
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 class BooksController(private val bookCatalogueOperations: BookCatalogueOperations,
-                     private val bookInventoryOperations: BookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
+                      private val bookInventoryOperations: BookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     fun index(): Flowable&lt;BookRecommendation&gt; {
         return bookCatalogueOperations.findAll()
                 .flatMapMaybe { b -&gt;
@@ -323,37 +330,31 @@ class BookCatalogueClientStub : BookCatalogueOperations {
 <p>Write a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookrecommendation/src/test/kotlin/example/micronaut/bookrecommendation/BookControllerSpec.kt</div>
+<div class="title">bookrecommendation/src/test/kotlin/example/micronaut/bookrecommendation/BookControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxStreamingHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object BookControllerSpec : Spek({
-    describe("BookController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: RxStreamingHttpClient = embeddedServer.applicationContext.createBean(RxStreamingHttpClient::class.java, embeddedServer.url)
+@MicronautTest
+class BooksControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client: RxStreamingHttpClient
 
-        it("books can be retrieved") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books")
-            val books = client.jsonStream(req, BookRecommendation::class.java)
-            assertEquals(books.toList().blockingGet().size, 1)
-            assertEquals(books.toList().blockingGet()[0].name, "Building Microservices")
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testRetrieveBooks() {
+        val books = client.jsonStream(HttpRequest.GET&lt;Any&gt;("/books"), BookRecommendation::class.java)
+        Assertions.assertEquals(books.toList().blockingGet().size, 1)
+        Assertions.assertEquals(books.toList().blockingGet()[0].name, "Building Microservices")
     }
-
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">

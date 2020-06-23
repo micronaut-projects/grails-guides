@@ -105,15 +105,6 @@ function addJsClass() {
 default package: <code>example.micronaut.bookinventory</code>.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a Controller:</p>
 </div>
 <div class="listingblock">
@@ -140,6 +131,7 @@ open class BooksController {
     private fun bookInventoryByIsbn(isbn: String): Optional&lt;BookInventory&gt; {
         if (isbn == "1491950358") {
             return Optional.of(BookInventory(isbn, 4))
+
         } else if (isbn == "1680502395") {
             return Optional.of(BookInventory(isbn, 0))
         }
@@ -179,53 +171,42 @@ data class BookInventory(var isbn: String, val stock: Int)</code></pre>
 <p>Write a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookinventory/src/test/kotlin/example/micronaut/bookinventory/BooksControllerSpec.kt</div>
+<div class="title">bookinventory/src/test/kotlin/example/micronaut/bookinventory/BooksControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookinventory
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.client.HttpClient
-import io.micronaut.http.client.exceptions.HttpClientException
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object BookControllerSpec : Spek({
-    describe("BookController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: HttpClient = HttpClient.create(embeddedServer.url)
+@MicronautTest
+class BooksControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var rxHttpClient: RxHttpClient
 
-        it("a book in stock returns true") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books/stock/1491950358")
-            val hasStock = client.toBlocking().retrieve(req, Boolean::class.java)
-            assertTrue(hasStock)
-        }
-        it("a book out of stock returns false") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books/stock/1680502395")
-            val hasStock = client.toBlocking().retrieve(req, Boolean::class.java)
-            assertFalse(hasStock)
-        }
-
-        it("non existing Isbn returns 404") {
-            val ex = assertFailsWith&lt;HttpClientException&gt; {
-                val req = HttpRequest.GET&lt;Any&gt;("/books/stock/XXXXX")
-                val hasStock = client.toBlocking().retrieve(req, Boolean::class.java)
-            }
-            assertEquals(ex.message, "Page Not Found")
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testBooksController() {
+        val rsp = rxHttpClient.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/books/stock/1491950358"), Boolean::class.java)
+        Assertions.assertEquals(rsp.status(), HttpStatus.OK)
+        Assertions.assertTrue(rsp.body()!!)
     }
 
-})</code></pre>
+    @Test
+    fun testBooksControllerWithNonExistingIsbn() {
+        val thrown = Assertions.assertThrows(HttpClientResponseException::class.java) { rxHttpClient.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/books/stock/XXXXX"), Boolean::class.java) }
+        Assertions.assertEquals(
+                HttpStatus.NOT_FOUND,
+                thrown.response.status
+        )
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
