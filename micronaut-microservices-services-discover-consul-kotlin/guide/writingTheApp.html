@@ -85,16 +85,13 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#spek2"><strong>2.1</strong><span>Test with Spek 2</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookcatalogue"><strong>2.1</strong><span>Catalogue Microservice</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#bookcatalogue"><strong>2.2</strong><span>Catalogue Microservice</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookinventory"><strong>2.2</strong><span>Inventory Microservice</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#bookinventory"><strong>2.3</strong><span>Inventory Microservice</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#bookrecommendation"><strong>2.4</strong><span>Recommendation Microservice</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#bookrecommendation"><strong>2.3</strong><span>Recommendation Microservice</span></a>
                     </div>
                     
                 </div>
@@ -176,52 +173,7 @@ select an available instance, and make a request.</p>
 </div>
 
 
-<h2 id="spek2">2.1 Test with Spek 2</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul-kotlin/edit/master/src/main/docs/guide/spek2.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>In this tutorial, we use <a href="http://spekframework.org">Spek 2</a> to test the microservices:</p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">micronautVersion=1.2.6
-kotlinVersion=1.3.50
-spekVersion=2.0.8</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">bookcatalogue/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">repositories {
-...
-..
-}
-dependencies {
-    ...
-    ..
-    .
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude group: 'org.junit.platform'
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-}</code></pre>
-</div>
-</div>
-
-
-<h2 id="bookcatalogue">2.2 Catalogue Microservice</h2>
+<h2 id="bookcatalogue">2.1 Catalogue Microservice</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul-kotlin/edit/master/src/main/docs/guide/writingTheApp/bookcatalogue.adoc"'>
@@ -254,7 +206,7 @@ import io.micronaut.http.annotation.Get
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 class BooksController {
 
-    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
+    @Get <i class="conum" data-value="2"></i><b>(2)</b>
     internal fun index(): List&lt;Book&gt; {
         return listOf(Book("1491950358", "Building Microservices"),
                 Book("1680502395", "Release It!"),
@@ -290,40 +242,34 @@ data class Book(var isbn: String, val name: String)</code></pre>
 <p>Write a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookcatalogue/src/test/kotlin/example/micronaut/bookcatalogue/BooksControllerSpec.kt</div>
+<div class="title">bookcatalogue/src/test/kotlin/example/micronaut/bookcatalogue/BooksControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookcatalogue
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object BooksControllerSpec : Spek({
-    describe("BookController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: HttpClient = HttpClient.create(embeddedServer.url)
+@MicronautTest
+class BooksControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client: HttpClient
 
-        it("books can be retrieved") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books") <i class="conum" data-value="1"></i><b>(1)</b>
-            val books = client.toBlocking().retrieve(req, Argument.of(List::class.java, Book::class.java)) <i class="conum" data-value="2"></i><b>(2)</b>
-            assertEquals(actual = 3, expected = books.size)
-            assertTrue(books.contains(Book("1491950358", "Building Microservices")))
-            assertTrue(books.contains(Book("1680502395", "Release It!")))
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testRetrieveBooks() {
+        val request: HttpRequest&lt;*&gt; = HttpRequest.GET&lt;Any&gt;("/books") <i class="conum" data-value="1"></i><b>(1)</b>
+        val books: List&lt;*&gt; = client.toBlocking().retrieve(request, Argument.listOf(Book::class.java)) <i class="conum" data-value="2"></i><b>(2)</b>
+        Assertions.assertEquals(3, books.size)
+        Assertions.assertTrue(books.contains(Book("1491950358", "Building Microservices")))
+        Assertions.assertTrue(books.contains(Book("1680502395", "Release It!")))
     }
-
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -384,7 +330,7 @@ object BooksControllerSpec : Spek({
 </div>
 
 
-<h2 id="bookinventory">2.3 Inventory Microservice</h2>
+<h2 id="bookinventory">2.2 Inventory Microservice</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul-kotlin/edit/master/src/main/docs/guide/writingTheApp/bookinventory.adoc"'>
@@ -402,15 +348,6 @@ object BooksControllerSpec : Spek({
 <div class="paragraph">
 <p>The previous command creates a folder named <code>bookinventory</code> and a Micronaut app inside it with
 default package: <code>example.micronaut.bookinventory</code>.</p>
-</div>
-<div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
 </div>
 <div class="paragraph">
 <p>Create a Controller:</p>
@@ -479,53 +416,42 @@ data class BookInventory(var isbn: String, val stock: Int)</code></pre>
 <p>Write a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookinventory/src/test/kotlin/example/micronaut/bookinventory/BooksControllerSpec.kt</div>
+<div class="title">bookinventory/src/test/kotlin/example/micronaut/bookinventory/BooksControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookinventory
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.client.HttpClient
-import io.micronaut.http.client.exceptions.HttpClientException
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object BookControllerSpec : Spek({
-    describe("BookController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: HttpClient = HttpClient.create(embeddedServer.url)
+@MicronautTest
+class BooksControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var rxHttpClient: RxHttpClient
 
-        it("a book in stock returns true") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books/stock/1491950358")
-            val hasStock = client.toBlocking().retrieve(req, Boolean::class.java)
-            assertTrue(hasStock)
-        }
-        it("a book out of stock returns false") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books/stock/1680502395")
-            val hasStock = client.toBlocking().retrieve(req, Boolean::class.java)
-            assertFalse(hasStock)
-        }
-
-        it("non existing Isbn returns 404") {
-            val ex = assertFailsWith&lt;HttpClientException&gt; {
-                val req = HttpRequest.GET&lt;Any&gt;("/books/stock/XXXXX")
-                client.toBlocking().retrieve(req, Boolean::class.java)
-            }
-            assertEquals(ex.message, "Page Not Found")
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testBooksController() {
+        val rsp = rxHttpClient.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/books/stock/1491950358"), Boolean::class.java)
+        Assertions.assertEquals(rsp.status(), HttpStatus.OK)
+        Assertions.assertTrue(rsp.body()!!)
     }
 
-})</code></pre>
+    @Test
+    fun testBooksControllerWithNonExistingIsbn() {
+        val thrown = Assertions.assertThrows(HttpClientResponseException::class.java) { rxHttpClient.toBlocking().exchange(HttpRequest.GET&lt;Any&gt;("/books/stock/XXXXX"), Boolean::class.java) }
+        Assertions.assertEquals(
+                HttpStatus.NOT_FOUND,
+                thrown.response.status
+        )
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -574,7 +500,7 @@ object BookControllerSpec : Spek({
 </div>
 
 
-<h2 id="bookrecommendation">2.4 Recommendation Microservice</h2>
+<h2 id="bookrecommendation">2.3 Recommendation Microservice</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-services-discover-consul-kotlin/edit/master/src/main/docs/guide/writingTheApp/bookrecommendation.adoc"'>
@@ -615,10 +541,12 @@ interface BookCatalogueOperations {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations::class)
 interface BookCatalogueClient : BookCatalogueOperations {
 
     @Get("/books")
@@ -667,16 +595,21 @@ interface BookInventoryOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 
 @Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations::class)
 interface BookInventoryClient : BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     override fun stock(@NotBlank isbn: String): Maybe&lt;Boolean&gt;
 }</code></pre>
@@ -706,7 +639,7 @@ import io.reactivex.Flowable
 class BooksController(private val bookCatalogueOperations: BookCatalogueOperations,
                       private val bookInventoryOperations: BookInventoryOperations) { <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Get("/") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get <i class="conum" data-value="3"></i><b>(3)</b>
     fun index(): Flowable&lt;BookRecommendation&gt; {
         return bookCatalogueOperations.findAll()
                 .flatMapMaybe { b -&gt;
@@ -812,37 +745,31 @@ class BookCatalogueClientStub : BookCatalogueOperations {
 <p>Write a test:</p>
 </div>
 <div class="listingblock">
-<div class="title">bookrecommendation/src/test/kotlin/example/micronaut/bookrecommendation/BooksControllerSpec.kt</div>
+<div class="title">bookrecommendation/src/test/kotlin/example/micronaut/bookrecommendation/BooksControllerTest.kt</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
-import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxStreamingHttpClient
-import io.micronaut.runtime.server.EmbeddedServer
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import javax.inject.Inject
 
-object BookControllerSpec : Spek({
-    describe("BookController Suite") {
-        var embeddedServer: EmbeddedServer = ApplicationContext.run(EmbeddedServer::class.java)
-        var client: RxStreamingHttpClient = embeddedServer.applicationContext.createBean(RxStreamingHttpClient::class.java, embeddedServer.url)
+@MicronautTest
+class BooksControllerTest {
+    @Inject
+    @field:Client("/")
+    lateinit var client: RxStreamingHttpClient
 
-        it("books can be retrieved") {
-            val req = HttpRequest.GET&lt;Any&gt;("/books")
-            val books = client.jsonStream(req, BookRecommendation::class.java)
-            assertEquals(1, books.toList().blockingGet().size)
-            assertEquals("Building Microservices", books.toList().blockingGet()[0].name)
-        }
-
-        afterGroup {
-            client.close()
-            embeddedServer.close()
-        }
+    @Test
+    fun testRetrieveBooks() {
+        val books = client.jsonStream(HttpRequest.GET&lt;Any&gt;("/books"), BookRecommendation::class.java)
+        Assertions.assertEquals(books.toList().blockingGet().size, 1)
+        Assertions.assertEquals(books.toList().blockingGet()[0].name, "Building Microservices")
     }
-
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">

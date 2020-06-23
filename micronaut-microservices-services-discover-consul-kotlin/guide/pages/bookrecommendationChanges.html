@@ -131,10 +131,12 @@ function addJsClass() {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations::class)
 interface BookCatalogueClient : BookCatalogueOperations {
 
     @Get("/books")
@@ -155,16 +157,21 @@ interface BookCatalogueClient : BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 
 @Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations::class)
 interface BookInventoryClient : BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     override fun stock(@NotBlank isbn: String): Maybe&lt;Boolean&gt;
 }</code></pre>
