@@ -104,7 +104,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -118,7 +118,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
@@ -180,7 +180,7 @@ open class BooksController {
     @Produces(MediaType.TEXT_PLAIN)
     @Get("/stock/{isbn}")
     @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
-    open fun stock(@SpanTag("stock.isbn") @NotBlank isbn: String): Boolean? { <i class="conum" data-value="2"></i><b>(2)</b>
+    open fun stock(@SpanTag("stock.isbn") @NotBlank isbn: String): Boolean? {  <i class="conum" data-value="2"></i><b>(2)</b>
         return bookInventoryByIsbn(isbn).map { (_, stock) -&gt; stock &gt; 0 }.orElse(null)
     }
 

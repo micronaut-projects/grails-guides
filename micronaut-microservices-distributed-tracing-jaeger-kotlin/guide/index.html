@@ -90,7 +90,7 @@
         <h1>Microservices distributed tracing with Jaeger and Micronaut</h1>
         <p>Use Jaeger distributed tracing to investigate the behaviour of your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC2</p>
     </header>
     
 
@@ -298,7 +298,7 @@
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -312,7 +312,7 @@
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
@@ -372,7 +372,7 @@
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -386,7 +386,7 @@
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
@@ -448,7 +448,7 @@ open class BooksController {
     @Produces(MediaType.TEXT_PLAIN)
     @Get("/stock/{isbn}")
     @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
-    open fun stock(@SpanTag("stock.isbn") @NotBlank isbn: String): Boolean? { <i class="conum" data-value="2"></i><b>(2)</b>
+    open fun stock(@SpanTag("stock.isbn") @NotBlank isbn: String): Boolean? {  <i class="conum" data-value="2"></i><b>(2)</b>
         return bookInventoryByIsbn(isbn).map { (_, stock) -&gt; stock &gt; 0 }.orElse(null)
     }
 
@@ -498,7 +498,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -512,7 +512,7 @@ either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan`
     ...
     ..
     .
-    implementation 'io.jaegertracing:jaeger-thrift'
+    runtimeOnly("io.jaegertracing:jaeger-thrift")
 }</code></pre>
 </div>
 </div>
