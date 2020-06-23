@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Microservices distributed tracing with Zipkin and Micronaut | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Microservices distributed tracing with Zipkin and Micronaut. Use Zipkin distributed tracing to investigate the behaviour of your Micronaut apps.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-microservices-distributed-tracing-zipkin-groovy/guide/index.html">Microservices distributed tracing with Zipkin and Micronaut</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy"><img src="https://travis-ci.org/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#zipkin"><strong>3</strong><span>Zipkin and Micronaut</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#zipkininstall"><strong>3.1</strong><span>Install Zipkin via Docker</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#micronautandzipkin"><strong>3.2</strong><span>Integrate Zipkin</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookcatalogueChanges"><strong>3.3</strong><span>Book Catalogue</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookinventoryChanges"><strong>3.4</strong><span>Book Inventory</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#bookrecommendationChanges"><strong>3.5</strong><span>Book Recommendation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#runningTheApp"><strong>4</strong><span>Running the app</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>5</strong><span>Next Steps</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>6</strong><span>Help with Micronaut</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Microservices distributed tracing with Zipkin and Micronaut</h1>
+        <p>Use Zipkin distributed tracing to investigate the behaviour of your Micronaut apps.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In this guide, we are going to integrate <a href="https://zipkin.io">Zipkin</a> in a Micronaut app composed of three microservices.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in microservice architectures. It manages both the collection and lookup of this data.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>You will discover how Micronaut eases Zipkin integration.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.git" class="bare">https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The initial folder contains a sample application. To learn more about this sample app read
+<a href="http://guides.micronaut.io/micronaut-microservices-services-discover-consul-groovy/guide/index.html">Consul and Micronaut - Microservices service discovery
+</a> guide. The application contains three microservices.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bookcatalogue</code> - It returns a list of books. It uses a domain consisting of a book name and isbn.</p>
+</li>
+<li>
+<p><code>bookinventory</code> - It exposes an endpoint to check whether a book has sufficient stock to fullfil an order. It uses a domain consisting of a stock level and isbn.</p>
+</li>
+<li>
+<p><code>bookrecommendation</code> - It consumes previous services and exposes and endpoint which recommends book names which are in stock.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>bookcatalogue</code> service consumes endpoints exposed by the other services. The following image illustrates the application flow:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/flow.svg" alt="flow">
+</div>
+</div>
+
+
+<h1 id="zipkin">3 Zipkin and Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="zipkininstall">3.1 Install Zipkin via Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin/zipkininstall.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The quickest way to start <a href="https://zipkin.io">Zipkin</a> is via Docker:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>$ docker run -d -p 9411:9411 openzipkin/zipkin</code></pre>
+</div>
+</div>
+
+
+<h2 id="micronautandzipkin">3.2 Integrate Zipkin</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin/micronautandzipkin.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="bookcatalogueChanges">3.3 Book Catalogue</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin/bookcatalogueChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>tracing</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    implementation "io.micronaut:micronaut-tracing"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, to send tracing spans to Zipkin the minimal configuration requires you add the following dependencies to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    runtime 'io.zipkin.brave:brave-instrumentation-http'
+    runtime 'io.zipkin.reporter2:zipkin-reporter'
+    implementation 'io.opentracing.brave:brave-opentracing'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookcatalogue</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Trace 100% of requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In production, you will probably want to trace a smaller percentage of the requests. However, in order to keep this tutorial easy, we set it to trace 100%.</p>
+</div>
+<div class="paragraph">
+<p>Disable distributed tracing in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookcatalogue/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    enabled: false</code></pre>
+</div>
+</div>
+
+
+<h2 id="bookinventoryChanges">3.4 Book Inventory</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin/bookinventoryChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>tracing</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    implementation "io.micronaut:micronaut-tracing"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, to send tracing spans to Zipkin the minimal configuration requires you add the following dependencies to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    runtime 'io.zipkin.brave:brave-instrumentation-http'
+    runtime 'io.zipkin.reporter2:zipkin-reporter'
+    implementation 'io.opentracing.brave:brave-opentracing'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookinventory</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Trace 100% of requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In production, you will probably want to trace a smaller percentage of the requests. However, in order to keep this tutorial easy, we set it to trace 100%.</p>
+</div>
+<div class="paragraph">
+<p>Disable distributed tracing in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    enabled: false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Annotate <code>BooksController</code> method with <code>@ContinueSpan</code> and the method parameter with <code>@SpanTag</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookinventory/src/main/java/example/micronaut/bookinventory/BooksController.groovy</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory
+
+import groovy.transform.CompileStatic
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Produces
+import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.SpanTag
+
+import javax.validation.constraints.NotBlank
+
+@CompileStatic
+@Controller("/books")
+class BooksController {
+
+    @Produces(MediaType.TEXT_PLAIN)
+    @Get("/stock/{isbn}")
+    @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
+    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) { <i class="conum" data-value="2"></i><b>(2)</b>
+        bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
+    }
+
+    private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
+        if (isbn == "1491950358") {
+            return Optional.of(new BookInventory(isbn, 4))
+
+        } else if (isbn == "1680502395") {
+            return Optional.of(new BookInventory(isbn, 0))
+        }
+        Optional.empty()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@ContinueSpan</code> annotation will continue an existing span, wrapping the method call or reactive type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@SpanTag</code> annotation can be used on method arguments to include the value of each argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> you need either to annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code></td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="bookrecommendationChanges">3.5 Book Recommendation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/zipkin/bookrecommendationChanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Modify <code>build.gradle</code> to add <code>tracing</code> dependency.</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    implementation "io.micronaut:micronaut-tracing"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, to send tracing spans to Zipkin the minimal configuration requires you add the following dependencies to <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">dependencies {
+    ...
+    ..
+    .
+    runtime 'io.zipkin.brave:brave-instrumentation-http'
+    runtime 'io.zipkin.reporter2:zipkin-reporter'
+    compile 'io.opentracing.brave:brave-opentracing'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Append to <code>bookrecommendation</code> service <code>application.yml</code> the following snippet:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    http:
+      url: http://localhost:9411
+    enabled: true
+    sampler:
+      probability: 1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Trace 100% of requests.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In production, you will probably want to trace a smaller percentage of the requests. However, in order to keep this tutorial easy, we set it to trace 100%.</p>
+</div>
+<div class="paragraph">
+<p>Disable distributed tracing in tests:</p>
+</div>
+<div class="listingblock">
+<div class="title">bookrecommendation/src/main/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">tracing:
+  zipkin:
+    enabled: false</code></pre>
+</div>
+</div>
+
+
+<h1 id="runningTheApp">4 Running the app</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/runningTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Run <code>bookcatalogue</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookcatalogue $ ./gradlew run
+...
+&gt; Task :bookcatalogue:run
+14:28:34.034 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 499ms. Server Running: http://localhost:8081</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookinventory</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookinventory $ ./gradlew run
+...
+&gt; Task :bookinventory:run
+14:31:13.104 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 506ms. Server Running: http://localhost:8082</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>bookrecommendation</code> microservice:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">bookrecommendation $ ./gradlew run
+...
+&gt; Task :bookrecommendation:run
+14:31:57.389 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 523ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can run a cURL command to test the whole application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://localhost:8080/books
+[{"name":"Building Microservices"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can then navigate to <a href="http://localhost:9411" class="bare">http://localhost:9411</a> t to access the Jaeger UI.</p>
+</div>
+<div class="paragraph">
+<p>The previous request generates a trace composed by 5 spans.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/zipkinui.png" alt="zipkinui">
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous image, you can see the requests to <code>bookinventory</code> are done in parallel.</p>
+</div>
+<div class="paragraph">
+<p>You can see the details if you click the span:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/zipkinclientserver.png" alt="zipkinclientserver">
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous image, you can see that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Whenever a Micronaut HTTP client executes a new network request, a span is involved.</p>
+</li>
+<li>
+<p>Whenever a Micronaut Server receives a request, a span is involved.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>stock.isbn</code> tags that we configured with <code>@SpanTag</code> is present as shown in the next image:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/zipkintag.png" alt="zipkintag">
+</div>
+</div>
+
+
+<h1 id="nextSteps">5 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>As you have seen in this tutorial, without any annotations you get distributing tracing up-and-running fast with Micronaut.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut includes several annotations to give you more flexibility. We introduced the <code>@ContinueSpan</code>, <code>@SpanTag</code> annotations. Also, you have at your disposal the <code>@NewSpan</code> annotation which will create a new span, wrapping the method call or reactive type.</p>
+</div>
+<div class="paragraph">
+<p>Make sure to read more about <a href="https://docs.micronaut.io/latest/guide/index.html#zipkin">Tracing with Zipkin</a> inside Micronaut.</p>
+</div>
+
+
+<h1 id="help">6 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-microservices-distributed-tracing-zipkin-groovy/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
