@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Schedule periodic tasks inside your Micronaut applications | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Schedule periodic tasks inside your Micronaut applications. Learn how to schedule periodic tasks inside your Micronaut microservices.' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/micronaut-scheduled/guide/index.html">Schedule periodic tasks inside your Micronaut applications</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/micronaut-scheduled"><img src="https://travis-ci.org/micronaut-guides/micronaut-scheduled.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-scheduled&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/micronaut-scheduled.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/micronaut-scheduled.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/micronaut-scheduled.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/micronaut-scheduled/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the Application</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#logger"><strong>2.1</strong><span>Set log level INFO for package demo</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#creatingSimpleJob"><strong>2.2</strong><span>Creating a Job</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#businessLogicInServices"><strong>2.3</strong><span>Business logic in dedicated Use Cases</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#schedulingAJobManually"><strong>2.4</strong><span>Scheduling a Job Manually</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#summary"><strong>3</strong><span>Summary</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>4</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalchanges"><strong>4.1</strong><span>Micronaut + GraalVM changes</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>4.2</strong><span>Native Image generation</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>4.3</strong><span>Native Image generation with Docker</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>5</strong><span>Help with Micronaut</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Schedule periodic tasks inside your Micronaut applications</h1>
+        <p>Learn how to schedule periodic tasks inside your Micronaut microservices.</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 1.2.7</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Nowadays it is pretty usual to have some kind of cron or scheduled task that needs to run every midnight, every hour, a few times a week,&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>In this guide you will learn how to use Micronaut native capabilities to schedule periodic tasks inside a Micronaut microservice.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-scheduled/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-scheduled.git" class="bare">https://github.com/micronaut-guides/micronaut-scheduled.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the Application</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create an app using the <a href="http://docs.micronaut.io/snapshot/guide/index.html#cli">Micronaut Command Line Interface</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>mn create-app example.micronaut.complete</code></p>
+</div>
+<div class="paragraph">
+<p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>create-app</code> creates a Java Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+other build tools such as <code>Maven</code> or other programming languages such as <code>Groovy</code> or <code>Kotlin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Java or Kotlin and IntelliJ IDEA make sure you have enabled annotation processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/annotationprocessorsintellij.png" alt="annotationprocessorsintellij">
+</div>
+</div>
+
+
+<h2 id="logger">2.1 Set log level INFO for package demo</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/writingTheApp/logger.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>During this guide, we are going to use several log statements to show Job execution.</p>
+</div>
+<div class="paragraph">
+<p>Add at the end of <code>logback.xml</code> the next statement:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/logback.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;configuration&gt;
+...
+..
+.
+    &lt;logger name="example.micronaut" level="info"/&gt;
+&lt;/configuration&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above line configures a logger for package <code>example.micronaut</code> with log level INFO.</p>
+</div>
+
+
+<h2 id="creatingSimpleJob">2.2 Creating a Job</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/writingTheApp/creatingSimpleJob.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a file and add the following:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/HelloWorldJob.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.scheduling.annotation.Scheduled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class HelloWorldJob {
+    private static final Logger LOG = LoggerFactory.getLogger(HelloWorldJob.class); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Scheduled(fixedDelay = "10s") <i class="conum" data-value="3"></i><b>(3)</b>
+    void executeEveryTen() {
+        LOG.info("Simple Job every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+    }
+
+    @Scheduled(fixedDelay = "45s", initialDelay = "5s") <i class="conum" data-value="4"></i><b>(4)</b>
+    void executeEveryFourtyFive() {
+        LOG.info("Simple Job every 45 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut&#8217;s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject a Logger.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create trigger every 10 seconds</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Create another trigger every 45 seconds with an initial delay of 5 seconds (5000 millis)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p>Now start the application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And after a few seconds you will see the following output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">---
+... Simple Job every 10 seconds :15/5/2018 12:48:02 <i class="conum" data-value="1"></i><b>(1)</b>
+... Simple Job every 45 seconds :15/5/2018 12:48:07 <i class="conum" data-value="2"></i><b>(2)</b>
+... Simple Job every 10 seconds :15/5/2018 12:48:12 <i class="conum" data-value="3"></i><b>(3)</b>
+... Simple Job every 10 seconds :15/5/2018 12:48:22
+... Simple Job every 10 seconds :15/5/2018 12:48:32
+... Simple Job every 10 seconds :15/5/2018 12:48:42
+... Simple Job every 45 seconds :15/5/2018 12:48:52 <i class="conum" data-value="4"></i><b>(4)</b>
+... Simple Job every 10 seconds :15/5/2018 12:48:52</code></pre>
+</div>
+</div>
+<hr>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>First execution of 10 seconds job just after the application starts</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The 45 seconds job just starts 5 seconds after the app starts</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Second execution of 10 seconds job just 10 seconds after the first execution</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Second execution of 45 seconds job just 45 seconds after the first execution</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="businessLogicInServices">2.3 Business logic in dedicated Use Cases</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/writingTheApp/businessLogicInServices.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Although the previous example is valid, usually you don&#8217;t want to put your business logic in a Job. A better approach is to create an additional bean which the <code>Job</code> invokes. This approach decouples your business logic from the scheduling logic. Moreover, it facilitates testing and maintenance. Let’s see an example:</p>
+</div>
+<div class="paragraph">
+<p>Create the following use case:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/EmailUseCase.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Singleton
+public class EmailUseCase {
+    private static final Logger LOG = LoggerFactory.getLogger(EmailUseCase.class); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    void send(String user, String message) {
+        LOG.info("Sending email to {}: {} at {}", user, message, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And then the job:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/DailyEmailJob.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.scheduling.annotation.Scheduled;
+
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class DailyEmailJob {
+
+    protected final EmailUseCase emailUseCase;
+
+    public DailyEmailJob(EmailUseCase emailUseCase) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.emailUseCase = emailUseCase;
+    }
+
+    @Scheduled(cron = "0 30 4 1/1 * ?") <i class="conum" data-value="3"></i><b>(3)</b>
+    void execute() {
+        emailUseCase.send("john.doe@micronaut.example", "Test Message"); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To register a Singleton in Micronaut&#8217;s application context annotate your class with <code>javax.inject.Singleton</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Constructor injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Trigger the job once a day at 04:30 AM</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Call the injected use case</td>
+</tr>
+</table>
+</div>
+
+
+<h2 id="schedulingAJobManually">2.4 Scheduling a Job Manually</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/writingTheApp/schedulingAJobManually.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Imagine the following scenario. You want to send every user an email 2 hours after they registered into your app. You want to ask him about his experiences during this first interaction with your application.</p>
+</div>
+<div class="paragraph">
+<p>For this guide, we are going to schedule a Job to trigger after one minute.</p>
+</div>
+<div class="paragraph">
+<p>To test it out, we are going to call twice a new use case named <code>RegisterUseCase</code> when the app starts.</p>
+</div>
+<div class="paragraph">
+<p>Modify <code>Application</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/Application.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.context.event.ApplicationEventListener;
+import io.micronaut.runtime.Micronaut;
+import io.micronaut.runtime.server.event.ServerStartupEvent;
+
+import javax.inject.Singleton;
+
+@Singleton <i class="conum" data-value="1"></i><b>(1)</b>
+public class Application implements ApplicationEventListener&lt;ServerStartupEvent&gt; {  <i class="conum" data-value="2"></i><b>(2)</b>
+
+    private final RegisterUseCase registerUseCase;
+
+    public Application(RegisterUseCase registerUseCase) {  <i class="conum" data-value="3"></i><b>(3)</b>
+        this.registerUseCase = registerUseCase;
+    }
+
+    public static void main(String[] args) {
+        Micronaut.run(Application.class);
+    }
+
+
+    @Override
+    public void onApplicationEvent(ServerStartupEvent event) {  <i class="conum" data-value="4"></i><b>(4)</b>
+        try {
+            registerUseCase.register("harry@micronaut.example");
+            Thread.sleep(20000);
+            registerUseCase.register("ron@micronaut.example");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate <code>Application.java</code> with <code>@Singleton</code> to register it in the application context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Listen to the event <code>ServerStartupEvent</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Constructor injection of <code>RegisterUseCase</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>onApplicationEvent</code> is invoked when the app starts.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p>As you see in the previous example, subscribing to an event is as easy as implementing <code>ApplicationEventListener</code>.</p>
+</div>
+<div class="paragraph">
+<p>Create a runnable task <code>EmailTask.java</code></p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/EmailTask.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+public class EmailTask implements Runnable {
+
+    private String email;
+    private String message;
+    private EmailUseCase emailUseCase;
+
+    public EmailTask(EmailUseCase emailUseCase, String email, String message) {
+        this.email = email;
+        this.message = message;
+        this.emailUseCase = emailUseCase;
+    }
+
+    @Override
+    public void run() {
+        emailUseCase.send(email, message);
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create <code>RegisterUseCase.java</code> which schedules the previous task.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/example/micronaut/RegisterUseCase.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut;
+
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.TaskScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Date;
+
+@Singleton
+public class RegisterUseCase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterUseCase.class);
+
+    protected final TaskScheduler taskScheduler;
+    protected final EmailUseCase emailUseCase;
+
+    public RegisterUseCase(EmailUseCase emailUseCase, <i class="conum" data-value="1"></i><b>(1)</b>
+                           @Named(TaskExecutors.SCHEDULED) TaskScheduler taskScheduler) {  <i class="conum" data-value="2"></i><b>(2)</b>
+        this.emailUseCase = emailUseCase;
+        this.taskScheduler = taskScheduler;
+    }
+
+    public void register(String email) {
+        LOG.info("saving {} at {}", email, new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+        scheduleFollowupEmail(email, "Welcome to Micronaut");
+    }
+
+    private void scheduleFollowupEmail(String email, String message) {
+        EmailTask task = new EmailTask(emailUseCase, email, message); <i class="conum" data-value="3"></i><b>(3)</b>
+        taskScheduler.schedule(Duration.ofMinutes(1), task);  <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Constructor injection of <code>EmailUseCase</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inject the <code>TaskScheduler</code> bean</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create a <code>Runnable</code> task.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Schedule the task to run a minute from now.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you execute the above code you will see the Job being executed one minute after we schedule it and with the supplied email address.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">INFO  example.micronaut.RegisterUseCase - saving harry@micronaut.example at 15/5/2018 06:25:14
+INFO  example.micronaut.RegisterUseCase - saving ron@micronaut.example at 15/5/2018 06:25:34
+INFO  example.micronaut.EmailUseCase - Sending email to harry@micronaut.example : Welcome to Micronaut at 15/5/2018 06:26:14
+INFO  example.micronaut.EmailUseCase - Sending email to ron@micronaut.example : Welcome to Micronaut at 15/5/2018 06:26:34</code></pre>
+</div>
+</div>
+
+
+<h1 id="summary">3 Summary</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/summary.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>During this guide, we learned how to configure Jobs using the <code>@Scheduled</code> annotation using fixedDelay, initialDelay,
+and cron as well as manually configuring jobs with a <code>TaskScheduler</code> and tasks.</p>
+</div>
+
+
+<h1 id="graal">4 Generate a Micronaut app's Native Image with GraalVM</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/graal.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We are going to use <a href="https://www.graalvm.org">GraalVM</a>, the polyglot embeddable virtual machine, to generate a Native image
+of our Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based
+applications.</p>
+</div>
+
+
+<h2 id="graalchanges">4.1 Micronaut + GraalVM changes</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
+</div>
+<div class="paragraph">
+<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
+that is automatically picked up by the <code>native-image</code> tool:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    annotationProcessor "io.micronaut:micronaut-graal"
+}</code></pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
+This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
+components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
+VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
+program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>We need to add a dependency to <code>svm</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+...
+..
+.
+    compileOnly "org.graalvm.nativeimage:svm:19.3.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To simplify building the image you need to create a <code>native-image.properties</code> file.
+The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application. For our example <code>example.micronaut/micronautguide</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add a <code>native-image.properties</code> inside  <code>src/main/resources/META-INF/native-image/example.micronaut/micronautguide</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:IncludeResources=logback.xml|application.yml \
+       -H:Name=micronautguide \
+       -H:Class=example.micronaut.Application</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
+</li>
+<li>
+<p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
+</li>
+</ul>
+</div>
+
+
+<h2 id="graalnativeimage">4.2 Native Image generation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The easiest way to install GraalVM is to use <a href="https://sdkman.io">SDKMan.io</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk list java
+================================================================================
+Available Java Versions
+================================================================================
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
+--------------------------------------------------------------------------------
+....
+ GraalVM       |     | 20.1.0.r11   | grl     | installed  | 20.1.0.r11-grl
+               |     | 20.1.0.r8    | grl     |            | 20.1.0.r8-grl
+               |     | 20.0.0.r11   | grl     |            | 20.0.0.r11-grl
+               |     | 20.0.0.r8    | grl     | installed  | 20.0.0.r8-grl
+               |     | 19.3.1.r11   | grl     | installed  | 19.3.1.r11-grl
+               |     | 19.3.1.r8    | grl     |            | 19.3.1.r8-grl
+....
+
+# For Java 8
+$ sdk install java 20.1.0.r8-grl
+
+# For Java 11
+$ sdk install java 20.1.0.r11-grl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to install the <code>native-image</code> component which is not installed by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ gu install native-image</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To generate the native image you need to generate the FAT JAR first.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Invoke <code>native-image</code>. It may take a minute to complete.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
+/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
+[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
+[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
+[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
+[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
+[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
+[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
+[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
+[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
+[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
+[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
+[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
+[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
+[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
+[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
+[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--no-server</code> options tells to not use server-based image building.</p>
+</div>
+<div class="paragraph">
+<p>You can invoke the generated native image <code>micronautguide</code>. Startup will be really fast.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> $ ./micronautguide -Xmx68m
+07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You will see the log message of the jobs appear:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ 10:16:20.803 [pool-2-thread-1] INFO  example.micronaut.HelloWorldJob - Simple Job every 10 seconds: 09/12/2019 10:16:20
+$ 10:16:20.806 [main] INFO  example.micronaut.RegisterUseCase - saving harry@micronaut.example at 09/12/2019 10:16:20
+$ 10:16:25.804 [pool-2-thread-2] INFO  example.micronaut.HelloWorldJob - Simple Job every 45 seconds: 09/12/2019 10:16:25
+$ 10:16:30.807 [pool-2-thread-4] INFO  example.micronaut.HelloWorldJob - Simple Job every 10 seconds: 09/12/2019 10:16:30</code></pre>
+</div>
+</div>
+
+
+<h2 id="graaldocker">4.3 Native Image generation with Docker</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
+</div>
+<div class="listingblock">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:19.3.0-java8 as graalvm
+COPY . /home/app/micronautguide
+WORKDIR /home/app/micronautguide
+RUN gu install native-image
+RUN native-image --no-server -cp build/libs/complete-*-all.jar
+
+FROM frolvlad/alpine-glibc
+EXPOSE 8080
+COPY --from=graalvm /home/app/micronautguide /app/micronautguide
+ENTRYPOINT ["/app/micronautguide","-Xmx68m"]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">docker-build.sh</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+docker build . -t micronautguide
+echo
+echo
+echo "To run the docker container execute:"
+echo "    $ docker run -p 8080:8080 micronautguide"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
+
+$ % ./docker-build.sh
+Sending build context to Docker daemon    127MB
+Step 1/10 : FROM oracle/graalvm-ce:20.1.0-java11 as graalvm
+ ---&gt; 2adef7aab8f9
+Step 2/10 : RUN gu install native-image
+ ---&gt; Using cache
+ ---&gt; a52c98379916
+Step 3/10 : COPY . /home/app/complete
+ ---&gt; 7b5d8708feb7
+Step 4/10 : WORKDIR /home/app/complete
+ ---&gt; Running in 52615dd2ceed
+Removing intermediate container 52615dd2ceed
+ ---&gt; fe6e67e150b6
+Step 5/10 : RUN native-image --no-server -cp build/libs/complete-*-all.jar
+ ---&gt; Running in b0cca1a82c2c
+[micronautguide:24]    classlist:   4,224.09 ms,  0.96 GB
+[micronautguide:24]        (cap):     557.93 ms,  0.96 GB
+WARNING: Could not resolve io.netty.channel.epoll.EpollChannelOption for reflection configuration.
+WARNING: Could not resolve io.netty.channel.kqueue.KQueueChannelOption for reflection configuration.
+[micronautguide:24]        setup:   1,840.06 ms,  0.96 GB
+WARNING GR-10238: VarHandle for static field is currently not fully supported. Static field private static volatile java.lang.System$Logger jdk.internal.event.EventHelper.securityLogger is not properly marked for Unsafe access!
+[micronautguide:24]     (clinit):   1,383.94 ms,  3.42 GB
+[micronautguide:24]   (typeflow):  16,198.26 ms,  3.42 GB
+[micronautguide:24]    (objects):  20,293.44 ms,  3.42 GB
+[micronautguide:24]   (features):   2,859.27 ms,  3.42 GB
+[micronautguide:24]     analysis:  43,474.70 ms,  3.42 GB
+[micronautguide:24]     universe:   1,783.90 ms,  3.38 GB
+[micronautguide:24]      (parse):   4,345.14 ms,  3.68 GB
+[micronautguide:24]     (inline):   2,786.82 ms,  3.52 GB
+[micronautguide:24]    (compile):  18,459.86 ms,  4.32 GB
+[micronautguide:24]      compile:  28,292.51 ms,  4.32 GB
+[micronautguide:24]        image:   5,348.95 ms,  4.33 GB
+[micronautguide:24]        write:     804.47 ms,  4.33 GB
+[micronautguide:24]      [total]:  86,008.19 ms,  4.33 GB
+Removing intermediate container b0cca1a82c2c
+ ---&gt; 31e41f3f3306
+Step 6/10 : FROM frolvlad/alpine-glibc
+ ---&gt; 3a1c752f649f
+Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
+ ---&gt; Using cache
+ ---&gt; 536cd2f06071
+Step 8/10 : EXPOSE 8080
+ ---&gt; Using cache
+ ---&gt; 1e011af81857
+Step 9/10 : COPY --from=graalvm /home/app/complete/micronautguide /app/complete
+ ---&gt; 921480edd9b7
+Step 10/10 : ENTRYPOINT ["/app/complete"]
+ ---&gt; Running in a61b95562776
+Removing intermediate container a61b95562776
+ ---&gt; 56c8fff02b03
+Successfully built 56c8fff02b03
+Successfully tagged complete:latest
+
+
+To run the docker container execute:
+    $ docker run -p 8080:8080 complete</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use docker to run the image with the app&#8217;s native-image:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdelamo@Sergios-iMac-Pro complete %  docker run -p 8080:8080 complete
+/app/complete: /usr/lib/libstdc++.so.6: no version information available (required by /app/complete)
+05:06:22.567 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 40ms. Server Running: http://35bc084914f6:8080</code></pre>
+</div>
+</div>
+
+
+<h1 id="help">5 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-scheduled/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333;">OCI sponsored the creation of this Guide. OCI offers several <a href="https://objectcomputing.com/products/micronaut/">Micronaut services</a>:</h3>
+
+<img src="../img/oci-micronaut-services.svg"/>
+
+<h3>Free consultation </h3>
+
+<!-- This is the code that is needed to run the form -->
+
+<!--Copy and paste into the document's head or body.-->
+
+<script type="text/javascript">
+
+    /** This section is only needed once per page if manually copying **/
+    if (typeof MauticSDKLoaded == 'undefined') {
+        var MauticSDKLoaded = true;
+        var head            = document.getElementsByTagName('head')[0];
+        var script          = document.createElement('script');
+        script.type         = 'text/javascript';
+        script.src          = 'https://mautic.objectcomputing.com/media/js/mautic-form.js';
+        script.onload       = function() {
+            MauticSDK.onLoad();
+        };
+        head.appendChild(script);
+        var MauticDomain = 'https://mautic.objectcomputing.com';
+        var MauticLang   = {
+            'submittingMessage': "Please wait..."
+        }
+    }
+</script>
+
+<!--Copy and paste into the document's body.-->
+
+<style type="text/css" scoped>
+    .mauticform_wrapper { max-width: 600px; margin: 10px auto; }
+    .mauticform-innerform {}
+    .mauticform-post-success {}
+    .mauticform-name { font-weight: bold; font-size: 1.5em; margin-bottom: 3px; }
+    .mauticform-description { margin-top: 2px; margin-bottom: 10px; }
+    .mauticform-error { margin-bottom: 10px; color: red; }
+    .mauticform-message { margin-bottom: 10px;color: green; }
+    .mauticform-row { display: block; margin-bottom: 20px; }
+    .mauticform-label { font-size: 1.1em; display: block; font-weight: bold; margin-bottom: 5px; }
+    .mauticform-row.mauticform-required .mauticform-label:after { color: #e32; content: " *"; display: inline; }
+    .mauticform-helpmessage { display: block; font-size: 0.9em; margin-bottom: 3px; }
+    .mauticform-errormsg { display: block; color: red; margin-top: 2px; }
+    .mauticform-selectbox, .mauticform-input, .mauticform-textarea { width: 100%; padding: 0.5em 0.5em; border: 1px solid #CCC; background: #fff; box-shadow: 0px 0px 0px #fff inset; border-radius: 4px; box-sizing: border-box; }
+    .mauticform-checkboxgrp-row {}
+    .mauticform-checkboxgrp-label { font-weight: normal; }
+    .mauticform-checkboxgrp-checkbox {}
+    .mauticform-radiogrp-row {}
+    .mauticform-radiogrp-label { font-weight: normal; }
+    .mauticform-radiogrp-radio {}
+    .mauticform-button-wrapper .mauticform-button.btn-default, .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default { font-size: 14px; color: #fff;background-color: #feb672 ;border-color: #dddddd; padding: 15px 30px;}
+    .mauticform-button-wrapper .mauticform-button, .mauticform-pagebreak-wrapper .mauticform-pagebreak { display: inline-block;margin-bottom: 0;font-weight: 600;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 6px 12px;font-size: 13px;line-height: 1.3856;border-radius: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+    .mauticform-button-wrapper .mauticform-button.btn-default[disabled], .mauticform-pagebreak-wrapper .mauticform-pagebreak.btn-default[disabled] { background-color:#feb672; border-color: #dddddd; opacity: 0.75; cursor: not-allowed; font-size: 14px; color: #fff; padding: 15px 30px;}
+    .mauticform-pagebreak-wrapper .mauticform-button-wrapper {  display: inline; }
+</style>
+<div id="mauticform_wrapper_grailsorgconsultationform" class="mauticform_wrapper">
+    <form autocomplete="false" role="form" method="post" action="https://mautic.objectcomputing.com/form/submit?formId=3" id="mauticform_grailsorgconsultationform" data-mautic-form="grailsorgconsultationform">
+
+        <div class="mauticform-innerform">
+
+          <div class="mauticform-page-wrapper mauticform-page-1" data-mautic-form-page="1">
+
+            <div id="mauticform_grailsorgconsultationform_first_name"  data-validate="first_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-1 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_first_name" name="mauticform[first_name]" value="" placeholder="First Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_last_name"  data-validate="last_name" data-validation-type="text" class="mauticform-row mauticform-text mauticform-field-2 mauticform-required col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_last_name" name="mauticform[last_name]" value="" placeholder="Last Name *" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_email"  data-validate="email" data-validation-type="email" class="mauticform-row mauticform-email mauticform-field-3 mauticform-required col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_email" name="mauticform[email]" value="" placeholder="Email *" class="mauticform-input" type="email" />
+                <span class="mauticform-errormsg" style="display: none;">This is required.</span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_phone"  class="mauticform-row mauticform-tel mauticform-field-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_phone" name="mauticform[phone]" value="" placeholder="Phone" class="mauticform-input" type="tel" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_company"  class="mauticform-row mauticform-text mauticform-field-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input id="mauticform_input_grailsorgconsultationform_company" name="mauticform[company]" value="" placeholder="Company" class="mauticform-input" type="text" />
+                <span class="mauticform-errormsg" style="display: none;"></span>
+            </div>
+
+            <div id="mauticform_grailsorgconsultationform_submit"  class="mauticform-row mauticform-button-wrapper mauticform-field-6" style="">
+                <button type="submit" name="mauticform[submit]" id="mauticform_input_grailsorgconsultationform_submit" name="mauticform[submit]" value="" class="mauticform-button btn btn-default" value="1" style="border: none; margin-left: 14px;">SUBMIT</button>
+            </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="mauticform[formId]" id="mauticform_grailsorgconsultationform_id" value="3"/>
+        <input type="hidden" name="mauticform[return]" id="mauticform_grailsorgconsultationform_return" value=""/>
+        <input type="hidden" name="mauticform[formName]" id="mauticform_grailsorgconsultationform_name" value="grailsorgconsultationform"/>
+</form>
+</div>
+
+<!--The code below is the message that appears when someone hits submit. Feel free to style this how you see fit for Grails.org. All CSS is handled in the above code.-->
+
+<div class="mauticform-error" id="mauticform_grailsorgconsultationform_error"></div>
+<div class="mauticform-message" id="mauticform_grailsorgconsultationform_message"></div>
+
+<h3 style="color: #333;">The <a href="https://objectcomputing.com/products/micronaut">OCI Micronaut Team</a>
+includes Micronaut co-founders, <b>Jeff Scott Brown and Graeme Rocher</b>.
+Check our <a href="https://objectcomputing.com/services/training/catalog/micronaut-training">Micronaut courses</a> and learn from the engineers who developed,
+matured and maintain Micronaut.</h3>
+
+<img src="../img/ocigrailsteam.png" style="max-width: 748px; width: 100%;" alt="Micronaut OCI Team">
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
