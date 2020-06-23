@@ -131,10 +131,10 @@ function addJsClass() {
 
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.retry.annotation.Recoverable;
 import io.reactivex.Flowable;
 
-@Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
-public interface BookCatalogueClient extends BookCatalogueOperations {
+interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
     Flowable&lt;Book&gt; findAll();
@@ -154,17 +154,20 @@ public interface BookCatalogueClient extends BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookrecommendation;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Maybe;
-
+import io.micronaut.retry.annotation.Recoverable;
 import javax.validation.constraints.NotBlank;
 
-@Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
-public interface BookInventoryClient extends BookInventoryOperations {
+interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
-    Maybe&lt;Boolean&gt; stock(@NotBlank String isbn);
+    Maybe&lt;Boolean&gt; stock(@NonNull @NotBlank String isbn);
 }</code></pre>
 </div>
 </div>

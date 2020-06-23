@@ -111,7 +111,6 @@ default package: <code>example.micronaut.bookcatalogue</code>.</p>
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.reactivex.Flowable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -119,8 +118,8 @@ import java.util.List;
 @Controller("/books") <i class="conum" data-value="1"></i><b>(1)</b>
 public class BooksController {
 
-    @Get("/") <i class="conum" data-value="2"></i><b>(2)</b>
-    List&lt;Book&gt; index() {
+    @Get <i class="conum" data-value="2"></i><b>(2)</b>
+    public List&lt;Book&gt; index() {
         Book buildingMicroservices = new Book("1491950358", "Building Microservices");
         Book releaseIt = new Book("1680502395", "Release It!");
         Book cidelivery = new Book("0321601912", "Continuous Delivery:");
@@ -149,36 +148,43 @@ public class BooksController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookcatalogue;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
 
 @Introspected
 public class Book {
+    @NonNull
+    @NotBlank
     private String isbn;
+    @NonNull
+    @NotBlank
+
     private String name;
 
-    public Book() {
-    }
+    public Book() {}
 
-    public Book(String isbn, String name) {
+    public Book(@NonNull @NotBlank String isbn, @NonNull @NotBlank String name) {
         this.isbn = isbn;
         this.name = name;
     }
 
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
@@ -186,14 +192,18 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn) &amp;&amp;
-                Objects.equals(name, book.name);
+
+        if (!isbn.equals(book.isbn)) return false;
+        return name.equals(book.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, name);
+        int result = isbn.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -219,17 +229,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest <i class="conum" data-value="1"></i><b>(1)</b>
+@MicronautTest
 public class BooksControllerTest {
 
     @Inject
     @Client("/")
-    HttpClient client; <i class="conum" data-value="2"></i><b>(2)</b>
+    HttpClient client;
 
     @Test
     public void testRetrieveBooks() {
-        HttpRequest request = HttpRequest.GET("/books"); <i class="conum" data-value="3"></i><b>(3)</b>
-        List books = client.toBlocking().retrieve(request, Argument.listOf(Book.class)); <i class="conum" data-value="4"></i><b>(4)</b>
+        HttpRequest request = HttpRequest.GET("/books");
+        List books = client.toBlocking().retrieve(request, Argument.listOf(Book.class));
         assertEquals(3, books.size());
         assertTrue(books.contains(new Book("1491950358", "Building Microservices")));
         assertTrue(books.contains(new Book("1680502395", "Release It!")));

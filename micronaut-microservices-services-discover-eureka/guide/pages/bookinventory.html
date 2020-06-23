@@ -105,15 +105,6 @@ function addJsClass() {
 default package: <code>example.micronaut.bookinventory</code>.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a Controller:</p>
 </div>
 <div class="listingblock">
@@ -134,8 +125,8 @@ public class BooksController {
 
     @Produces(MediaType.TEXT_PLAIN) <i class="conum" data-value="2"></i><b>(2)</b>
     @Get("/stock/{isbn}") <i class="conum" data-value="3"></i><b>(3)</b>
-    public Boolean stock(@NotBlank String isbn) {
-        return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
+    public Boolean stock(@NotBlank String isbn) { <i class="conum" data-value="1"></i><b>(1)</b>
+        return bookInventoryByIsbn(isbn).map(bi -&gt; bi.getStock() &gt; 0).orElse(null);
     }
 
     private Optional&lt;BookInventory&gt; bookInventoryByIsbn(String isbn) {
@@ -174,36 +165,46 @@ public class BooksController {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">package example.micronaut.bookinventory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Introspected
 public class BookInventory {
+
+    @NonNull
+    @NotBlank
     private String isbn;
+
+    @NonNull
+    @NotNull
     private Integer stock;
 
-    public BookInventory() {
-    }
+    public BookInventory() {}
 
-    public BookInventory(String isbn, Integer stock) {
+    public BookInventory(@NonNull @NotBlank String isbn, @NonNull @NotNull Integer stock) {
         this.isbn = isbn;
         this.stock = stock;
     }
 
+    @NonNull
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(@NonNull String isbn) {
         this.isbn = isbn;
     }
 
+    @NonNull
     public Integer getStock() {
         return stock;
     }
 
-    public void setStock(Integer stock) {
+    public void setStock(@NonNull Integer stock) {
         this.stock = stock;
     }
 
@@ -211,14 +212,18 @@ public class BookInventory {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         BookInventory that = (BookInventory) o;
-        return Objects.equals(isbn, that.isbn) &amp;&amp;
-                Objects.equals(stock, that.stock);
+
+        if (!isbn.equals(that.isbn)) return false;
+        return stock.equals(that.stock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isbn, stock);
+        int result = isbn.hashCode();
+        result = 31 * result + stock.hashCode();
+        return result;
     }
 }</code></pre>
 </div>
@@ -256,7 +261,7 @@ public class BooksControllerTest {
     @Test
     public void testBooksController() {
         HttpResponse&lt;Boolean&gt; rsp = rxHttpClient.toBlocking().exchange(HttpRequest.GET("/books/stock/1491950358"), Boolean.class);
-        assertEquals(HttpStatus.OK, rsp.status());
+        assertEquals(rsp.status(), HttpStatus.OK);
         assertTrue(rsp.body());
     }
 
@@ -266,7 +271,11 @@ public class BooksControllerTest {
             rxHttpClient.toBlocking().exchange(HttpRequest.GET("/books/stock/XXXXX"), Boolean.class);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getResponse().getStatus());
+        assertEquals(
+                HttpStatus.NOT_FOUND,
+                thrown.getResponse().getStatus()
+        );
+
     }
 }</code></pre>
 </div>
