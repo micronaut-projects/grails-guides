@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>1 Introduction null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <div class="navTitle">
+        
+        Micronaut Functions in GraalVM Native Images deployed to AWS Lambda
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                    <a href="../guide/index.html" class="button">Table of contents</a>
+
+                    <div id="nav-summary-childs" style="display:none;">
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>1</strong><span>Introduction</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/samLocal.html"><strong>3</strong><span>Running Lambda Locally via SAM</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/deployToLambda.html"><strong>4</strong><span>Deploying to AWS Lambda</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/setupApiGateway.html"><strong>5</strong><span>Connecting our Lambda to API Gateway</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/nextSteps.html"><strong>6</strong><span>Next Steps</span></a>
+                        </div>
+                        
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/help.html"><strong>7</strong><span>Help with Micronaut</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="separator selected">
+                <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>1 Introduction</h1>
+
+                    <p><strong>Version:</strong> null</p>
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#requirements"><strong>1.1</strong><span>What you'll need to get started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="gettingStarted">1 Introduction</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://aws.amazon.com/lambda/">AWS Lambda</a> is a dynamically scaled and billed-per-execution compute service. Instances of Lambdas are added and removed dynamically.</p>
+</div>
+<div class="paragraph">
+<p>When a new instance handles its first request, the response time increases, which is called a cold start. After that request is processed, the instance stays alive (≈10 m) to be reused for subsequent requests.</p>
+</div>
+<div class="paragraph">
+<p>In the guide <a href="https://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html">Micronaut Functions deployed in AWS Lambda</a>, we used the <strong>Java runtime</strong>. Cold startups may cause some request to take more than 5 seconds.</p>
+</div>
+<div class="paragraph">
+<p>To get rid of cold startups, in this guide, we combine several technologies:</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html"><strong>Lambda Proxy Integration in API Gateway</strong></a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>In Lambda proxy integration, when a client submits an API request, API Gateway passes to the integrated Lambda function the raw request as-is.</p>
+</div>
+<div class="paragraph">
+<p>This request data includes the request headers, query string parameters, URL path variables, payload, and API configuration data. The configuration data can include current deployment stage name, stage variables, user identity, or authorization context (if any).</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html"><strong>Custom AWS Lambda Runtimes</strong></a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>A runtime is a program that runs a Lambda function&#8217;s handler method when the function is invoked. You can include a runtime in your function&#8217;s deployment package in the form of an executable file named bootstrap.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><a href="https://www.graalvm.org/docs/reference-manual/native-image/"><strong>GraalVM Native Images</strong></a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image. This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary components like memory management and thread scheduling from a different virtual machine. The resulting program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
+</div>
+</blockquote>
+</div>
+
+
+<h2 id="requirements">1.1 What you'll need to get started</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_you_will_also_want_the_following">You will also want the following:</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>An AWS Account <a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/">(here&#8217;s how to start one)</a></p>
+</li>
+<li>
+<p>A local install of <a href="https://docs.docker.com/v17.09/engine/installation/">docker</a>, which is used to build the lambda</p>
+</li>
+<li>
+<p>The Micronaut CLI tool, installed via</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>sdk install micronaut</code></p>
+</div>
+<div class="paragraph">
+<p>(<a href="https://sdkman.io/install">Here&#8217;s a link to install sdkman if you don&#8217;t already have it</a>)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_you_may_also_optionally_want">You may also, optionally, want</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>The AWS <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html">SAM CLI tool</a>, to test deploying the Lambda architecture locally (so there&#8217;s no surprises in AWS proper!)</p>
+</li>
+<li>
+<p>The <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html">AWS CLI tool</a>, which can be used to deploy your entire architecture from the command line</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway.git" class="bare">https://github.com/micronaut-guides/micronaut-function-graalvm-aws-lambda-gateway.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/writingTheApp.html"><strong>2</strong><span>Writing the Application</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically. All guides are released with an ASLv2 license for the code, and Creative Commons license for the writing. 
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
