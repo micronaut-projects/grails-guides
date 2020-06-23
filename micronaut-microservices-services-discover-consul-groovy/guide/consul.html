@@ -319,9 +319,11 @@ function addJsClass() {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations.class)
 interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
@@ -342,15 +344,20 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 @Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations.class)
 interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
 }</code></pre>

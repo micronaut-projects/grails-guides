@@ -98,7 +98,7 @@
         <h1>Consul and Micronaut - Microservices service discovery</h1>
         <p>Use Consul service discovery to expose your Micronaut apps.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 1.2.6</p>
+        <p><strong>Micronaut Version:</strong> 2.0.0.RC2</p>
     </header>
     
 
@@ -111,6 +111,18 @@
 </div>
 
 
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/micronaut-guides/micronaut-microservices-services-discover-consul-groovy/index.html">read this tutorial for Micronaut 1.x.</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In this guide, we are going to create three microservices and register them with <a href="https://www.consul.io">Consul</a> Service discovery.</p>
 </div>
@@ -322,9 +334,11 @@ class BooksController {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @TupleConstructor
 @EqualsAndHashCode
+@Introspected
 @CompileStatic
 class Book {
     String isbn
@@ -455,15 +469,6 @@ class BooksControllerSpec extends Specification {
 default package: <code>example.micronaut.bookinventory</code>.</p>
 </div>
 <div class="paragraph">
-<p>Micronaut already includes bean validation capabilities out of the box:</p>
-</div>
-<div class="listingblock">
-<div class="title">bookinventory/build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">implementation "io.micronaut:micronaut-validation"</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Create a Controller:</p>
 </div>
 <div class="listingblock">
@@ -528,10 +533,12 @@ class BooksController {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
 @TupleConstructor
 @EqualsAndHashCode
+@Introspected
 class BookInventory {
     String isbn
     Integer stock
@@ -679,6 +686,7 @@ interface BookCatalogueOperations {
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 @Client("http://localhost:8081") <i class="conum" data-value="1"></i><b>(1)</b>
@@ -708,10 +716,12 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @CompileStatic
 @TupleConstructor
 @EqualsAndHashCode
+@Introspected
 class Book {
     String isbn
     String name
@@ -739,8 +749,11 @@ interface BookInventoryOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
@@ -748,6 +761,7 @@ import javax.validation.constraints.NotBlank
 @Client("http://localhost:8082") <i class="conum" data-value="1"></i><b>(1)</b>
 interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
 }</code></pre>
@@ -826,10 +840,12 @@ class BookController {
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Introspected
 
 @TupleConstructor
 @CompileStatic
 @EqualsAndHashCode
+@Introspected
 class BookRecommendation {
     String name
 }</code></pre>
@@ -1261,9 +1277,11 @@ Note: Creating bean classes for 3 type elements
 
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Flowable
 
 @Client(id = "bookcatalogue") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookCatalogueOperations.class)
 interface BookCatalogueClient extends BookCatalogueOperations {
 
     @Get("/books")
@@ -1284,15 +1302,20 @@ interface BookCatalogueClient extends BookCatalogueOperations {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">package example.micronaut.bookrecommendation
 
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.retry.annotation.Recoverable
 import io.reactivex.Maybe
 
 import javax.validation.constraints.NotBlank
 
 @Client(id = "bookinventory") <i class="conum" data-value="1"></i><b>(1)</b>
+@Recoverable(api = BookInventoryOperations.class)
 interface BookInventoryClient extends BookInventoryOperations {
 
+    @Consumes(MediaType.TEXT_PLAIN)
     @Get("/books/stock/{isbn}")
     Maybe&lt;Boolean&gt; stock(@NotBlank String isbn)
 }</code></pre>
