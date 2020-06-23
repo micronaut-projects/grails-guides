@@ -167,7 +167,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -181,9 +181,9 @@ function addJsClass() {
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http'
-    runtime 'io.zipkin.reporter2:zipkin-reporter'
-    implementation 'io.opentracing.brave:brave-opentracing'
+    implementation("io.opentracing.brave:brave-opentracing")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http")
+    runtimeOnly("io.zipkin.reporter2:zipkin-reporter")
 }</code></pre>
 </div>
 </div>
@@ -245,7 +245,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -259,9 +259,9 @@ function addJsClass() {
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http'
-    runtime 'io.zipkin.reporter2:zipkin-reporter'
-    implementation 'io.opentracing.brave:brave-opentracing'
+    implementation("io.opentracing.brave:brave-opentracing")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http")
+    runtimeOnly("io.zipkin.reporter2:zipkin-reporter")
 }</code></pre>
 </div>
 </div>
@@ -317,7 +317,6 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.SpanTag
-
 import javax.validation.constraints.NotBlank
 
 @CompileStatic
@@ -327,7 +326,7 @@ class BooksController {
     @Produces(MediaType.TEXT_PLAIN)
     @Get("/stock/{isbn}")
     @ContinueSpan <i class="conum" data-value="1"></i><b>(1)</b>
-    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) { <i class="conum" data-value="2"></i><b>(2)</b>
+    Boolean stock(@SpanTag("stock.isbn") @NotBlank String isbn) {  <i class="conum" data-value="2"></i><b>(2)</b>
         bookInventoryByIsbn(isbn).map { bi -&gt; bi.getStock() &gt; 0 }.orElse(null)
     }
 
@@ -376,7 +375,7 @@ class BooksController {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -390,9 +389,9 @@ class BooksController {
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http'
-    runtime 'io.zipkin.reporter2:zipkin-reporter'
-    compile 'io.opentracing.brave:brave-opentracing'
+    implementation("io.opentracing.brave:brave-opentracing")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http")
+    runtimeOnly("io.zipkin.reporter2:zipkin-reporter")
 }</code></pre>
 </div>
 </div>

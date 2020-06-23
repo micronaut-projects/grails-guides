@@ -104,7 +104,7 @@ function addJsClass() {
     ...
     ..
     .
-    implementation "io.micronaut:micronaut-tracing"
+    implementation("io.micronaut:micronaut-tracing")
 }</code></pre>
 </div>
 </div>
@@ -118,9 +118,9 @@ function addJsClass() {
     ...
     ..
     .
-    runtime 'io.zipkin.brave:brave-instrumentation-http'
-    runtime 'io.zipkin.reporter2:zipkin-reporter'
-    compile 'io.opentracing.brave:brave-opentracing'
+    implementation("io.opentracing.brave:brave-opentracing")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http")
+    runtimeOnly("io.zipkin.reporter2:zipkin-reporter")
 }</code></pre>
 </div>
 </div>
