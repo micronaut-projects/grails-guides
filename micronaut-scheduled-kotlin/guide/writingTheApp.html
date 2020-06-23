@@ -115,7 +115,7 @@ function addJsClass() {
 <p>The previous command creates a micronaut app with the default package <code>example.micronaut</code> in a folder named <code>complete</code>.</p>
 </div>
 <div class="paragraph">
-<p>Due to the <code>--lang kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
+<p>Due to the <code>--lang=kotlin</code> flag, it generates a Kotlin Micronaut app that uses the <a href="http://gradle.org">Gradle</a> build system. However, you could use
 other build tools such as <code>Maven</code> or other programming languages such as <code>Java</code> or <code>Groovy</code>.</p>
 </div>
 <div class="paragraph">
@@ -342,7 +342,7 @@ class EmailUseCase {
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(EmailUseCase::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
+        private val LOG = LoggerFactory.getLogger(EmailUseCase::class.java)
     }
 }</code></pre>
 </div>
