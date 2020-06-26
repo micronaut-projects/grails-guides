@@ -1,114 +1,327 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
   <url>
-    <loc>https://guides.micronaut.io/creating-your-first-micronaut-app/guide/index.html</loc>
+    <loc>https://micronaut.io/index.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-scheduled/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/cache.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-security-basicauth/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautandroid.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-security-session/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautaws.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-security-jwt/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautdevops.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-security-jwt-cookie/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/cloudnative.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-cli/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautgooglecloud.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/adding-commit-info/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/servicediscovery.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-database-authentication-provider-groovy/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautapprentice.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-email/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/dataaccess.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-http-client/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautsecurity.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-microservices-services-discover-consul/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/messaging.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-microservices-services-discover-eureka/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/micronautmicrosoftazure.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-microservices-distributed-tracing-jaeger/guide/index.html</loc>
+    <loc>https://micronaut.io/categories/distributedtracing.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-microservices-distributed-tracing-zipkin/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/google.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-data-access-jpa-hibernate/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/error.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-function-aws-lambda/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/rx.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-file-download-excel/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/gorm.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-token-propagation/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/aws-elasticbeanstlak.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-elasticbeanstalk/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/eachproperty.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-multitenancy-propagation/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/flowable.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-error-handling/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/scheduled.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-creating-first-graal-app/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/rabbitmq.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-gradle-google-cloud/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/custom-runtime.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-rabbitmq/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/appengine.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-oauth2-okta/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/cache.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-spa-react/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/validation.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-data-access-mybatis/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/json-streams.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-rabbitmq-rpc/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/session.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-azure-cloud/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/consul.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-oauth2-oidc-google/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/database.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-function-graalvm-aws-lambda-gateway/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/graal.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-configuration/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/mybatis.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-cache/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/kotlin.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-oauth2-cognito/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/groovy.html</loc>
   </url>
   <url>
-    <loc>https://guides.micronaut.io/micronaut-oauth2-github/guide/index.html</loc>
+    <loc>https://micronaut.io/tags/quickcast.html</loc>
   </url>
   <url>
-    <loc>index.html</loc>
+    <loc>https://micronaut.io/tags/javascript.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/function-client.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/react.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/azure.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/http-client.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/geb.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/info.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/hibernate.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/data.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/hibernate-validator.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/ldap.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/zipkin.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/token-propgation.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/service-discovery.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/netflix.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/configuration.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/eureka.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/handlebars.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/multiple-datasources.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/management.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/aws-lambda.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/functions.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/multitenancy.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/video.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/excel.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/okta.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/cognito.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/spreadsheet-builder-poi.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/flyway.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/h2.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/client.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/properties.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/authentication-provider.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/velocity.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/builder.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/oidc.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/caffeine.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/aws-api-gateway.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/spock.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/jpa.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/exception.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/health.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/gradle.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/basic-auth.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/bintray.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/rpc.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/jaeger.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/requires.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/jdbc.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/distributed-tracing.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/views.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/git.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/http-server-filter.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/googlecloud.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/java.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/cli.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/github.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/cookie.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/junit.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/sam-cli.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/propagation.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/aws.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/spek.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/maven.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/oauth2.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/jwt.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/sendgrid.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/endpoint.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/security.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/cloud.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/multitenancy-gorm.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/job.html</loc>
   </url>
 </urlset>
