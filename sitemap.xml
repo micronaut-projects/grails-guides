@@ -1,327 +1,327 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
   <url>
-    <loc>http://localhost:8890/categories/micronautsecurity.html</loc>
+    <loc>https://micronaut.io/categories/micronautsecurity.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/messaging.html</loc>
+    <loc>https://micronaut.io/categories/messaging.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautaws.html</loc>
+    <loc>https://micronaut.io/categories/micronautaws.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/servicediscovery.html</loc>
+    <loc>https://micronaut.io/categories/servicediscovery.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautgooglecloud.html</loc>
+    <loc>https://micronaut.io/categories/micronautgooglecloud.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautandroid.html</loc>
+    <loc>https://micronaut.io/categories/micronautandroid.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautmicrosoftazure.html</loc>
+    <loc>https://micronaut.io/categories/micronautmicrosoftazure.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/dataaccess.html</loc>
+    <loc>https://micronaut.io/categories/dataaccess.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautdevops.html</loc>
+    <loc>https://micronaut.io/categories/micronautdevops.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/micronautapprentice.html</loc>
+    <loc>https://micronaut.io/categories/micronautapprentice.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/distributedtracing.html</loc>
+    <loc>https://micronaut.io/categories/distributedtracing.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/cache.html</loc>
+    <loc>https://micronaut.io/categories/cache.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/categories/cloudnative.html</loc>
+    <loc>https://micronaut.io/categories/cloudnative.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/netflix.html</loc>
+    <loc>https://micronaut.io/tags/netflix.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/error.html</loc>
+    <loc>https://micronaut.io/tags/error.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/json-streams.html</loc>
+    <loc>https://micronaut.io/tags/json-streams.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/http-server-filter.html</loc>
+    <loc>https://micronaut.io/tags/http-server-filter.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/aws-api-gateway.html</loc>
+    <loc>https://micronaut.io/tags/aws-api-gateway.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/geb.html</loc>
+    <loc>https://micronaut.io/tags/geb.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/jaeger.html</loc>
+    <loc>https://micronaut.io/tags/jaeger.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/requires.html</loc>
+    <loc>https://micronaut.io/tags/requires.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/consul.html</loc>
+    <loc>https://micronaut.io/tags/consul.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/bintray.html</loc>
+    <loc>https://micronaut.io/tags/bintray.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/ldap.html</loc>
+    <loc>https://micronaut.io/tags/ldap.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/cloud.html</loc>
+    <loc>https://micronaut.io/tags/cloud.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/info.html</loc>
+    <loc>https://micronaut.io/tags/info.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/data.html</loc>
+    <loc>https://micronaut.io/tags/data.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/jpa.html</loc>
+    <loc>https://micronaut.io/tags/jpa.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/github.html</loc>
+    <loc>https://micronaut.io/tags/github.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/cognito.html</loc>
+    <loc>https://micronaut.io/tags/cognito.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/job.html</loc>
+    <loc>https://micronaut.io/tags/job.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/maven.html</loc>
+    <loc>https://micronaut.io/tags/maven.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/http-client.html</loc>
+    <loc>https://micronaut.io/tags/http-client.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/token-propgation.html</loc>
+    <loc>https://micronaut.io/tags/token-propgation.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/react.html</loc>
+    <loc>https://micronaut.io/tags/react.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/caffeine.html</loc>
+    <loc>https://micronaut.io/tags/caffeine.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/jwt.html</loc>
+    <loc>https://micronaut.io/tags/jwt.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/handlebars.html</loc>
+    <loc>https://micronaut.io/tags/handlebars.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/google.html</loc>
+    <loc>https://micronaut.io/tags/google.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/flyway.html</loc>
+    <loc>https://micronaut.io/tags/flyway.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/spock.html</loc>
+    <loc>https://micronaut.io/tags/spock.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/security.html</loc>
+    <loc>https://micronaut.io/tags/security.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/multitenancy-gorm.html</loc>
+    <loc>https://micronaut.io/tags/multitenancy-gorm.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/h2.html</loc>
+    <loc>https://micronaut.io/tags/h2.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/spreadsheet-builder-poi.html</loc>
+    <loc>https://micronaut.io/tags/spreadsheet-builder-poi.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/java.html</loc>
+    <loc>https://micronaut.io/tags/java.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/oauth2.html</loc>
+    <loc>https://micronaut.io/tags/oauth2.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/javascript.html</loc>
+    <loc>https://micronaut.io/tags/javascript.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/session.html</loc>
+    <loc>https://micronaut.io/tags/session.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/excel.html</loc>
+    <loc>https://micronaut.io/tags/excel.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/azure.html</loc>
+    <loc>https://micronaut.io/tags/azure.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/sam-cli.html</loc>
+    <loc>https://micronaut.io/tags/sam-cli.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/cookie.html</loc>
+    <loc>https://micronaut.io/tags/cookie.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/properties.html</loc>
+    <loc>https://micronaut.io/tags/properties.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/multitenancy.html</loc>
+    <loc>https://micronaut.io/tags/multitenancy.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/aws-elasticbeanstlak.html</loc>
+    <loc>https://micronaut.io/tags/aws-elasticbeanstlak.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/propagation.html</loc>
+    <loc>https://micronaut.io/tags/propagation.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/functions.html</loc>
+    <loc>https://micronaut.io/tags/functions.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/quickcast.html</loc>
+    <loc>https://micronaut.io/tags/quickcast.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/authentication-provider.html</loc>
+    <loc>https://micronaut.io/tags/authentication-provider.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/endpoint.html</loc>
+    <loc>https://micronaut.io/tags/endpoint.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/git.html</loc>
+    <loc>https://micronaut.io/tags/git.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/gradle.html</loc>
+    <loc>https://micronaut.io/tags/gradle.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/hibernate-validator.html</loc>
+    <loc>https://micronaut.io/tags/hibernate-validator.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/validation.html</loc>
+    <loc>https://micronaut.io/tags/validation.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/rx.html</loc>
+    <loc>https://micronaut.io/tags/rx.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/exception.html</loc>
+    <loc>https://micronaut.io/tags/exception.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/eachproperty.html</loc>
+    <loc>https://micronaut.io/tags/eachproperty.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/oidc.html</loc>
+    <loc>https://micronaut.io/tags/oidc.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/health.html</loc>
+    <loc>https://micronaut.io/tags/health.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/basic-auth.html</loc>
+    <loc>https://micronaut.io/tags/basic-auth.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/okta.html</loc>
+    <loc>https://micronaut.io/tags/okta.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/graal.html</loc>
+    <loc>https://micronaut.io/tags/graal.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/flowable.html</loc>
+    <loc>https://micronaut.io/tags/flowable.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/kotlin.html</loc>
+    <loc>https://micronaut.io/tags/kotlin.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/rpc.html</loc>
+    <loc>https://micronaut.io/tags/rpc.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/management.html</loc>
+    <loc>https://micronaut.io/tags/management.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/eureka.html</loc>
+    <loc>https://micronaut.io/tags/eureka.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/cli.html</loc>
+    <loc>https://micronaut.io/tags/cli.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/multiple-datasources.html</loc>
+    <loc>https://micronaut.io/tags/multiple-datasources.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/service-discovery.html</loc>
+    <loc>https://micronaut.io/tags/service-discovery.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/function-client.html</loc>
+    <loc>https://micronaut.io/tags/function-client.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/appengine.html</loc>
+    <loc>https://micronaut.io/tags/appengine.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/builder.html</loc>
+    <loc>https://micronaut.io/tags/builder.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/groovy.html</loc>
+    <loc>https://micronaut.io/tags/groovy.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/spek.html</loc>
+    <loc>https://micronaut.io/tags/spek.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/hibernate.html</loc>
+    <loc>https://micronaut.io/tags/hibernate.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/jdbc.html</loc>
+    <loc>https://micronaut.io/tags/jdbc.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/velocity.html</loc>
+    <loc>https://micronaut.io/tags/velocity.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/aws-lambda.html</loc>
+    <loc>https://micronaut.io/tags/aws-lambda.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/distributed-tracing.html</loc>
+    <loc>https://micronaut.io/tags/distributed-tracing.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/sendgrid.html</loc>
+    <loc>https://micronaut.io/tags/sendgrid.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/aws.html</loc>
+    <loc>https://micronaut.io/tags/aws.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/googlecloud.html</loc>
+    <loc>https://micronaut.io/tags/googlecloud.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/configuration.html</loc>
+    <loc>https://micronaut.io/tags/configuration.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/database.html</loc>
+    <loc>https://micronaut.io/tags/database.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/cache.html</loc>
+    <loc>https://micronaut.io/tags/cache.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/rabbitmq.html</loc>
+    <loc>https://micronaut.io/tags/rabbitmq.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/zipkin.html</loc>
+    <loc>https://micronaut.io/tags/zipkin.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/client.html</loc>
+    <loc>https://micronaut.io/tags/client.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/views.html</loc>
+    <loc>https://micronaut.io/tags/views.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/video.html</loc>
+    <loc>https://micronaut.io/tags/video.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/scheduled.html</loc>
+    <loc>https://micronaut.io/tags/scheduled.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/junit.html</loc>
+    <loc>https://micronaut.io/tags/junit.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/mybatis.html</loc>
+    <loc>https://micronaut.io/tags/mybatis.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/gorm.html</loc>
+    <loc>https://micronaut.io/tags/gorm.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/tags/custom-runtime.html</loc>
+    <loc>https://micronaut.io/tags/custom-runtime.html</loc>
   </url>
   <url>
-    <loc>http://localhost:8890/index.html</loc>
+    <loc>https://micronaut.io/index.html</loc>
   </url>
 </urlset>
