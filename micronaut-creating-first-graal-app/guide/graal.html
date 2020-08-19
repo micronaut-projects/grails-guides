@@ -205,10 +205,10 @@ $ ./docker-build.sh</code></pre>
 <p>To build your native image without using Docker you need to install GraalVM SDK via the <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
 </div>
 <div class="listingblock">
-<div class="title">Installing GraalVM 20.1.0 with SDKman</div>
+<div class="title">Installing GraalVM 20.2.0 with SDKman</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.1.0.r8-grl
-$ sdk use java 20.1.0.r8-grl</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.2.0.r8-grl
+$ sdk use java 20.2.0.r8-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -231,9 +231,9 @@ $ sdk use java 20.1.0.r8-grl</code></pre>
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.1.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.2.0.r8-grl
 $ ./gradlew assemble
-$ native-image --no-server -cp build/libs/complete-*-all.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+$ native-image -cp build/libs/complete-*-all.jar <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
