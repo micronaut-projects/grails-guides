@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='google-site-verification' content='REYQ1_I6HGowAE7LOLVqfQbnKaB4IfFpMlGzMbJj55Q' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='icon' href='../img/micronaut-favicon.ico' />
+    <meta charset='UTF-8' />
+    <title>Deploy a Micronaut application as a GraalVM Native Image to AWS Lambda | Micronaut Guides | Micronaut Framework</title>
+    <meta name='description' content='Deploy a Micronaut application as a GraalVM Native Image to AWS Lambda. Learn how to distribute a Kotlin Micronaut application built as a GraalVM Native image to AWS Lambda Custom Runtime' />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel='stylesheet' href='../css/main.css' />
+    <link rel='stylesheet' href='../css/screen.css' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js'></script>
+</head>
+<body class='guide'>
+<div id="navigation">
+    <div class="navTitle">
+        <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+    </div>
+    <div class="navLinks">
+        <ul>
+            <li>
+                <a href="http://guides.micronaut.io">Micronaut Guides</a>
+                <span> &rarr; </span>
+                <a href="http://guides.micronaut.io/mn-application-aws-lambda-graalvm/guide/index.html">Deploy a Micronaut application as a GraalVM Native Image to AWS Lambda</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class='fullwidth'><article class="guide">
+    <aside>
+        <a href="https://travis-ci.org/micronaut-guides/mn-application-aws-lambda-graalvm"><img src="https://travis-ci.org/micronaut-guides/mn-application-aws-lambda-graalvm.svg?branch=master"></a>
+
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+
+
+        <ul class="githublinks">
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/mn-application-aws-lambda-graalvm.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm.git'" class="codeButton">HTTPS</button></li>
+        </ul>
+        <div class="input-group">
+            <!-- Target -->
+            <input id="github-url" value="git@github.com:micronaut-guides/mn-application-aws-lambda-graalvm.git" type="text" />
+            <!-- Trigger -->
+            <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
+                <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
+            </button>
+        </div>
+        <script>var clipboard = new Clipboard('.clippy');</script>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/archive/master.zip&quot;">Download ZIP</button>
+        
+        <div id="table-of-content">
+            <h3>Table of Contents</h3>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>1</strong><span>Getting Started</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#requirements"><strong>1.1</strong><span>What you will need</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#solution"><strong>1.2</strong><span>Solution</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#writingTheApp"><strong>2</strong><span>Writing the App</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#code"><strong>2.1</strong><span>Code</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#lambda"><strong>3</strong><span>Lambda</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#createfunction"><strong>3.1</strong><span>Create Function</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#uploadcode"><strong>3.2</strong><span>Upload Code</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#handler"><strong>3.3</strong><span>Handler</span></a></div>
+            
+            <div class="toc-item" style="margin-left:10px"><a href="#test"><strong>3.4</strong><span>Test</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>4</strong><span>Next Steps</span></a></div>
+            
+            <div class="toc-item" style="margin-left:0px"><a href="#help"><strong>5</strong><span>Help with Micronaut</span></a></div>
+            
+            <div style="clear:both" ></div>
+        </div>
+        
+    </aside>
+    <header>
+        <h1>Deploy a Micronaut application as a GraalVM Native Image to AWS Lambda</h1>
+        <p>Learn how to distribute a Kotlin Micronaut application built as a GraalVM Native image to AWS Lambda Custom Runtime</p>
+        <p><strong>Authors:</strong> Sergio del Amo</p>
+        <p><strong>Micronaut Version:</strong> 2.0.1</p>
+    </header>
+    
+
+<h1 id="gettingStarted">1 Getting Started</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Please, read about <a href="https://micronaut-projects.github.io/micronaut-aws/latest/guide/index.html#lambda">Micronaut AWS Lambda Support</a> to learn more about different Lambda runtime, Triggers and Handlers and how to integrate with a Micronaut application.</p>
+</div>
+<div class="paragraph">
+<p>The biggest problem with Java applications and Lambda is how to mitigate Cold startups. Executing GraalVM Native images of a Micronaut function in a Lambda Custom runtime is a solution to this problem.</p>
+</div>
+<div class="paragraph">
+<p>In this guide, we are going to deploy a Micronaut Application as a GraalVM Native image to a AWS Lambda custom runtime. If your Lambda integrates with <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html">API Gateway via a Lambda Proxy</a>, a Micronaut function of type <code>Application</code> with the <code>aws-lambda</code> feature is a good fit. Specially, when you have multiple endpoints which you wish to delegate to a single Lambda.</p>
+</div>
+
+
+<h2 id="requirements">1.1 What you will need</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/requirements.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To complete this guide, you will need the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some time on your hands</p>
+</li>
+<li>
+<p>A decent text editor or IDE</p>
+</li>
+<li>
+<p>JDK 1.8 or greater installed with <code>JAVA_HOME</code> configured appropriately</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You will need also an <a href="https://aws.amazon.com/account/">AWS Account</a>.</p>
+</div>
+
+
+<h2 id="solution">1.2 Solution</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/solution.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>We recommend you to follow the instructions in the next sections and create the app step by step. However, you can go right to the <strong>completed example</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/archive/master.zip">Download</a> and unzip the source</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm.git" class="bare">https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, <code>cd</code> into the <code>complete</code> folder which you will find in the root project of the downloaded/cloned project.</p>
+</div>
+
+
+<h1 id="writingTheApp">2 Writing the App</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Micronaut application with the <code>aws-lambda</code> and <code>graalvm</code> features using the CLI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">% mn create-app example.micronaut.complete --lang=kotlin --features aws-lambda,graalvm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or use <a href="https://launch.micronaut.io">Micronaut Launch</a></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/launch.png" alt="launch">
+</div>
+</div>
+
+
+<h2 id="code">2.1 Code</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/code.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The generated application contains a <code>BookController</code>. It responds to POST request to <code>/</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/BookController.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Post
+import java.util.UUID
+import javax.validation.Valid
+
+@Controller <i class="conum" data-value="1"></i><b>(1)</b>
+open class BookController {
+    @Post <i class="conum" data-value="2"></i><b>(2)</b>
+    open fun save(@Valid @Body book: Book): BookSaved { <i class="conum" data-value="3"></i><b>(3)</b>
+        val bookSaved = BookSaved()
+        bookSaved.name = book.name
+        bookSaved.isbn = UUID.randomUUID().toString()
+        return bookSaved
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The class is defined as a controller with the <code>@Controller</code> annotation mapped to the path /</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@Post</code> annotation is used to map HTTP request to <code>/</code> to the the <code>save</code> method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add the <code>@Valid</code> annotation to any method parameter&#8217;s object which requires validation.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The controller&#8217;s method parameter is a <code>Book</code> object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/Book.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+import io.micronaut.core.annotation.Introspected
+
+@Introspected <i class="conum" data-value="1"></i><b>(1)</b>
+class Book {
+    var name: String? = null
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@Introspected</code> to generate the Bean Metainformation at compile time.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It returns a <code>BookSaved</code> object:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/kotlin/example/micronaut/BookSaved.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut
+import io.micronaut.core.annotation.Introspected
+
+@Introspected <i class="conum" data-value="1"></i><b>(1)</b>
+class BookSaved {
+    var name: String? = null
+    var isbn: String? = null
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Annotate the class with <code>@Introspected</code> to generate the Bean Metainformation at compile time.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The generated tests illustrates how the code works when the lambda gets invoked:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/test/kotlin/example/micronaut/BookControllerTest.kt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin" data-lang="kotlin">package example.micronaut;
+import com.amazonaws.serverless.proxy.internal.testutils.AwsProxyRequestBuilder
+import com.amazonaws.serverless.proxy.internal.testutils.MockLambdaContext
+import com.amazonaws.services.lambda.runtime.Context
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpMethod
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import io.micronaut.function.aws.proxy.MicronautLambdaHandler
+
+class BookRequestHandlerTest {
+
+    @Test
+    fun testBookController() {
+        val handler = MicronautLambdaHandler() <i class="conum" data-value="1"></i><b>(1)</b>
+        val book = Book()
+        book.name = "Building Microservices"
+        val objectMapper = handler.applicationContext.getBean(ObjectMapper::class.java)
+        val json = objectMapper.writeValueAsString(book)
+        val request = AwsProxyRequestBuilder("/", HttpMethod.POST.toString())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .body(json)
+                .build()
+        val lambdaContext: Context = MockLambdaContext()
+        val response = handler.handleRequest(request, lambdaContext) <i class="conum" data-value="2"></i><b>(2)</b>
+        Assertions.assertEquals(response.statusCode, HttpStatus.OK.code)
+        val bookSaved: BookSaved = objectMapper.readValue(response.body, BookSaved::class.java)
+        Assertions.assertNotNull(bookSaved)
+        Assertions.assertEquals(bookSaved.name, book.name)
+        Assertions.assertNotNull(bookSaved.isbn)
+        handler.applicationContext.close() <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>When you instantiate the Handler, the application context starts.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Remember to close your application context when you end your test. You can use your handler to obtain it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>You don&#8217;t invoke the controller directly. Instead, your handler receives a AWS Proxy Request event which it is routed transparently to your controller.</td>
+</tr>
+</table>
+</div>
+
+
+<h1 id="lambda">3 Lambda</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/lambda.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="createfunction">3.1 Create Function</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/lambda/createfunction.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Create a Lambda Function. As a runtime, select <code>Custom Runtime</code></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../img/create-function.png" alt="create function"></span></p>
+</div>
+
+
+<h2 id="uploadcode">3.2 Upload Code</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/lambda/uploadcode.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Micronaut&#8217;s eases the deployment of your functions as a <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html">Custom AWS Lambda runtime</a>.</p>
+</div>
+<div class="paragraph">
+<p>The main API you will interact with is <a href="https://micronaut-projects.github.io/micronaut-aws/latest/api/io/micronaut/function/aws/runtime/AbstractMicronautLambdaRuntime.html">AbstractMicronautLambdaRuntime</a>. An abstract class which you can extend to create your custom runtime <code>mainClass</code>. That class includes the necessary code to perform the <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html#runtimes-custom-build">Processing Tasks</a> described in the Custom Runtime documentation.</p>
+</div>
+<div class="sect1">
+<h2 id="_bootstrap">bootstrap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We deploy our custom runtime code as a ZIP file. At the root of the ZIP file you need a <code>bootstrap</code> file.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>If there’s a file named bootstrap in your deployment package, Lambda executes that file.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The generated application contains a <code>bootstrap</code> bash script:</p>
+</div>
+<div class="listingblock">
+<div class="title">bootstrap</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
+set -euo pipefail
+./complete -Xmx128m -Djava.library.path=$(pwd)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_native_image_properties">native-image.properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To generate a GraalVM Native image of the application, we need a <a href="https://www.graalvm.org/reference-manual/native-image/Configuration/#properties-file-format">native-image.properties</a> file.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/META-INF/native-image/example.micronaut/complete-application/native-image.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Args = -H:Name=complete \
+       -H:Class=io.micronaut.function.aws.runtime.MicronautLambdaRuntime</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>H:Class</code> argument defines the main class of your app.</p>
+</li>
+<li>
+<p>The <code>H:Name</code> argument defines  the native image name. The Dockerfile references this name.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dockerfile">Dockerfile</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The project includes a Dockerfile to generate a GraalVM Native image.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Uses the amazonlinux image</p>
+</li>
+<li>
+<p>Builds the JAR of the function.</p>
+</li>
+<li>
+<p>Install the necessary dependencies.</p>
+</li>
+<li>
+<p>Downloads GraalVM community edition</p>
+</li>
+<li>
+<p>Installs native-image utility.</p>
+</li>
+<li>
+<p>With the native-image command and the JAR, generates a GraalVM native image</p>
+</li>
+<li>
+<p>Bundles the native image of our function and the bootstrap file into a ZIP file.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-docker" data-lang="docker">FROM gradle:6.3.0-jdk11 as builder
+COPY --chown=gradle:gradle . /home/application
+WORKDIR /home/application
+RUN ./gradlew build --no-daemon
+FROM amazonlinux:2018.03.0.20191014.0 as graalvm
+
+ENV LANG=en_US.UTF-8
+
+RUN yum install -y gcc gcc-c++ libc6-dev  zlib1g-dev curl bash zlib zlib-devel zip
+
+ENV GRAAL_VERSION 20.1.0
+ENV JDK_VERSION java11
+ENV GRAAL_FILENAME graalvm-ce-${JDK_VERSION}-linux-amd64-${GRAAL_VERSION}.tar.gz
+
+RUN curl -4 -L https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAAL_VERSION}/${GRAAL_FILENAME} -o /tmp/${GRAAL_FILENAME}
+
+RUN tar -zxvf /tmp/${GRAAL_FILENAME} -C /tmp \
+    &amp;&amp; mv /tmp/graalvm-ce-${JDK_VERSION}-${GRAAL_VERSION} /usr/lib/graalvm
+
+RUN rm -rf /tmp/*
+CMD ["/usr/lib/graalvm/bin/native-image"]
+
+FROM graalvm
+COPY --from=builder /home/application/ /home/application/
+WORKDIR /home/application
+RUN /usr/lib/graalvm/bin/gu install native-image
+RUN /usr/lib/graalvm/bin/native-image --no-server -cp build/libs/complete-*-all.jar
+RUN chmod 777 bootstrap
+RUN chmod 777 complete
+RUN zip -j function.zip bootstrap complete
+EXPOSE 8080
+ENTRYPOINT ["/home/application/complete"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above file references the name used in the <code>native-image.properties</code> file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_sh">deploy.sh</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It includes a bash script to generate the ZIP file:</p>
+</div>
+<div class="listingblock">
+<div class="title">deploy.sh</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/bash
+docker build . -t complete
+mkdir -p build
+docker run --rm --entrypoint cat complete  /home/application/function.zip &gt; build/function.zip</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_upload_the_file">Upload the file</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Execute <code>./deploy.sh</code> and once you have a ZIP file, upload it</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../img/upload-function-code.png" alt="upload function code"></span></p>
+</div>
+</div>
+</div>
+
+
+<h2 id="handler">3.3 Handler</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/lambda/handler.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The handler used is the one created at <a href="https://micronaut-projects.github.io/micronaut-aws/latest/api/io/micronaut/function/aws/runtime/MicronautLambdaRuntime.html">MicronautLambdaRuntime</a>.</p>
+</div>
+<div class="paragraph">
+<p>Thus, you don&#8217;t need specify the handler in the AWS Lambda console.</p>
+</div>
+<div class="paragraph">
+<p>However, I like to specify it in the console as well:</p>
+</div>
+<div class="paragraph">
+<p><code>io.micronaut.function.aws.proxy.MicronautLambdaHandler</code></p>
+</div>
+<div class="paragraph">
+<p>That value is exposed as an environment variable.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/handler.png" alt="handler">
+</div>
+</div>
+
+
+<h2 id="test">3.4 Test</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/lambda/test.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>You can test it easily. As <code>Event Template</code> use <code>apigateway-aws-proxy</code> to get you started:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/test-event.png" alt="test event">
+</div>
+</div>
+<div class="paragraph">
+<p>You should see a 200 response:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../img/test-result.png" alt="test result">
+</div>
+</div>
+
+
+<h1 id="nextSteps">4 Next Steps</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Read more about <a href="https://micronaut-projects.github.io/micronaut-aws/latest/guide/index.html#lambda">Micronaut AWS Lambda Support</a></p>
+</div>
+
+
+<h1 id="help">5 Help with Micronaut</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-application-aws-lambda-graalvm/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<h3 style="color: #333; margin-bottom:25px;"><a href="https://objectcomputing.com/" target="_blank">Object Computing, Inc.</a> (OCI) sponsored the creation of this Guide. A variety of consulting and support services are available.</h3>
+
+<!--[if lte IE 8]>
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+<![endif]-->
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+<script>
+  hbspt.forms.create({
+	portalId: "4547412",
+	formId: "24edfcbb-b6f2-4fcf-af48-35ab6271031e"
+});
+</script>
+
+<h3 style="color: #333;">OCI is Home to Micronaut.</h3>
+
+<p><a href="https://objectcomputing.com/products/2gm-team" target="_blank">Meet the Team</a></p>
+
+</article>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115754405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115754405-1');
+</script>
+</body>
+</html>
