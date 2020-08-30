@@ -15,7 +15,7 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 
     chmod 777 gradlew
 
-    ./gradlew guides:runShadow || EXIT_STATUS=$?
+    ./gradlew buildGuide || EXIT_STATUS=$?
 
     if [[ $EXIT_STATUS -ne 0 ]]; then
         echo "Guides Website generation failed"
@@ -30,7 +30,7 @@ if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 
     cd gh-pages
 
-    cp -r ../static-website/guides/build/site/* .
+    cp -r ../static-website/build/dist/* .
 
     if git diff --quiet; then
         echo "No changes in GUIDES Website"
