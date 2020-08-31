@@ -24,7 +24,7 @@
             <li>
                 <a href="http://guides.micronaut.io">Micronaut Guides</a>
                 <span> &rarr; </span>
-                <a href="http://guides.micronaut.io/mn-serverless-function-aws-lambda/guide/index.html">Deploy a Serverless Micronaut function to AWS Lambda Java 11 Runtime</a>
+                <a href="http://guides.micronaut.io/mn-serverless-function-aws-lambda-kotlin/guide/index.html">Deploy a Serverless Micronaut function to AWS Lambda Java 11 Runtime</a>
             </li>
         </ul>
 
@@ -33,25 +33,25 @@
 
 <div class='fullwidth'><article class="guide">
     <aside>
-        <a href="https://travis-ci.org/micronaut-guides/mn-serverless-function-aws-lambda"><img src="https://travis-ci.org/micronaut-guides/mn-serverless-function-aws-lambda.svg?branch=master"></a>
+        <a href="https://travis-ci.org/micronaut-guides/mn-serverless-function-aws-lambda-kotlin"><img src="https://travis-ci.org/micronaut-guides/mn-serverless-function-aws-lambda-kotlin.svg?branch=master"></a>
 
-        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-serverless-function-aws-lambda&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin&quot;"><img height="15" src="../img/github_white.svg" alt="Github"/><span>&nbsp;Get the Code</span></button>
 
 
         <ul class="githublinks">
-            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/mn-serverless-function-aws-lambda.git'" class="codeButton">SSH</button></li>
-            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/mn-serverless-function-aws-lambda.git'" class="codeButton">HTTPS</button></li>
+            <li><button type="button" class="btn btn-default" href="#" onclick="document.getElementById('github-url').value='git@github.com:micronaut-guides/mn-serverless-function-aws-lambda-kotlin.git'" class="codeButton">SSH</button></li>
+            <li><button type="button" class="btn btn-default" onclick="document.getElementById('github-url').value='https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin.git'" class="codeButton">HTTPS</button></li>
         </ul>
         <div class="input-group">
             <!-- Target -->
-            <input id="github-url" value="git@github.com:micronaut-guides/mn-serverless-function-aws-lambda.git" type="text" />
+            <input id="github-url" value="git@github.com:micronaut-guides/mn-serverless-function-aws-lambda-kotlin.git" type="text" />
             <!-- Trigger -->
             <button type="button" class="clippy btn btn-default" type="button" data-clipboard-target="#github-url">
                 <img width="13" src="../img/clippy.svg" alt="Copy to clipboard">
             </button>
         </div>
         <script>var clipboard = new Clipboard('.clippy');</script>
-        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/archive/master.zip&quot;">Download ZIP</button>
+        <button type="button" class="btn btn-large" onclick="window.location.href=&quot;https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/archive/master.zip&quot;">Download ZIP</button>
         
         <div id="table-of-content">
             <h3>Table of Contents</h3>
@@ -95,7 +95,7 @@
 <h1 id="gettingStarted">1 Getting Started</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/gettingStarted.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -115,7 +115,7 @@
 <h2 id="requirements">1.1 What you will need</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/requirements.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/requirements.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -145,7 +145,7 @@
 <h2 id="solution">1.2 Solution</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/solution.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/solution.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -157,7 +157,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/archive/master.zip">Download</a> and unzip the source</p>
+<p><a href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/archive/master.zip">Download</a> and unzip the source</p>
 </li>
 </ul>
 </div>
@@ -167,7 +167,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda.git" class="bare">https://github.com/micronaut-guides/mn-serverless-function-aws-lambda.git</a></code></p>
+<p>Clone the <a href="https://git-scm.com/">Git</a> repository: <code>git clone <a href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin.git" class="bare">https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin.git</a></code></p>
 </li>
 </ul>
 </div>
@@ -179,7 +179,7 @@
 <h1 id="writingTheApp">2 Writing the App</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/writingTheApp.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -206,7 +206,7 @@
 <h2 id="code">2.1 Code</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/code.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/code.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -344,7 +344,7 @@ class BookRequestHandlerTest {
 <h1 id="lambda">3 Lambda</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/lambda.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/lambda.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -356,7 +356,7 @@ class BookRequestHandlerTest {
 <h2 id="createfunction">3.1 Create Function</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/lambda/createfunction.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/lambda/createfunction.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -373,7 +373,7 @@ class BookRequestHandlerTest {
 <h2 id="uploadcode">3.2 Upload Code</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/lambda/uploadcode.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/lambda/uploadcode.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -390,7 +390,7 @@ class BookRequestHandlerTest {
 <h2 id="handler">3.3 Handler</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/lambda/handler.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/lambda/handler.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -412,7 +412,7 @@ class BookRequestHandlerTest {
 <h2 id="test">3.4 Test</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/lambda/test.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/lambda/test.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -439,7 +439,7 @@ class BookRequestHandlerTest {
 <h1 id="nextSteps">4 Next Steps</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/nextSteps.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/nextSteps.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -453,7 +453,7 @@ class BookRequestHandlerTest {
 <h1 id="help">5 Help with Micronaut</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda/edit/master/src/main/docs/guide/help.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-kotlin/edit/master/src/main/docs/guide/help.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
