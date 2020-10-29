@@ -92,7 +92,7 @@
         <h1>Access a database with JPA and Hibernate</h1>
         <p>Learn how to access a database with JPA and Hibernate using Micronaut.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez,Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
+        <p><strong>Micronaut Version:</strong> 2.1.2</p>
     </header>
     
 
@@ -292,22 +292,12 @@ Also keep in mind that it is necessary to escape the <code>:</code> in the conne
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">---
 jpa:
   default:
-    packages-to-scan:
-      - 'example.micronaut.domain' <i class="conum" data-value="1"></i><b>(1)</b>
     properties:
       hibernate:
         hbm2ddl:
           auto: update
         show_sql: true</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Entities are scanned in the package <code>example.micronaut.domain</code>.</td>
-</tr>
-</table>
 </div>
 </div>
 
