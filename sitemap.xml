@@ -124,6 +124,9 @@
     <loc>https://micronaut.io/tags/flowable.html</loc>
   </url>
   <url>
+    <loc>https://micronaut.io/tags/autonomous.html</loc>
+  </url>
+  <url>
     <loc>https://micronaut.io/tags/multiple-datasources.html</loc>
   </url>
   <url>
@@ -290,6 +293,9 @@
   </url>
   <url>
     <loc>https://micronaut.io/tags/endpoint.html</loc>
+  </url>
+  <url>
+    <loc>https://micronaut.io/tags/oracle.html</loc>
   </url>
   <url>
     <loc>https://micronaut.io/tags/zipkin.html</loc>
