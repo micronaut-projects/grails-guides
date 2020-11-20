@@ -84,7 +84,7 @@
         <h1>Creating your first Micronaut Graal application</h1>
         <p>Learn how to create a Hello World Micronaut Graal application.</p>
         <p><strong>Authors:</strong> Iv&aacute;n L&oacute;pez, Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.1.0</p>
+        <p><strong>Micronaut Version:</strong> 2.2.0</p>
     </header>
     
 
@@ -199,7 +199,7 @@ This guide uses Micronaut 2.x. You can <a href="https://guides.micronaut.io/1.x/
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Starting with Micronaut 2.1.0, if you use Gradle you don&#8217;t need to select the <code>graalvm</code> feature anymore.
+Starting with Micronaut 2.2.0 you don&#8217;t need to select the <code>graalvm</code> feature anymore.
 </td>
 </tr>
 </table>
@@ -413,9 +413,25 @@ reflection which is only partially supported by GraalVM.
 
 
 <div class="paragraph">
-<p>The GraalVM support has been improved in Micronaut 2.1.0 with the new <a href="https://github.com/micronaut-projects/micronaut-gradle-plugin">Micronaut Gradle Plugin</a>
-so now everything is configured by the plugin and you don&#8217;t need to do anything to your application or select the
+<p>The GraalVM support has been improved in Micronaut 2.2.0 with a new <a href="https://micronaut-projects.github.io/micronaut-maven-plugin/latest/index.html">Micronaut Maven Plugin</a>
+and Micronaut 2.1.0 already included a <a href="https://github.com/micronaut-projects/micronaut-gradle-plugin">Micronaut Gradle Plugin</a>.</p>
+</div>
+<div class="paragraph">
+<p>Now everything is configured by the plugins and you don&#8217;t need to do anything to your application or select the
 <code>graalvm</code> feature when creating the application.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This guide uses Gradle but it contains instructions for using the Maven plugin. To create the application with Maven
+support run: <code>mn create-app hello-world --build maven</code>.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_installing_graalvm">Installing GraalVM</h3>
@@ -423,9 +439,9 @@ so now everything is configured by the plugin and you don&#8217;t need to do any
 <p>The first step is installing GraalVM via the <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
 </div>
 <div class="listingblock">
-<div class="title">Installing GraalVM 20.2.0 with SDKman</div>
+<div class="title">Installing GraalVM 20.3.0 with SDKman</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.2.0.r8-grl # or 20.2.0.r11-grl for JDK 11</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.3.0.r8-grl # or 20.3.0.r11-grl for JDK 11</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -454,13 +470,23 @@ so now everything is configured by the plugin and you don&#8217;t need to do any
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.2.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.3.0.r8-grl
 
 $ ./gradlew nativeImage</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command will create the native executable <code>build/native-image/application</code>.</p>
+<p>Or if you use Maven:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.3.0.r8-grl
+
+$ ./mvnw package -Dpackaging=native-image</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous command will create the native executable in <code>build/native-image</code> directory (or in <code>target</code> if you use Maven).</p>
 </div>
 <div class="paragraph">
 <p>It is also possible to customize the name of the native image or pass additional parameters to GraalVM:</p>
@@ -470,7 +496,7 @@ $ ./gradlew nativeImage</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">nativeImage {
     args('--verbose')
-    imageName('micronaut-graalvm-app') <i class="conum" data-value="1"></i><b>(1)</b>
+    imageName('hello-world') <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
 </div>
 </div>
@@ -492,13 +518,17 @@ any additional dependency.</p>
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.2.0.r8-grl
-
-$ ./gradlew dockerBuildNative</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew dockerBuildNative</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Building Graal native image with Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./mvnw package -Dpackaging=docker-native</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command will create the image <code>complete:latest</code>. To execute it:</p>
+<p>The previous command will create the image <code>hello-world:latest</code>. To execute it:</p>
 </div>
 <div class="listingblock">
 <div class="title">Executing the native image</div>
@@ -538,7 +568,8 @@ sys     0m0.004s</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For more information about the new Micronaut Gradle plugin, take a look at <a href="https://github.com/micronaut-projects/micronaut-gradle-plugin">the documentation</a>.
+For more information about the new plugins take a look at the <a href="https://github.com/micronaut-projects/micronaut-gradle-plugin">Micronaut Gradle plugin</a>
+and <a href="https://micronaut-projects.github.io/micronaut-maven-plugin/latest/index.html">Micronaut Maven Plugin</a> documentation.
 </td>
 </tr>
 </table>
