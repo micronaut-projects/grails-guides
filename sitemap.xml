@@ -1,241 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
   <url>
-    <loc>/index.html</loc>
+    <loc>/tags/mybatis.html</loc>
   </url>
   <url>
-    <loc>/categories/cache.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautandroid.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautaws.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautdevops.html</loc>
-  </url>
-  <url>
-    <loc>/categories/cloudnative.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautgooglecloud.html</loc>
-  </url>
-  <url>
-    <loc>/categories/servicediscovery.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautapprentice.html</loc>
-  </url>
-  <url>
-    <loc>/categories/dataaccess.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautsecurity.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautoracle.html</loc>
-  </url>
-  <url>
-    <loc>/categories/messaging.html</loc>
-  </url>
-  <url>
-    <loc>/categories/micronautmicrosoftazure.html</loc>
-  </url>
-  <url>
-    <loc>/categories/distributedtracing.html</loc>
-  </url>
-  <url>
-    <loc>/tags/api-gateway.html</loc>
-  </url>
-  <url>
-    <loc>/tags/google.html</loc>
-  </url>
-  <url>
-    <loc>/tags/error.html</loc>
-  </url>
-  <url>
-    <loc>/tags/rx.html</loc>
-  </url>
-  <url>
-    <loc>/tags/gorm.html</loc>
-  </url>
-  <url>
-    <loc>/tags/aws-elasticbeanstlak.html</loc>
+    <loc>/tags/junit.html</loc>
   </url>
   <url>
     <loc>/tags/eachproperty.html</loc>
   </url>
   <url>
-    <loc>/tags/flowable.html</loc>
-  </url>
-  <url>
-    <loc>/tags/scheduled.html</loc>
-  </url>
-  <url>
-    <loc>/tags/rabbitmq.html</loc>
-  </url>
-  <url>
-    <loc>/tags/custom-runtime.html</loc>
-  </url>
-  <url>
-    <loc>/tags/appengine.html</loc>
-  </url>
-  <url>
-    <loc>/tags/cache.html</loc>
-  </url>
-  <url>
-    <loc>/tags/validation.html</loc>
-  </url>
-  <url>
-    <loc>/tags/json-streams.html</loc>
-  </url>
-  <url>
-    <loc>/tags/session.html</loc>
-  </url>
-  <url>
-    <loc>/tags/consul.html</loc>
-  </url>
-  <url>
-    <loc>/tags/database.html</loc>
-  </url>
-  <url>
-    <loc>/tags/graal.html</loc>
-  </url>
-  <url>
-    <loc>/tags/mybatis.html</loc>
-  </url>
-  <url>
-    <loc>/tags/kotlin.html</loc>
-  </url>
-  <url>
-    <loc>/tags/groovy.html</loc>
-  </url>
-  <url>
-    <loc>/tags/quickcast.html</loc>
-  </url>
-  <url>
-    <loc>/tags/javascript.html</loc>
+    <loc>/tags/gorm.html</loc>
   </url>
   <url>
     <loc>/tags/function-client.html</loc>
   </url>
   <url>
-    <loc>/tags/react.html</loc>
-  </url>
-  <url>
-    <loc>/tags/azure.html</loc>
-  </url>
-  <url>
-    <loc>/tags/http-client.html</loc>
-  </url>
-  <url>
-    <loc>/tags/geb.html</loc>
-  </url>
-  <url>
-    <loc>/tags/info.html</loc>
-  </url>
-  <url>
-    <loc>/tags/hibernate.html</loc>
-  </url>
-  <url>
     <loc>/tags/data.html</loc>
-  </url>
-  <url>
-    <loc>/tags/serverless-function.html</loc>
-  </url>
-  <url>
-    <loc>/tags/hibernate-validator.html</loc>
   </url>
   <url>
     <loc>/tags/ldap.html</loc>
   </url>
   <url>
-    <loc>/tags/zipkin.html</loc>
+    <loc>/tags/jaeger.html</loc>
   </url>
   <url>
-    <loc>/tags/token-propgation.html</loc>
-  </url>
-  <url>
-    <loc>/tags/service-discovery.html</loc>
-  </url>
-  <url>
-    <loc>/tags/netflix.html</loc>
-  </url>
-  <url>
-    <loc>/tags/configuration.html</loc>
-  </url>
-  <url>
-    <loc>/tags/eureka.html</loc>
+    <loc>/tags/flowable.html</loc>
   </url>
   <url>
     <loc>/tags/handlebars.html</loc>
-  </url>
-  <url>
-    <loc>/tags/multiple-datasources.html</loc>
-  </url>
-  <url>
-    <loc>/tags/management.html</loc>
-  </url>
-  <url>
-    <loc>/tags/aws-lambda.html</loc>
-  </url>
-  <url>
-    <loc>/tags/functions.html</loc>
-  </url>
-  <url>
-    <loc>/tags/multitenancy.html</loc>
-  </url>
-  <url>
-    <loc>/tags/video.html</loc>
-  </url>
-  <url>
-    <loc>/tags/excel.html</loc>
-  </url>
-  <url>
-    <loc>/tags/okta.html</loc>
-  </url>
-  <url>
-    <loc>/tags/cognito.html</loc>
-  </url>
-  <url>
-    <loc>/tags/spreadsheet-builder-poi.html</loc>
-  </url>
-  <url>
-    <loc>/tags/flyway.html</loc>
-  </url>
-  <url>
-    <loc>/tags/h2.html</loc>
-  </url>
-  <url>
-    <loc>/tags/client.html</loc>
-  </url>
-  <url>
-    <loc>/tags/properties.html</loc>
-  </url>
-  <url>
-    <loc>/tags/authentication-provider.html</loc>
-  </url>
-  <url>
-    <loc>/tags/velocity.html</loc>
-  </url>
-  <url>
-    <loc>/tags/builder.html</loc>
-  </url>
-  <url>
-    <loc>/tags/oidc.html</loc>
-  </url>
-  <url>
-    <loc>/tags/caffeine.html</loc>
-  </url>
-  <url>
-    <loc>/tags/aws-api-gateway.html</loc>
-  </url>
-  <url>
-    <loc>/tags/spock.html</loc>
-  </url>
-  <url>
-    <loc>/tags/jpa.html</loc>
   </url>
   <url>
     <loc>/tags/exception.html</loc>
@@ -244,64 +37,97 @@
     <loc>/tags/health.html</loc>
   </url>
   <url>
-    <loc>/tags/gradle.html</loc>
-  </url>
-  <url>
-    <loc>/tags/basic-auth.html</loc>
-  </url>
-  <url>
-    <loc>/tags/bintray.html</loc>
-  </url>
-  <url>
-    <loc>/tags/rpc.html</loc>
-  </url>
-  <url>
-    <loc>/tags/jaeger.html</loc>
-  </url>
-  <url>
-    <loc>/tags/requires.html</loc>
-  </url>
-  <url>
-    <loc>/tags/jdbc.html</loc>
-  </url>
-  <url>
-    <loc>/tags/distributed-tracing.html</loc>
-  </url>
-  <url>
-    <loc>/tags/views.html</loc>
-  </url>
-  <url>
     <loc>/tags/git.html</loc>
   </url>
   <url>
-    <loc>/tags/http-server-filter.html</loc>
+    <loc>/tags/gradle.html</loc>
   </url>
   <url>
-    <loc>/tags/googlecloud.html</loc>
+    <loc>/tags/builder.html</loc>
   </url>
   <url>
-    <loc>/tags/java.html</loc>
+    <loc>/tags/job.html</loc>
   </url>
   <url>
-    <loc>/tags/cli.html</loc>
+    <loc>/tags/google.html</loc>
   </url>
   <url>
-    <loc>/tags/github.html</loc>
+    <loc>/tags/jpa.html</loc>
   </url>
   <url>
-    <loc>/tags/cookie.html</loc>
+    <loc>/tags/authentication-provider.html</loc>
   </url>
   <url>
-    <loc>/tags/junit.html</loc>
+    <loc>/tags/hibernate.html</loc>
   </url>
   <url>
-    <loc>/tags/sam-cli.html</loc>
+    <loc>/tags/appengine.html</loc>
+  </url>
+  <url>
+    <loc>/tags/validation.html</loc>
+  </url>
+  <url>
+    <loc>/tags/custom-runtime.html</loc>
+  </url>
+  <url>
+    <loc>/tags/javascript.html</loc>
+  </url>
+  <url>
+    <loc>/tags/geb.html</loc>
+  </url>
+  <url>
+    <loc>/tags/caffeine.html</loc>
+  </url>
+  <url>
+    <loc>/tags/session.html</loc>
+  </url>
+  <url>
+    <loc>/tags/okta.html</loc>
+  </url>
+  <url>
+    <loc>/tags/cache.html</loc>
+  </url>
+  <url>
+    <loc>/tags/rx.html</loc>
+  </url>
+  <url>
+    <loc>/tags/functions.html</loc>
+  </url>
+  <url>
+    <loc>/tags/sendgrid.html</loc>
+  </url>
+  <url>
+    <loc>/tags/eureka.html</loc>
+  </url>
+  <url>
+    <loc>/tags/azure.html</loc>
+  </url>
+  <url>
+    <loc>/tags/info.html</loc>
+  </url>
+  <url>
+    <loc>/tags/service-discovery.html</loc>
+  </url>
+  <url>
+    <loc>/tags/netflix.html</loc>
+  </url>
+  <url>
+    <loc>/tags/multitenancy-gorm.html</loc>
   </url>
   <url>
     <loc>/tags/propagation.html</loc>
   </url>
   <url>
-    <loc>/tags/aws.html</loc>
+    <loc>/tags/zipkin.html</loc>
+  </url>
+  <url>
+    <loc>/tags/spock.html</loc>
+  </url>
+  <url>
+    <loc>/tags/aws-elasticbeanstlak.html</loc>
+  </url>
+  <url>
+    <loc>/tags/jwt.html</loc>
   </url>
   <url>
     <loc>/tags/spek.html</loc>
@@ -310,30 +136,204 @@
     <loc>/tags/maven.html</loc>
   </url>
   <url>
-    <loc>/tags/oauth2.html</loc>
+    <loc>/tags/cognito.html</loc>
   </url>
   <url>
-    <loc>/tags/jwt.html</loc>
+    <loc>/tags/http-client.html</loc>
   </url>
   <url>
-    <loc>/tags/sendgrid.html</loc>
+    <loc>/tags/aws-lambda.html</loc>
   </url>
   <url>
-    <loc>/tags/graalvm.html</loc>
+    <loc>/tags/consul.html</loc>
+  </url>
+  <url>
+    <loc>/tags/rabbitmq.html</loc>
+  </url>
+  <url>
+    <loc>/tags/views.html</loc>
+  </url>
+  <url>
+    <loc>/tags/bintray.html</loc>
   </url>
   <url>
     <loc>/tags/endpoint.html</loc>
   </url>
   <url>
+    <loc>/tags/client.html</loc>
+  </url>
+  <url>
+    <loc>/tags/multitenancy.html</loc>
+  </url>
+  <url>
+    <loc>/tags/groovy.html</loc>
+  </url>
+  <url>
+    <loc>/tags/basic-auth.html</loc>
+  </url>
+  <url>
+    <loc>/tags/multiple-datasources.html</loc>
+  </url>
+  <url>
+    <loc>/tags/java.html</loc>
+  </url>
+  <url>
+    <loc>/tags/hibernate-validator.html</loc>
+  </url>
+  <url>
+    <loc>/tags/json-streams.html</loc>
+  </url>
+  <url>
+    <loc>/tags/excel.html</loc>
+  </url>
+  <url>
+    <loc>/tags/cli.html</loc>
+  </url>
+  <url>
     <loc>/tags/security.html</loc>
+  </url>
+  <url>
+    <loc>/tags/configuration.html</loc>
   </url>
   <url>
     <loc>/tags/cloud.html</loc>
   </url>
   <url>
-    <loc>/tags/multitenancy-gorm.html</loc>
+    <loc>/tags/video.html</loc>
   </url>
   <url>
-    <loc>/tags/job.html</loc>
+    <loc>/tags/scheduled.html</loc>
+  </url>
+  <url>
+    <loc>/tags/rpc.html</loc>
+  </url>
+  <url>
+    <loc>/tags/graal.html</loc>
+  </url>
+  <url>
+    <loc>/tags/oauth2.html</loc>
+  </url>
+  <url>
+    <loc>/tags/graalvm.html</loc>
+  </url>
+  <url>
+    <loc>/tags/properties.html</loc>
+  </url>
+  <url>
+    <loc>/tags/api-gateway.html</loc>
+  </url>
+  <url>
+    <loc>/tags/requires.html</loc>
+  </url>
+  <url>
+    <loc>/tags/jdbc.html</loc>
+  </url>
+  <url>
+    <loc>/tags/aws-api-gateway.html</loc>
+  </url>
+  <url>
+    <loc>/tags/quickcast.html</loc>
+  </url>
+  <url>
+    <loc>/tags/oidc.html</loc>
+  </url>
+  <url>
+    <loc>/tags/serverless-function.html</loc>
+  </url>
+  <url>
+    <loc>/tags/velocity.html</loc>
+  </url>
+  <url>
+    <loc>/tags/cookie.html</loc>
+  </url>
+  <url>
+    <loc>/tags/token-propgation.html</loc>
+  </url>
+  <url>
+    <loc>/tags/googlecloud.html</loc>
+  </url>
+  <url>
+    <loc>/tags/flyway.html</loc>
+  </url>
+  <url>
+    <loc>/tags/react.html</loc>
+  </url>
+  <url>
+    <loc>/tags/h2.html</loc>
+  </url>
+  <url>
+    <loc>/tags/error.html</loc>
+  </url>
+  <url>
+    <loc>/tags/distributed-tracing.html</loc>
+  </url>
+  <url>
+    <loc>/tags/spreadsheet-builder-poi.html</loc>
+  </url>
+  <url>
+    <loc>/tags/aws.html</loc>
+  </url>
+  <url>
+    <loc>/tags/github.html</loc>
+  </url>
+  <url>
+    <loc>/tags/http-server-filter.html</loc>
+  </url>
+  <url>
+    <loc>/tags/kotlin.html</loc>
+  </url>
+  <url>
+    <loc>/tags/management.html</loc>
+  </url>
+  <url>
+    <loc>/tags/sam-cli.html</loc>
+  </url>
+  <url>
+    <loc>/tags/database.html</loc>
+  </url>
+  <url>
+    <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/categories/cloudnative.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautoracle.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautmicrosoftazure.html</loc>
+  </url>
+  <url>
+    <loc>/categories/dataaccess.html</loc>
+  </url>
+  <url>
+    <loc>/categories/messaging.html</loc>
+  </url>
+  <url>
+    <loc>/categories/cache.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautaws.html</loc>
+  </url>
+  <url>
+    <loc>/categories/distributedtracing.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautdevops.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautapprentice.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautandroid.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautgooglecloud.html</loc>
+  </url>
+  <url>
+    <loc>/categories/micronautsecurity.html</loc>
+  </url>
+  <url>
+    <loc>/categories/servicediscovery.html</loc>
   </url>
 </urlset>
