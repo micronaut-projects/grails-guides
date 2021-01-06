@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>8.2 Native Image generation null</title>
+    <title>8.1 Native Image generation null</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -88,7 +88,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>8.2 Native Image generation</h1>
+                    <h1>8.1 Native Image generation</h1>
 
                     <p><strong>Version:</strong> null</p>
                 </div>
@@ -97,7 +97,7 @@ function addJsClass() {
 
                 
 
-<h2 id="graalnativeimage">8.2 Native Image generation</h2>
+<h2 id="graalnativeimage">8.1 Native Image generation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
@@ -142,53 +142,26 @@ $ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To generate the native image you need to generate the FAT JAR first.</p>
+<p>To generate a native image using Gradle run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew nativeImage</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Invoke <code>native-image</code>. It may take a minute to complete.</p>
+<p>The native image will be built to <code>build/native-image/application</code> and can be run with <code>./build/native-image/application</code></p>
+</div>
+<div class="paragraph">
+<p>To generate a native image using Maven run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
-[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
-[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
-[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
-[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
-[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
-[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
-[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
-[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
-[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
-[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
-[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
-[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
-[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
-[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./mvn package -Dpackaging=native-image</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>--no-server</code> options tells to not use server-based image building.</p>
-</div>
-<div class="paragraph">
-<p>You can invoke the generated native image <code>micronautguide</code>. Startup will be really fast.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> $ ./micronautguide -Xmx68m
-07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
-</div>
+<p>The native image will be built to <code>target/application</code> and can be run with <code>./target/application</code>.</p>
 </div>
 <div class="paragraph">
 <p>You can execute the endpoint exposed by the native image:</p>

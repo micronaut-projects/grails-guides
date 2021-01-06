@@ -76,11 +76,9 @@
             
             <div class="toc-item" style="margin-left:0px"><a href="#graal"><strong>8</strong><span>Generate a Micronaut app's Native Image with GraalVM</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graalchanges"><strong>8.1</strong><span>Micronaut + GraalVM changes</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>8.1</strong><span>Native Image generation</span></a></div>
             
-            <div class="toc-item" style="margin-left:10px"><a href="#graalnativeimage"><strong>8.2</strong><span>Native Image generation</span></a></div>
-            
-            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>8.3</strong><span>Native Image generation with Docker</span></a></div>
+            <div class="toc-item" style="margin-left:10px"><a href="#graaldocker"><strong>8.2</strong><span>Native Image generation with Docker</span></a></div>
             
             <div class="toc-item" style="margin-left:0px"><a href="#nextSteps"><strong>9</strong><span>Next steps</span></a></div>
             
@@ -94,7 +92,7 @@
         <h1>Creating your first Micronaut app</h1>
         <p>Learn how to create a Hello World Micronaut app with Java with a controller and a functional test.</p>
         <p><strong>Authors:</strong> Sergio del Amo</p>
-        <p><strong>Micronaut Version:</strong> 2.0.0.RC1</p>
+        <p><strong>Micronaut Version:</strong> 2.2.2</p>
     </header>
     
 
@@ -420,85 +418,7 @@ applications.</p>
 </div>
 
 
-<h2 id="graalchanges">8.1 Micronaut + GraalVM changes</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graalchanges.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>Micronaut itself does not rely on reflection or dynamic classloading so works automatically with GraalVM native.</p>
-</div>
-<div class="paragraph">
-<p>First, add Micronaut Graal&#8217;s annotation processor that helps to handle generating the <code>reflection-config.json</code> metadata
-that is automatically picked up by the <code>native-image</code> tool:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-.
-    annotationProcessor("io.micronaut:micronaut-graal")
-}</code></pre>
-</div>
-</div>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>GraalVM Native Image allows you to ahead-of-time compile Java code to a standalone executable, called a native image.
-This executable includes the application, the libraries, the JDK and does not run on the Java VM, but includes necessary
-components like memory management and thread scheduling from a different virtual machine, called “Substrate VM”. Substrate
-VM is the name for the runtime components (like the deoptimizer, garbage collector, thread scheduling etc.). The resulting
-program has faster startup time and lower runtime memory overhead compared to a Java VM.</p>
-</div>
-</blockquote>
-</div>
-<div class="paragraph">
-<p>We need to add a dependency to <code>svm</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-...
-..
-.
-    compileOnly("org.graalvm.nativeimage:svm")
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To simplify building the image you need to create a <code>native-image.properties</code> file.
-The convention is to use the folder <code>src/main/resources/META-INF/native-image</code> and then a folder following the maven coordinates of the application. For our example <code>example.micronaut/micronautguide</code>.</p>
-</div>
-<div class="paragraph">
-<p>Add a <code>native-image.properties</code> inside  <code>src/main/resources/META-INF/native-image/example.micronaut/micronautguide</code> folder.</p>
-</div>
-<div class="listingblock">
-<div class="title">src/main/resources/META-INF/native-image/example.micronaut/micronautguide/native-image.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">Args = -H:Name=micronautguide \
-       -H:Class=example.micronaut.Application</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>-H:Name</code> argument specifies the name of the native image that will be generated.</p>
-</li>
-<li>
-<p>The <code>-H:Class</code> argument specifies the entry point of your application (the class that defines a static void main method.</p>
-</li>
-</ul>
-</div>
-
-
-<h2 id="graalnativeimage">8.2 Native Image generation</h2>
+<h2 id="graalnativeimage">8.1 Native Image generation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graalnativeimage.adoc"'>
@@ -543,53 +463,26 @@ $ sdk install java 20.1.0.r11-grl</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To generate the native image you need to generate the FAT JAR first.</p>
+<p>To generate a native image using Gradle run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew nativeImage</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Invoke <code>native-image</code>. It may take a minute to complete.</p>
+<p>The native image will be built to <code>build/native-image/application</code> and can be run with <code>./build/native-image/application</code></p>
+</div>
+<div class="paragraph">
+<p>To generate a native image using Maven run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ which java
-/Users/sdelamo/.sdkman/candidates/java/20.1.0.r11-grl/bin/java</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ native-image --no-server -cp build/libs/complete-0.1-all.jar
-[micronautguide:28833]    classlist:   3,459.84 ms,  0.96 GB
-[micronautguide:28833]        (cap):   2,622.25 ms,  0.96 GB
-[micronautguide:28833]     (clinit):   1,306.37 ms,  5.48 GB
-[micronautguide:28833]   (typeflow):  14,735.93 ms,  5.48 GB
-[micronautguide:28833]    (objects):  21,228.62 ms,  5.48 GB
-[micronautguide:28833]   (features):   2,722.65 ms,  5.48 GB
-[micronautguide:28833]     analysis:  42,115.37 ms,  5.48 GB
-[micronautguide:28833]     universe:   1,348.45 ms,  5.48 GB
-[micronautguide:28833]      (parse):   2,717.52 ms,  5.48 GB
-[micronautguide:28833]     (inline):   4,520.18 ms,  5.64 GB
-[micronautguide:28833]    (compile):  20,724.72 ms,  5.90 GB
-[micronautguide:28833]      compile:  30,636.91 ms,  5.90 GB
-[micronautguide:28833]        image:   5,010.54 ms,  5.66 GB
-[micronautguide:28833]        write:   1,399.49 ms,  5.66 GB
-[micronautguide:28833]      [total]:  90,218.13 ms,  5.66 GB</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./mvn package -Dpackaging=native-image</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>--no-server</code> options tells to not use server-based image building.</p>
-</div>
-<div class="paragraph">
-<p>You can invoke the generated native image <code>micronautguide</code>. Startup will be really fast.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash"> $ ./micronautguide -Xmx68m
-07:42:20.792 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 21ms. Server Running: http://localhost:8080</code></pre>
-</div>
+<p>The native image will be built to <code>target/application</code> and can be run with <code>./target/application</code>.</p>
 </div>
 <div class="paragraph">
 <p>You can execute the endpoint exposed by the native image:</p>
@@ -602,7 +495,7 @@ Hello World</code></pre>
 </div>
 
 
-<h2 id="graaldocker">8.3 Native Image generation with Docker</h2>
+<h2 id="graaldocker">8.2 Native Image generation with Docker</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/graal/graaldocker.adoc"'>
@@ -612,107 +505,27 @@ Hello World</code></pre>
 
 
 <div class="paragraph">
-<p>Alternatively, you can use <code>Dockerfile</code>  to construct the native image and a script <code>docker-build.sh</code> to run it:</p>
-</div>
-<div class="listingblock">
-<div class="title">Dockerfile</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">FROM oracle/graalvm-ce:20.1.0-java8 as graalvm
-RUN gu install native-image
-
-COPY . /home/app/complete
-WORKDIR /home/app/complete
-
-RUN native-image --no-server -cp build/libs/complete-*-all.jar
-
-FROM frolvlad/alpine-glibc
-RUN apk update &amp;&amp; apk add libstdc++
-EXPOSE 8080
-COPY --from=graalvm /home/app/complete/complete /app/complete
-ENTRYPOINT ["/app/complete"]</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">docker-build.sh</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#!/bin/sh
-docker build . -t complete
-echo
-echo
-echo "To run the docker container execute:"
-echo "    $ docker run -p 8080:8080 complete"</code></pre>
-</div>
+<p>To build a native image with Docker and Gradle run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ./gradlew assemble
-
-$ % ./docker-build.sh
-Sending build context to Docker daemon    127MB
-Step 1/10 : FROM oracle/graalvm-ce:20.1.0-java11 as graalvm
- ---&gt; 2adef7aab8f9
-Step 2/10 : RUN gu install native-image
- ---&gt; Using cache
- ---&gt; a52c98379916
-Step 3/10 : COPY . /home/app/complete
- ---&gt; 7b5d8708feb7
-Step 4/10 : WORKDIR /home/app/complete
- ---&gt; Running in 52615dd2ceed
-Removing intermediate container 52615dd2ceed
- ---&gt; fe6e67e150b6
-Step 5/10 : RUN native-image --no-server -cp build/libs/complete-*-all.jar
- ---&gt; Running in b0cca1a82c2c
-[micronautguide:24]    classlist:   4,224.09 ms,  0.96 GB
-[micronautguide:24]        (cap):     557.93 ms,  0.96 GB
-WARNING: Could not resolve io.netty.channel.epoll.EpollChannelOption for reflection configuration.
-WARNING: Could not resolve io.netty.channel.kqueue.KQueueChannelOption for reflection configuration.
-[micronautguide:24]        setup:   1,840.06 ms,  0.96 GB
-WARNING GR-10238: VarHandle for static field is currently not fully supported. Static field private static volatile java.lang.System$Logger jdk.internal.event.EventHelper.securityLogger is not properly marked for Unsafe access!
-[micronautguide:24]     (clinit):   1,383.94 ms,  3.42 GB
-[micronautguide:24]   (typeflow):  16,198.26 ms,  3.42 GB
-[micronautguide:24]    (objects):  20,293.44 ms,  3.42 GB
-[micronautguide:24]   (features):   2,859.27 ms,  3.42 GB
-[micronautguide:24]     analysis:  43,474.70 ms,  3.42 GB
-[micronautguide:24]     universe:   1,783.90 ms,  3.38 GB
-[micronautguide:24]      (parse):   4,345.14 ms,  3.68 GB
-[micronautguide:24]     (inline):   2,786.82 ms,  3.52 GB
-[micronautguide:24]    (compile):  18,459.86 ms,  4.32 GB
-[micronautguide:24]      compile:  28,292.51 ms,  4.32 GB
-[micronautguide:24]        image:   5,348.95 ms,  4.33 GB
-[micronautguide:24]        write:     804.47 ms,  4.33 GB
-[micronautguide:24]      [total]:  86,008.19 ms,  4.33 GB
-Removing intermediate container b0cca1a82c2c
- ---&gt; 31e41f3f3306
-Step 6/10 : FROM frolvlad/alpine-glibc
- ---&gt; 3a1c752f649f
-Step 7/10 : RUN apk update &amp;&amp; apk add libstdc++
- ---&gt; Using cache
- ---&gt; 536cd2f06071
-Step 8/10 : EXPOSE 8080
- ---&gt; Using cache
- ---&gt; 1e011af81857
-Step 9/10 : COPY --from=graalvm /home/app/complete/micronautguide /app/complete
- ---&gt; 921480edd9b7
-Step 10/10 : ENTRYPOINT ["/app/complete"]
- ---&gt; Running in a61b95562776
-Removing intermediate container a61b95562776
- ---&gt; 56c8fff02b03
-Successfully built 56c8fff02b03
-Successfully tagged complete:latest
-
-
-To run the docker container execute:
-    $ docker run -p 8080:8080 complete</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./gradlew dockerBuild</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You can use docker to run the image with the app&#8217;s native-image:</p>
+<p>Or with Maven run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">sdelamo@Sergios-iMac-Pro complete %  docker run -p 8080:8080 complete
-/app/complete: /usr/lib/libstdc++.so.6: no version information available (required by /app/complete)
-05:06:22.567 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 40ms. Server Running: http://35bc084914f6:8080</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">./mvnw package -Dpackaging=docker-native</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can then run the Docker container with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">docker run -p 8080:8080 complete</code></pre>
 </div>
 </div>
 
@@ -733,22 +546,29 @@ To run the docker container execute:
 
 <h1 id="help">10 Help with Micronaut</h1>
 
-    <h3 style="color: #333; margin-bottom:25px;"><a href="https://objectcomputing.com/" target="_blank">Object Computing, Inc.</a> (OCI) sponsored the creation of this Guide. A variety of consulting and support services are available.</h3>
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-guides/creating-your-first-micronaut-app/edit/master/src/main/docs/guide/help.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
 
-    <!--[if lte IE 8]>
-    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
-    <![endif]-->
-    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
-    <script>
-        hbspt.forms.create({
-            portalId: "4547412",
-            formId: "24edfcbb-b6f2-4fcf-af48-35ab6271031e"
-        });
-    </script>
 
-    <h3 style="color: #333;">OCI is Home to Micronaut.</h3>
+<h3 style="color: #333; margin-bottom:25px;"><a href="https://objectcomputing.com/" target="_blank">Object Computing, Inc.</a> (OCI) sponsored the creation of this Guide. A variety of consulting and support services are available.</h3>
 
-    <p><a href="https://objectcomputing.com/products/2gm-team" target="_blank">Meet the Team</a></p>
+<!--[if lte IE 8]>
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+<![endif]-->
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+<script>
+  hbspt.forms.create({
+	portalId: "4547412",
+	formId: "24edfcbb-b6f2-4fcf-af48-35ab6271031e"
+});
+</script>
+
+<h3 style="color: #333;">OCI is Home to Micronaut.</h3>
+
+<p><a href="https://objectcomputing.com/products/2gm-team" target="_blank">Meet the Team</a></p>
 
 </article>
 </div>
