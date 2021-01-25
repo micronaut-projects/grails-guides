@@ -951,37 +951,37 @@ import java.net.URI;
 import java.util.List;
 
 @ExecuteOn(TaskExecutors.IO)  <i class="conum" data-value="1"></i><b>(1)</b>
-@Controller("/genres")
+@Controller("/genres")  <i class="conum" data-value="2"></i><b>(2)</b>
 public class GenreController {
 
     protected final GenreRepository genreRepository;
 
-    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="2"></i><b>(2)</b>
+    public GenreController(GenreRepository genreRepository) { <i class="conum" data-value="3"></i><b>(3)</b>
         this.genreRepository = genreRepository;
     }
 
-    @Get("/{id}") <i class="conum" data-value="3"></i><b>(3)</b>
+    @Get("/{id}") <i class="conum" data-value="4"></i><b>(4)</b>
     public Genre show(Long id) {
         return genreRepository
                 .findById(id)
-                .orElse(null); <i class="conum" data-value="4"></i><b>(4)</b>
+                .orElse(null); <i class="conum" data-value="5"></i><b>(5)</b>
     }
 
-    @Put <i class="conum" data-value="5"></i><b>(5)</b>
-    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="6"></i><b>(6)</b>
+    @Put <i class="conum" data-value="6"></i><b>(6)</b>
+    public HttpResponse update(@Body @Valid GenreUpdateCommand command) { <i class="conum" data-value="7"></i><b>(7)</b>
         int numberOfEntitiesUpdated = genreRepository.update(command.getId(), command.getName());
 
         return HttpResponse
                 .noContent()
-                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="7"></i><b>(7)</b>
+                .header(HttpHeaders.LOCATION, location(command.getId()).getPath()); <i class="conum" data-value="8"></i><b>(8)</b>
     }
 
-    @Get(value = "/list{?args*}") <i class="conum" data-value="8"></i><b>(8)</b>
+    @Get(value = "/list{?args*}") <i class="conum" data-value="9"></i><b>(9)</b>
     public List&lt;Genre&gt; list(@Valid SortingAndOrderArguments args) {
         return genreRepository.findAll(args);
     }
 
-    @Post <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post <i class="conum" data-value="10"></i><b>(10)</b>
     public HttpResponse&lt;Genre&gt; save(@Body @Valid GenreSaveCommand cmd) {
         Genre genre = genreRepository.save(cmd.getName());
 
@@ -990,7 +990,7 @@ public class GenreController {
                 .headers(headers -&gt; headers.location(location(genre.getId())));
     }
 
-    @Post("/ex") <i class="conum" data-value="9"></i><b>(9)</b>
+    @Post("/ex") <i class="conum" data-value="11"></i><b>(11)</b>
     public HttpResponse&lt;Genre&gt; saveExceptions(@Body @Valid GenreSaveCommand cmd) {
         try {
             Genre genre = genreRepository.saveWithException(cmd.getName());
@@ -1002,7 +1002,7 @@ public class GenreController {
         }
     }
 
-    @Delete("/{id}") <i class="conum" data-value="10"></i><b>(10)</b>
+    @Delete("/{id}") <i class="conum" data-value="12"></i><b>(12)</b>
     public HttpResponse delete(Long id) {
         genreRepository.deleteById(id);
         return HttpResponse.noContent();
@@ -1062,6 +1062,10 @@ public class GenreController {
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Maps a <code>POST</code> request to <code>/ex</code> which generates an exception.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
 <td>Maps a <code>DELETE</code> request to <code>/genres/{id}</code> which attempts to remove a genre. This illustrates the use of a URL path variable.</td>
 </tr>
 </table>
@@ -1300,7 +1304,7 @@ $ open build/reports/tests/test/index.html</code></pre>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy"></code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy" data-lang="groovy">runtimeOnly("org.postgresql:postgresql")</code></pre>
 </div>
 </div>
 <div class="paragraph">
