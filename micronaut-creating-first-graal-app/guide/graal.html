@@ -165,9 +165,9 @@ support run: <code>mn create-app hello-world --build maven</code>.
 <p>The first step is installing GraalVM via the <a href="https://www.graalvm.org/docs/getting-started/">Getting Started</a> instructions or using SDKman:</p>
 </div>
 <div class="listingblock">
-<div class="title">Installing GraalVM 20.3.0 with SDKman</div>
+<div class="title">Installing GraalVM 21.0.0 with SDKman</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 20.3.0.r8-grl # or 20.3.0.r11-grl for JDK 11</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk install java 21.0.0.r8-grl # or 21.0.0.r11-grl for JDK 11</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -196,7 +196,7 @@ support run: <code>mn create-app hello-world --build maven</code>.
 <div class="listingblock">
 <div class="title">Building Graal native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.3.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 21.0.0.r8-grl
 
 $ ./gradlew nativeImage</code></pre>
 </div>
@@ -206,7 +206,7 @@ $ ./gradlew nativeImage</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 20.3.0.r8-grl
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ sdk use java 21.0.0.r8-grl
 
 $ ./mvnw package -Dpackaging=native-image</code></pre>
 </div>
